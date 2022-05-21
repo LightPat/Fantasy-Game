@@ -9,7 +9,14 @@ namespace LightPat
 {
     public class DisplaySettingsMenu : MonoBehaviour
     {
-        public TMP_Dropdown resolutionDropdown, fullscreenModeDropdown, graphicsQualityDropdown;
+        [Header("Dropdowns")]
+        public TMP_Dropdown resolutionDropdown;
+        public TMP_Dropdown fullscreenModeDropdown;
+        public TMP_Dropdown graphicsQualityDropdown;
+        [Header("Config Labels")]
+        public TextMeshProUGUI currentResolutionDisplay;
+        public TextMeshProUGUI currentFullscreenModeDisplay;
+        public TextMeshProUGUI currentGraphicsQualityDisplay;
 
         private FullScreenMode[] fsModes = new FullScreenMode[3];
         private List<Resolution> supportedResolutions = new List<Resolution>();
@@ -49,6 +56,11 @@ namespace LightPat
             // Graphics Quality dropdown
             graphicsQualityDropdown.AddOptions(QualitySettings.names.ToList());
             graphicsQualityDropdown.value = QualitySettings.GetQualityLevel();
+
+            // Display Current Config
+            currentResolutionDisplay.SetText("Current Resolution: " + resolutionDropdown.options[currentResIndex].text);
+            currentFullscreenModeDisplay.SetText("Current Fullscreen Mode: " + resolutionDropdown.options[fsModeIndex].text);
+            currentGraphicsQualityDisplay.SetText("Current Graphics Quality: " + QualitySettings.names[QualitySettings.GetQualityLevel()]);
         }
 
         public void ApplyChanges()

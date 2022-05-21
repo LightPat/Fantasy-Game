@@ -14,7 +14,7 @@ namespace LightPat.Core
         /// Public method for this manager to recieve dialogue from other objects in the scene
         /// </summary>
         /// <param name="newDialogue">An array of strings that is each step in the dialogue</param>
-        public void loadDialogue(string[] newDialogue)
+        public void LoadDialogue(string[] newDialogue)
         {
             foreach (string s in newDialogue)
             {
@@ -26,7 +26,8 @@ namespace LightPat.Core
                 displayObject.SetText(dialogueQueue.Dequeue());
             }
         }
-
+        
+        // TODO Change this
         void OnJump()
         {
             if (dialogueQueue.Count == 0) { displayObject.SetText(""); return; }

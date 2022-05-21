@@ -10,15 +10,9 @@ namespace LightPat.Core
         public TextDialogueManager dialogueManager;
         public string[] dialogue;
 
-        private void Start()
-        {
-            dialogueManager.loadDialogue(dialogue);
-        }
-
-        /*
         public void SendDialogue()
         {
-            dialogueManager.loadDialogue(dialogue);
-        }*/
+            dialogueManager.LoadDialogue(dialogue);
+        }
     }
 }

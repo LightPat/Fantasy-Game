@@ -107,5 +107,22 @@ namespace LightPat.Core
         {
             lookInput = value.Get<Vector2>();
         }
+
+        [Header("Interact Settings")]
+        public float reach = 4f;
+        void OnInteract()
+        {
+            RaycastHit hit;
+            // Raycast gameObject that we are looking at if it is in the range of our reach
+            bool bHit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach);
+
+            if (bHit)
+            {
+                if (hit.collider.GetComponent<Interactable>())
+                {
+                    hit.collider.GetComponent<Interactable>().Invoke();
+                }
+            }
+        }
     }
 }

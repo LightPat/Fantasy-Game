@@ -137,6 +137,7 @@ GameObject:
   - component: {fileID: 685291582}
   - component: {fileID: 685291586}
   - component: {fileID: 685291587}
+  - component: {fileID: 685291588}
   m_Layer: 0
   m_Name: TutorialTrigger
   m_TagString: Untagged
@@ -241,9 +242,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 685291581}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab4a2222493cee24a84f3766880077e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 24feb611cbbea564b85cf35ab9faabf4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &685291588
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685291581}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7a6ec2c11cd2e844b67d073e73676d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dialogueManager: {fileID: 776547688}
+  dialogue:
+  - Move with WASD
+  - Look with mouse, you can check your sensitivity in settings
+  - Interact with objects using the 'e' key
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -410,7 +428,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &776547688 stripped
 MonoBehaviour:
@@ -577,53 +595,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 5827357120933526178, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
+      propertyPath: m_TagString
+      value: MainCamera
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
---- !u!1 &1732040289
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1732040290}
-  - component: {fileID: 1732040291}
-  m_Layer: 0
-  m_Name: TutorialDialogue
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1732040290
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1732040289}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1732040291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1732040289}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7a6ec2c11cd2e844b67d073e73676d2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dialogueManager: {fileID: 776547688}
-  dialogue:
-  - Move with WASD
-  - Look with mouse, you can check your sensitivity in settings
-  - Interact with objects using the 'e' key

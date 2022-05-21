@@ -543,10 +543,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1359714615, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
-      propertyPath: m_text
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 942678447194384557, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -594,10 +590,6 @@ PrefabInstance:
     - target: {fileID: 942678447194384558, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 5827357120933526178, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
-      propertyPath: m_TagString
-      value: MainCamera
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}

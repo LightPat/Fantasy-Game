@@ -64,7 +64,6 @@ namespace LightPat.Core
 
             Quaternion newRotation = Quaternion.Euler(0, lookEulers.x, 0);
             rb.MoveRotation(newRotation);
-
             verticalRotate.rotation = Quaternion.Euler(-lookEulers.y, lookEulers.x, 0);
         }
 
@@ -102,7 +101,6 @@ namespace LightPat.Core
         [Header("Look Settings")]
         public float sensitivity = 1f;
         public float verticalLookBound = 90f;
-        private Quaternion oldRotation;
         private Vector3 lookEulers;
         private Vector2 lookInput;
         void OnLook(InputValue value)

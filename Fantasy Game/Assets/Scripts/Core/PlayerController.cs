@@ -74,11 +74,11 @@ namespace LightPat.Core
             moveForce.z -= rb.velocity.z;
             rb.AddForce(moveForce, ForceMode.VelocityChange);
 
-            //// Falling Gravity velocity increase
-            //if (rb.velocity.y < 0)
-            //{
-            //    rb.AddForce(new Vector3(0, (fallingGravityScale * -1), 0), ForceMode.VelocityChange);
-            //}
+            // Falling Gravity velocity increase
+            if (rb.velocity.y < 0)
+            {
+                rb.AddForce(new Vector3(0, (fallingGravityScale * -1), 0), ForceMode.VelocityChange);
+            }
         }
 
 
@@ -121,6 +121,36 @@ namespace LightPat.Core
                 if (hit.collider.GetComponent<Interactable>())
                 {
                     hit.collider.GetComponent<Interactable>().Invoke();
+                }
+            }
+        }
+
+        [Header("Jump Settings")]
+        public float jumpHeight = 3f;
+        public float fallingGravityScale = 0.5f;
+        [Header("IsGrounded Settings")]
+        public float checkDistance = 1;
+        private bool grounded = false;
+        void OnJump(InputValue value)
+        {
+            // TODO this isn't really an elegant solution, if you stand on the edge of something it doesn't realize that you are still grouded
+            // If you check for velocity = 0 then you can double jump since the apex of your jump's velocity is 0
+            // Check if the player is touching a gameObject under them
+            // May need to change 1.5f to be a different number if you switch the asset of the player model
+            bool isGrounded()
+            {
+                RaycastHit hit;
+                bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1, out hit, checkDistance);
+                Debug.Log(hit.collider);
+                return bHit;
+            }
+
+            if (value.isPressed)
+            {
+                if (isGrounded())
+                {
+                    float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+                    rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
                 }
             }
         }

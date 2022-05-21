@@ -5,7 +5,7 @@ using TMPro;
 using System;
 using System.Linq;
 
-namespace LightPat
+namespace LightPat.UI
 {
     public class DisplaySettingsMenu : MonoBehaviour
     {
@@ -18,6 +18,7 @@ namespace LightPat
         public TextMeshProUGUI currentFullscreenModeDisplay;
         public TextMeshProUGUI currentGraphicsQualityDisplay;
 
+        private GameObject lastMenu;
         private FullScreenMode[] fsModes = new FullScreenMode[3];
         private List<Resolution> supportedResolutions = new List<Resolution>();
 
@@ -59,7 +60,7 @@ namespace LightPat
 
             // Display Current Config
             currentResolutionDisplay.SetText("Current Resolution: " + resolutionDropdown.options[currentResIndex].text);
-            currentFullscreenModeDisplay.SetText("Current Fullscreen Mode: " + resolutionDropdown.options[fsModeIndex].text);
+            currentFullscreenModeDisplay.SetText("Current Fullscreen Mode: " + fullscreenModeDropdown.options[fsModeIndex].text);
             currentGraphicsQualityDisplay.SetText("Current Graphics Quality: " + QualitySettings.names[QualitySettings.GetQualityLevel()]);
         }
 
@@ -80,6 +81,17 @@ namespace LightPat
         public void QuitGame()
         {
             Application.Quit();
+        }
+
+        public void setLastMenu(GameObject lm)
+        {
+            lastMenu = lm;
+        }
+
+        public void goBackToLastMenu()
+        {
+            lastMenu.SetActive(true);
+            Destroy(gameObject);
         }
     }
 }

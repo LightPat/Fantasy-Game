@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace LightPat.UI
 {
@@ -19,6 +20,11 @@ namespace LightPat.UI
         public void QuitGame()
         {
             Application.Quit();
+        }
+
+        public void StartGame()
+        {
+            SceneManager.LoadScene("Level1");
         }
     }
 }

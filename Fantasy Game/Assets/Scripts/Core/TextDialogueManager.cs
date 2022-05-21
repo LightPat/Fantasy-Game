@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.InputSystem;
 
 namespace LightPat.Core
 {
@@ -25,12 +26,18 @@ namespace LightPat.Core
             {
                 displayObject.SetText(dialogueQueue.Dequeue());
             }
+
+            GetComponent<PlayerInput>().SwitchCurrentActionMap("Text Dialogue");
         }
         
-        // TODO Change this
-        void OnJump()
+        void OnNextLine()
         {
-            if (dialogueQueue.Count == 0) { displayObject.SetText(""); return; }
+            if (dialogueQueue.Count == 0)
+            {
+                displayObject.SetText("");
+                GetComponent<PlayerInput>().SwitchCurrentActionMap("First Person");
+                return;
+            }
 
             string s = dialogueQueue.Dequeue();
             displayObject.SetText(s);

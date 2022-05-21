@@ -130,7 +130,6 @@ namespace LightPat.Core
         public float fallingGravityScale = 0.5f;
         [Header("IsGrounded Settings")]
         public float checkDistance = 1;
-        private bool grounded = false;
         void OnJump(InputValue value)
         {
             // TODO this isn't really an elegant solution, if you stand on the edge of something it doesn't realize that you are still grouded

@@ -1,24 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 
 namespace LightPat.Core
 {
     public class PlayerController : MonoBehaviour
     {
+        [Header("Object Assignments")]
+        public Transform verticalRotate;
+        public GameObject crosshair;
+        public GameObject escapeMenu;
+
         private Rigidbody rb;
         private float currentSpeed;
-        private Transform verticalRotate;
 
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
             playerInput = GetComponent<PlayerInput>();
             currentSpeed = walkingSpeed;
-            verticalRotate = transform.Find("Vertical Rotate");
+            Cursor.lockState = CursorLockMode.Locked;
         }
-
 
         private void Update()
         {
@@ -26,7 +30,24 @@ namespace LightPat.Core
             // Red is for enemy
             // Blue is for interactable
             // Green is for friendly
-            // TODO
+            RaycastHit hit;
+            bool bHit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach);
+
+            if (bHit)
+            {
+                if (hit.collider.GetComponent<Interactable>())
+                {
+                    crosshair.GetComponent<RawImage>().color = new Color32(0, 255, 0, 100);
+                }
+                else
+                {
+                    crosshair.GetComponent<RawImage>().color = new Color32(0, 0, 0, 100);
+                }
+            }
+            else
+            {
+                crosshair.GetComponent<RawImage>().color = new Color32(0, 0, 0, 100);
+            }
 
             // Look logic
             lookInput *= (sensitivity);
@@ -154,8 +175,6 @@ namespace LightPat.Core
             }
         }
 
-        [Header("Escape Settings")]
-        public GameObject escapeMenu;
         private PlayerInput playerInput;
         private string lastActionMapName;
         private GameObject menu;
@@ -168,12 +187,14 @@ namespace LightPat.Core
 
                 transform.Find("HUD").gameObject.SetActive(false);
                 menu = Instantiate(escapeMenu);
+                Cursor.lockState = CursorLockMode.None;
             }
             else
             {
                 Destroy(menu);
                 transform.Find("HUD").gameObject.SetActive(true);
                 playerInput.SwitchCurrentActionMap(lastActionMapName);
+                Cursor.lockState = CursorLockMode.Locked;
             }
         }
     }

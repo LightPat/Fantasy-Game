@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 2036400901}
   - component: {fileID: 2036400900}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: HUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -330,6 +330,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b3e93936db9a3fc4cb4c9d8ad96a3663, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  verticalRotate: {fileID: 7193977337293026838}
+  crosshair: {fileID: 3474682665725843588}
+  escapeMenu: {fileID: 2367944742497944294, guid: 6ed21f0f96c0f794eb0b409975293614, type: 3}
   walkingSpeed: 5
   sensitivity: 0.1
   verticalLookBound: 90
@@ -337,7 +340,6 @@ MonoBehaviour:
   jumpHeight: 3
   fallingGravityScale: 0.5
   checkDistance: 1
-  escapeMenu: {fileID: 2367944742497944294, guid: 6ed21f0f96c0f794eb0b409975293614, type: 3}
 --- !u!114 &776547688
 MonoBehaviour:
   m_ObjectHideFlags: 0

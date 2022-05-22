@@ -14,6 +14,7 @@ namespace LightPat.Core
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
+            playerInput = GetComponent<PlayerInput>();
             currentSpeed = walkingSpeed;
             verticalRotate = transform.Find("Vertical Rotate");
         }
@@ -21,6 +22,13 @@ namespace LightPat.Core
 
         private void Update()
         {
+            // Crosshair Color Change Hover Logic
+            // Red is for enemy
+            // Blue is for interactable
+            // Green is for friendly
+            // TODO
+
+            // Look logic
             lookInput *= (sensitivity);
             lookEulers.x += lookInput.x;
 
@@ -88,13 +96,6 @@ namespace LightPat.Core
         private Vector2 moveInput;
         void OnMove(InputValue value)
         {
-            if (value.Get<Vector2>() != Vector2.zero)
-            {
-            }
-            else
-            {
-            }
-
             moveInput = value.Get<Vector2>();
         }
 
@@ -140,7 +141,6 @@ namespace LightPat.Core
             {
                 RaycastHit hit;
                 bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1, out hit, checkDistance);
-                Debug.Log(hit.collider);
                 return bHit;
             }
 
@@ -151,6 +151,29 @@ namespace LightPat.Core
                     float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
                     rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
                 }
+            }
+        }
+
+        [Header("Escape Settings")]
+        public GameObject escapeMenu;
+        private PlayerInput playerInput;
+        private string lastActionMapName;
+        private GameObject menu;
+        void OnEscape()
+        {
+            if (playerInput.currentActionMap.name != "Menu")
+            {
+                lastActionMapName = playerInput.currentActionMap.name;
+                playerInput.SwitchCurrentActionMap("Menu");
+
+                transform.Find("HUD").gameObject.SetActive(false);
+                menu = Instantiate(escapeMenu);
+            }
+            else
+            {
+                Destroy(menu);
+                transform.Find("HUD").gameObject.SetActive(true);
+                playerInput.SwitchCurrentActionMap(lastActionMapName);
             }
         }
     }

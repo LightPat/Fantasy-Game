@@ -4,10 +4,11 @@ using UnityEngine;
 using TMPro;
 using System;
 using System.Linq;
+using LightPat.Core;
 
 namespace LightPat.UI
 {
-    public class DisplaySettingsMenu : MonoBehaviour
+    public class DisplaySettingsMenu : Menu
     {
         [Header("Dropdowns")]
         public TMP_Dropdown resolutionDropdown;
@@ -18,7 +19,6 @@ namespace LightPat.UI
         public TextMeshProUGUI currentFullscreenModeDisplay;
         public TextMeshProUGUI currentGraphicsQualityDisplay;
 
-        private GameObject lastMenu;
         private FullScreenMode[] fsModes = new FullScreenMode[3];
         private List<Resolution> supportedResolutions = new List<Resolution>();
 
@@ -76,22 +76,6 @@ namespace LightPat.UI
             QualitySettings.SetQualityLevel(graphicsQualityDropdown.value, true);
 
             Screen.SetResolution(res.width, res.height, fsMode, res.refreshRate);
-        }
-
-        public void QuitGame()
-        {
-            Application.Quit();
-        }
-
-        public void setLastMenu(GameObject lm)
-        {
-            lastMenu = lm;
-        }
-
-        public void goBackToLastMenu()
-        {
-            lastMenu.SetActive(true);
-            Destroy(gameObject);
         }
     }
 }

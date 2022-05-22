@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using LightPat.Core;
 
 namespace LightPat.UI
 {
-    public class StartMenu : MonoBehaviour
+    public class StartMenu : Menu
     {
         public GameObject settingsMenu;
 
@@ -15,11 +16,6 @@ namespace LightPat.UI
             _settings.GetComponent<DisplaySettingsMenu>().setLastMenu(gameObject);
 
             gameObject.SetActive(false);
-        }
-
-        public void QuitGame()
-        {
-            Application.Quit();
         }
 
         public void StartGame()

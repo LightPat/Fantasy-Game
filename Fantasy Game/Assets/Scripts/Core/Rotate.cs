@@ -8,7 +8,7 @@ namespace LightPat.Core
     {
         void Update()
         {
-            transform.Rotate(0,0,0.5f);
+            transform.Rotate(0.1f, 0.3f, 0.5f);
         }
     }
 }

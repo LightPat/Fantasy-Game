@@ -215,7 +215,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 446604340}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 8.420263, y: 1.29, z: -1.6131644}
+  m_LocalPosition: {x: 0.57, y: 1.51, z: 6.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -260,7 +260,7 @@ MonoBehaviour:
   dialogueManager: {fileID: 776547688}
   dialogue:
   - Move with WASD
-  - Look with mouse, you can check your sensitivity in settings
+  - Look with mouse, you can change your sensitivity in settings
   - Interact with objects using the 'e' key
 --- !u!1 &705507993
 GameObject:
@@ -543,6 +543,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2036400899, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
+      propertyPath: m_Name
+      value: HUD
+      objectReference: {fileID: 0}
     - target: {fileID: 942678447194384557, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
       propertyPath: m_RootOrder
       value: 2

@@ -1213,6 +1213,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settingsMenu: {fileID: 2367944742497944294, guid: 6ed21f0f96c0f794eb0b409975293614, type: 3}
   sceneTransition: {fileID: 8430780216283060431, guid: 2243871662fa62c4496ca01cf70fab1f, type: 3}
+  transitionClipName: Fade to Black
 --- !u!1 &1995582586
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ namespace LightPat.UI
     {
         public GameObject settingsMenu;
         public GameObject sceneTransition;
+        public string transitionClipName;
 
         public void OpenSettingsMenu()
         {
@@ -21,7 +22,7 @@ namespace LightPat.UI
 
         public void StartGame()
         {
-            StartCoroutine(WaitForAnimation("Fade to Black"));
+            StartCoroutine(WaitForAnimation(transitionClipName));
         }
 
         private IEnumerator WaitForAnimation(string animationName)

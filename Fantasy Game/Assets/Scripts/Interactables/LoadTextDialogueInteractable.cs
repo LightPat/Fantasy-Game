@@ -6,7 +6,7 @@ using LightPat.Core;
 namespace LightPat.Interactables
 {
     [RequireComponent(typeof(TextDialogue))]
-    public class LoadTextDialogue : Interactable
+    public class LoadTextDialogueInteractable : Interactable
     {
         public override void Invoke()
         {

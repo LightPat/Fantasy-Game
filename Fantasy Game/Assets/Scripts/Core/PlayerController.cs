@@ -37,16 +37,16 @@ namespace LightPat.Core
             {
                 if (hit.collider.GetComponent<Interactable>())
                 {
-                    crosshair.GetComponent<RawImage>().color = new Color32(0, 255, 0, 100);
+                    crosshair.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
                 }
                 else
                 {
-                    crosshair.GetComponent<RawImage>().color = new Color32(0, 0, 0, 100);
+                    crosshair.GetComponent<Image>().color = new Color32(0, 0, 0, 255);
                 }
             }
             else
             {
-                crosshair.GetComponent<RawImage>().color = new Color32(0, 0, 0, 100);
+                crosshair.GetComponent<Image>().color = new Color32(0, 0, 0, 255);
             }
 
             // Look logic

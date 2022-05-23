@@ -236,6 +236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a439876a0b48bba45959ab8524ff7b2e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInput: {fileID: 1589888365}
   sceneTransition: {fileID: 8430780216283060431, guid: 2243871662fa62c4496ca01cf70fab1f, type: 3}
   transitionClipName: Fade from Black
 --- !u!114 &30020772
@@ -723,5 +724,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 2885953169430158880, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
+--- !u!114 &1589888365 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2885953169430158880, guid: 57bace2d1201ec74a8a6ca4333be7214, type: 3}
+  m_PrefabInstance: {fileID: 979551918}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

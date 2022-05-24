@@ -22,6 +22,7 @@ namespace LightPat.Core
             playerInput = GetComponent<PlayerInput>();
             currentSpeed = walkingSpeed;
             Cursor.lockState = CursorLockMode.Locked;
+            lookEulers = new Vector3(transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.z);
         }
 
         private void Update()

@@ -1433,7 +1433,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c88aab0c7c3b01f42a8768882c70855d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cycleSpeed: 0.01
+  cycleSpeed: 0.5
 --- !u!1 &737740734
 GameObject:
   m_ObjectHideFlags: 0
@@ -2652,7 +2652,7 @@ GameObject:
   - component: {fileID: 1655201022}
   - component: {fileID: 1655201021}
   m_Layer: 0
-  m_Name: Combined Mesh
+  m_Name: Water
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2715,7 +2715,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1655201020}
   m_LocalRotation: {x: 0, y: 0.9089591, z: 0, w: -0.41688532}
-  m_LocalPosition: {x: 4298.67, y: 120.31, z: -6853.85}
+  m_LocalPosition: {x: 4305.22, y: 116, z: -6858.75}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

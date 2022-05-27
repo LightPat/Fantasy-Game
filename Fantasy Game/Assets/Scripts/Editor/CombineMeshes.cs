@@ -24,6 +24,7 @@ namespace LightPat.Editor
             }
 
             Mesh combinedMesh = new Mesh();
+            combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
             combinedMesh.CombineMeshes(combine);
             Debug.Log(combinedMesh);
 

@@ -198,5 +198,19 @@ namespace LightPat.Core
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }
+
+
+        public float flyingSpeed = 100f;
+        void OnSprint(InputValue value)
+        {
+            if (value.isPressed)
+            {
+                currentSpeed = flyingSpeed;
+            }
+            else
+            {
+                currentSpeed = walkingSpeed;
+            }
+        }
     }
 }

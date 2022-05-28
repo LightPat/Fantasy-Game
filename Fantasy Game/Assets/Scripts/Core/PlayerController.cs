@@ -36,9 +36,13 @@ namespace LightPat.Core
 
             if (bHit)
             {
-                if (hit.collider.GetComponent<Interactable>())
+                if (hit.transform.GetComponent<Interactable>())
                 {
                     crosshair.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
+                }
+                else if (hit.transform.GetComponent<Enemy>())
+                {
+                    crosshair.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
                 }
                 else
                 {

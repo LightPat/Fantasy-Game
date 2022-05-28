@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace LightPat.Core
 {
-    public class Enemy : MonoBehaviour
+    public abstract class Enemy : MonoBehaviour
     {
-
+        public abstract void Attack();
     }
 }

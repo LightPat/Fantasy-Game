@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 namespace LightPat.Core
 {
+    [RequireComponent(typeof(Attributes))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Object Assignments")]
@@ -38,11 +39,15 @@ namespace LightPat.Core
             {
                 if (hit.transform.GetComponent<Interactable>())
                 {
-                    crosshair.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
+                    crosshair.GetComponent<Image>().color = new Color32(0, 0, 255, 255);
                 }
                 else if (hit.transform.GetComponent<Enemy>())
                 {
                     crosshair.GetComponent<Image>().color = new Color32(255, 0, 0, 255);
+                }
+                else if (hit.transform.GetComponent<Friendly>())
+                {
+                    crosshair.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
                 }
                 else
                 {

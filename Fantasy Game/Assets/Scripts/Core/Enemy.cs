@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace LightPat.Core
 {
+    [RequireComponent(typeof(Attributes))]
     public abstract class Enemy : MonoBehaviour
     {
         [Header("Attack Settings")]

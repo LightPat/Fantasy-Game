@@ -18,6 +18,7 @@ namespace LightPat.EnemyAI
         private Vector3 startingPosition;
         private Vector3 roamingPosition;
         private bool lookingAround = true;
+        [SerializeField]
         private Transform target;
         private Rigidbody rb;
 
@@ -42,7 +43,7 @@ namespace LightPat.EnemyAI
 
                 if (visionBHit)
                 {
-                    if (visionHit.transform.GetComponent<PlayerController>())
+                    if (visionHit.transform.GetComponent<PlayerController>() | visionHit.transform.GetComponent<Friendly>())
                     {
                         target = visionHit.transform;
                     }

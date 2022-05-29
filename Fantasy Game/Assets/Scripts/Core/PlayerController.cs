@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 
 namespace LightPat.Core
 {
+    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(AudioSource))]
     [RequireComponent(typeof(Attributes))]
     public class PlayerController : MonoBehaviour
     {
@@ -127,7 +129,7 @@ namespace LightPat.Core
             }
         }
 
-        [Header("")]
+        [Header("Footstep Detection Settings")]
         public float footstepDetectionRadius = 10f;
         private IEnumerator playFootstep()
         {
@@ -252,7 +254,7 @@ namespace LightPat.Core
             {
                 if (hit.transform.GetComponent<Attributes>())
                 {
-                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage);
+                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                 }
             }
         }

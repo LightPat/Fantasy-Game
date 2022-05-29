@@ -14,9 +14,10 @@ namespace LightPat.Core
             HP = maxHealth;
         }
 
-        public void InflictDamage(float damage)
+        public void InflictDamage(float damage, GameObject inflicter)
         {
             HP -= damage;
+            SendMessage("OnAttacked", inflicter);
             if (HP <= 0)
             {
                 Debug.Log(name + "'s HP has reached " + HP + ", it is now dead.");

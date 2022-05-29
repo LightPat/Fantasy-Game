@@ -127,7 +127,6 @@ namespace LightPat.EnemyAI
             yield return new WaitForEndOfFrame();
         }
 
-        private Vector3 gizmoPosition;
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.yellow;
@@ -145,6 +144,11 @@ namespace LightPat.EnemyAI
         {
             lookingAround = true;
             roamingPosition = value;
+        }
+
+        void OnAttacked(GameObject value)
+        {
+            //target = value.transform;
         }
     }
 }

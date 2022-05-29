@@ -20,6 +20,22 @@ namespace LightPat.FriendlyAI
             audioSrc = GetComponent<AudioSource>();
         }
 
+        private void Update()
+        {
+            if (target != null)
+            {
+                // If the target is super far away, stop following it
+                if (Vector3.Distance(target.position, transform.position) > 5f)
+                {
+                    target = null;
+                    return;
+                }
+
+                rb.MoveRotation(Quaternion.LookRotation(target.position - transform.position));
+                Attack();
+            }
+        }
+
         private void FixedUpdate()
         {
             if (target == null)
@@ -51,8 +67,7 @@ namespace LightPat.FriendlyAI
 
         void OnAttacked(GameObject value)
         {
-            Debug.Log(value.transform);
-
+            target = value.transform;
         }
     }
 }

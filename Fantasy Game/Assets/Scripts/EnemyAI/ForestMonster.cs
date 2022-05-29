@@ -30,7 +30,7 @@ namespace LightPat.EnemyAI
         {
             startingPosition = transform.position;
             rb = GetComponent<Rigidbody>();
-            roamingPosition = new Vector3(5017.73f, 0, -7598.18f);
+            roamingPosition = transform.position + new Vector3(0.1f,0,0.1f);
         }
 
         private void Update()
@@ -73,7 +73,6 @@ namespace LightPat.EnemyAI
                 if (lookingAround)
                 {
                     rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), 4));
-                    Debug.Log(Quaternion.Angle(transform.rotation, Quaternion.LookRotation(roamingPosition - transform.position)));
                     if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(roamingPosition - transform.position)) < 1)
                     {
                         lookingAround = false;
@@ -97,21 +96,17 @@ namespace LightPat.EnemyAI
 
                     if (radiusBHit)
                     {
-                        Debug.Log(radiusHit.transform);
                         Debug.DrawRay(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position, Color.blue, 20f);
                         StartCoroutine(RefreshRoamingPosition());
-                        Time.timeScale = 1f;
                     }
                     else
                     {
                         Debug.DrawRay(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position, Color.green, 20f);
-                        Time.timeScale = 5f;
                     }
                 }
             }
             else // Once we have a target
             {
-                Debug.Log("Chasing player");
                 // If we are not right next to the target, move toward it
                 if (Vector3.Distance(target.position, transform.position) > stopDistance)
                 {

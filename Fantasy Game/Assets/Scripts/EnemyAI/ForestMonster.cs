@@ -9,6 +9,7 @@ namespace LightPat.EnemyAI
     {
         public float visionDistance = 10f;
         public float chaseSpeed = 2f;
+        public float maxChaseDistance = 30f;
         private Transform target;
         private Rigidbody rb;
 
@@ -34,6 +35,12 @@ namespace LightPat.EnemyAI
             }
             else
             {
+                if (Vector3.Distance(target.position, transform.position) > maxChaseDistance)
+                {
+                    target = null;
+                    return;
+                }
+
                 transform.LookAt(target.position);
                 Attack();
             }

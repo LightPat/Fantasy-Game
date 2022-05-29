@@ -35,6 +35,7 @@ namespace LightPat.EnemyAI
             else
             {
                 transform.LookAt(target.position);
+                Attack();
             }
         }
 
@@ -51,11 +52,6 @@ namespace LightPat.EnemyAI
                 moveForce.z -= rb.velocity.z;
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
             }
-        }
-
-        public override void Attack()
-        {
-            Debug.Log("Attacking");
         }
     }
 }

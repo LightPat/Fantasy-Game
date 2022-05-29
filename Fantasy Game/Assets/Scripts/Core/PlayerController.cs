@@ -203,17 +203,33 @@ namespace LightPat.Core
             }
         }
 
-
-        public float flyingSpeed = 100f;
+        [Header("Sprint Settings")]
+        public float sprintSpeed = 100f;
         void OnSprint(InputValue value)
         {
             if (value.isPressed)
             {
-                currentSpeed = flyingSpeed;
+                currentSpeed = sprintSpeed;
             }
             else
             {
                 currentSpeed = walkingSpeed;
+            }
+        }
+
+        [Header("Attack Settings")]
+        public float attackDamage = 10f;
+        void OnAttack()
+        {
+            RaycastHit hit;
+            bool bHit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach);
+
+            if (bHit)
+            {
+                if (hit.transform.GetComponent<Attributes>())
+                {
+                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage);
+                }
             }
         }
     }

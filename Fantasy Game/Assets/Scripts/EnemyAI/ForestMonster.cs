@@ -40,7 +40,7 @@ namespace LightPat.EnemyAI
                             break;
                         }
                     }
-                }                
+                }
             }
             else
             {

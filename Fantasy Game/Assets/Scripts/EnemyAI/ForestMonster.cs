@@ -9,6 +9,7 @@ namespace LightPat.EnemyAI
     {
         [Header("Chase Settings")]
         public float visionDistance = 10f;
+        public float FOV = 30;
         public float chaseSpeed = 2f;
         public float maxChaseDistance = 15f;
         public float stopDistance = 2f;
@@ -24,19 +25,26 @@ namespace LightPat.EnemyAI
         {
             if (target == null)
             {
-                RaycastHit hit;
-                bool bHit = Physics.Raycast(transform.position, transform.forward, out hit, visionDistance);
-
-                if (bHit)
+                // If we don't have a target check a series of raycasts
+                for (float i = -FOV; i < FOV; i += 1f)
                 {
-                    if (hit.transform.GetComponent<PlayerController>())
+                    RaycastHit hit;
+                    bool bHit = Physics.Raycast(transform.position, Quaternion.Euler(0,i,0) * transform.forward, out hit, visionDistance);
+                    Debug.DrawRay(transform.position, Quaternion.Euler(0, i, 0) * transform.forward * visionDistance, Color.blue, 2f);
+
+                    if (bHit)
                     {
-                        target = hit.transform;
+                        if (hit.transform.GetComponent<PlayerController>())
+                        {
+                            target = hit.transform;
+                            break;
+                        }
                     }
-                }
+                }                
             }
             else
             {
+                // If the target is super far away, stop following it
                 if (Vector3.Distance(target.position, transform.position) > maxChaseDistance)
                 {
                     target = null;
@@ -56,6 +64,7 @@ namespace LightPat.EnemyAI
             }
             else
             {
+                // If we are right next to the target, stop moving toward it
                 if (Vector3.Distance(target.position, transform.position) > stopDistance)
                 {
                     Vector3 moveForce = transform.forward * chaseSpeed;

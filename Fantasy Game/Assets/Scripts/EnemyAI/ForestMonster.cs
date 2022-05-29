@@ -21,11 +21,16 @@ namespace LightPat.EnemyAI
         private Transform target;
         private Rigidbody rb;
 
+        private RaycastHit visionHit;
+        private RaycastHit radiusHit;
+        private bool visionBHit;
+        private bool radiusBHit;
+
         private void Start()
         {
             startingPosition = transform.position;
             rb = GetComponent<Rigidbody>();
-            roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+            roamingPosition = new Vector3(5017.73f, 0, -7598.18f);
         }
 
         private void Update()
@@ -33,14 +38,13 @@ namespace LightPat.EnemyAI
             if (target == null)
             {
                 // If we don't have a target check a raycast
-                RaycastHit hit;
-                bool bHit = Physics.Raycast(transform.position, transform.forward, out hit, visionDistance);
+                visionBHit = Physics.Raycast(transform.position, transform.forward, out visionHit, visionDistance);
 
-                if (bHit)
+                if (visionBHit)
                 {
-                    if (hit.transform.GetComponent<PlayerController>())
+                    if (visionHit.transform.GetComponent<PlayerController>())
                     {
-                        target = hit.transform;
+                        target = visionHit.transform;
                     }
                 }
             }
@@ -69,15 +73,16 @@ namespace LightPat.EnemyAI
                 if (lookingAround)
                 {
                     rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), 4));
-
-                    if (transform.rotation == Quaternion.LookRotation(roamingPosition - transform.position))
+                    Debug.Log(Quaternion.Angle(transform.rotation, Quaternion.LookRotation(roamingPosition - transform.position)));
+                    if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(roamingPosition - transform.position)) < 1)
                     {
                         lookingAround = false;
                     }
                 }
-                else if (Vector3.Distance(transform.position, roamingPosition) > 3) // If we haven't reached our roaming position yet
+                else if (Vector3.Distance(transform.position, roamingPosition) > 1) // If we haven't reached our roaming position yet
                 {
                     Vector3 moveForce = transform.forward * roamSpeed;
+                    rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), 4));
                     moveForce.x -= rb.velocity.x;
                     moveForce.z -= rb.velocity.z;
                     moveForce.y = 0;
@@ -87,10 +92,26 @@ namespace LightPat.EnemyAI
                 {
                     lookingAround = true;
                     roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+
+                    radiusBHit = Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position, out radiusHit);
+
+                    if (radiusBHit)
+                    {
+                        Debug.Log(radiusHit.transform);
+                        Debug.DrawRay(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position, Color.blue, 20f);
+                        StartCoroutine(RefreshRoamingPosition());
+                        Time.timeScale = 1f;
+                    }
+                    else
+                    {
+                        Debug.DrawRay(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position, Color.green, 20f);
+                        Time.timeScale = 5f;
+                    }
                 }
             }
             else // Once we have a target
             {
+                Debug.Log("Chasing player");
                 // If we are not right next to the target, move toward it
                 if (Vector3.Distance(target.position, transform.position) > stopDistance)
                 {
@@ -102,6 +123,18 @@ namespace LightPat.EnemyAI
                     rb.AddForce(moveForce, ForceMode.VelocityChange);
                 }
             }
+        }
+
+        private IEnumerator RefreshRoamingPosition()
+        {
+            roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+            while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position, out radiusHit))
+            {
+                roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+            }
+
+            Debug.DrawRay(transform.position + transform.forward, roamingPosition - transform.position, Color.black, 20f);
+            yield return new WaitForEndOfFrame();
         }
     }
 }

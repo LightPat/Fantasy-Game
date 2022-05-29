@@ -66,6 +66,7 @@ namespace LightPat.EnemyAI
                     Vector3 moveForce = transform.forward * chaseSpeed;
                     moveForce.x -= rb.velocity.x;
                     moveForce.z -= rb.velocity.z;
+                    moveForce.y = 0;
                     rb.AddForce(moveForce, ForceMode.VelocityChange);
                 }
             }

@@ -7,9 +7,11 @@ namespace LightPat.EnemyAI
 {
     public class ForestMonster : Enemy
     {
+        [Header("Chase Settings")]
         public float visionDistance = 10f;
         public float chaseSpeed = 2f;
-        public float maxChaseDistance = 30f;
+        public float maxChaseDistance = 15f;
+        public float stopDistance = 2f;
         private Transform target;
         private Rigidbody rb;
 
@@ -50,14 +52,17 @@ namespace LightPat.EnemyAI
         {
             if (target == null)
             {
-
+                // Add wandering code here
             }
             else
             {
-                Vector3 moveForce = transform.forward * chaseSpeed;
-                moveForce.x -= rb.velocity.x;
-                moveForce.z -= rb.velocity.z;
-                rb.AddForce(moveForce, ForceMode.VelocityChange);
+                if (Vector3.Distance(target.position, transform.position) > stopDistance)
+                {
+                    Vector3 moveForce = transform.forward * chaseSpeed;
+                    moveForce.x -= rb.velocity.x;
+                    moveForce.z -= rb.velocity.z;
+                    rb.AddForce(moveForce, ForceMode.VelocityChange);
+                }
             }
         }
     }

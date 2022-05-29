@@ -96,12 +96,7 @@ namespace LightPat.EnemyAI
 
                     if (radiusBHit)
                     {
-                        Debug.DrawRay(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position, Color.blue, 20f);
                         StartCoroutine(RefreshRoamingPosition());
-                    }
-                    else
-                    {
-                        Debug.DrawRay(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position, Color.green, 20f);
                     }
                 }
             }
@@ -128,7 +123,6 @@ namespace LightPat.EnemyAI
                 roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
             }
 
-            Debug.DrawRay(transform.position + transform.forward, roamingPosition - transform.position, Color.black, 20f);
             yield return new WaitForEndOfFrame();
         }
     }

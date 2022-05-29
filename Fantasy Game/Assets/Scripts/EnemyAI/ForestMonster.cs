@@ -25,20 +25,16 @@ namespace LightPat.EnemyAI
         {
             if (target == null)
             {
-                // If we don't have a target check a series of raycasts
-                for (float i = -FOV; i < FOV; i += 1f)
-                {
-                    RaycastHit hit;
-                    bool bHit = Physics.Raycast(transform.position, Quaternion.Euler(0,i,0) * transform.forward, out hit, visionDistance);
-                    Debug.DrawRay(transform.position, Quaternion.Euler(0, i, 0) * transform.forward * visionDistance, Color.blue, 2f);
+                // If we don't have a target check a raycast
+                RaycastHit hit;
+                bool bHit = Physics.Raycast(transform.position, transform.forward, out hit, visionDistance);
+                Debug.DrawRay(transform.position, transform.forward * visionDistance, Color.blue, 2f);
 
-                    if (bHit)
+                if (bHit)
+                {
+                    if (hit.transform.GetComponent<PlayerController>())
                     {
-                        if (hit.transform.GetComponent<PlayerController>())
-                        {
-                            target = hit.transform;
-                            break;
-                        }
+                        target = hit.transform;
                     }
                 }
             }

@@ -107,7 +107,7 @@ MonoBehaviour:
   jumpHeight: 3
   fallingGravityScale: 0.5
   checkDistance: 1
-  sprintSpeed: 100
+  sprintSpeed: 10
   attackDamage: 10
 --- !u!114 &6765129139771697682
 MonoBehaviour:
@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0613324567c596469ea79a60f4c7d06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fpsUpdateInterval: 0.5
   style:
     m_Name: 
     m_Normal:

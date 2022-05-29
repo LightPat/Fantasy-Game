@@ -125,5 +125,19 @@ namespace LightPat.EnemyAI
 
             yield return new WaitForEndOfFrame();
         }
+
+        private Vector3 gizmoPosition;
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.yellow;
+            if (!Application.isPlaying)
+            {
+                Gizmos.DrawWireSphere(transform.position, roamRadius);
+            }
+            else
+            {
+                Gizmos.DrawWireSphere(startingPosition, roamRadius);
+            }
+        }
     }
 }

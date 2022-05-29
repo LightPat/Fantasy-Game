@@ -127,9 +127,16 @@ namespace LightPat.Core
             }
         }
 
+        [Header("")]
+        public float footstepDetectionRadius = 10f;
         private IEnumerator playFootstep()
         {
             audioSrc.Play();
+            Collider[] colliders = Physics.OverlapSphere(transform.position, footstepDetectionRadius);
+            foreach (Collider c in colliders)
+            {
+                c.SendMessageUpwards("OnFootstep", transform.position, SendMessageOptions.DontRequireReceiver);
+            }
             yield return new WaitForSeconds(.3f);
             audioSrc.Pause();
         }

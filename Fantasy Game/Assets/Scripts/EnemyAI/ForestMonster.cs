@@ -139,5 +139,11 @@ namespace LightPat.EnemyAI
                 Gizmos.DrawWireSphere(startingPosition, roamRadius);
             }
         }
+
+        void OnFootstep(Vector3 value)
+        {
+            lookingAround = true;
+            roamingPosition = value;
+        }
     }
 }

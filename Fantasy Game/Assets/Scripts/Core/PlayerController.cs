@@ -16,10 +16,12 @@ namespace LightPat.Core
 
         private Rigidbody rb;
         private float currentSpeed;
+        private AudioSource audioSrc;
 
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
+            audioSrc = GetComponent<AudioSource>();
             playerInput = GetComponent<PlayerInput>();
             currentSpeed = walkingSpeed;
             Cursor.lockState = CursorLockMode.Locked;
@@ -113,6 +115,11 @@ namespace LightPat.Core
             moveForce.z -= rb.velocity.z;
             rb.AddForce(moveForce, ForceMode.VelocityChange);
 
+            if (!audioSrc.isPlaying & rb.velocity.magnitude > 3 & moveInput != Vector2.zero)
+            {
+                StartCoroutine(playFootstep());
+            }
+
             // Falling Gravity velocity increase
             if (rb.velocity.y < 0)
             {
@@ -120,7 +127,12 @@ namespace LightPat.Core
             }
         }
 
-
+        private IEnumerator playFootstep()
+        {
+            audioSrc.Play();
+            yield return new WaitForSeconds(.3f);
+            audioSrc.Pause();
+        }
 
         [Header("Move Settings")]
         public float walkingSpeed = 5f;

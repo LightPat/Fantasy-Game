@@ -9,7 +9,6 @@ namespace LightPat.EnemyAI
     {
         [Header("Chase Settings")]
         public float visionDistance = 10f;
-        public float FOV = 30;
         public float chaseSpeed = 3f;
         public float maxChaseDistance = 15f;
         public float stopDistance = 2f;
@@ -18,6 +17,7 @@ namespace LightPat.EnemyAI
         public float roamSpeed = 2f;
         private Vector3 startingPosition;
         private Vector3 roamingPosition;
+        private bool lookingAround = true;
         private Transform target;
         private Rigidbody rb;
 
@@ -60,13 +60,23 @@ namespace LightPat.EnemyAI
 
         private void FixedUpdate()
         {
+            // If we don't have a target yet, roam
             if (target == null)
             {
                 // Roaming Logic
-                if (Vector3.Distance(transform.position, roamingPosition) > 3)
+                // If we are turning to look at our new roaming position
+                roamingPosition.y = transform.position.y;
+                if (lookingAround)
                 {
-                    roamingPosition.y = transform.position.y;
-                    rb.MoveRotation(Quaternion.LookRotation(roamingPosition - transform.position));
+                    rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), 4));
+
+                    if (transform.rotation == Quaternion.LookRotation(roamingPosition - transform.position))
+                    {
+                        lookingAround = false;
+                    }
+                }
+                else if (Vector3.Distance(transform.position, roamingPosition) > 3) // If we haven't reached our roaming position yet
+                {
                     Vector3 moveForce = transform.forward * roamSpeed;
                     moveForce.x -= rb.velocity.x;
                     moveForce.z -= rb.velocity.z;
@@ -75,10 +85,11 @@ namespace LightPat.EnemyAI
                 }
                 else // Once we've reached our roaming position, get a new one
                 {
+                    lookingAround = true;
                     roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
                 }
             }
-            else
+            else // Once we have a target
             {
                 // If we are not right next to the target, move toward it
                 if (Vector3.Distance(target.position, transform.position) > stopDistance)
@@ -86,7 +97,7 @@ namespace LightPat.EnemyAI
                     Vector3 moveForce = transform.forward * chaseSpeed;
                     moveForce.x -= rb.velocity.x;
                     moveForce.z -= rb.velocity.z;
-                    // Never let the rigidbody jump
+                    // Never let the rigidbody jump when chasing a player
                     moveForce.y = 0;
                     rb.AddForce(moveForce, ForceMode.VelocityChange);
                 }

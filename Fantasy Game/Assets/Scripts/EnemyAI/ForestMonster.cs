@@ -26,7 +26,6 @@ namespace LightPat.EnemyAI
             startingPosition = transform.position;
             rb = GetComponent<Rigidbody>();
             roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-            Debug.Log(roamingPosition);
         }
 
         private void Update()
@@ -36,7 +35,6 @@ namespace LightPat.EnemyAI
                 // If we don't have a target check a raycast
                 RaycastHit hit;
                 bool bHit = Physics.Raycast(transform.position, transform.forward, out hit, visionDistance);
-                Debug.DrawRay(transform.position, transform.forward * visionDistance, Color.blue, 2f);
 
                 if (bHit)
                 {

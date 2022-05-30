@@ -6,14 +6,14 @@ namespace LightPat.UI
 {
     public class WorldSpaceInfoLabel : MonoBehaviour
     {
-        public float rotationSpeed;
+        public float rotationSpeed = 0.2f;
         public float animationSpeed = 0.02f;
         public float viewDistance = 10f;
 
         private void Update()
         {
-            transform.LookAt(Camera.main.transform);
-            transform.Rotate(0, 180, 0);
+            Quaternion rotTarget = Quaternion.LookRotation(Camera.main.transform.position - transform.position);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotTarget, rotationSpeed);
 
             if (Vector3.Distance(Camera.main.transform.position, transform.position) > viewDistance)
             {

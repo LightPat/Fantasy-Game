@@ -218,6 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healthRenderer: {fileID: 0}
+  imageMaterial: {fileID: 2100000, guid: 5a1994db17ab058418ca8780878488e8, type: 2}
 --- !u!82 &1575297323
 AudioSource:
   m_ObjectHideFlags: 0
@@ -903,7 +904,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: -20, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 200, y: 200}
   m_Pivot: {x: 1, y: 0}
 --- !u!222 &4140671630231116568
 CanvasRenderer:

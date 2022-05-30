@@ -24,7 +24,6 @@ namespace LightPat.Core
             {
                 if (hit.transform.GetComponent<Attributes>())
                 {
-                    Debug.Log(hit.transform);
                     hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                     StartCoroutine(AttackCooldown());
                 }

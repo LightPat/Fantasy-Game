@@ -25,7 +25,7 @@ namespace LightPat.Core
             // Enable playerInput since it is disabled by default
             playerInput.enabled = true;
             GetComponent<TextDialogue>().SendDialogue();
-            //Destroy(gameObject);
+            Destroy(gameObject);
 
 
         }

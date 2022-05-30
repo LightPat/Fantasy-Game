@@ -8,19 +8,25 @@ namespace LightPat.Core
 {
     public class Attributes : MonoBehaviour
     {
+        public int currentLevel = 1;
         public float maxHealth = 100f;
         private float HP;
+        [Header("Only assign for NPC/mobs")]
         [SerializeField]
         private Renderer healthRenderer;
-        [Header("Only assign for player")]
+        [SerializeField]
+        private TextMeshPro worldSpaceLevelDisplay;
+        [Header("Only assign for player/allies/bosses")]
         [SerializeField]
         private Material imageMaterial;
+        [SerializeField]
+        private TextMeshProUGUI screenSpaceLevelDisplay;
 
         private void Start()
         {
             HP = maxHealth;
-
             UpdateMaterial();
+            UpdateLevel();
         }
 
         public void InflictDamage(float damage, GameObject inflicter)
@@ -33,6 +39,12 @@ namespace LightPat.Core
             }
 
             UpdateMaterial();
+        }
+
+        public void UpdateLevel(int newLevel)
+        {
+            currentLevel = newLevel;
+            UpdateLevel();
         }
 
         public float GetHP()
@@ -51,6 +63,18 @@ namespace LightPat.Core
             else
             {
                 imageMaterial.SetFloat("healthPercentage", HP / maxHealth);
+            }
+        }
+
+        private void UpdateLevel()
+        {
+            if (worldSpaceLevelDisplay != null)
+            {
+                worldSpaceLevelDisplay.SetText(currentLevel.ToString());
+            }
+            else
+            {
+                screenSpaceLevelDisplay.SetText("Lvl. " + currentLevel.ToString());
             }
         }
     }

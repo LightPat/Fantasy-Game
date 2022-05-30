@@ -2,31 +2,37 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 namespace LightPat.Core
 {
     public class Attributes : MonoBehaviour
     {
         public float maxHealth = 100f;
-        public TextMeshProUGUI overlayText;
-        public TextMeshPro worldSpaceText;
         private float HP;
+        [SerializeField]
+        private Renderer healthRenderer;
+        [Header("Only assign for player")]
+        [SerializeField]
+        private Material imageMaterial;
 
         private void Start()
         {
             HP = maxHealth;
-            SetDisplayText(HP.ToString() + " HP");
+
+            UpdateMaterial();
         }
 
         public void InflictDamage(float damage, GameObject inflicter)
         {
             HP -= damage;
-            SetDisplayText(HP.ToString() + " HP");
             SendMessage("OnAttacked", inflicter);
             if (HP <= 0)
             {
                 Debug.Log(name + "'s HP has reached " + HP + ", it is now dead.");
             }
+
+            UpdateMaterial();
         }
 
         public float GetHP()
@@ -34,15 +40,17 @@ namespace LightPat.Core
             return HP;
         }
 
-        private void SetDisplayText(string newText)
+        private void UpdateMaterial()
         {
-            if (overlayText != null)
+            // If we are the player, we have to edit the material directly (limitation of unity's canvas renderer)
+            // If we are a NPC, we edit the renderer's material instance
+            if (healthRenderer != null)
             {
-                overlayText.SetText(newText);
+                healthRenderer.material.SetFloat("healthPercentage", HP / maxHealth);
             }
-            if (worldSpaceText != null)
+            else
             {
-                worldSpaceText.SetText(newText);
+                imageMaterial.SetFloat("healthPercentage", HP / maxHealth);
             }
         }
     }

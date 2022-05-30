@@ -261,7 +261,7 @@ namespace LightPat.Core
 
         void OnAttacked(GameObject value)
         {
-            Debug.Log("I'm being attacked! " + value);
+            //Debug.Log("I'm being attacked! " + value);
         }
     }
 }

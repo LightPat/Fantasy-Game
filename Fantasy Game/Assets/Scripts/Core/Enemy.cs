@@ -18,12 +18,13 @@ namespace LightPat.Core
             if (!allowAttack) { return; }
 
             RaycastHit hit;
-            bool bHit = Physics.Raycast(transform.position + (transform.forward * 0.1f), transform.forward, out hit, attackReach);
+            bool bHit = Physics.Raycast(transform.position, transform.forward, out hit, attackReach);
 
             if (bHit)
             {
                 if (hit.transform.GetComponent<Attributes>())
                 {
+                    Debug.Log(hit.transform);
                     hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                     StartCoroutine(AttackCooldown());
                 }

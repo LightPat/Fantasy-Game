@@ -11,9 +11,6 @@ namespace LightPat.Core
         public GameObject sceneTransition;
         public string transitionClipName;
 
-        public Friendly guard;
-        public Transform forestMonster;
-
         private void Start()
         {
             StartCoroutine(StartTutorial(transitionClipName));

@@ -2,25 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
 
 namespace LightPat.Core
 {
     public class Attributes : MonoBehaviour
     {
+        [Header("Affinity Scores")]
+        public byte[] personalityValues;
+        public byte[] physicalValues;
+        public byte[] magicalValues;
+        [Header("Health")]
         public int currentLevel = 1;
         public float maxHealth = 100f;
         private float HP;
         [Header("Only assign for NPC/mobs")]
-        [SerializeField]
-        private Renderer healthRenderer;
-        [SerializeField]
-        private TextMeshPro worldSpaceLevelDisplay;
+        public Renderer healthRenderer;
+        public TextMeshPro worldSpaceLevelDisplay;
         [Header("Only assign for player/allies/bosses")]
-        [SerializeField]
-        private Material imageMaterial;
-        [SerializeField]
-        private TextMeshProUGUI screenSpaceLevelDisplay;
+        public Material imageMaterial;
+        public TextMeshProUGUI screenSpaceLevelDisplay;
 
         private void Start()
         {
@@ -39,17 +39,6 @@ namespace LightPat.Core
             }
 
             UpdateMaterial();
-        }
-
-        public void UpdateLevel(int newLevel)
-        {
-            currentLevel = newLevel;
-            UpdateLevel();
-        }
-
-        public float GetHP()
-        {
-            return HP;
         }
 
         private void UpdateMaterial()

@@ -6,7 +6,7 @@ namespace LightPat.UI
 {
     public class WorldSpaceInfoLabel : MonoBehaviour
     {
-        public float rotationSpeed = 0.2f;
+        public float rotationSpeed = 0.4f;
         public float animationSpeed = 0.02f;
         public float viewDistance = 10f;
 

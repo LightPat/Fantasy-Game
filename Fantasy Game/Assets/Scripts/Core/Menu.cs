@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LightPat.Core
 {
-    public class Menu : MonoBehaviour
+    public abstract class Menu : MonoBehaviour
     {
         protected GameObject lastMenu;
 

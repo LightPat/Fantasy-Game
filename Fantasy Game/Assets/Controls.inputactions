@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "InventoryToggle",
+                    "type": "Button",
+                    "id": "80f7d9d7-7a38-43d2-aad9-3666c9432ae7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -190,6 +199,17 @@
                     "action": "Attack",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9fb5c9d6-e9d9-4137-9ebd-16c36c675df5",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -264,6 +284,45 @@
                     "processors": "",
                     "groups": "Keyboard and Mouse",
                     "action": "Escape",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "Inventory",
+            "id": "204882e5-b55f-4aa5-b968-29f908c600da",
+            "actions": [
+                {
+                    "name": "InventoryToggle",
+                    "type": "Button",
+                    "id": "1fc0e867-1d73-484d-a0b4-38661c08c14c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e0794fc7-d4f8-4abd-a917-c7cdd68fb0bf",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b2771176-9b46-44cc-b275-50726d2004a4",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

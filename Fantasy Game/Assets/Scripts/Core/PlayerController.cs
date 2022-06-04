@@ -15,6 +15,7 @@ namespace LightPat.Core
         public Transform verticalRotate;
         public GameObject crosshair;
         public GameObject escapeMenu;
+        public GameObject inventoryPrefab;
 
         private Rigidbody rb;
         private float currentSpeed;
@@ -225,6 +226,28 @@ namespace LightPat.Core
                 Destroy(menu);
                 transform.Find("HUD").gameObject.SetActive(true);
                 playerInput.SwitchCurrentActionMap(lastActionMapName);
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+        }
+
+        private GameObject inventoryMenu;
+        void OnInventoryToggle()
+        {
+            if (playerInput.currentActionMap.name != "Inventory")
+            {
+                lastActionMapName = playerInput.currentActionMap.name;
+                playerInput.SwitchCurrentActionMap("Inventory");
+
+                transform.Find("HUD").gameObject.SetActive(false);
+                inventoryMenu = Instantiate(inventoryPrefab);
+                inventoryMenu.GetComponent<PlayerInventory>().UpdateAttributes(GetComponent<Attributes>());
+                Cursor.lockState = CursorLockMode.None;
+            }
+            else
+            {
+                Destroy(inventoryMenu);
+                transform.Find("HUD").gameObject.SetActive(true);
+                playerInput.SwitchCurrentActionMap("First Person");
                 Cursor.lockState = CursorLockMode.Locked;
             }
         }

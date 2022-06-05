@@ -172,9 +172,9 @@ namespace LightPat.Core
 
             if (bHit)
             {
-                if (hit.collider.GetComponent<Interactable>())
+                if (hit.transform.GetComponent<Interactable>())
                 {
-                    hit.collider.GetComponent<Interactable>().Invoke();
+                    hit.transform.GetComponent<Interactable>().Invoke();
                 }
             }
         }

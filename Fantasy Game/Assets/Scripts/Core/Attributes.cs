@@ -8,9 +8,9 @@ namespace LightPat.Core
     public class Attributes : MonoBehaviour
     {
         [Header("Affinity Scores")]
-        public byte[] personalityValues;
-        public byte[] physicalValues;
-        public byte[] magicalValues;
+        public sbyte[] personalityValues;
+        public sbyte[] physicalValues;
+        public sbyte[] magicalValues;
         [Header("Health")]
         public int currentLevel = 1;
         public float maxHealth = 100f;

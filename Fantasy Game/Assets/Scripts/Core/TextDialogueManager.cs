@@ -4,12 +4,15 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.InputSystem;
 using System;
+using UnityEngine.UI;
 
 namespace LightPat.Core
 {
     public class TextDialogueManager : MonoBehaviour
     {
+        public GameObject HUD;
         public TextMeshProUGUI displayObject;
+        public GameObject[] buttonOptions;
         private Queue<string> dialogueQueue = new Queue<string>();
         private List<string> dialogueOptions = new List<string>();
 
@@ -26,17 +29,17 @@ namespace LightPat.Core
 
             if (displayObject.text == "")
             {
-                string s = dialogueQueue.Dequeue();
-                parseDialogueOptions(s);
-                displayObject.SetText(s);
+                displayObject.SetText(parseDialogueOptions(dialogueQueue.Dequeue()));
             }
 
             GetComponent<PlayerInput>().SwitchCurrentActionMap("Text Dialogue");
+            HUD.SetActive(false);
+            Cursor.lockState = CursorLockMode.None;
         }
 
-        private void parseDialogueOptions(string dialogue)
+        private string parseDialogueOptions(string dialogue)
         {
-            if (dialogue.IndexOf("|") == -1) { dialogueOptions.Clear(); return; }
+            if (dialogue.IndexOf("|") == -1) { dialogueOptions.Clear(); return dialogue; }
 
             int count = 1;
             string splice = count.ToString() + ": ";
@@ -45,14 +48,24 @@ namespace LightPat.Core
                 if (c == '|')
                 {
                     dialogueOptions.Add(splice);
+                    // Remove last 3 characters which are the personality data
+                    buttonOptions[count - 1].SetActive(true);
+                    buttonOptions[count - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(splice.Substring(0, splice.Length - 3));
+                    buttonOptions[count - 1].GetComponent<Button>().onClick.AddListener(() => ChooseOption(count - 1));
                     count++;
                     splice = count.ToString() + ": ";
                     continue;
                 }
                 splice += c;
             }
-
+            // Add onclick listener for buttons
+            // SetActive when dialogue options aren't being shown
+            // Add space for prompt above buttons
             dialogueOptions.Add(splice);
+            buttonOptions[count - 1].SetActive(true);
+            buttonOptions[count - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(splice.Substring(0, splice.Length - 3));
+            buttonOptions[count - 1].GetComponent<Button>().onClick.AddListener(() => ChooseOption(count - 1));
+            return "";
         }
 
         private void GoToNextLine()
@@ -61,12 +74,28 @@ namespace LightPat.Core
             {
                 displayObject.SetText("");
                 GetComponent<PlayerInput>().SwitchCurrentActionMap("First Person");
+                HUD.SetActive(true);
+                Cursor.lockState = CursorLockMode.Locked;
                 return;
             }
 
-            string s = dialogueQueue.Dequeue();
-            parseDialogueOptions(s);
-            displayObject.SetText(s);
+            displayObject.SetText(parseDialogueOptions(dialogueQueue.Dequeue()));
+        }
+        
+        private void ChooseOption(int optionIndex)
+        {
+            int indexToChange = int.Parse(dialogueOptions[optionIndex].Substring(dialogueOptions[optionIndex].Length - 3, 1));
+            sbyte value = sbyte.Parse(dialogueOptions[optionIndex].Substring(dialogueOptions[optionIndex].Length - 2, 2));
+
+            // Change personality values
+            GetComponent<Attributes>().personalityValues[indexToChange] += value;
+
+            for (int i = 0; i < dialogueOptions.Count; i++)
+            {
+                buttonOptions[i].SetActive(false);
+            }
+
+            GoToNextLine();
         }
 
         void OnNextLine()
@@ -80,16 +109,9 @@ namespace LightPat.Core
             int keyPressed = Convert.ToInt32(inputValue.Get()) - 1;
 
             // If we press a key that is out of the option range
-            Debug.Log(keyPressed + " " + dialogueOptions.Count);
             if (keyPressed >= dialogueOptions.Count) { return; }
 
-            int indexToChange = int.Parse(dialogueOptions[keyPressed].Substring(dialogueOptions[keyPressed].Length - 3, 1));
-            sbyte value = sbyte.Parse(dialogueOptions[keyPressed].Substring(dialogueOptions[keyPressed].Length - 2, 2));
-
-            // Change personality values
-            GetComponent<Attributes>().personalityValues[indexToChange] += value;
-
-            GoToNextLine();
+            ChooseOption(keyPressed);
         }
     }
 }

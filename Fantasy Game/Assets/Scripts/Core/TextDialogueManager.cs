@@ -41,22 +41,38 @@ namespace LightPat.Core
         {
             if (dialogue.IndexOf("|") == -1) { dialogueOptions.Clear(); return dialogue; }
 
-            int count = 1;
-            string splice = count.ToString() + ": ";
+            int count = 0;
+            string splice = "";
+            string header = "";
             foreach (char c in dialogue)
             {
                 if (c == '|')
                 {
-                    dialogueOptions.Add(splice);
-                    // Remove last 3 characters which are the personality data
-                    buttonOptions[count - 1].SetActive(true);
-                    buttonOptions[count - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(splice.Substring(0, splice.Length - 3));
-                    buttonOptions[count - 1].GetComponent<Button>().onClick.AddListener(() => ChooseOption(count - 1));
-                    count++;
-                    splice = count.ToString() + ": ";
-                    continue;
+                    if (count == 0)
+                    {
+                        count++;
+                        continue;
+                    }
+                    else
+                    {
+                        dialogueOptions.Add(splice);
+                        // Remove last 3 characters which are the personality data
+                        buttonOptions[count - 1].SetActive(true);
+                        buttonOptions[count - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(splice.Substring(0, splice.Length - 3));
+                        buttonOptions[count - 1].GetComponent<Button>().onClick.AddListener(() => ChooseOption(count - 1));
+                        count++;
+                        splice = count.ToString() + ": ";
+                        continue;
+                    }
                 }
-                splice += c;
+                if (count == 0)
+                {
+                    header += c;
+                }
+                else
+                {
+                    splice += c;
+                }
             }
             // Add onclick listener for buttons
             // SetActive when dialogue options aren't being shown
@@ -65,11 +81,12 @@ namespace LightPat.Core
             buttonOptions[count - 1].SetActive(true);
             buttonOptions[count - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(splice.Substring(0, splice.Length - 3));
             buttonOptions[count - 1].GetComponent<Button>().onClick.AddListener(() => ChooseOption(count - 1));
-            return "";
+            return header;
         }
 
         private void GoToNextLine()
         {
+            // If there is no more dialogue left to loop through
             if (dialogueQueue.Count == 0)
             {
                 displayObject.SetText("");

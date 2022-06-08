@@ -39,15 +39,21 @@ namespace LightPat.Core
 
         private string parseDialogueOptions(string dialogue)
         {
-            if (dialogue.IndexOf("|") == -1) { dialogueOptions.Clear(); return dialogue; }
+            // Always clear our dialogue options when parsing a new string
+            dialogueOptions.Clear();
+            // If this isn't an option string then just return string as is
+            if (dialogue.IndexOf("|") == -1) { return dialogue; }
 
             int count = 0;
             string splice = "";
             string header = "";
+            // Loop through the line of dialogue, since this an option string
             foreach (char c in dialogue)
             {
+                // If we encouter a |, we want to append where we are in the loop as an option then reset the splice variable to the empty string and repeat the process
                 if (c == '|')
                 {
+                    // If count is 0, we are parsing the header, so we just want to increment count and continue
                     if (count == 0)
                     {
                         count++;
@@ -55,16 +61,18 @@ namespace LightPat.Core
                     }
                     else
                     {
+                        // Add spliced string to dialogue options for parsing in ChooseOption()
                         dialogueOptions.Add(splice);
-                        // Remove last 3 characters which are the personality data
+                        // Set button to active
                         buttonOptions[count - 1].SetActive(true);
+                        // Remove last 3 characters from splice which are the personality data
                         buttonOptions[count - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(splice.Substring(0, splice.Length - 3));
-                        buttonOptions[count - 1].GetComponent<Button>().onClick.AddListener(() => ChooseOption(count - 1));
                         count++;
                         splice = count.ToString() + ": ";
                         continue;
                     }
                 }
+                // If count is 0, we are parsing the header
                 if (count == 0)
                 {
                     header += c;
@@ -74,13 +82,10 @@ namespace LightPat.Core
                     splice += c;
                 }
             }
-            // Add onclick listener for buttons
-            // SetActive when dialogue options aren't being shown
-            // Add space for prompt above buttons
+
             dialogueOptions.Add(splice);
             buttonOptions[count - 1].SetActive(true);
             buttonOptions[count - 1].transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(splice.Substring(0, splice.Length - 3));
-            buttonOptions[count - 1].GetComponent<Button>().onClick.AddListener(() => ChooseOption(count - 1));
             return header;
         }
 
@@ -99,7 +104,7 @@ namespace LightPat.Core
             displayObject.SetText(parseDialogueOptions(dialogueQueue.Dequeue()));
         }
         
-        private void ChooseOption(int optionIndex)
+        public void ChooseOption(int optionIndex)
         {
             int indexToChange = int.Parse(dialogueOptions[optionIndex].Substring(dialogueOptions[optionIndex].Length - 3, 1));
             sbyte value = sbyte.Parse(dialogueOptions[optionIndex].Substring(dialogueOptions[optionIndex].Length - 2, 2));
@@ -107,6 +112,7 @@ namespace LightPat.Core
             // Change personality values
             GetComponent<Attributes>().personalityValues[indexToChange] += value;
 
+            // Since we are choosing an option, we have to reset the buttons in case the next dialogue isn't a choice
             for (int i = 0; i < dialogueOptions.Count; i++)
             {
                 buttonOptions[i].SetActive(false);

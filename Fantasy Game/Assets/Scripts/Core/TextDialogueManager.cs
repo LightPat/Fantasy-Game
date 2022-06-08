@@ -45,7 +45,7 @@ namespace LightPat.Core
             if (dialogue.IndexOf("|") == -1) { return dialogue; }
 
             int count = 0;
-            string splice = "";
+            string splice = "1: ";
             string header = "";
             // Loop through the line of dialogue, since this an option string
             foreach (char c in dialogue)

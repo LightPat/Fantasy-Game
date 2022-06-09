@@ -54,6 +54,10 @@ namespace LightPat.Core
                 {
                     crosshair.GetComponent<Image>().color = new Color32(0, 255, 0, 255);
                 }
+                else if (hit.transform.GetComponent<Weapon>())
+                {
+                    crosshair.GetComponent<Image>().color = new Color32(255, 127, 80, 255);
+                }
                 else
                 {
                     crosshair.GetComponent<Image>().color = new Color32(0, 0, 0, 255);
@@ -175,6 +179,14 @@ namespace LightPat.Core
                 if (hit.transform.GetComponent<Interactable>())
                 {
                     hit.transform.GetComponent<Interactable>().Invoke();
+                }
+                else if (hit.transform.GetComponent<Weapon>())
+                {
+                    // Remove rigidbody, reparent to player, disable the collider, and add the offest to localPosition
+                    Destroy(hit.transform.GetComponent<Rigidbody>());
+                    hit.transform.SetParent(transform);
+                    hit.transform.localPosition += hit.transform.GetComponent<Weapon>().offset;
+                    hit.transform.GetComponentInChildren<Collider>().enabled = false;
                 }
             }
         }

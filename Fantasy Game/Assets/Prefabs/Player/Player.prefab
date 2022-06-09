@@ -1272,6 +1272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verticalRotate: {fileID: 6765129141194256265}
+  weaponHolder: {fileID: 0}
   crosshair: {fileID: 6765129140371477272}
   escapeMenu: {fileID: 2367944742497944294, guid: 6ed21f0f96c0f794eb0b409975293614, type: 3}
   inventoryPrefab: {fileID: 3796279741549607518, guid: 36e75a8d8c990124b85798f499c524d9, type: 3}

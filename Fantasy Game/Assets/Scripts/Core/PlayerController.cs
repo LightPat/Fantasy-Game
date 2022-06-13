@@ -222,6 +222,41 @@ namespace LightPat.Core
             }
         }
 
+        [Header("Sprint Settings")]
+        public float sprintSpeed = 100f;
+        void OnSprint(InputValue value)
+        {
+            if (value.isPressed)
+            {
+                currentSpeed = sprintSpeed;
+            }
+            else
+            {
+                currentSpeed = walkingSpeed;
+            }
+        }
+
+        [Header("Attack Settings")]
+        public float attackDamage = 10f;
+        void OnAttack()
+        {
+            RaycastHit hit;
+            bool bHit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach);
+
+            if (bHit)
+            {
+                if (hit.transform.GetComponent<Attributes>())
+                {
+                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
+                }
+            }
+        }
+
+        void OnAttacked(GameObject value)
+        {
+            Debug.Log("I'm being attacked! " + value);
+        }
+
         private PlayerInput playerInput;
         private string lastActionMapName;
         private GameObject menu;
@@ -268,39 +303,9 @@ namespace LightPat.Core
             }
         }
 
-        [Header("Sprint Settings")]
-        public float sprintSpeed = 100f;
-        void OnSprint(InputValue value)
+        void OnInspectWeapon(InputValue value)
         {
-            if (value.isPressed)
-            {
-                currentSpeed = sprintSpeed;
-            }
-            else
-            {
-                currentSpeed = walkingSpeed;
-            }
-        }
-
-        [Header("Attack Settings")]
-        public float attackDamage = 10f;
-        void OnAttack()
-        {
-            RaycastHit hit;
-            bool bHit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach);
-
-            if (bHit)
-            {
-                if (hit.transform.GetComponent<Attributes>())
-                {
-                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
-                }
-            }
-        }
-
-        void OnAttacked(GameObject value)
-        {
-            //Debug.Log("I'm being attacked! " + value);
+            Debug.Log(value.Get<Vector2>());
         }
     }
 }

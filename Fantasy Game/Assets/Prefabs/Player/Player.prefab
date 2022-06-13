@@ -1256,7 +1256,7 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Keyboard and Mouse
-  m_DefaultActionMap: Text Dialogue
+  m_DefaultActionMap: First Person
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 6765129141794934317}
 --- !u!114 &6765129139771697683
@@ -1397,8 +1397,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   personalityValues: 3232323232
-  physicalValues: 00000000
-  magicalValues: 0000000000
+  physicalValues: 64646464
+  magicalValues: 6464646464
   currentLevel: 1
   maxHealth: 100
   healthRenderer: {fileID: 0}

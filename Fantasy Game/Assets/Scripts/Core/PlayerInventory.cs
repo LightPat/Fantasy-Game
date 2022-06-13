@@ -7,9 +7,12 @@ namespace LightPat.Core
 {
     public class PlayerInventory : MonoBehaviour
     {
+        [Header("Attributes Display")]
         public Transform personality;
         public Transform physical;
         public Transform magical;
+        [Header("Model Inspect Window")]
+        public Transform modelInspectWindow;
 
         [HideInInspector]
         public GameObject equippedWeapon;

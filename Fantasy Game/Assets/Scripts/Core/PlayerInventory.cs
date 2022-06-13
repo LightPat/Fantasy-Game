@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using LightPat.UI;
 
 namespace LightPat.Core
 {
@@ -12,10 +13,16 @@ namespace LightPat.Core
         public Transform physical;
         public Transform magical;
         [Header("Model Inspect Window")]
-        public Transform modelInspectWindow;
+        public InspectChild modelCamera;
 
         [HideInInspector]
         public GameObject equippedWeapon;
+        [HideInInspector]
+        public bool leftClickPressed, reset;
+        [HideInInspector]
+        public Vector2 mouseInput, scrollInput;
+        [HideInInspector]
+        public GameObject inspectingModel;
 
         public void UpdateAttributes(Attributes newAttributes)
         {
@@ -44,6 +51,14 @@ namespace LightPat.Core
         public void UpdateWeapon(GameObject g)
         {
             equippedWeapon = g;
+        }
+
+        private void Update()
+        {
+            modelCamera.GetComponent<InspectChild>().mouseInput = mouseInput;
+            modelCamera.GetComponent<InspectChild>().leftClickPressed = leftClickPressed;
+            modelCamera.GetComponent<InspectChild>().scrollInput = scrollInput;
+            modelCamera.GetComponent<InspectChild>().reset = reset;
         }
     }
 }

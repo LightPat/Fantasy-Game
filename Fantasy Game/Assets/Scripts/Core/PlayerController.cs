@@ -305,7 +305,28 @@ namespace LightPat.Core
 
         void OnInspectWeapon(InputValue value)
         {
-            Debug.Log(value.Get<Vector2>());
+            inventoryMenu.GetComponent<PlayerInventory>().leftClickPressed = value.isPressed;
+        }
+
+        void OnMouseMove(InputValue value)
+        {
+            inventoryMenu.GetComponent<PlayerInventory>().mouseInput = value.Get<Vector2>();
+        }
+
+        void OnResetInspect(InputValue value)
+        {
+            inventoryMenu.GetComponent<PlayerInventory>().reset = value.isPressed;
+        }
+
+        void OnInspectZoom(InputValue value)
+        {
+            inventoryMenu.GetComponent<PlayerInventory>().scrollInput = value.Get<Vector2>();
+        }
+
+        void OnRotateCamera(InputValue value)
+        {
+            // TODO
+            //inventoryMenu.GetComponent<PlayerInventory>().rotateCamera = value.isPressed;
         }
     }
 }

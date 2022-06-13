@@ -8,12 +8,23 @@ namespace LightPat.UI
     public class InventoryWeaponIcon : MonoBehaviour
     {
         public GameObject weaponReference;
-        public Vector3 inspectRotation;
-        public TextMeshProUGUI nameDisplay;
+        public Vector3 initialInspectRotation;
+        public TextMeshProUGUI weaponNameDisplay;
+        public Transform weaponCamera;
 
         private void Start()
         {
-            nameDisplay.SetText(weaponReference.name);
+            weaponNameDisplay.SetText(weaponReference.name);
+        }
+        
+        public void OnClickDisplayWeapon()
+        {
+            GameObject UIWeapon = Instantiate(weaponReference, weaponCamera);
+            UIWeapon.GetComponent<Rigidbody>().useGravity = false;
+            UIWeapon.transform.localPosition = Vector3.forward * 2;
+            UIWeapon.transform.rotation = Quaternion.Euler(initialInspectRotation);
+            UIWeapon.GetComponentInChildren<Collider>().enabled = false;
+            weaponCamera.GetComponent<InspectChild>().displayedWeapon = UIWeapon;
         }
     }
 }

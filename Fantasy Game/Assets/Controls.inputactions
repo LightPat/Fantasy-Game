@@ -348,10 +348,46 @@
                     "name": "InspectWeapon",
                     "type": "Value",
                     "id": "fbcaf991-b3e8-4607-9bfa-98f50d16d4d3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "MouseMove",
+                    "type": "Value",
+                    "id": "ac12981d-dfef-4eb1-998b-36ad6c24450f",
                     "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "ResetInspect",
+                    "type": "Value",
+                    "id": "e8743ca5-ea05-40cc-bcc3-af9ecb2ae8fb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "InspectZoom",
+                    "type": "Value",
+                    "id": "aa460bfd-aa81-4303-8274-34bf5936e4ce",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "RotateCamera",
+                    "type": "Button",
+                    "id": "e6bb2011-8feb-43e5-a8b7-df2b2f098d9b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -378,59 +414,59 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "2D Vector",
-                    "id": "be9548a2-d3ae-4a75-b699-6f28150c7910",
-                    "path": "2DVector",
+                    "name": "",
+                    "id": "cd28c9b1-1bc7-4478-bb51-5867bb285ad7",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "InspectWeapon",
-                    "isComposite": true,
+                    "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "up",
-                    "id": "50e8e033-b443-4155-9649-6f962e239e8a",
-                    "path": "<Keyboard>/w",
+                    "name": "",
+                    "id": "9ce9eb92-f6a9-4017-a428-68bea4373382",
+                    "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
-                    "action": "InspectWeapon",
+                    "action": "MouseMove",
                     "isComposite": false,
-                    "isPartOfComposite": true
+                    "isPartOfComposite": false
                 },
                 {
-                    "name": "down",
-                    "id": "9193c721-e139-405f-9b2d-23a14e7843a7",
-                    "path": "<Keyboard>/s",
+                    "name": "",
+                    "id": "10276d24-816e-455c-bf3d-ab90c7d004d2",
+                    "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "InspectWeapon",
+                    "groups": "",
+                    "action": "ResetInspect",
                     "isComposite": false,
-                    "isPartOfComposite": true
+                    "isPartOfComposite": false
                 },
                 {
-                    "name": "left",
-                    "id": "48c3dcea-8a88-43ee-8b6a-b1274770fd56",
-                    "path": "<Keyboard>/a",
+                    "name": "",
+                    "id": "b62c5c0d-e046-492f-a617-0070f5db2344",
+                    "path": "<Mouse>/scroll",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "InspectWeapon",
+                    "groups": "",
+                    "action": "InspectZoom",
                     "isComposite": false,
-                    "isPartOfComposite": true
+                    "isPartOfComposite": false
                 },
                 {
-                    "name": "right",
-                    "id": "a3e26a94-14be-4ae8-ac56-a3cb60f7c839",
-                    "path": "<Keyboard>/d",
+                    "name": "",
+                    "id": "8202bf14-dc16-4757-b03d-a3bb8cbb7bc9",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "InspectWeapon",
+                    "groups": "",
+                    "action": "RotateCamera",
                     "isComposite": false,
-                    "isPartOfComposite": true
+                    "isPartOfComposite": false
                 }
             ]
         }

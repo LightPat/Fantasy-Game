@@ -1358,6 +1358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enterColor: {r: 0, g: 1, b: 0, a: 1}
   exitColor: {r: 1, g: 1, b: 1, a: 1}
+  colorFadeSpeed: 0.03
 --- !u!1 &7009179892703961644
 GameObject:
   m_ObjectHideFlags: 0

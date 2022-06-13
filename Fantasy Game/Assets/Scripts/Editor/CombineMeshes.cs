@@ -7,7 +7,7 @@ namespace LightPat.Editor
 {
     public class CombineMeshes : MonoBehaviour
     {
-        [MenuItem("Tools/CombineMeshes")]
+        [MenuItem("Tools/Combine Selected Meshes")]
         private static void NewMenuOption()
         {
             GameObject[] selectedObjects = Selection.gameObjects;

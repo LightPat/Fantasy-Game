@@ -16,6 +16,7 @@ namespace LightPat.Core
         public GameObject crosshair;
         public GameObject escapeMenu;
         public GameObject inventoryPrefab;
+        public GameObject equippedWeapon;
 
         private Rigidbody rb;
         private float currentSpeed;
@@ -182,11 +183,13 @@ namespace LightPat.Core
                 }
                 else if (hit.transform.GetComponent<Weapon>())
                 {
-                    // Remove rigidbody, reparent to player, disable the collider, and add the offest to localPosition
-                    Destroy(hit.transform.GetComponent<Rigidbody>());
-                    hit.transform.SetParent(transform);
-                    hit.transform.localPosition += hit.transform.GetComponent<Weapon>().offset;
-                    hit.transform.GetComponentInChildren<Collider>().enabled = false;
+                    if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
+
+                    equippedWeapon = hit.transform.gameObject;
+                    equippedWeapon.transform.SetParent(transform);
+                    equippedWeapon.transform.localPosition += equippedWeapon.transform.GetComponent<Weapon>().offset;
+                    equippedWeapon.transform.GetComponentInChildren<Collider>().enabled = false;
+                    Destroy(equippedWeapon.transform.GetComponent<Rigidbody>());
                 }
             }
         }
@@ -253,6 +256,7 @@ namespace LightPat.Core
                 transform.Find("HUD").gameObject.SetActive(false);
                 inventoryMenu = Instantiate(inventoryPrefab);
                 inventoryMenu.GetComponent<PlayerInventory>().UpdateAttributes(GetComponent<Attributes>());
+                inventoryMenu.GetComponent<PlayerInventory>().UpdateWeapon(equippedWeapon);
                 Cursor.lockState = CursorLockMode.None;
             }
             else

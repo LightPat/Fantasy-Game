@@ -11,6 +11,9 @@ namespace LightPat.Core
         public Transform physical;
         public Transform magical;
 
+        [HideInInspector]
+        public GameObject equippedWeapon;
+
         public void UpdateAttributes(Attributes newAttributes)
         {
             int i = 0;
@@ -33,6 +36,11 @@ namespace LightPat.Core
                 child.GetComponent<TextMeshProUGUI>().SetText(child.name + " " + newAttributes.magicalValues[i]);
                 i++;
             }
+        }
+
+        public void UpdateWeapon(GameObject g)
+        {
+            equippedWeapon = g;
         }
     }
 }

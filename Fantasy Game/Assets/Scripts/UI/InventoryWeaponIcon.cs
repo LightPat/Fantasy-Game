@@ -19,7 +19,9 @@ namespace LightPat.UI
         
         public void OnClickDisplayWeapon()
         {
+            // Destroy model if there is something already being displayed
             if (weaponCamera.GetComponent<InspectModel>().displayedModel != null) { Destroy(weaponCamera.GetComponent<InspectModel>().displayedModel); }
+            weaponCamera.GetComponent<InspectModel>().DestroyDisplayedModel();
 
             GameObject UIWeapon = Instantiate(weaponReference, weaponCamera);
             UIWeapon.GetComponent<Rigidbody>().useGravity = false;

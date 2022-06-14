@@ -52,6 +52,11 @@ namespace LightPat.UI
         private void OnDisable()
         {
             // Destroy model when this script is destroyed or disabled
+            DestroyDisplayedModel();
+        }
+
+        public void DestroyDisplayedModel()
+        {
             if (displayedModel != null) { Destroy(displayedModel); }
         }
     }

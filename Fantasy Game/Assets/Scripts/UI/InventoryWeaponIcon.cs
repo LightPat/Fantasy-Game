@@ -23,6 +23,7 @@ namespace LightPat.UI
             UIWeapon.GetComponent<Rigidbody>().useGravity = false;
             UIWeapon.transform.localPosition = Vector3.forward * 2;
             UIWeapon.transform.rotation = Quaternion.Euler(initialInspectRotation);
+            UIWeapon.transform.SetParent(null);
             UIWeapon.GetComponentInChildren<Collider>().enabled = false;
             weaponCamera.GetComponent<InspectChild>().displayedWeapon = UIWeapon;
         }

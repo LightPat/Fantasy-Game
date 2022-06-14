@@ -18,7 +18,7 @@ namespace LightPat.Core
         [HideInInspector]
         public GameObject equippedWeapon;
         [HideInInspector]
-        public bool leftClickPressed, reset;
+        public bool leftClickPressed, reset, rotateCamera;
         [HideInInspector]
         public Vector2 mouseInput, scrollInput;
         [HideInInspector]
@@ -59,6 +59,7 @@ namespace LightPat.Core
             modelCamera.GetComponent<InspectChild>().leftClickPressed = leftClickPressed;
             modelCamera.GetComponent<InspectChild>().scrollInput = scrollInput;
             modelCamera.GetComponent<InspectChild>().reset = reset;
+            modelCamera.GetComponent<InspectChild>().rotateCamera = rotateCamera;
         }
     }
 }

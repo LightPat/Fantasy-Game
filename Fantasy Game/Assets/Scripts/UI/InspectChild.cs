@@ -6,13 +6,14 @@ namespace LightPat
 {
     public class InspectChild : MonoBehaviour
     {
+        public float rotateCamSpeed = 0.1f;
         public float scrollSpeed = 0.1f;
         [HideInInspector]
         public GameObject displayedWeapon;
         [HideInInspector]
         public Vector2 mouseInput, scrollInput;
         [HideInInspector]
-        public bool leftClickPressed, reset;
+        public bool leftClickPressed, reset, rotateCamera;
 
         private Camera thisCam;
 
@@ -23,16 +24,28 @@ namespace LightPat
 
         private void Update()
         {
-            if (leftClickPressed & displayedWeapon != null)
+            if (displayedWeapon == null) { return; }
+
+            // Rotate rigidbody by holding left click and moving your mouse
+            if (leftClickPressed)
             {
                 displayedWeapon.GetComponent<Rigidbody>().AddTorque(new Vector3(mouseInput.y, 0, -mouseInput.x));
             }
 
+            // Press R to remove all forces from the rigidbody
             if (reset)
             {
                 displayedWeapon.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
             }
 
+            // Rotate camera with right click and moving your mouse
+            if (rotateCamera)
+            {
+                transform.RotateAround(displayedWeapon.transform.position, Vector3.up, mouseInput.x * rotateCamSpeed);
+                transform.RotateAround(displayedWeapon.transform.position, Vector3.left, mouseInput.y * rotateCamSpeed);
+            }
+
+            // Camera zooming with scroll whell
             thisCam.fieldOfView -= scrollInput.y * scrollSpeed;
         }
     }

@@ -325,8 +325,7 @@ namespace LightPat.Core
 
         void OnRotateCamera(InputValue value)
         {
-            // TODO
-            //inventoryMenu.GetComponent<PlayerInventory>().rotateCamera = value.isPressed;
+            inventoryMenu.GetComponent<PlayerInventory>().rotateCamera = value.isPressed;
         }
     }
 }

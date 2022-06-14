@@ -24,7 +24,10 @@ namespace LightPat.UI
             UIWeapon.transform.localPosition = Vector3.forward * 2;
             UIWeapon.transform.rotation = Quaternion.Euler(initialInspectRotation);
             UIWeapon.transform.SetParent(null);
+            // May have to change this line if a model has multiple colliders
             UIWeapon.GetComponentInChildren<Collider>().enabled = false;
+            // UIModel layer
+            UIWeapon.layer = 6;
             weaponCamera.GetComponent<InspectChild>().displayedWeapon = UIWeapon;
         }
     }

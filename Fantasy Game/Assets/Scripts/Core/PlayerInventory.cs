@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using LightPat.UI;
+using UnityEngine.UI;
 
 namespace LightPat.Core
 {
     public class PlayerInventory : MonoBehaviour
     {
+        public InspectModel modelCamera;
+        public Transform weaponIconsParent;
         [Header("Attributes Display")]
         public Transform personality;
         public Transform physical;
         public Transform magical;
-        [Header("Model Inspect Window")]
-        public InspectModel modelCamera;
 
         private GameObject equippedWeapon;
-        private bool leftClickPressed, reset, rotateCamera;
-        private Vector2 mouseInput, scrollInput;
 
         public void UpdateAttributes(Attributes newAttributes)
         {
@@ -45,7 +44,16 @@ namespace LightPat.Core
 
         public void UpdateWeapon(GameObject g)
         {
-            equippedWeapon = g;
+            //equippedWeapon = g;
+            if (g == null) { return; }
+
+            foreach (Transform child in weaponIconsParent)
+            {
+                if (child.GetComponent<InventoryWeaponIcon>().weaponReference.name == g.name)
+                {
+                    child.GetComponent<Button>().onClick.Invoke();
+                }
+            }
         }
 
         public void UpdateInspectInput(bool newBool, int boolIndex)

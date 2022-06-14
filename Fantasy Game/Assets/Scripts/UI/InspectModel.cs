@@ -48,5 +48,11 @@ namespace LightPat.UI
             // Camera zooming with scroll whell
             thisCam.fieldOfView -= scrollInput.y * scrollSpeed;
         }
+
+        private void OnDisable()
+        {
+            // Destroy model when this script is destroyed or disabled
+            if (displayedModel != null) { Destroy(displayedModel); }
+        }
     }
 }

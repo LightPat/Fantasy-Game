@@ -19,6 +19,8 @@ namespace LightPat.UI
         
         public void OnClickDisplayWeapon()
         {
+            if (weaponCamera.GetComponent<InspectModel>().displayedModel != null) { Destroy(weaponCamera.GetComponent<InspectModel>().displayedModel); }
+
             GameObject UIWeapon = Instantiate(weaponReference, weaponCamera);
             UIWeapon.GetComponent<Rigidbody>().useGravity = false;
             UIWeapon.transform.localPosition = Vector3.forward * 2;

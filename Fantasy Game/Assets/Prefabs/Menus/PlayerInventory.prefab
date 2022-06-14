@@ -1034,10 +1034,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6622e89859e30e42be4a4a9f5666fab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  modelCamera: {fileID: 1549594097511444419}
+  weaponIconsParent: {fileID: 8219828877590567244}
   personality: {fileID: 2880834840458528865}
   physical: {fileID: 2345431333797746317}
   magical: {fileID: 3906564312902904366}
-  modelCamera: {fileID: 1549594097511444419}
 --- !u!1 &3988633476008419002
 GameObject:
   m_ObjectHideFlags: 0

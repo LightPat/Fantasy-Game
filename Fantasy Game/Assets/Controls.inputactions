@@ -345,15 +345,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "InspectWeapon",
-                    "type": "Value",
-                    "id": "fbcaf991-b3e8-4607-9bfa-98f50d16d4d3",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "MouseMove",
                     "type": "Value",
                     "id": "ac12981d-dfef-4eb1-998b-36ad6c24450f",
@@ -363,7 +354,16 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "ResetInspect",
+                    "name": "RotateInspectWeapon",
+                    "type": "Value",
+                    "id": "fbcaf991-b3e8-4607-9bfa-98f50d16d4d3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "ResetInspectForces",
                     "type": "Value",
                     "id": "e8743ca5-ea05-40cc-bcc3-af9ecb2ae8fb",
                     "expectedControlType": "",
@@ -372,7 +372,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "InspectZoom",
+                    "name": "ZoomInspectCamera",
                     "type": "Value",
                     "id": "aa460bfd-aa81-4303-8274-34bf5936e4ce",
                     "expectedControlType": "Vector2",
@@ -381,7 +381,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "RotateCamera",
+                    "name": "RotateInspectCamera",
                     "type": "Value",
                     "id": "e6bb2011-8feb-43e5-a8b7-df2b2f098d9b",
                     "expectedControlType": "",
@@ -415,17 +415,6 @@
                 },
                 {
                     "name": "",
-                    "id": "cd28c9b1-1bc7-4478-bb51-5867bb285ad7",
-                    "path": "<Mouse>/leftButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "InspectWeapon",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "9ce9eb92-f6a9-4017-a428-68bea4373382",
                     "path": "<Mouse>/delta",
                     "interactions": "",
@@ -442,7 +431,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ResetInspect",
+                    "action": "ResetInspectForces",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -453,7 +442,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "InspectZoom",
+                    "action": "ZoomInspectCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -464,7 +453,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "RotateCamera",
+                    "action": "RotateInspectCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "cd28c9b1-1bc7-4478-bb51-5867bb285ad7",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RotateInspectWeapon",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

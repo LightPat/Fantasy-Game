@@ -303,29 +303,29 @@ namespace LightPat.Core
             }
         }
 
-        void OnInspectWeapon(InputValue value)
-        {
-            inventoryMenu.GetComponent<PlayerInventory>().leftClickPressed = value.isPressed;
-        }
-
         void OnMouseMove(InputValue value)
         {
-            inventoryMenu.GetComponent<PlayerInventory>().mouseInput = value.Get<Vector2>();
+            inventoryMenu.GetComponent<PlayerInventory>().UpdateInspectInput(value.Get<Vector2>(), 0);
         }
 
-        void OnResetInspect(InputValue value)
+        void OnRotateInspectWeapon(InputValue value)
         {
-            inventoryMenu.GetComponent<PlayerInventory>().reset = value.isPressed;
+            inventoryMenu.GetComponent<PlayerInventory>().UpdateInspectInput(value.isPressed, 0);
         }
 
-        void OnInspectZoom(InputValue value)
+        void OnResetInspectForces(InputValue value)
         {
-            inventoryMenu.GetComponent<PlayerInventory>().scrollInput = value.Get<Vector2>();
+            inventoryMenu.GetComponent<PlayerInventory>().UpdateInspectInput(value.isPressed, 1);
         }
 
-        void OnRotateCamera(InputValue value)
+        void OnZoomInspectCamera(InputValue value)
         {
-            inventoryMenu.GetComponent<PlayerInventory>().rotateCamera = value.isPressed;
+            inventoryMenu.GetComponent<PlayerInventory>().UpdateInspectInput(value.Get<Vector2>(), 1);
+        }
+
+        void OnRotateInspectCamera(InputValue value)
+        {
+            inventoryMenu.GetComponent<PlayerInventory>().UpdateInspectInput(value.isPressed, 2);
         }
     }
 }

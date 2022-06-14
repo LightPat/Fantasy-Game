@@ -28,7 +28,7 @@ namespace LightPat.UI
             UIWeapon.GetComponentInChildren<Collider>().enabled = false;
             // UIModel layer
             UIWeapon.layer = 6;
-            weaponCamera.GetComponent<InspectChild>().displayedWeapon = UIWeapon;
+            weaponCamera.GetComponent<InspectModel>().displayedModel = UIWeapon;
         }
     }
 }

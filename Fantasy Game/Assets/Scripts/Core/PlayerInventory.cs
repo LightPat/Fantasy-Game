@@ -13,16 +13,11 @@ namespace LightPat.Core
         public Transform physical;
         public Transform magical;
         [Header("Model Inspect Window")]
-        public InspectChild modelCamera;
+        public InspectModel modelCamera;
 
-        [HideInInspector]
-        public GameObject equippedWeapon;
-        [HideInInspector]
-        public bool leftClickPressed, reset, rotateCamera;
-        [HideInInspector]
-        public Vector2 mouseInput, scrollInput;
-        [HideInInspector]
-        public GameObject inspectingModel;
+        private GameObject equippedWeapon;
+        private bool leftClickPressed, reset, rotateCamera;
+        private Vector2 mouseInput, scrollInput;
 
         public void UpdateAttributes(Attributes newAttributes)
         {
@@ -53,13 +48,32 @@ namespace LightPat.Core
             equippedWeapon = g;
         }
 
-        private void Update()
+        public void UpdateInspectInput(bool newBool, int boolIndex)
         {
-            modelCamera.GetComponent<InspectChild>().mouseInput = mouseInput;
-            modelCamera.GetComponent<InspectChild>().leftClickPressed = leftClickPressed;
-            modelCamera.GetComponent<InspectChild>().scrollInput = scrollInput;
-            modelCamera.GetComponent<InspectChild>().reset = reset;
-            modelCamera.GetComponent<InspectChild>().rotateCamera = rotateCamera;
+            if (boolIndex == 0)
+            {
+                modelCamera.GetComponent<InspectModel>().leftClickPressed = newBool;
+            }
+            else if (boolIndex == 1)
+            {
+                modelCamera.GetComponent<InspectModel>().reset = newBool;
+            }
+            else if (boolIndex == 2)
+            {
+                modelCamera.GetComponent<InspectModel>().rotateCamera = newBool;
+            }
+        }
+
+        public void UpdateInspectInput(Vector2 newVector2, int vectorIndex)
+        {
+            if (vectorIndex == 0)
+            {
+                modelCamera.GetComponent<InspectModel>().mouseInput = newVector2;
+            }
+            else if (vectorIndex == 1)
+            {
+                modelCamera.GetComponent<InspectModel>().scrollInput = newVector2;
+            }
         }
     }
 }

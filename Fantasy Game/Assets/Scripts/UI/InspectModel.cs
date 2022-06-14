@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LightPat
+namespace LightPat.UI
 {
     public class InspectModel : MonoBehaviour
     {

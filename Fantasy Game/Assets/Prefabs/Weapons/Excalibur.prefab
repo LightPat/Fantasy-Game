@@ -157,3 +157,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   offset: {x: 1, y: 0.8, z: 0.5}
+  idealPersonality: 3232323232
+  baseDamage: 50

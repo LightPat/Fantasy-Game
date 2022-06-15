@@ -247,7 +247,14 @@ namespace LightPat.Core
             {
                 if (hit.transform.GetComponent<Attributes>())
                 {
-                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
+                    if (equippedWeapon)
+                    {
+                        hit.transform.GetComponent<Attributes>().InflictDamage(equippedWeapon.GetComponent<Weapon>().baseDamage, gameObject);
+                    }
+                    else
+                    {
+                        hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
+                    }
                 }
             }
         }

@@ -21,6 +21,7 @@ namespace LightPat.Core
         private Rigidbody rb;
         private float currentSpeed;
         private AudioSource audioSrc;
+        private Animator animator;
 
         private void Start()
         {
@@ -30,6 +31,7 @@ namespace LightPat.Core
             currentSpeed = walkingSpeed;
             Cursor.lockState = CursorLockMode.Locked;
             lookEulers = new Vector3(transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.z);
+            animator = GetComponent<Animator>();
         }
 
         private void Update()
@@ -114,6 +116,9 @@ namespace LightPat.Core
             Quaternion newRotation = Quaternion.Euler(0, lookEulers.x, 0);
             rb.MoveRotation(newRotation);
             verticalRotate.rotation = Quaternion.Euler(-lookEulers.y, lookEulers.x, 0);
+
+            animator.SetFloat("Speed", new Vector2(rb.velocity.x, rb.velocity.z).magnitude);
+            animator.SetBool("Falling", !IsGrounded());
         }
 
         void FixedUpdate()
@@ -125,7 +130,7 @@ namespace LightPat.Core
 
             if (!audioSrc.isPlaying & rb.velocity.magnitude > 3 & moveInput != Vector2.zero)
             {
-                StartCoroutine(playFootstep());
+                //StartCoroutine(playFootstep());
             }
 
             // Falling Gravity velocity increase
@@ -197,29 +202,60 @@ namespace LightPat.Core
         [Header("Jump Settings")]
         public float jumpHeight = 3f;
         public float fallingGravityScale = 0.5f;
+        public float jumpDelay = 1f;
+        private float lastLandingTime = 0;
+        void OnJump()
+        {
+            // If the difference between the time we finished our last jump and the current time is greater than our jump delay, do not execute anymore code
+            if (Time.time - lastLandingTime < jumpDelay)
+            {
+                return;
+            }
+
+            // If we are on the ground, jump
+            if (IsGrounded())
+            {
+                StartCoroutine(IdleJump());
+            }
+        }
+
+        private IEnumerator IdleJump()
+        {
+            animator.SetBool("Jumping", true);
+
+            yield return new WaitForSeconds(0.5f);
+
+            float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+            rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
+
+            yield return new WaitForSeconds(0.1f);
+
+            float startTime = Time.time;
+
+            // While we are stil airborne, we wait until we are on the ground again or we wait until the animation has completed and switch to falling animation
+            while (!IsGrounded())
+            {
+                yield return new WaitForEndOfFrame();
+                // If the jump animation has reached the midpoint, switch to falling
+                if (Time.time - startTime >= 0.6) { break; }
+            }
+
+            animator.SetBool("Jumping", false);
+            lastLandingTime = Time.time;
+        }
+
         [Header("IsGrounded Settings")]
         public float checkDistance = 1;
-        void OnJump(InputValue value)
+        private bool IsGrounded()
         {
             // TODO this isn't really an elegant solution, if you stand on the edge of something it doesn't realize that you are still grouded
             // If you check for velocity = 0 then you can double jump since the apex of your jump's velocity is 0
             // Check if the player is touching a gameObject under them
             // May need to change 1.5f to be a different number if you switch the asset of the player model
-            bool isGrounded()
-            {
-                RaycastHit hit;
-                bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1, out hit, checkDistance);
-                return bHit;
-            }
 
-            if (value.isPressed)
-            {
-                if (isGrounded())
-                {
-                    float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-                    rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
-                }
-            }
+            RaycastHit hit;
+            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1, out hit, checkDistance);
+            return bHit;
         }
 
         [Header("Sprint Settings")]

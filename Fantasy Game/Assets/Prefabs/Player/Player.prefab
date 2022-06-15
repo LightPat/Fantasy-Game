@@ -3259,6 +3259,7 @@ MonoBehaviour:
   reach: 4
   jumpHeight: 3
   fallingGravityScale: 0.5
+  jumpDelay: 0.2
   checkDistance: 1
   sprintSpeed: 10
   attackDamage: 10

@@ -123,10 +123,13 @@ namespace LightPat.Core
 
         void FixedUpdate()
         {
-            Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * currentSpeed;
-            moveForce.x -= rb.velocity.x;
-            moveForce.z -= rb.velocity.z;
-            rb.AddForce(moveForce, ForceMode.VelocityChange);
+            if (!stopMoveInput)
+            {
+                Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * currentSpeed;
+                moveForce.x -= rb.velocity.x;
+                moveForce.z -= rb.velocity.z;
+                rb.AddForce(moveForce, ForceMode.VelocityChange);
+            }
 
             if (!audioSrc.isPlaying & rb.velocity.magnitude > 3 & moveInput != Vector2.zero)
             {
@@ -157,6 +160,7 @@ namespace LightPat.Core
         [Header("Move Settings")]
         public float walkingSpeed = 5f;
         private Vector2 moveInput;
+        private bool stopMoveInput;
         void OnMove(InputValue value)
         {
             moveInput = value.Get<Vector2>();
@@ -215,7 +219,7 @@ namespace LightPat.Core
             // If we are on the ground, jump
             if (IsGrounded())
             {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("01_Standing_Idle"))
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("01_Standing_Idle") | animator.GetCurrentAnimatorStateInfo(0).IsName("02_Walk"))
                 {
                     StartCoroutine(IdleJump());
                 }
@@ -230,8 +234,10 @@ namespace LightPat.Core
         {
             animator.SetBool("Jumping", true);
 
+            stopMoveInput = true;
             yield return new WaitForSeconds(0.5f);
             // Add stop moving here
+            stopMoveInput = false;
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);

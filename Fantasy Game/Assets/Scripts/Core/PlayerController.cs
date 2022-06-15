@@ -215,7 +215,14 @@ namespace LightPat.Core
             // If we are on the ground, jump
             if (IsGrounded())
             {
-                StartCoroutine(IdleJump());
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("01_Standing_Idle"))
+                {
+                    StartCoroutine(IdleJump());
+                }
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("03_Run"))
+                {
+                    StartCoroutine(RunningJump());
+                }
             }
         }
 
@@ -224,6 +231,7 @@ namespace LightPat.Core
             animator.SetBool("Jumping", true);
 
             yield return new WaitForSeconds(0.5f);
+            // Add stop moving here
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
@@ -232,7 +240,7 @@ namespace LightPat.Core
 
             float startTime = Time.time;
 
-            // While we are stil airborne, we wait until we are on the ground again or we wait until the animation has completed and switch to falling animation
+            // While we are stil airborne, we wait until we are on the ground again
             while (!IsGrounded())
             {
                 yield return new WaitForEndOfFrame();
@@ -244,9 +252,45 @@ namespace LightPat.Core
             lastLandingTime = Time.time;
         }
 
+        private IEnumerator RunningJump()
+        {
+            animator.SetBool("Jumping", true);
+
+            float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+            rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
+
+            // Wait for is grounded to clear
+            yield return new WaitForSeconds(0.1f);
+
+            float startTime = Time.time;
+
+            // While we are stil airborne, we wait until we are on the ground again
+            while (!IsGrounded(0.1f))
+            {
+                yield return new WaitForEndOfFrame();
+                // If the jump animation has reached the midpoint, switch to falling
+                if (Time.time - startTime >= 0.4) { break; }
+            }
+
+            animator.SetBool("Jumping", false);
+            lastLandingTime = Time.time;
+        }
+
         [Header("IsGrounded Settings")]
         public float checkDistance = 1;
         private bool IsGrounded()
+        {
+            // TODO this isn't really an elegant solution, if you stand on the edge of something it doesn't realize that you are still grouded
+            // If you check for velocity = 0 then you can double jump since the apex of your jump's velocity is 0
+            // Check if the player is touching a gameObject under them
+            // May need to change 1.5f to be a different number if you switch the asset of the player model
+
+            RaycastHit hit;
+            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1, out hit, checkDistance);
+            return bHit;
+        }
+
+        private bool IsGrounded(float checkDistance)
         {
             // TODO this isn't really an elegant solution, if you stand on the edge of something it doesn't realize that you are still grouded
             // If you check for velocity = 0 then you can double jump since the apex of your jump's velocity is 0

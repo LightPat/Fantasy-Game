@@ -208,6 +208,7 @@ namespace LightPat.Core
         public float fallingGravityScale = 0.5f;
         public float jumpDelay = 1f;
         private float lastLandingTime = 0;
+        private bool jumpRunning;
         void OnJump()
         {
             // If the difference between the time we finished our last jump and the current time is greater than our jump delay, do not execute anymore code
@@ -219,7 +220,10 @@ namespace LightPat.Core
             // If we are on the ground, jump
             if (IsGrounded())
             {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("01_Standing_Idle") | animator.GetCurrentAnimatorStateInfo(0).IsName("02_Walk"))
+                // This fixes spacebar spamming adding too much force on jump
+                if (jumpRunning) { return; }
+
+                if (currentSpeed == walkingSpeed)
                 {
                     StartCoroutine(IdleJump());
                 }
@@ -233,6 +237,7 @@ namespace LightPat.Core
         private IEnumerator IdleJump()
         {
             animator.SetBool("Jumping", true);
+            jumpRunning = true;
 
             stopMoveInput = true;
             yield return new WaitForSeconds(0.5f);
@@ -256,11 +261,13 @@ namespace LightPat.Core
 
             animator.SetBool("Jumping", false);
             lastLandingTime = Time.time;
+            jumpRunning = false;
         }
 
         private IEnumerator RunningJump()
         {
             animator.SetBool("Jumping", true);
+            jumpRunning = true;
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
@@ -280,6 +287,7 @@ namespace LightPat.Core
 
             animator.SetBool("Jumping", false);
             lastLandingTime = Time.time;
+            jumpRunning = false;
         }
 
         [Header("IsGrounded Settings")]

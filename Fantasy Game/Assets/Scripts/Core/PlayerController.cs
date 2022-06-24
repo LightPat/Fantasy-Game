@@ -330,6 +330,32 @@ namespace LightPat.Core
             }
         }
 
+        [Header("Crouch Settings")]
+        public float crouchSpeed = 2f;
+        void OnCrouch(InputValue value)
+        {
+            animator.SetBool("Crouching", value.isPressed);
+            if (value.isPressed)
+            {
+                // If we are sliding
+                if (currentSpeed == sprintSpeed)
+                {
+                    return;
+                }
+
+                currentSpeed = crouchSpeed;
+            }
+            else
+            {
+                // If we are sliding
+                if (currentSpeed == sprintSpeed)
+                {
+                    return;
+                }
+                currentSpeed = walkingSpeed;
+            }
+        }
+
         [Header("Attack Settings")]
         public float attackDamage = 10f;
         void OnAttack()

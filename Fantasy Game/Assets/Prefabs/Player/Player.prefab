@@ -3262,6 +3262,7 @@ MonoBehaviour:
   jumpDelay: 0.2
   checkDistance: 1
   sprintSpeed: 10
+  crouchSpeed: 2
   attackDamage: 10
 --- !u!114 &6765129139771697682
 MonoBehaviour:

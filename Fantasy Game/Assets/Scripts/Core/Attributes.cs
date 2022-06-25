@@ -36,7 +36,7 @@ namespace LightPat.Core
             if (HP <= 0)
             {
                 Debug.Log(name + "'s HP has reached " + HP + ", it is now dead.");
-                GetComponent<Animator>().SetTrigger("Death");
+                GetComponent<Animator>().SetBool("Dead", true);
             }
 
             UpdateMaterial();

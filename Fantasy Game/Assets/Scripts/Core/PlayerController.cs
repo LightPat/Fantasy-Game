@@ -118,8 +118,32 @@ namespace LightPat.Core
             verticalRotate.rotation = Quaternion.Euler(-lookEulers.y, lookEulers.x, 0);
 
             animator.SetFloat("Speed", new Vector2(rb.velocity.x, rb.velocity.z).magnitude);
-            animator.SetFloat("VerticalSpeed", rb.velocity.y);
-            animator.SetBool("Falling", !IsGrounded());
+
+            // If we are not landing, update falling animation parameter
+            if (!landing)
+            {
+                animator.SetBool("Falling", !IsGrounded());
+            }
+            else // If we are landing, once we are fully on the ground, exit the landing state
+            {
+                if (IsGrounded())
+                {
+                    landing = false;
+                }
+            }
+
+            // If we are falling but not landing, we send a raycast to see when we are about to enter the landing state
+            if (animator.GetBool("Falling") & rb.velocity.y < 0 & !landing)
+            {
+                if (IsGrounded(landingCheckDistance))
+                {
+                    // Enter landing state
+                    landing = true;
+                    animator.SetBool("Falling", false);
+                    // Update vertical speed
+                    animator.SetFloat("LandingSpeed", rb.velocity.y);
+                }
+            }
         }
 
         void FixedUpdate()
@@ -208,8 +232,10 @@ namespace LightPat.Core
         public float jumpHeight = 3f;
         public float fallingGravityScale = 0.5f;
         public float jumpDelay = 1f;
+        public float landingCheckDistance = 5f;
         private float lastLandingTime = 0;
         private bool jumpRunning;
+        private bool landing;
         void OnJump()
         {
             // If the difference between the time we finished our last jump and the current time is greater than our jump delay, do not execute anymore code

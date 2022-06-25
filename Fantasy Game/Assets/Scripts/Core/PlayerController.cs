@@ -379,6 +379,11 @@ namespace LightPat.Core
             }
         }
 
+        void OnTestAnim()
+        {
+            animator.SetTrigger("New");
+        }
+
         void OnAttacked(GameObject value)
         {
             Debug.Log("I'm being attacked! " + value);

@@ -118,6 +118,7 @@ namespace LightPat.Core
             verticalRotate.rotation = Quaternion.Euler(-lookEulers.y, lookEulers.x, 0);
 
             animator.SetFloat("Speed", new Vector2(rb.velocity.x, rb.velocity.z).magnitude);
+            animator.SetFloat("VerticalSpeed", rb.velocity.y);
             animator.SetBool("Falling", !IsGrounded());
         }
 
@@ -359,6 +360,7 @@ namespace LightPat.Core
 
         private IEnumerator Slide()
         {
+            // This prevents the player from holding down crouch and endlessly sliding
             yield return new WaitForSeconds(1f);
             animator.SetBool("Crouching", false);
         }

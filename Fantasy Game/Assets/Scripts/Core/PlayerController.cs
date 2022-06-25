@@ -223,11 +223,11 @@ namespace LightPat.Core
                 // This fixes spacebar spamming adding too much force on jump
                 if (jumpRunning) { return; }
 
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | animator.GetCurrentAnimatorStateInfo(0).IsName("Standing_Idle"))
                 {
                     StartCoroutine(IdleJump());
                 }
-                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Run") & !animator.GetBool("Crouching"))
                 {
                     StartCoroutine(RunningJump());
                 }
@@ -340,6 +340,7 @@ namespace LightPat.Core
                 // If we are sliding
                 if (currentSpeed == sprintSpeed)
                 {
+                    StartCoroutine(Slide());
                     return;
                 }
 
@@ -354,6 +355,12 @@ namespace LightPat.Core
                 }
                 currentSpeed = walkingSpeed;
             }
+        }
+
+        private IEnumerator Slide()
+        {
+            yield return new WaitForSeconds(1f);
+            animator.SetBool("Crouching", false);
         }
 
         [Header("Attack Settings")]

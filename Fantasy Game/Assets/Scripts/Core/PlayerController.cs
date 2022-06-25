@@ -223,11 +223,11 @@ namespace LightPat.Core
                 // This fixes spacebar spamming adding too much force on jump
                 if (jumpRunning) { return; }
 
-                if (currentSpeed == walkingSpeed)
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk"))
                 {
                     StartCoroutine(IdleJump());
                 }
-                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("03_Run"))
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Run"))
                 {
                     StartCoroutine(RunningJump());
                 }

@@ -1277,14 +1277,17 @@ MonoBehaviour:
   escapeMenu: {fileID: 2367944742497944294, guid: 6ed21f0f96c0f794eb0b409975293614, type: 3}
   inventoryPrefab: {fileID: 3796279741549607518, guid: 36e75a8d8c990124b85798f499c524d9, type: 3}
   equippedWeapon: {fileID: 0}
+  firstPersonCamera: {fileID: 6817064171299634000}
+  thirdPersonCamera: {fileID: 6765129141794934313}
   footstepDetectionRadius: 10
   walkingSpeed: 5
   sensitivity: 0.2
   verticalLookBound: 90
   reach: 4
-  jumpHeight: 3
+  jumpHeight: 5
   fallingGravityScale: 0.5
   jumpDelay: 0.2
+  landingCheckDistance: 3
   checkDistance: 1
   sprintSpeed: 10
   crouchSpeed: 2
@@ -1749,7 +1752,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6765129141794934312
 Transform:
   m_ObjectHideFlags: 0
@@ -1757,13 +1760,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6765129141794934313}
-  m_LocalRotation: {x: 0.3439836, y: -0, z: -0, w: 0.93897563}
-  m_LocalPosition: {x: 0, y: 1.88, z: -3.26}
+  m_LocalRotation: {x: 0.08715578, y: 0, z: 0, w: 0.9961947}
+  m_LocalPosition: {x: 0, y: -0.25, z: -3.64}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6765129141194256265}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 40.24, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 10, y: 0, z: 0}
 --- !u!20 &6765129141794934317
 Camera:
   m_ObjectHideFlags: 0
@@ -1785,7 +1788,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.5
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 10000
@@ -1866,7 +1869,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6853415559762563100
 Transform:
   m_ObjectHideFlags: 0
@@ -1900,9 +1903,9 @@ Camera:
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.5
+    x: 0
     y: 0
-    width: 0.5
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000

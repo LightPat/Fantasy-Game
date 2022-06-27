@@ -18,6 +18,10 @@ namespace LightPat.Core
         public GameObject inventoryPrefab;
         public GameObject equippedWeapon;
 
+        [Header("Switch Cameras")]
+        public GameObject firstPersonCamera;
+        public GameObject thirdPersonCamera;
+
         private Rigidbody rb;
         private float currentSpeed;
         private AudioSource audioSrc;
@@ -417,6 +421,20 @@ namespace LightPat.Core
         void OnTestAnim()
         {
             animator.SetTrigger("New");
+        }
+
+        void OnSwitchCameras()
+        {
+            if (firstPersonCamera.activeInHierarchy)
+            {
+                firstPersonCamera.SetActive(false);
+                thirdPersonCamera.SetActive(true);
+            }
+            else
+            {
+                firstPersonCamera.SetActive(true);
+                thirdPersonCamera.SetActive(false);
+            }
         }
 
         void OnAttacked(GameObject value)

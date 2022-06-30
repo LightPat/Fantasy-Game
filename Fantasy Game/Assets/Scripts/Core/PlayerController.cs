@@ -24,7 +24,7 @@ namespace LightPat.Core
 
         private Rigidbody rb;
         private float currentSpeedTarget;
-        private float lockSpeedTarget;
+        private float? lockSpeedTarget = null;
         private AudioSource audioSrc;
         private Animator animator;
 
@@ -77,7 +77,7 @@ namespace LightPat.Core
             }
 
             // Look logic
-            if (!stopLookInput)
+            if (!disableLookInput)
             {
                 lookInput *= (sensitivity);
                 lookEulers.x += lookInput.x;
@@ -137,8 +137,7 @@ namespace LightPat.Core
                 if (IsGrounded())
                 {
                     landing = false;
-                    lockMoveInput = Vector2.zero;
-                    lockSpeedTarget = 0;
+                    // lockMoveInput and lockSpeedTarget are reset using animation events
                 }
             }
 
@@ -158,25 +157,26 @@ namespace LightPat.Core
 
         void FixedUpdate()
         {
-            if (!stopMoveInput)
+            if (!disableMoveInput)
             {
                 Vector3 moveForce;
-                if (lockMoveInput == Vector2.zero)
+                if (lockMoveInput == null)
                 {
                     moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y);
                 }
                 else
                 {
-                    moveForce = rb.rotation * new Vector3(lockMoveInput.x, 0, lockMoveInput.y);
+                    Vector3 casted = (Vector3)lockMoveInput;
+                    moveForce = rb.rotation * new Vector3(casted.x, 0, casted.y);
                 }
 
-                if (lockSpeedTarget == 0)
+                if (lockSpeedTarget == null)
                 {
                     moveForce *= currentSpeedTarget;
                 }
                 else
                 {
-                    moveForce *= lockSpeedTarget;
+                    moveForce *= (float)lockSpeedTarget;
                 }
 
                 moveForce.x -= rb.velocity.x;
@@ -186,7 +186,7 @@ namespace LightPat.Core
 
             if (!audioSrc.isPlaying & rb.velocity.magnitude > 3 & moveInput != Vector2.zero)
             {
-                //StartCoroutine(playFootstep());
+                StartCoroutine(PlayFootstep());
             }
 
             // Falling Gravity velocity increase
@@ -210,27 +210,44 @@ namespace LightPat.Core
             audioSrc.Pause();
         }
 
-        private IEnumerator DisableMoving(float waitTime)
+        public void LockMovementEvent(string parameters)
         {
-            stopMoveInput = true;
-            yield return new WaitForSeconds(waitTime);
-            stopMoveInput = false;
-        }
+            string[] subs = parameters.Split(' ');
 
-        private IEnumerator DisableLooking(float waitTime)
-        {
-            stopLookInput = true;
-            yield return new WaitForSeconds(waitTime);
-            stopLookInput = false;
+            if (subs[0] == "Sprint")
+            {
+                lockSpeedTarget = sprintSpeed;
+            }
+            else if (subs[0] == "Walk")
+            {
+                lockSpeedTarget = walkingSpeed;
+            }
+            else if (subs[0] == "0")
+            {
+                lockSpeedTarget = 0;
+            }
+            else if (subs[0] == "null")
+            {
+                lockSpeedTarget = null;
+            }
+
+            if (subs[1] == "null")
+            {
+                lockMoveInput = null;
+            }
+            else
+            {
+                lockMoveInput = new Vector2(float.Parse(subs[1]), float.Parse(subs[2]));
+            }
         }
 
         [Header("Move Settings")]
         public float walkingSpeed = 5f;
         private Vector2 moveInput;
         // lockMoveInput is a vector2 that has a higher priority than moveInput. This should only be assigned to make the player keep moving in a certain direction for a period of time.
-        private Vector2 lockMoveInput;
+        private Vector2? lockMoveInput;
         // stopMoveInput is a boolean to stop the player from moving
-        private bool stopMoveInput;
+        private bool disableMoveInput;
         void OnMove(InputValue value)
         {
             moveInput = value.Get<Vector2>();
@@ -241,7 +258,7 @@ namespace LightPat.Core
         public float verticalLookBound = 90f;
         private Vector3 lookEulers;
         private Vector2 lookInput;
-        private bool stopLookInput;
+        private bool disableLookInput;
         void OnLook(InputValue value)
         {
             lookInput = value.Get<Vector2>();
@@ -315,11 +332,11 @@ namespace LightPat.Core
             lockSpeedTarget = airborneXZSpeed;
 
             // Stop moving and looking for half a second while animation completes
-            stopLookInput = true;
-            stopMoveInput = true;
+            disableLookInput = true;
+            disableMoveInput = true;
             yield return new WaitForSeconds(0.5f);
-            stopMoveInput = false;
-            stopLookInput = false;
+            disableMoveInput = false;
+            disableLookInput = false;
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);

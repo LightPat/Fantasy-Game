@@ -23,7 +23,8 @@ namespace LightPat.Core
         public GameObject thirdPersonCamera;
 
         private Rigidbody rb;
-        private float currentSpeed;
+        private float currentSpeedTarget;
+        private float lockSpeedTarget;
         private AudioSource audioSrc;
         private Animator animator;
 
@@ -32,7 +33,7 @@ namespace LightPat.Core
             rb = GetComponent<Rigidbody>();
             audioSrc = GetComponent<AudioSource>();
             playerInput = GetComponent<PlayerInput>();
-            currentSpeed = walkingSpeed;
+            currentSpeedTarget = walkingSpeed;
             Cursor.lockState = CursorLockMode.Locked;
             lookEulers = new Vector3(transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.z);
             animator = GetComponent<Animator>();
@@ -76,50 +77,53 @@ namespace LightPat.Core
             }
 
             // Look logic
-            lookInput *= (sensitivity);
-            lookEulers.x += lookInput.x;
-
-            // This prevents the rotation from increasing or decreasing infinitely if the player does a bunch of spins horizontally
-            if (lookEulers.x >= 360)
+            if (!stopLookInput)
             {
-                lookEulers.x = lookEulers.x - 360;
-            }
-            else if (lookEulers.x <= -360)
-            {
-                lookEulers.x = lookEulers.x + 360;
-            }
+                lookInput *= (sensitivity);
+                lookEulers.x += lookInput.x;
 
-            /* First Person Camera Rotation Logic
-            Remember that the camera is a child of the player, so we don't need to worry about horizontal rotation, that has already been calculated
-            Calculate vertical rotation for the first person camera if you're not looking straight up or down already
-            If we reach the top or bottom of our vertical look bound, set the total rotation amount to 1 over or 1 under the bound
-            Otherwise, just change the rotation by the lookInput */
-            if (lookEulers.y < -verticalLookBound)
-            {
-                lookEulers.y = -verticalLookBound - 1;
+                // This prevents the rotation from increasing or decreasing infinitely if the player does a bunch of spins horizontally
+                if (lookEulers.x >= 360)
+                {
+                    lookEulers.x = lookEulers.x - 360;
+                }
+                else if (lookEulers.x <= -360)
+                {
+                    lookEulers.x = lookEulers.x + 360;
+                }
 
-                if (lookInput.y > 0)
+                /* First Person Camera Rotation Logic
+                Remember that the camera is a child of the player, so we don't need to worry about horizontal rotation, that has already been calculated
+                Calculate vertical rotation for the first person camera if you're not looking straight up or down already
+                If we reach the top or bottom of our vertical look bound, set the total rotation amount to 1 over or 1 under the bound
+                Otherwise, just change the rotation by the lookInput */
+                if (lookEulers.y < -verticalLookBound)
+                {
+                    lookEulers.y = -verticalLookBound - 1;
+
+                    if (lookInput.y > 0)
+                    {
+                        lookEulers.y += lookInput.y;
+                    }
+                }
+                else if (lookEulers.y > verticalLookBound)
+                {
+                    lookEulers.y = verticalLookBound + 1;
+
+                    if (lookInput.y < 0)
+                    {
+                        lookEulers.y += lookInput.y;
+                    }
+                }
+                else
                 {
                     lookEulers.y += lookInput.y;
                 }
-            }
-            else if (lookEulers.y > verticalLookBound)
-            {
-                lookEulers.y = verticalLookBound + 1;
 
-                if (lookInput.y < 0)
-                {
-                    lookEulers.y += lookInput.y;
-                }
+                Quaternion newRotation = Quaternion.Euler(0, lookEulers.x, 0);
+                rb.MoveRotation(newRotation);
+                verticalRotate.rotation = Quaternion.Euler(-lookEulers.y, lookEulers.x, 0);
             }
-            else
-            {
-                lookEulers.y += lookInput.y;
-            }
-
-            Quaternion newRotation = Quaternion.Euler(0, lookEulers.x, 0);
-            rb.MoveRotation(newRotation);
-            verticalRotate.rotation = Quaternion.Euler(-lookEulers.y, lookEulers.x, 0);
 
             animator.SetFloat("Speed", new Vector2(rb.velocity.x, rb.velocity.z).magnitude);
 
@@ -130,6 +134,8 @@ namespace LightPat.Core
             }
             else // If we are landing, once we are fully on the ground, exit the landing state
             {
+                //StartCoroutine(DisableLooking(2f));
+                //StartCoroutine(DisableMoving(2f));
                 if (IsGrounded())
                 {
                     landing = false;
@@ -154,7 +160,25 @@ namespace LightPat.Core
         {
             if (!stopMoveInput)
             {
-                Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * currentSpeed;
+                Vector3 moveForce;
+                if (lockMoveInput == Vector2.zero)
+                {
+                    moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y);
+                }
+                else
+                {
+                    moveForce = rb.rotation * new Vector3(lockMoveInput.x, 0, lockMoveInput.y);
+                }
+
+                if (lockSpeedTarget == 0)
+                {
+                    moveForce *= currentSpeedTarget;
+                }
+                else
+                {
+                    moveForce *= lockSpeedTarget;
+                }
+
                 moveForce.x -= rb.velocity.x;
                 moveForce.z -= rb.velocity.z;
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
@@ -174,7 +198,7 @@ namespace LightPat.Core
 
         [Header("Footstep Detection Settings")]
         public float footstepDetectionRadius = 10f;
-        private IEnumerator playFootstep()
+        private IEnumerator PlayFootstep()
         {
             audioSrc.Play();
             Collider[] colliders = Physics.OverlapSphere(transform.position, footstepDetectionRadius);
@@ -186,9 +210,26 @@ namespace LightPat.Core
             audioSrc.Pause();
         }
 
+        private IEnumerator DisableMoving(float waitTime)
+        {
+            stopMoveInput = true;
+            yield return new WaitForSeconds(waitTime);
+            stopMoveInput = false;
+        }
+
+        private IEnumerator DisableLooking(float waitTime)
+        {
+            stopLookInput = true;
+            yield return new WaitForSeconds(waitTime);
+            stopLookInput = false;
+        }
+
         [Header("Move Settings")]
         public float walkingSpeed = 5f;
         private Vector2 moveInput;
+        // lockMoveInput is a vector2 that has a higher priority than moveInput. This should only be assigned to make the player keep moving in a certain direction for a period of time.
+        private Vector2 lockMoveInput;
+        // stopMoveInput is a boolean to stop the player from moving
         private bool stopMoveInput;
         void OnMove(InputValue value)
         {
@@ -200,6 +241,7 @@ namespace LightPat.Core
         public float verticalLookBound = 90f;
         private Vector3 lookEulers;
         private Vector2 lookInput;
+        private bool stopLookInput;
         void OnLook(InputValue value)
         {
             lookInput = value.Get<Vector2>();
@@ -254,11 +296,11 @@ namespace LightPat.Core
                 // This fixes spacebar spamming adding too much force on jump
                 if (jumpRunning) { return; }
 
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | animator.GetCurrentAnimatorStateInfo(0).IsName("Standing_Idle"))
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | animator.GetCurrentAnimatorStateInfo(0).IsName("Standing_Idle")) // If we are walking or standing still
                 {
                     StartCoroutine(IdleJump());
                 }
-                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Run") & !animator.GetBool("Crouching"))
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Run") & !animator.GetBool("Crouching")) // If we are running, but not sliding
                 {
                     StartCoroutine(RunningJump());
                 }
@@ -270,14 +312,17 @@ namespace LightPat.Core
             animator.SetBool("Jumping", true);
             jumpRunning = true;
 
+            // Stop moving and looking for half a second while animation completes
+            stopLookInput = true;
             stopMoveInput = true;
             yield return new WaitForSeconds(0.5f);
-            // Add stop moving here
             stopMoveInput = false;
+            stopLookInput = false;
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
 
+            // Wait so that isGrounded() doesn't return true while taking off
             yield return new WaitForSeconds(0.1f);
 
             float startTime = Time.time;
@@ -299,11 +344,14 @@ namespace LightPat.Core
         {
             animator.SetBool("Jumping", true);
             jumpRunning = true;
+            // Make the player continue sprinting through the whole jump and roll sequence
+            lockMoveInput = moveInput;
+            lockSpeedTarget = sprintSpeed;
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
 
-            // Wait for is grounded to clear
+            // Wait so that isGrounded() doesn't return true while taking off
             yield return new WaitForSeconds(0.1f);
 
             float startTime = Time.time;
@@ -319,6 +367,11 @@ namespace LightPat.Core
             animator.SetBool("Jumping", false);
             lastLandingTime = Time.time;
             jumpRunning = false;
+
+            // Wait for rolling animation to complete
+            yield return new WaitForSeconds(1.783f);
+            lockMoveInput = Vector2.zero;
+            lockSpeedTarget = 0;
         }
 
         [Header("IsGrounded Settings")]
@@ -353,11 +406,11 @@ namespace LightPat.Core
         {
             if (value.isPressed)
             {
-                currentSpeed = sprintSpeed;
+                currentSpeedTarget = sprintSpeed;
             }
             else
             {
-                currentSpeed = walkingSpeed;
+                currentSpeedTarget = walkingSpeed;
             }
         }
 
@@ -369,22 +422,22 @@ namespace LightPat.Core
             if (value.isPressed)
             {
                 // If we are sliding
-                if (currentSpeed == sprintSpeed)
+                if (currentSpeedTarget == sprintSpeed)
                 {
                     StartCoroutine(Slide());
                     return;
                 }
 
-                currentSpeed = crouchSpeed;
+                currentSpeedTarget = crouchSpeed;
             }
             else
             {
                 // If we are sliding
-                if (currentSpeed == sprintSpeed)
+                if (currentSpeedTarget == sprintSpeed)
                 {
                     return;
                 }
-                currentSpeed = walkingSpeed;
+                currentSpeedTarget = walkingSpeed;
             }
         }
 

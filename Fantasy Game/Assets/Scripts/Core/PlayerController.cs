@@ -134,11 +134,11 @@ namespace LightPat.Core
             }
             else // If we are landing, once we are fully on the ground, exit the landing state
             {
-                //StartCoroutine(DisableLooking(2f));
-                //StartCoroutine(DisableMoving(2f));
                 if (IsGrounded())
                 {
                     landing = false;
+                    lockMoveInput = Vector2.zero;
+                    lockSpeedTarget = 0;
                 }
             }
 
@@ -279,6 +279,7 @@ namespace LightPat.Core
         public float fallingGravityScale = 0.5f;
         public float jumpDelay = 1f;
         public float landingCheckDistance = 5f;
+        public float airborneXZSpeed = 1f;
         private float lastLandingTime = 0;
         private bool jumpRunning;
         private bool landing;
@@ -311,6 +312,7 @@ namespace LightPat.Core
         {
             animator.SetBool("Jumping", true);
             jumpRunning = true;
+            lockSpeedTarget = airborneXZSpeed;
 
             // Stop moving and looking for half a second while animation completes
             stopLookInput = true;
@@ -367,11 +369,6 @@ namespace LightPat.Core
             animator.SetBool("Jumping", false);
             lastLandingTime = Time.time;
             jumpRunning = false;
-
-            // Wait for rolling animation to complete
-            yield return new WaitForSeconds(1.783f);
-            lockMoveInput = Vector2.zero;
-            lockSpeedTarget = 0;
         }
 
         [Header("IsGrounded Settings")]

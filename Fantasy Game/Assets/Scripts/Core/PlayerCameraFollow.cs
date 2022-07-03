@@ -7,6 +7,7 @@ namespace LightPat.Core
     public class PlayerCameraFollow : MonoBehaviour
     {
         public Transform target;
+        public float rotationSpeed;
         [HideInInspector]
         public bool UpdateRotation;
 
@@ -16,7 +17,7 @@ namespace LightPat.Core
 
             if (UpdateRotation)
             {
-                transform.rotation = target.rotation;
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
             }
         }
     }

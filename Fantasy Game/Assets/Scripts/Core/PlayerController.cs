@@ -243,7 +243,6 @@ namespace LightPat.Core
 
         public void RotateCameraWithBoneEvent(int value)
         {
-
             if (value == 1) // Start updating rotation, disable look input
             {
                 firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = true;

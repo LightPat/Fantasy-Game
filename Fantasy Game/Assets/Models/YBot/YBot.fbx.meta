@@ -433,7 +433,7 @@ ModelImporter:
         floatParameter: 0
         intParameter: 1
         messageOptions: 0
-      - time: 0.414966
+      - time: 0.3957055
         functionName: RotateCameraWithBoneEvent
         data: 
         objectReferenceParameter: {instanceID: 0}

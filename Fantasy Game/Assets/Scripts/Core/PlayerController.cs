@@ -241,10 +241,30 @@ namespace LightPat.Core
             }
         }
 
-        public void RotateCameraWithBoneEvent()
+        public void RotateCameraWithBoneEvent(int value)
         {
-            firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = !firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation;
-            disableLookInput = firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation;
+
+            if (value == 1) // Start updating rotation, disable look input
+            {
+                firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = true;
+                disableLookInput = true;
+            }
+            else if (value == 0) // Stop updating rotation, re-enable look input, reset the camera's rotation
+            {
+                firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = false;
+                StartCoroutine(ResetCamera());
+            }
+        }
+        
+        private IEnumerator ResetCamera()
+        {
+            disableLookInput = false;
+
+            while (firstPersonCamera.transform.localRotation != Quaternion.identity)
+            {
+                firstPersonCamera.transform.localRotation = Quaternion.Slerp(firstPersonCamera.transform.localRotation, Quaternion.identity, 0.1f);
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         [Header("Move Settings")]

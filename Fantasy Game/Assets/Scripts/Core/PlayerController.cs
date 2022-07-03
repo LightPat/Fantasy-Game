@@ -254,11 +254,11 @@ namespace LightPat.Core
                 firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = false;
                 disableLookInput = false;
 
-                // Set fps cam's rotation to the rotation of the fps cam at the end of the animation
+                // Set verticalRotate's rotation to the rotation of the fps cam at the end of the animation
                 verticalRotate.rotation = firstPersonCamera.transform.rotation;
-                // Sets fps cam to the same rotation as vertical rotate
+                // Set fps cam to the same rotation as vertical rotate
                 firstPersonCamera.transform.localRotation = Quaternion.identity;
-                // Adjust lookEulers accordingly
+                // Adjust lookEulers to new verticalRotate rotation
                 lookEulers = new Vector3(verticalRotate.rotation.eulerAngles.y, -verticalRotate.rotation.eulerAngles.x, verticalRotate.rotation.eulerAngles.z);
             }
         }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LightPat.Core
 {
-    public class CameraFollow : MonoBehaviour
+    public class PlayerCameraFollow : MonoBehaviour
     {
         public Transform target;
         [HideInInspector]

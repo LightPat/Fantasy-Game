@@ -241,6 +241,12 @@ namespace LightPat.Core
             }
         }
 
+        public void RotateCameraWithBoneEvent()
+        {
+            firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = !firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation;
+            disableLookInput = firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation;
+        }
+
         [Header("Move Settings")]
         public float walkingSpeed = 5f;
         private Vector2 moveInput;
@@ -487,7 +493,14 @@ namespace LightPat.Core
 
         void OnTestAnim()
         {
-            animator.SetTrigger("New");
+            StartCoroutine(TestAnim());
+        }
+
+        private IEnumerator TestAnim()
+        {
+            animator.SetBool("New", true);
+            yield return new WaitForSeconds(0.1f);
+            animator.SetBool("New", false);
         }
 
         void OnSwitchCameras()

@@ -1420,6 +1420,7 @@ MonoBehaviour:
   fallingGravityScale: 0.5
   jumpDelay: 0.2
   landingCheckDistance: 3
+  airborneXZSpeed: 5
   checkDistance: 1
   sprintSpeed: 10
   crouchSpeed: 2

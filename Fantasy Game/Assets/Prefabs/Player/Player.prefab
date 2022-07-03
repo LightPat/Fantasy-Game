@@ -1303,6 +1303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 4121916138064900998}
+  offset: {x: 0, y: 0, z: 0, w: 1}
   UpdateRotation: 0
 --- !u!1 &6765129139771697679
 GameObject:

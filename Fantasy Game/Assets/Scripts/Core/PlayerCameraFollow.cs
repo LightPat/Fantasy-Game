@@ -7,7 +7,6 @@ namespace LightPat.Core
     public class PlayerCameraFollow : MonoBehaviour
     {
         public Transform target;
-        public Quaternion offset;
         [HideInInspector]
         public bool UpdateRotation;
 
@@ -17,7 +16,6 @@ namespace LightPat.Core
 
             if (UpdateRotation)
             {
-                // Append rotation instead of setting it so that it doesn't mess with where the player was looking before
                 transform.rotation = target.rotation;
             }
         }

@@ -248,23 +248,18 @@ namespace LightPat.Core
             {
                 firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = true;
                 disableLookInput = true;
-                firstPersonCamera.GetComponent<PlayerCameraFollow>().offset = verticalRotate.rotation;
             }
             else if (value == 0) // Stop updating rotation, re-enable look input, reset the camera's rotation
             {
                 firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = false;
-                StartCoroutine(ResetCamera());
-            }
-        }
-        
-        private IEnumerator ResetCamera()
-        {
-            disableLookInput = false;
+                disableLookInput = false;
 
-            while (firstPersonCamera.transform.localRotation != Quaternion.identity)
-            {
-                firstPersonCamera.transform.localRotation = Quaternion.RotateTowards(firstPersonCamera.transform.localRotation, Quaternion.identity, 0.1f);
-                yield return new WaitForEndOfFrame();
+                // Set fps cam's rotation to the rotation of the fps cam at the end of the animation
+                verticalRotate.rotation = firstPersonCamera.transform.rotation;
+                // Sets fps cam to the same rotation as vertical rotate
+                firstPersonCamera.transform.localRotation = Quaternion.identity;
+                // Adjust lookEulers accordingly
+                lookEulers = new Vector3(verticalRotate.rotation.eulerAngles.y, -verticalRotate.rotation.eulerAngles.x, verticalRotate.rotation.eulerAngles.z);
             }
         }
 

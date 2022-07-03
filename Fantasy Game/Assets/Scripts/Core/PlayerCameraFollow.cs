@@ -7,6 +7,7 @@ namespace LightPat.Core
     public class PlayerCameraFollow : MonoBehaviour
     {
         public Transform target;
+        public Quaternion offset;
         [HideInInspector]
         public bool UpdateRotation;
 

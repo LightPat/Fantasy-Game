@@ -248,6 +248,7 @@ namespace LightPat.Core
             {
                 firstPersonCamera.GetComponent<PlayerCameraFollow>().UpdateRotation = true;
                 disableLookInput = true;
+                firstPersonCamera.GetComponent<PlayerCameraFollow>().offset = verticalRotate.rotation;
             }
             else if (value == 0) // Stop updating rotation, re-enable look input, reset the camera's rotation
             {
@@ -262,7 +263,7 @@ namespace LightPat.Core
 
             while (firstPersonCamera.transform.localRotation != Quaternion.identity)
             {
-                firstPersonCamera.transform.localRotation = Quaternion.Slerp(firstPersonCamera.transform.localRotation, Quaternion.identity, 0.1f);
+                firstPersonCamera.transform.localRotation = Quaternion.RotateTowards(firstPersonCamera.transform.localRotation, Quaternion.identity, 0.1f);
                 yield return new WaitForEndOfFrame();
             }
         }

@@ -7,18 +7,20 @@ namespace LightPat.Core
     public abstract class Menu : MonoBehaviour
     {
         protected GameObject lastMenu;
+        [HideInInspector]
+        public GameObject childMenu;
 
         public void QuitGame()
         {
             Application.Quit();
         }
 
-        public void setLastMenu(GameObject lm)
+        public void SetLastMenu(GameObject lm)
         {
             lastMenu = lm;
         }
 
-        public void goBackToLastMenu()
+        public void GoBackToLastMenu()
         {
             Destroy(gameObject);
             if (lastMenu == null) { return; }

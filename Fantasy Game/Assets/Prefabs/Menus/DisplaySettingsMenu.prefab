@@ -5417,8 +5417,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2367944742497944289}
-        m_TargetAssemblyTypeName: LightPat.UI.DisplaySettingsMenu, Assembly-CSharp
-        m_MethodName: goBackToLastMenu
+        m_TargetAssemblyTypeName: LightPat.Core.Menu, Assembly-CSharp
+        m_MethodName: GoBackToLastMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

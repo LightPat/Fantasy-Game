@@ -10,10 +10,10 @@ namespace LightPat.UI
 
         private void Start()
         {
-            StartCoroutine(saveImage());
+            StartCoroutine(SaveImage());
         }
 
-        private IEnumerator saveImage()
+        private IEnumerator SaveImage()
         {
             yield return new WaitForSeconds(2f);
             Texture2D tex = new Texture2D(renderTexture.width, renderTexture.height, TextureFormat.RGB24, false);

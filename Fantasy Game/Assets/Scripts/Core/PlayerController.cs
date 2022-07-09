@@ -553,6 +553,10 @@ namespace LightPat.Core
             }
             else
             {
+                if (menu.GetComponent<Menu>().childMenu)
+                {
+                    Destroy(menu.GetComponent<Menu>().childMenu);
+                }
                 Destroy(menu);
                 transform.Find("HUD").gameObject.SetActive(true);
                 playerInput.SwitchCurrentActionMap(lastActionMapName);

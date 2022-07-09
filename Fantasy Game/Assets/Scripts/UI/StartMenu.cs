@@ -15,7 +15,7 @@ namespace LightPat.UI
         public void OpenSettingsMenu()
         {
             GameObject _settings = Instantiate(settingsMenu);
-            _settings.GetComponent<DisplaySettingsMenu>().setLastMenu(gameObject);
+            _settings.GetComponent<DisplaySettingsMenu>().SetLastMenu(gameObject);
 
             gameObject.SetActive(false);
         }

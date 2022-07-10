@@ -437,42 +437,87 @@ namespace LightPat.Core
 
         [Header("Sprint Settings")]
         public float sprintSpeed = 100f;
+        public bool toggleSprint;
         void OnSprint(InputValue value)
         {
-            if (value.isPressed)
+            if (toggleSprint)
             {
-                currentSpeedTarget = sprintSpeed;
+                if (value.isPressed)
+                {
+                    if (currentSpeedTarget == sprintSpeed)
+                    {
+                        currentSpeedTarget = walkingSpeed;
+                    }
+                    else if (currentSpeedTarget == walkingSpeed)
+                    {
+                        currentSpeedTarget = sprintSpeed;
+                    }
+                }
             }
-            else
+            else // If toggle sprint is off
             {
-                currentSpeedTarget = walkingSpeed;
+                if (value.isPressed)
+                {
+                    currentSpeedTarget = sprintSpeed;
+                }
+                else
+                {
+                    currentSpeedTarget = walkingSpeed;
+                }
             }
         }
 
         [Header("Crouch Settings")]
         public float crouchSpeed = 2f;
+        public bool toggleCrouch;
         void OnCrouch(InputValue value)
         {
-            animator.SetBool("Crouching", value.isPressed);
-            if (value.isPressed)
+            if (toggleCrouch)
             {
-                // If we are sliding
-                if (currentSpeedTarget == sprintSpeed)
+                if (value.isPressed)
                 {
-                    StartCoroutine(Slide());
-                    return;
-                }
+                    if (currentSpeedTarget == crouchSpeed)
+                    {
+                        animator.SetBool("Crouching", false);
+                        currentSpeedTarget = walkingSpeed;
+                    }
+                    else
+                    {
+                        animator.SetBool("Crouching", true);
+                        if (currentSpeedTarget == sprintSpeed)
+                        {
+                            StartCoroutine(Slide());
+                            return;
+                        }
 
-                currentSpeedTarget = crouchSpeed;
-            }
-            else
-            {
-                // If we are sliding
-                if (currentSpeedTarget == sprintSpeed)
-                {
-                    return;
+                        currentSpeedTarget = crouchSpeed;
+                    }
                 }
-                currentSpeedTarget = walkingSpeed;
+            }
+            else // If toggle crouch is off
+            {
+                animator.SetBool("Crouching", value.isPressed);
+                if (value.isPressed)
+                {
+                    // If we are running
+                    if (currentSpeedTarget == sprintSpeed)
+                    {
+                        StartCoroutine(Slide());
+                        return;
+                    }
+
+                    currentSpeedTarget = crouchSpeed;
+                }
+                else
+                {
+                    // If we are sliding
+                    if (currentSpeedTarget == sprintSpeed)
+                    {
+                        return;
+                    }
+
+                    currentSpeedTarget = walkingSpeed;
+                }
             }
         }
 

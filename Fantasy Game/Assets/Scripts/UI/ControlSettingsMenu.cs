@@ -4,12 +4,16 @@ using UnityEngine;
 using LightPat.Core;
 using TMPro;
 using System;
+using UnityEngine.UI;
 
 namespace LightPat.UI
 {
     public class ControlSettingsMenu : Menu
     {
         public TMP_InputField sensitivityInput;
+        public Toggle crouchToggle;
+        public Toggle sprintToggle;
+
         private PlayerController player;
         private float originalSensitivity;
 
@@ -18,6 +22,9 @@ namespace LightPat.UI
             player = FindObjectOfType<PlayerController>();
             sensitivityInput.text = player.sensitivity.ToString();
             originalSensitivity = player.sensitivity;
+
+            crouchToggle.isOn = player.toggleCrouch;
+            sprintToggle.isOn = player.toggleSprint;
         }
 
         public void SensitivityChange()
@@ -30,6 +37,16 @@ namespace LightPat.UI
             {
                 player.sensitivity = originalSensitivity;
             }
+        }
+
+        public void SetCrouchMode()
+        {
+            player.toggleCrouch = crouchToggle.isOn;
+        }
+
+        public void SetSprintMode()
+        {
+            player.toggleSprint = sprintToggle.isOn;
         }
     }
 }

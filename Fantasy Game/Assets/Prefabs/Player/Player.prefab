@@ -1424,7 +1424,9 @@ MonoBehaviour:
   airborneXZSpeed: 5
   checkDistance: 1
   sprintSpeed: 10
+  toggleSprint: 1
   crouchSpeed: 2
+  toggleCrouch: 1
   attackDamage: 10
 --- !u!114 &6765129139771697682
 MonoBehaviour:

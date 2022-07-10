@@ -186,7 +186,7 @@ namespace LightPat.Core
 
             if (!audioSrc.isPlaying & rb.velocity.magnitude > 3 & moveInput != Vector2.zero)
             {
-                StartCoroutine(PlayFootstep());
+                //StartCoroutine(PlayFootstep());
             }
 
             // Falling Gravity velocity increase

@@ -1302,7 +1302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8f3a44fbe13a984f879b56c5d1020da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 4121916138064900998}
+  target: {fileID: 1077571439060688217}
   rotationSpeed: 300
   UpdateRotation: 0
 --- !u!1 &6765129139771697679
@@ -1415,7 +1415,7 @@ MonoBehaviour:
   footstepDetectionRadius: 10
   walkingSpeed: 5
   sensitivity: 0.2
-  verticalLookBound: 90
+  verticalLookBound: 65
   reach: 4
   jumpHeight: 5
   fallingGravityScale: 0.5
@@ -2129,9 +2129,9 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 69332d3220d765e4187c15b8f9e23d84, type: 3}
   m_PrefabInstance: {fileID: 6717997624400672333}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &4121916138064900998 stripped
+--- !u!4 &1077571439060688217 stripped
 Transform:
-  m_CorrespondingSourceObject: {fileID: 7208261743932278219, guid: 69332d3220d765e4187c15b8f9e23d84, type: 3}
+  m_CorrespondingSourceObject: {fileID: 6039136598254185236, guid: 69332d3220d765e4187c15b8f9e23d84, type: 3}
   m_PrefabInstance: {fileID: 6717997624400672333}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &5907164630393604892 stripped

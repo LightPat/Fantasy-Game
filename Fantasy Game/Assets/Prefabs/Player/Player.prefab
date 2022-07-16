@@ -1412,6 +1412,7 @@ MonoBehaviour:
   equippedWeapon: {fileID: 0}
   firstPersonCamera: {fileID: 1984222143}
   thirdPersonCamera: {fileID: 6765129141794934313}
+  playerModel: {fileID: 6535187343315079590}
   footstepDetectionRadius: 10
   walkingSpeed: 5
   sensitivity: 0.2

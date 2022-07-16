@@ -13,6 +13,7 @@ namespace LightPat.Core
     {
         [Header("Object Assignments")]
         public Transform verticalRotate;
+        public Transform playerModel;
         public GameObject crosshair;
         public GameObject escapeMenu;
         public GameObject inventoryPrefab;
@@ -153,6 +154,55 @@ namespace LightPat.Core
                     animator.SetFloat("LandingSpeed", rb.velocity.y);
                 }
             }
+
+            // Decode move input into a direction for animator
+            // Forwards == 0
+            // Right == 1
+            // Backwards == 2
+            // Left == 3
+            if (moveInput == new Vector2(1, 0))
+            {
+                animator.SetInteger("Direction", 1); // right
+            }
+            else if (moveInput == new Vector2(-1, 0))
+            {
+                animator.SetInteger("Direction", 3); // left
+            }
+            else if (moveInput.y > 0)
+            {
+                animator.SetInteger("Direction", 0); // forwards
+            }
+            else if (moveInput.y < 0)
+            {
+                animator.SetInteger("Direction", 2); // backwards
+            }
+
+            float interpSpeed = 0.05f;
+            // Rotate the player model based on the direction of the moveInput vector when pressing two keys at the same time
+            if (Vector2.Distance(moveInput, new Vector2(0.7f, 0.7f)) < 0.1)
+            {
+                // forward - right
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, 45, 0), interpSpeed);
+            }
+            else if (Vector2.Distance(moveInput, new Vector2(-0.7f, 0.7f)) < 0.1)
+            {
+                // forward - left
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, -45, 0), interpSpeed);
+            }
+            else if (Vector2.Distance(moveInput, new Vector2(0.7f, -0.7f)) < 0.1)
+            {
+                // backward - right
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, -45, 0), interpSpeed);
+            }
+            else if (Vector2.Distance(moveInput, new Vector2(-0.7f, -0.7f)) < 0.1)
+            {
+                // backward - left
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, 45, 0), interpSpeed);
+            }
+            else
+            {
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.identity, interpSpeed);
+            }
         }
 
         void FixedUpdate()
@@ -182,34 +232,6 @@ namespace LightPat.Core
                 moveForce.x -= rb.velocity.x;
                 moveForce.z -= rb.velocity.z;
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
-
-                // Decode move input into a direction
-                // Forwards == 0
-                // Right == 1
-                // Backwards == 2
-                // Left == 3
-                if (moveInput == new Vector2(0, 1))
-                {
-                    animator.SetInteger("Direction", 0); // forwards
-                }
-                else if (moveInput == new Vector2(1, 0))
-                {
-                    animator.SetInteger("Direction", 1); // right
-                }
-                else if (moveInput == new Vector2(0, -1))
-                {
-                    animator.SetInteger("Direction", 2); // backwards
-                }
-                else if (moveInput == new Vector2(-1, 0))
-                {
-                    animator.SetInteger("Direction", 3); // left
-                }
-                else
-                {
-                    animator.SetInteger("Direction", 0);
-                }
-
-                // Need to account for holding two keys at the same time
             }
 
             if (!audioSrc.isPlaying & rb.velocity.magnitude > 3 & moveInput != Vector2.zero)

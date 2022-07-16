@@ -1406,13 +1406,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verticalRotate: {fileID: 6765129141194256265}
+  playerModel: {fileID: 6535187343315079590}
   crosshair: {fileID: 6765129140371477272}
   escapeMenu: {fileID: 7261538855375635446, guid: 28e6f708d26a6eb4e8bdc88b90ceb96d, type: 3}
   inventoryPrefab: {fileID: 3796279741549607518, guid: 36e75a8d8c990124b85798f499c524d9, type: 3}
   equippedWeapon: {fileID: 0}
   firstPersonCamera: {fileID: 1984222143}
   thirdPersonCamera: {fileID: 6765129141794934313}
-  playerModel: {fileID: 6535187343315079590}
   footstepDetectionRadius: 10
   walkingSpeed: 5
   sensitivity: 0.2
@@ -1426,7 +1426,7 @@ MonoBehaviour:
   checkDistance: 1
   sprintSpeed: 10
   toggleSprint: 1
-  crouchSpeed: 2
+  crouchSpeed: 3
   toggleCrouch: 1
   attackDamage: 10
 --- !u!114 &6765129139771697682

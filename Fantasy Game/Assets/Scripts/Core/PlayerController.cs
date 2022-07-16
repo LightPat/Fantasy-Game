@@ -182,6 +182,34 @@ namespace LightPat.Core
                 moveForce.x -= rb.velocity.x;
                 moveForce.z -= rb.velocity.z;
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
+
+                // Decode move input into a direction
+                // Forwards == 0
+                // Right == 1
+                // Backwards == 2
+                // Left == 3
+                if (moveInput == new Vector2(0, 1))
+                {
+                    animator.SetInteger("Direction", 0); // forwards
+                }
+                else if (moveInput == new Vector2(1, 0))
+                {
+                    animator.SetInteger("Direction", 1); // right
+                }
+                else if (moveInput == new Vector2(0, -1))
+                {
+                    animator.SetInteger("Direction", 2); // backwards
+                }
+                else if (moveInput == new Vector2(-1, 0))
+                {
+                    animator.SetInteger("Direction", 3); // left
+                }
+                else
+                {
+                    animator.SetInteger("Direction", 0);
+                }
+
+                // Need to account for holding two keys at the same time
             }
 
             if (!audioSrc.isPlaying & rb.velocity.magnitude > 3 & moveInput != Vector2.zero)

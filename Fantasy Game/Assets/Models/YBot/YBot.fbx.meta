@@ -614,6 +614,13 @@ ModelImporter:
         messageOptions: 0
       - time: 0.5103448
         functionName: LockMovementEvent
+        data: 0 null
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 1
+        functionName: LockMovementEvent
         data: null null
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0

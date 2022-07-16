@@ -260,6 +260,7 @@ namespace LightPat.Core
             audioSrc.Pause();
         }
 
+        // The formatting is: speedTarget (null, 0, Walk, or Sprint) lockMoveInput (null or two values to represent a vector2 input)
         public void LockMovementEvent(string parameters)
         {
             string[] subs = parameters.Split(' ');
@@ -291,6 +292,7 @@ namespace LightPat.Core
             }
         }
 
+        // 1 means rotate with bone, 0 means rotate with mouse input
         public void RotateCameraWithBoneEvent(int value)
         {
             if (value == 1) // Start updating rotation, disable look input
@@ -385,11 +387,11 @@ namespace LightPat.Core
                 // This fixes spacebar spamming adding too much force on jump
                 if (jumpRunning) { return; }
 
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | animator.GetCurrentAnimatorStateInfo(0).IsName("Standing_Idle")) // If we are walking or standing still
+                if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Walking") | animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle")) // If we are walking or standing still
                 {
                     StartCoroutine(IdleJump());
                 }
-                else if (animator.GetCurrentAnimatorStateInfo(0).IsName("Run") & !animator.GetBool("Crouching")) // If we are running, but not sliding
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running") & !animator.GetBool("Crouching")) // If we are running, but not sliding
                 {
                     StartCoroutine(RunningJump());
                 }

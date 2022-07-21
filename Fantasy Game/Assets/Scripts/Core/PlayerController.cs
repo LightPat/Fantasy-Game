@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.Animations.Rigging;
 
 namespace LightPat.Core
 {
@@ -17,6 +18,7 @@ namespace LightPat.Core
         public GameObject crosshair;
         public GameObject escapeMenu;
         public GameObject inventoryPrefab;
+        [HideInInspector]
         public GameObject equippedWeapon;
 
         [Header("Switch Cameras")]
@@ -339,6 +341,9 @@ namespace LightPat.Core
 
         [Header("Interact Settings")]
         public float reach = 4f;
+        public Transform weaponParent;
+        public TwoBoneIKConstraint rightHand;
+        public TwoBoneIKConstraint leftHand;
         void OnInteract()
         {
             RaycastHit hit;
@@ -356,10 +361,14 @@ namespace LightPat.Core
                     if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
 
                     equippedWeapon = hit.transform.gameObject;
-                    equippedWeapon.transform.SetParent(transform);
-                    equippedWeapon.transform.localPosition += equippedWeapon.transform.GetComponent<Weapon>().offset;
-                    equippedWeapon.transform.GetComponentInChildren<Collider>().enabled = false;
-                    Destroy(equippedWeapon.transform.GetComponent<Rigidbody>());
+                    //equippedWeapon.transform.GetComponentInChildren<Collider>().enabled = false;
+                    Destroy(equippedWeapon.GetComponent<Rigidbody>());
+                    equippedWeapon.transform.SetParent(weaponParent);
+                    equippedWeapon.transform.localRotation = Quaternion.identity;
+                    equippedWeapon.transform.localPosition = equippedWeapon.GetComponent<Weapon>().offset;
+                    rightHand.data.target = equippedWeapon.transform.Find("ref_right_hand_grip");
+                    leftHand.data.target = equippedWeapon.transform.Find("ref_left_hand_grip");
+                    GetComponent<RigBuilder>().Build();
                 }
             }
         }

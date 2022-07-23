@@ -1,21 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-namespace LightPat
+namespace LightPat.ProceduralAnimations
 {
     public class ProceduralAnimationController : MonoBehaviour
     {
-        // Start is called before the first frame update
-        void Start()
-        {
-        
-        }
+        public float moveSpeed;
 
-        // Update is called once per frame
         void Update()
         {
-        
+            transform.Translate(new Vector3(moveInput.x, 0, moveInput.y) * moveSpeed);
+        }
+
+        private Vector2 moveInput;
+        void OnMove(InputValue value)
+        {
+            moveInput = value.Get<Vector2>();
         }
     }
 }

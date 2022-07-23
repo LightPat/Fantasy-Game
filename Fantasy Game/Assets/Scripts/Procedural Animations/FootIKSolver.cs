@@ -12,6 +12,8 @@ namespace LightPat.ProceduralAnimations
         public float lerpSpeed;
         public float stepHeight;
 
+        public FootIKSolver otherFoot;
+
         private float lerpProgress;
         private Vector3 newPosition;
         private Vector3 currentPosition;
@@ -33,14 +35,12 @@ namespace LightPat.ProceduralAnimations
             // If there is ground below a new step
             if (Physics.Raycast(rootBone.position + (rootBone.right * footSpacing), Vector3.down, out hit, 10, LayerMask.NameToLayer("Player")))
             {
-                if (Vector3.Distance(newPosition, hit.point) > stepDistance)
+                if (Vector3.Distance(newPosition, hit.point) > stepDistance & !otherFoot.IsMoving())
                 {
                     lerpProgress = 0;
                     newPosition = hit.point;
                 }
             }
-
-            Debug.Log(lerpProgress);
 
             if (lerpProgress < 1)
             {
@@ -57,10 +57,9 @@ namespace LightPat.ProceduralAnimations
             }
         }
 
-        private void OnDrawGizmos()
+        public bool IsMoving()
         {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(newPosition, 0.2f);
+            return lerpProgress < 1;
         }
     }
 }

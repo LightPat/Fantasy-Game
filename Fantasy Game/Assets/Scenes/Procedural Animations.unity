@@ -271,7 +271,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 524555557}
-  - component: {fileID: 524555558}
   m_Layer: 7
   m_Name: RightLegIK_target
   m_TagString: Untagged
@@ -293,23 +292,6 @@ Transform:
   m_Father: {fileID: 66465851}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &524555558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 524555556}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69f3613730e13ac4e833bdeb5be46966, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rootBone: {fileID: 1262575657}
-  footSpacing: 0.2
-  stepDistance: 0.2
-  lerpSpeed: 3
-  stepHeight: 0.7
 --- !u!4 &529770746 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -6874584590210671055, guid: c13324d3be0ef6049a3e84557ed95bf5, type: 3}
@@ -1042,9 +1024,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rootBone: {fileID: 1262575657}
   footSpacing: -0.2
-  stepDistance: 0.5
-  lerpSpeed: 3
-  stepHeight: 3
+  stepDistance: 0.7
+  lerpSpeed: 5
+  stepHeight: 0.5
 --- !u!1 &1262575656 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1082271958561512970, guid: c13324d3be0ef6049a3e84557ed95bf5, type: 3}

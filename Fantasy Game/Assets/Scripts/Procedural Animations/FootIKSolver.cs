@@ -12,45 +12,49 @@ namespace LightPat.ProceduralAnimations
         public float lerpSpeed;
         public float stepHeight;
 
-        public float progress;
-
+        private float lerpProgress;
         private Vector3 newPosition;
+        private Vector3 currentPosition;
         private Vector3 oldPosition;
 
         private void Start()
         {
+            currentPosition = transform.position;
             newPosition = transform.position;
-            oldPosition = Vector3.forward;
+            oldPosition = transform.position;
         }
 
         private void Update()
         {
+            transform.position = currentPosition;
+
+            // Root transform moves
             RaycastHit hit;
-            // If there is ground below us, assign target position to be that ground
-            if (Physics.Raycast(rootBone.position + (rootBone.right * footSpacing), Vector3.down, out hit, LayerMask.NameToLayer("Player")))
+            // If there is ground below a new step
+            if (Physics.Raycast(rootBone.position + (rootBone.right * footSpacing), Vector3.down, out hit, 10, LayerMask.NameToLayer("Player")))
             {
-                if (Vector3.Distance(transform.position, hit.point) > stepDistance)
+                if (Vector3.Distance(newPosition, hit.point) > stepDistance)
                 {
+                    lerpProgress = 0;
                     newPosition = hit.point;
                 }
             }
 
-            // Change back to lerp
-            Vector3 interpolatedPosition = Vector3.MoveTowards(transform.position, newPosition, lerpSpeed * Time.deltaTime);
+            Debug.Log(lerpProgress);
 
-            // Get distance between oldPosition and newPosition
-            // Get the percentage along we are, so it is the distance between transform.position and newPosition / #1
-            //float progress = 1 - Vector3.Distance(transform.position, newPosition) / Vector3.Distance(oldPosition, newPosition);
-            //Debug.Log(progress);
-            interpolatedPosition.y += Mathf.Sin(progress * Mathf.PI) * stepHeight;
+            if (lerpProgress < 1)
+            {
+                Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, lerpProgress);
+                interpolatedPosition.y += Mathf.Sin(lerpProgress * Mathf.PI) * stepHeight;
 
-            //if (progress < 0.5)
-            //{
-            //    oldPosition = transform.position;
-            //}
+                currentPosition = interpolatedPosition;
 
-
-            transform.position = interpolatedPosition;
+                lerpProgress += Time.deltaTime * lerpSpeed;
+            }
+            else
+            {
+                oldPosition = newPosition;
+            }
         }
 
         private void OnDrawGizmos()

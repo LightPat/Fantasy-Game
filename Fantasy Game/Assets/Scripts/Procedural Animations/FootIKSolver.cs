@@ -7,11 +7,10 @@ namespace LightPat.ProceduralAnimations
     public class FootIKSolver : MonoBehaviour
     {
         public Transform rootBone;
-        public float footSpacing;
-        public float stepDistance;
-        public float lerpSpeed;
-        public float stepHeight;
-
+        public float footSpacing = 0.2f;
+        public float stepDistance = 0.7f;
+        public float lerpSpeed = 5;
+        public float stepHeight = 0.5f;
         public FootIKSolver otherFoot;
 
         private float lerpProgress;

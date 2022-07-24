@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Skin
-    second: {fileID: 2100000, guid: b42797e58c1884840b35b90dc4d95f8d, type: 2}
+    second: {fileID: 2100000, guid: 98a8a9898d41f4541981e99d9aa984e0, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -91,7 +91,7 @@ ModelImporter:
     legStretch: 0.05
     feetSpacing: 0
     globalScale: 1
-    rootMotionBoneName: Armature
+    rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1

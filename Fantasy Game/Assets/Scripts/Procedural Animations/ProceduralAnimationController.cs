@@ -7,7 +7,7 @@ namespace LightPat.ProceduralAnimations
 {
     public class ProceduralAnimationController : MonoBehaviour
     {
-        public float moveSpeed;
+        public float moveSpeed = 0.05f;
 
         void Update()
         {

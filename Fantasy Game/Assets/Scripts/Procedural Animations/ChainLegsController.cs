@@ -45,15 +45,5 @@ namespace LightPat.ProceduralAnimations
         {
 
         }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-
-            foreach (Transform t in legSet1)
-            {
-                Gizmos.DrawSphere(t.position, 0.5f);
-            }
-        }
     }
 }

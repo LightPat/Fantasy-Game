@@ -361,15 +361,30 @@ namespace LightPat.Core
                     if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
 
                     equippedWeapon = hit.transform.gameObject;
-                    //equippedWeapon.transform.GetComponentInChildren<Collider>().enabled = false;
-                    Destroy(equippedWeapon.GetComponent<Rigidbody>());
-                    equippedWeapon.transform.SetParent(weaponParent);
-                    equippedWeapon.transform.localRotation = Quaternion.identity;
-                    equippedWeapon.transform.localPosition = equippedWeapon.GetComponent<Weapon>().offset;
+                    ////equippedWeapon.transform.GetComponentInChildren<Collider>().enabled = false;
+                    //Destroy(equippedWeapon.GetComponent<Rigidbody>());
+                    //equippedWeapon.transform.SetParent(weaponParent);
+                    //equippedWeapon.transform.localRotation = Quaternion.identity;
+                    //equippedWeapon.transform.localPosition = equippedWeapon.GetComponent<Weapon>().offset;
+
+
+
                     rightHand.data.target = equippedWeapon.transform.Find("ref_right_hand_grip");
                     leftHand.data.target = equippedWeapon.transform.Find("ref_left_hand_grip");
                     GetComponent<RigBuilder>().Build();
+                    StartCoroutine(PickUpWeapon());
                 }
+            }
+        }
+
+        private IEnumerator PickUpWeapon()
+        {
+            rightHand.weight = 0;
+
+            while (rightHand.weight != 1)
+            {
+                rightHand.weight += 0.1f;
+                yield return new WaitForEndOfFrame();
             }
         }
 

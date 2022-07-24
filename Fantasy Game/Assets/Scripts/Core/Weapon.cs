@@ -9,5 +9,13 @@ namespace LightPat
         public Vector3 offset;
         public sbyte[] idealPersonality;
         public int baseDamage;
+
+        private void Update()
+        {
+            if (transform.parent != null)
+            {
+                transform.localPosition = offset;
+            }
+        }
     }
 }

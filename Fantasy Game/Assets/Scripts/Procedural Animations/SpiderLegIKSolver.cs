@@ -13,9 +13,9 @@ namespace LightPat.ProceduralAnimations
         [HideInInspector] public float stepDistance;
         [HideInInspector] public float lerpSpeed;
         [HideInInspector] public float stepHeight;
+        public SpiderLegIKSolver correspondingLegTarget;
 
         public bool permissionToMove = true;
-        public bool headLeg = false;
 
         private float lerpProgress;
         private Vector3 newPosition;
@@ -50,6 +50,10 @@ namespace LightPat.ProceduralAnimations
                 {
                     lerpProgress = 0;
                     newPosition = hit.point;
+                    if (correspondingLegTarget.transform.position.z > transform.position.z)
+                    {
+                        newPosition.z += 1;
+                    }
                 }
             }
 
@@ -67,20 +71,17 @@ namespace LightPat.ProceduralAnimations
                 oldPosition = newPosition;
             }
 
-            //if (headLeg)
-            //{
-                // If we are moving
-                if (currentMovingState)
+            // If we are moving
+            if (currentMovingState)
+            {
+                // and we are stopping moving on this frame
+                if (currentMovingState != IsMoving())
                 {
-                    // and we are stopping moving on this frame
-                    if (currentMovingState != IsMoving())
-                    {
-                        // Send message to controller here to switch
-                        controller.switchTrigger = true;
-                        // Problems could arise here if multiple legs call for a switch at different times
-                    }
+                    // Send message to controller here to switch
+                    controller.switchTrigger = true;
+                    // Problems could arise here if multiple legs call for a switch at different times
                 }
-            //}
+            }
             
             currentMovingState = IsMoving();
         }

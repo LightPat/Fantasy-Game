@@ -6,13 +6,10 @@ namespace LightPat.ProceduralAnimations
 {
     public class SpiderLegIKSolver : MonoBehaviour
     {
-        [HideInInspector] public Transform rootBone;
+        // Assigned from SpiderLegsController Script
         [HideInInspector] public SpiderLegsController controller;
         public float rightAxisFootSpacing;
         public float forwardAxisFootSpacing;
-        [HideInInspector] public float stepDistance;
-        [HideInInspector] public float lerpSpeed;
-        [HideInInspector] public float stepHeight;
         public SpiderLegIKSolver correspondingLegTarget;
 
         public bool permissionToMove = true;
@@ -32,11 +29,8 @@ namespace LightPat.ProceduralAnimations
             currentPosition = transform.position;
             newPosition = transform.position;
             oldPosition = transform.position;
-
-            currentMovingState = permissionToMove;
         }
 
-        private bool currentMovingState;
         private void Update()
         {
             transform.position = currentPosition;
@@ -44,46 +38,38 @@ namespace LightPat.ProceduralAnimations
             // Root transform moves
             RaycastHit hit;
             // If there is ground below a new step
-            if (Physics.Raycast(rootBone.position + (rootBone.right * rightAxisFootSpacing) + (rootBone.forward * forwardAxisFootSpacing), Vector3.down, out hit, 10, LayerMask.NameToLayer("Player")))
+            if (Physics.Raycast(controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1)),
+                Vector3.down, out hit, 10, LayerMask.NameToLayer("Player")))
             {
-                if (Vector3.Distance(newPosition, hit.point) > stepDistance & permissionToMove)
+                if (Vector3.Distance(newPosition, hit.point) > controller.stepDistance & permissionToMove)
                 {
                     lerpProgress = 0;
                     newPosition = hit.point;
+                    // This is supposed to solve walking in front of each leg
                     if (correspondingLegTarget.transform.position.z > transform.position.z)
                     {
                         newPosition.z += 1;
                     }
                 }
             }
+            else
+            {
+                currentPosition = controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * forwardAxisFootSpacing) + (controller.rootBone.up * -3);
+            }
 
             if (lerpProgress < 1)
             {
                 Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, lerpProgress);
-                interpolatedPosition.y += Mathf.Sin(lerpProgress * Mathf.PI) * stepHeight;
+                interpolatedPosition.y += Mathf.Sin(lerpProgress * Mathf.PI) * controller.stepHeight;
 
                 currentPosition = interpolatedPosition;
 
-                lerpProgress += Time.deltaTime * lerpSpeed;
+                lerpProgress += Time.deltaTime * controller.lerpSpeed;
             }
             else
             {
                 oldPosition = newPosition;
             }
-
-            // If we are moving
-            if (currentMovingState)
-            {
-                // and we are stopping moving on this frame
-                if (currentMovingState != IsMoving())
-                {
-                    // Send message to controller here to switch
-                    controller.switchTrigger = true;
-                    // Problems could arise here if multiple legs call for a switch at different times
-                }
-            }
-            
-            currentMovingState = IsMoving();
         }
 
         public bool IsMoving()

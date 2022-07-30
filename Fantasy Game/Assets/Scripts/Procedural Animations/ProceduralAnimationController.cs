@@ -7,13 +7,17 @@ namespace LightPat.ProceduralAnimations
 {
     public class ProceduralAnimationController : MonoBehaviour
     {
+        public bool move;
         public float moveSpeed = 0.05f;
         public bool addForce;
-        public bool move;
         public Vector3 moveVector;
+        public bool addTorque;
+        public Vector3 torqueVector;
 
         void Update()
         {
+            //GetComponent<Rigidbody>().Sleep();
+            //Debug.Log(GetComponent<Rigidbody>().IsSleeping());
             if (move)
             {
                 transform.Translate(transform.forward * moveSpeed);
@@ -28,15 +32,12 @@ namespace LightPat.ProceduralAnimations
                 Vector3 moveForce = moveVector;
                 moveForce.x -= rb.velocity.x;
                 moveForce.z -= rb.velocity.z;
-                if (moveForce.x < 0)
-                {
-                    moveForce.x = 0;
-                }
-                if (moveForce.z < 0)
-                {
-                    moveForce.z = 0;
-                }
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
+            }
+
+            if (addTorque)
+            {
+                GetComponent<Rigidbody>().AddTorque(torqueVector, ForceMode.VelocityChange);
             }
         }
 

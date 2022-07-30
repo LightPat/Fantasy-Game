@@ -9,7 +9,6 @@ namespace LightPat.ProceduralAnimations
     public class SpiderLegsController : MonoBehaviour
     {
         public Transform rootBone;
-
         [Header("Animation Settings")]
         public float stepDistance;
         public float lerpSpeed;
@@ -39,10 +38,14 @@ namespace LightPat.ProceduralAnimations
                         if (counter == 0)
                         {
                             legSet1[i] = twoBoneConstraint.data.target.GetComponent<SpiderLegIKSolver>();
+                            legSet1[i].controller = this;
+                            legSet1[i].permissionToMove = true;
                         }
                         else
                         {
                             legSet2[i] = twoBoneConstraint.data.target.GetComponent<SpiderLegIKSolver>();
+                            legSet2[i].controller = this;
+                            legSet2[i].permissionToMove = true;
                         }
                         i++;
                     }
@@ -54,66 +57,45 @@ namespace LightPat.ProceduralAnimations
                 counter++;
             }
 
-            // Apply animation settings to both leg sets, and set legset1 to be able to move
-            foreach (SpiderLegIKSolver leg in legSet1)
-            {
-                leg.controller = this;
-                leg.rootBone = rootBone;
-                leg.stepDistance = stepDistance;
-                leg.lerpSpeed = lerpSpeed;
-                leg.stepHeight = stepHeight;
-                leg.permissionToMove = true;
-            }
             set1Moving = true;
-
-            foreach (SpiderLegIKSolver leg in legSet2)
-            {
-                leg.controller = this;
-                leg.rootBone = rootBone;
-                leg.stepDistance = stepDistance;
-                leg.lerpSpeed = lerpSpeed;
-                leg.stepHeight = stepHeight;
-                leg.permissionToMove = false;
-            }
             set2Moving = false;
         }
 
-        [HideInInspector]public bool switchTrigger;
         private bool set1Moving;
         private bool set2Moving;
 
         private void Update()
         {
-            if (switchTrigger)
+            // Switch legs that are moving
+            if (set1Moving != legSet1[0].IsMoving())
             {
-                if (set1Moving)
+                foreach (SpiderLegIKSolver leg in legSet2)
                 {
-                    set2Moving = true;
-                    set1Moving = false;
-                    foreach (SpiderLegIKSolver leg in legSet2)
-                    {
-                        leg.permissionToMove = true;
-                    }
-                    foreach (SpiderLegIKSolver leg in legSet1)
-                    {
-                        leg.permissionToMove = false;
-                    }
+                    leg.permissionToMove = true;
                 }
-                else if (set2Moving)
+                foreach (SpiderLegIKSolver leg in legSet1)
                 {
-                    set1Moving = true;
-                    set2Moving = false;
-                    foreach (SpiderLegIKSolver leg in legSet1)
-                    {
-                        leg.permissionToMove = true;
-                    }
-                    foreach (SpiderLegIKSolver leg in legSet2)
-                    {
-                        leg.permissionToMove = false;
-                    }
+                    leg.permissionToMove = false;
                 }
-                switchTrigger = false;
+                set2Moving = true;
+                set1Moving = false;
             }
+            else if (set2Moving != legSet2[0].IsMoving())
+            {
+                foreach (SpiderLegIKSolver leg in legSet1)
+                {
+                    leg.permissionToMove = true;
+                }
+                foreach (SpiderLegIKSolver leg in legSet2)
+                {
+                    leg.permissionToMove = false;
+                }
+                set1Moving = true;
+                set2Moving = false;
+            }
+
+            // Calcualate main body rotation depending on height of legs
+
         }
     }
 }

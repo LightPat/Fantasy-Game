@@ -9,20 +9,28 @@ namespace LightPat.ProceduralAnimations
     public class SpiderLegsController : MonoBehaviour
     {
         public Transform rootBone;
+        [HideInInspector] public SpiderPhysics physics;
         [Header("Animation Settings")]
         public float stepDistance;
-        public float lerpSpeed;
         public float stepHeight;
+        public float xAxisBodyRotationMultiplier;
+        public float yAxisBodyRotationMultiplier;
+        public float zAxisBodyRotationMultiplier;
 
         private RigBuilder rigBuilder;
         private SpiderLegIKSolver[] legSet1;
         private SpiderLegIKSolver[] legSet2;
+        private float[] previousHeights;
+        private float[] heightDifferences;
 
         private void Start()
         {
+            physics = GetComponentInParent<SpiderPhysics>();
             rigBuilder = GetComponent<RigBuilder>();
             legSet1 = new SpiderLegIKSolver[4];
             legSet2 = new SpiderLegIKSolver[4];
+            previousHeights = new float[legSet1.Length + legSet2.Length];
+            heightDifferences = new float[legSet1.Length + legSet2.Length];
 
             // Get references to each legIKSolver
             int counter = 0;
@@ -51,7 +59,7 @@ namespace LightPat.ProceduralAnimations
                     }
                     else
                     {
-                        Debug.Log(constraint.component + " is not a TwoBoneIKConstraint, so it will be ignored");
+                        Debug.LogWarning(constraint.component + " is not a TwoBoneIKConstraint, so it will be ignored");
                     }
                 }
                 counter++;
@@ -63,7 +71,6 @@ namespace LightPat.ProceduralAnimations
 
         private bool set1Moving;
         private bool set2Moving;
-
         private void Update()
         {
             // Switch legs that are moving
@@ -95,7 +102,31 @@ namespace LightPat.ProceduralAnimations
             }
 
             // Calcualate main body rotation depending on height of legs
+            // Get average height difference of each leg between this frame and last frame
+            // Then scale that difference to create the spider bodies rotation
+            int heightIterator = 0;
+            foreach (SpiderLegIKSolver leg in legSet1)
+            {
+                // Get height difference
+                heightDifferences[heightIterator] = leg.transform.localPosition.y - previousHeights[heightIterator];
+                // Assign new previous frame height
+                previousHeights[heightIterator] = leg.transform.localPosition.y;
+                heightIterator++;
+            }
 
+            foreach (SpiderLegIKSolver leg in legSet2)
+            {
+                heightDifferences[heightIterator] = leg.transform.localPosition.y - previousHeights[heightIterator];
+                previousHeights[heightIterator] = leg.transform.localPosition.y;
+                heightIterator++;
+            }
+
+            // If we are not airborne, and we are landing
+            if (!physics.airborne & !physics.landing)
+            {
+                float average = heightDifferences.Average();
+                transform.Rotate(average * xAxisBodyRotationMultiplier, average * yAxisBodyRotationMultiplier, average * zAxisBodyRotationMultiplier);
+            }
         }
     }
 }

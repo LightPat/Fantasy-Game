@@ -24,8 +24,6 @@ namespace LightPat.EnemyAI
         private bool lookingAround = true;
         public Transform target;
         private Rigidbody rb;
-        private RaycastHit visionHit;
-        private bool visionBHit;
         private bool radiusBHit;
 
         private void Start()
@@ -40,19 +38,29 @@ namespace LightPat.EnemyAI
             if (target == null)
             {
                 // If we don't have a target check a raycast
-                visionBHit = Physics.Raycast(transform.position, transform.forward, out visionHit, visionDistance);
+                RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.forward, visionDistance);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
-                if (visionBHit)
+                foreach (RaycastHit hit in allHits)
                 {
-                    if (visionHit.transform.GetComponent<PlayerController>() | visionHit.transform.GetComponent<Friendly>())
+                    if (hit.transform.gameObject == gameObject)
                     {
-                        target = visionHit.transform;
+                        continue;
                     }
+
+                    if (hit.transform.GetComponent<PlayerController>() | hit.transform.GetComponent<Friendly>())
+                    {
+                        target = hit.transform;
+                    }
+                    break;
                 }
             }
             else
             {
-                Attack();
+                if (Vector3.Distance(target.position, transform.position) < attackReach)
+                {
+                    Attack();
+                }
             }
         }
 
@@ -127,9 +135,12 @@ namespace LightPat.EnemyAI
                     return;
                 }
 
-                Quaternion chaseRotation = Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(target.position - transform.position), chaseRotationSpeed);
-                chaseRotation = Quaternion.Euler(0, chaseRotation.eulerAngles.y, 0);
-                rb.MoveRotation(chaseRotation);
+                if (target.position - transform.position != Vector3.zero)
+                {
+                    Quaternion chaseRotation = Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(target.position - transform.position), chaseRotationSpeed);
+                    chaseRotation = Quaternion.Euler(0, chaseRotation.eulerAngles.y, 0);
+                    rb.MoveRotation(chaseRotation);
+                }
             }
         }
 
@@ -187,7 +198,7 @@ namespace LightPat.EnemyAI
 
         void OnAttacked(GameObject attacker)
         {
-            Debug.Log("I'm being attacked by: " + attacker);
+            Debug.Log(name + " is being attacked by: " + attacker);
             target = attacker.transform;
         }
     }

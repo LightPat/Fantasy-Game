@@ -17,16 +17,23 @@ namespace LightPat.Core
         {
             if (!allowAttack) { return; }
 
-            RaycastHit hit;
-            bool bHit = Physics.Raycast(transform.position, transform.forward, out hit, attackReach);
+            // If we don't have a target check a raycast
+            RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.forward, attackReach);
+            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
-            if (bHit)
+            foreach (RaycastHit hit in allHits)
             {
+                if (hit.transform.gameObject == gameObject)
+                {
+                    continue;
+                }
+
                 if (hit.transform.GetComponent<Attributes>())
                 {
                     hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                     StartCoroutine(AttackCooldown());
                 }
+                break;
             }
         }
 

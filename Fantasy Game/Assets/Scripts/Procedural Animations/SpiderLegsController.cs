@@ -16,6 +16,9 @@ namespace LightPat.ProceduralAnimations
         public float xAxisBodyRotationMultiplier;
         public float yAxisBodyRotationMultiplier;
         public float zAxisBodyRotationMultiplier;
+        public float lerpSpeedMultiplier;
+        public float angularLerpSpeedMultiplier;
+        public float minimumLerpSpeed;
 
         private RigBuilder rigBuilder;
         private SpiderLegIKSolver[] legSet1;

@@ -560,13 +560,16 @@ namespace LightPat.Core
                     else
                     {
                         animator.SetBool("Crouching", true);
-                        if (currentSpeedTarget == sprintSpeed)
+                        // If sprint is active, and we are only holding W
+                        if (currentSpeedTarget == sprintSpeed & moveInput.y == 1)
                         {
                             StartCoroutine(Slide());
                             return;
                         }
-
-                        currentSpeedTarget = crouchSpeed;
+                        else
+                        {
+                            currentSpeedTarget = crouchSpeed;
+                        }
                     }
                 }
             }

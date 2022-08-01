@@ -2,26 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LightPat.Core;
+using UnityEditor;
 
 namespace LightPat.EnemyAI
 {
-    public class ForestMonster : Enemy
+    public class RoamingMonster : Enemy
     {
         [Header("Chase Settings")]
-        public float visionDistance = 10f;
-        public float chaseSpeed = 3f;
-        public float maxChaseDistance = 15f;
-        public float stopDistance = 2f;
-        public float chaseRotationSpeed = 5f;
+        public float visionDistance;
+        public float chaseSpeed;
+        public float maxChaseDistance;
+        public float stopDistance;
+        public float chaseRotationSpeed;
         [Header("Roam Settings")]
-        public float roamRadius = 50f;
-        public float roamSpeed = 2f;
-        public float roamingRotationSpeed = 4f;
+        public float roamRadius;
+        public float roamSpeed;
+        public float roamingRotationSpeed;
 
         private Vector3 startingPosition;
         private Vector3 roamingPosition;
         private bool lookingAround = true;
-        private Transform target;
+        public Transform target;
         private Rigidbody rb;
         private RaycastHit visionHit;
         private bool visionBHit;
@@ -51,16 +52,6 @@ namespace LightPat.EnemyAI
             }
             else
             {
-                // If the target is super far away, stop following it
-                if (Vector3.Distance(target.position, transform.position) > maxChaseDistance)
-                {
-                    target = null;
-                    return;
-                }
-
-                Quaternion chaseRotation = Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(target.position - transform.position), chaseRotationSpeed);
-                chaseRotation = Quaternion.Euler(0, chaseRotation.eulerAngles.y, 0);
-                rb.MoveRotation(chaseRotation);
                 Attack();
             }
         }
@@ -83,12 +74,20 @@ namespace LightPat.EnemyAI
                 }
                 else if (Vector3.Distance(transform.position, roamingPosition) > 1) // If we haven't reached our roaming position yet
                 {
-                    Vector3 moveForce = transform.forward * roamSpeed;
-                    rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), roamingRotationSpeed));
-                    moveForce.x -= rb.velocity.x;
-                    moveForce.z -= rb.velocity.z;
-                    moveForce.y = 0;
-                    rb.AddForce(moveForce, ForceMode.VelocityChange);
+                    if (!rb.isKinematic)
+                    {
+                        Vector3 moveForce = transform.forward * roamSpeed;
+                        rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), roamingRotationSpeed));
+                        moveForce.x -= rb.velocity.x;
+                        moveForce.z -= rb.velocity.z;
+                        moveForce.y = 0;
+                        rb.AddForce(moveForce, ForceMode.VelocityChange);
+                    }
+                    else
+                    {
+                        rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), roamingRotationSpeed));
+                        rb.MovePosition(rb.position + (Time.fixedDeltaTime * roamSpeed * transform.forward));
+                    }
                 }
                 else // Once we've reached our roaming position, get a new one
                 {
@@ -108,13 +107,29 @@ namespace LightPat.EnemyAI
                 // If we are not right next to the target, move toward it
                 if (Vector3.Distance(target.position, transform.position) > stopDistance)
                 {
-                    Vector3 moveForce = transform.forward * chaseSpeed;
-                    moveForce.x -= rb.velocity.x;
-                    moveForce.z -= rb.velocity.z;
-                    // Never let the rigidbody jump when chasing a player
-                    moveForce.y = 0;
-                    rb.AddForce(moveForce, ForceMode.VelocityChange);
+                    if (!rb.isKinematic)
+                    {
+                        Vector3 moveForce = transform.forward * chaseSpeed;
+                        moveForce.x -= rb.velocity.x;
+                        moveForce.z -= rb.velocity.z;
+                        // Never let the rigidbody jump when chasing a player
+                        moveForce.y = 0;
+                        rb.AddForce(moveForce, ForceMode.VelocityChange);
+                    }
+                    else
+                    {
+                        rb.MovePosition(rb.position + (Time.fixedDeltaTime * chaseSpeed * transform.forward));
+                    }
                 }
+                else if (Vector3.Distance(target.position, transform.position) > maxChaseDistance) // If the target is super far away, stop following it
+                {
+                    target = null;
+                    return;
+                }
+
+                Quaternion chaseRotation = Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(target.position - transform.position), chaseRotationSpeed);
+                chaseRotation = Quaternion.Euler(0, chaseRotation.eulerAngles.y, 0);
+                rb.MoveRotation(chaseRotation);
             }
         }
 
@@ -138,18 +153,41 @@ namespace LightPat.EnemyAI
             }
             else
             {
-                Gizmos.DrawWireSphere(startingPosition, roamRadius);
+                Gizmos.DrawWireSphere(new Vector3(startingPosition.x, transform.position.y, startingPosition.z), roamRadius);
+            }
+
+            Gizmos.color = Color.blue;
+            Gizmos.DrawSphere(startingPosition, 0.1f);
+
+            Gizmos.color = Color.black;
+            Gizmos.DrawSphere(roamingPosition, 1f);
+
+
+            if (lookingAround)
+            {
+                Gizmos.color = Color.green;
+                Vector3 pos = transform.position;
+                pos.y += 8;
+                Gizmos.DrawCube(pos, Vector3.one / 2);
+            }
+            else
+            {
+                Gizmos.color = Color.red;
+                Vector3 pos = transform.position;
+                pos.y += 8;
+                Gizmos.DrawCube(pos, Vector3.one / 2);
             }
         }
 
-        void OnFootstep(Vector3 value)
+        void OnFootstep(Vector3 soundOrigin)
         {
             lookingAround = true;
-            roamingPosition = value;
+            roamingPosition = soundOrigin;
         }
 
-        void OnAttacked(GameObject value)
+        void OnAttacked(GameObject attacker)
         {
+            Debug.Log("I'm being attacked by: " + attacker);
             //target = value.transform;
         }
     }

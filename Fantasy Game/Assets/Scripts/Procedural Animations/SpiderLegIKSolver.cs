@@ -35,35 +35,56 @@ namespace LightPat.ProceduralAnimations
         {
             transform.position = currentPosition;
 
-            // Root transform moves
-            RaycastHit hit;
-            // If there is ground below a new step
-            if (Physics.Raycast(controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1)),
-                Vector3.down, out hit, controller.physics.checkDistance, LayerMask.NameToLayer("Player")))
+            RaycastHit[] allHits = Physics.RaycastAll(controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1)),
+                Vector3.down, controller.physics.checkDistance);
+            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+
+            bool bHit = false;
+
+            foreach (RaycastHit hit in allHits)
             {
+                // If we raycast anything that isn't this object go to the next hit
+                if (hit.transform.gameObject == controller.rootBone.gameObject)
+                {
+                    continue;
+                }
+
+                bHit = true;
+
                 if (Vector3.Distance(newPosition, hit.point) > controller.stepDistance & permissionToMove)
                 {
                     lerpProgress = 0;
                     newPosition = hit.point;
 
                     // This is supposed to solve walking in front of each leg
-                    if (correspondingLegTarget.transform.position.z > transform.position.z)
-                    {
-                        newPosition.z += 1;
-                    }
+                    //if (correspondingLegTarget.transform.position.z > transform.position.z & controller.physics.velocity.z > 0)
+                    //{
+                    //    newPosition.z += 1;
+                    //}
                 }
+                break;
             }
-            else
+
+            // If we didn't hit anything in the previous for loop
+            if (!bHit)
             {
                 lerpProgress = 1;
                 currentPosition = controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * forwardAxisFootSpacing) + (controller.rootBone.up * -3);
                 newPosition = currentPosition;
+                oldPosition = currentPosition;
             }
 
             if (lerpProgress < 1)
             {
-                // Scale lerp speed with how far away the rootBone is from the leg
-                lerpSpeed = Vector3.Distance(controller.rootBone.position, currentPosition);
+                // Scale lerp speed with how fast we are moving
+                float velocityAverage = Mathf.Abs(controller.physics.velocity.x + controller.physics.velocity.y + controller.physics.velocity.z) * controller.lerpSpeedMultiplier;
+                float angularVelocityAverage = Mathf.Abs(controller.physics.angularVelocity.x + controller.physics.angularVelocity.y + controller.physics.angularVelocity.z) * controller.angularLerpSpeedMultiplier;
+                
+                lerpSpeed = velocityAverage + angularVelocityAverage;
+                if (lerpSpeed < controller.minimumLerpSpeed)
+                {
+                    lerpSpeed = controller.minimumLerpSpeed;
+                }
 
                 Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, lerpProgress);
                 interpolatedPosition.y += Mathf.Sin(lerpProgress * Mathf.PI) * controller.stepHeight;

@@ -188,7 +188,7 @@ namespace LightPat.EnemyAI
         void OnAttacked(GameObject attacker)
         {
             Debug.Log("I'm being attacked by: " + attacker);
-            //target = value.transform;
+            target = attacker.transform;
         }
     }
 }

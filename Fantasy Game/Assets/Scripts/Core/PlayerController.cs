@@ -18,8 +18,7 @@ namespace LightPat.Core
         public GameObject crosshair;
         public GameObject escapeMenu;
         public GameObject inventoryPrefab;
-        [HideInInspector]
-        public GameObject equippedWeapon;
+        [HideInInspector] public GameObject equippedWeapon;
 
         [Header("Switch Cameras")]
         public GameObject firstPersonCamera;
@@ -236,9 +235,9 @@ namespace LightPat.Core
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
             }
 
-            if (!audioSrc.isPlaying & rb.velocity.magnitude > 3 & moveInput != Vector2.zero)
+            if (!audioSrc.isPlaying & rb.velocity.magnitude > walkingSpeed - 1 & moveInput != Vector2.zero & IsGrounded())
             {
-                //StartCoroutine(PlayFootstep());
+                StartCoroutine(PlayFootstep());
             }
 
             // Falling Gravity velocity increase

@@ -178,31 +178,31 @@ namespace LightPat.Core
                 animator.SetInteger("Direction", 2); // backwards
             }
 
-            float interpSpeed = 0.05f;
+            float interpSpeed = 7f;
             // Rotate the player model based on the direction of the moveInput vector when pressing two keys at the same time
             if (Vector2.Distance(moveInput, new Vector2(0.7f, 0.7f)) < 0.1)
             {
                 // forward - right
-                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, 45, 0), interpSpeed);
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, 45, 0), interpSpeed * Time.deltaTime);
             }
             else if (Vector2.Distance(moveInput, new Vector2(-0.7f, 0.7f)) < 0.1)
             {
                 // forward - left
-                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, -45, 0), interpSpeed);
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, -45, 0), interpSpeed * Time.deltaTime);
             }
             else if (Vector2.Distance(moveInput, new Vector2(0.7f, -0.7f)) < 0.1)
             {
                 // backward - right
-                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, -45, 0), interpSpeed);
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, -45, 0), interpSpeed * Time.deltaTime);
             }
             else if (Vector2.Distance(moveInput, new Vector2(-0.7f, -0.7f)) < 0.1)
             {
                 // backward - left
-                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, 45, 0), interpSpeed);
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.Euler(0, 45, 0), interpSpeed * Time.deltaTime);
             }
             else
             {
-                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.identity, interpSpeed);
+                playerModel.localRotation = Quaternion.Slerp(playerModel.localRotation, Quaternion.identity, interpSpeed * Time.deltaTime);
             }
         }
 

@@ -1588,7 +1588,7 @@ MonoBehaviour:
   jumpDelay: 0.2
   landingCheckDistance: 3
   airborneXZSpeed: 5
-  checkDistance: 1
+  checkDistance: 3
   sprintSpeed: 15
   toggleSprint: 1
   crouchSpeed: 7

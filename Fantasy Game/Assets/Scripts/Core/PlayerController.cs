@@ -414,9 +414,13 @@ namespace LightPat.Core
                 {
                     StartCoroutine(IdleJump());
                 }
-                else if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running") & !animator.GetBool("Crouching")) // If we are running, but not sliding
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running") & !animator.GetBool("Crouching") & animator.GetInteger("Direction") == 0) // If we are running forwards, but not sliding
                 {
                     StartCoroutine(RunningJump());
+                }
+                else if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running") & !animator.GetBool("Crouching"))
+                {
+                    StartCoroutine(IdleJump());
                 }
             }
         }
@@ -494,7 +498,8 @@ namespace LightPat.Core
             // May need to change 1.5f to be a different number if you switch the asset of the player model
 
             RaycastHit hit;
-            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1, out hit, checkDistance);
+            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Vector3.up * -1, out hit, checkDistance);
+            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Vector3.up * -1, Color.red, 5f);
             return bHit;
         }
 

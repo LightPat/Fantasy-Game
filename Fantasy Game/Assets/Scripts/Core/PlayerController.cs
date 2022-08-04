@@ -245,6 +245,101 @@ namespace LightPat.Core
             {
                 rb.AddForce(new Vector3(0, (fallingGravityScale * -1), 0), ForceMode.VelocityChange);
             }
+
+            StepClimb();
+        }
+
+        [Header("Walk Up Stairs Settings")]
+        public float t = 0;
+        void StepClimb()
+        {
+            return;
+            
+
+            /*
+            // The height of stepRayUpper is the max height that we can step
+            // If our lower object's raycast is successful and our upper object's raycast is not successful, addForce
+            RaycastHit hitLower;
+            if (Physics.Raycast(stepRayLower.transform.position, transform.forward, out hitLower, 0.1f))
+            {
+                if (hitLower.transform != transform)
+                {
+                    //Debug.DrawRay(stepRayLower.transform.position, transform.forward, Color.red, 1f);
+                    //Debug.DrawRay(stepRayUpper.transform.position, transform.forward, Color.blue, 1f);
+                    RaycastHit hitUpper;
+                    if (!Physics.Raycast(stepRayUpper.transform.position, transform.forward, out hitUpper, 0.2f))
+                    {
+                        //rb.AddForce(0, stepSmooth, 0, ForceMode.VelocityChange);
+                        //rb.position -= new Vector3(0f, -stepSmooth * Time.deltaTime, 0f);
+                        //float targetHeight
+
+                        RaycastHit verticalHit;
+                        Physics.Raycast(new Vector3(hitLower.point.x, hitLower.point.y + maxStepHeight, hitLower.point.z), Vector3.down, out verticalHit, maxStepHeight);
+                        //Debug.DrawRay(new Vector3(hitLower.point.x, hitLower.point.y + maxStepHeight, hitLower.point.z), Vector3.down, Color.black, maxStepHeight);
+
+                        //animator.SetBool("Stairs", true);
+
+                        leftLegTarget.position = verticalHit.point;
+
+                        //Debug.Log(verticalHit.distance);
+
+                        // scale force with height of the step
+                        //Debug.Log(rb.velocity);
+                        //rb.AddForce(0, stepForce * verticalHit.distance, 0, ForceMode.VelocityChange);
+                        //Vector3 targetPosition = hitLower.point;
+                    }
+                    else
+                    {
+                        //animator.SetBool("Stairs", false);
+                    }
+                }
+                else
+                {
+                    //animator.SetBool("Stairs", false);
+                }
+            }
+            else
+            {
+                Debug.Log("Resetting Position");
+                leftLegTarget.localPosition = Vector3.zero;
+                //animator.SetBool("Stairs", false);
+            }*/
+
+            //RaycastHit hitLower45;
+            //if (Physics.Raycast(stepRayLower.transform.position, transform.TransformDirection(1.5f, 0, 1), out hitLower45, 0.1f))
+            //{
+            //    if (hitLower45.transform != transform)
+            //    {
+            //        RaycastHit hitUpper45;
+            //        if (!Physics.Raycast(stepRayUpper.transform.position, transform.TransformDirection(1.5f, 0, 1), out hitUpper45, 0.2f))
+            //        {
+            //            rb.position -= new Vector3(0f, -stepSmooth * Time.deltaTime, 0f);
+            //        }
+            //    }
+            //}
+
+            //RaycastHit hitLowerMinus45;
+            //if (Physics.Raycast(stepRayLower.transform.position, transform.TransformDirection(-1.5f, 0, 1), out hitLowerMinus45, 0.1f))
+            //{
+            //    if (hitLowerMinus45.transform != transform)
+            //    {
+            //        RaycastHit hitUpperMinus45;
+            //        if (!Physics.Raycast(stepRayUpper.transform.position, transform.TransformDirection(-1.5f, 0, 1), out hitUpperMinus45, 0.2f))
+            //        {
+            //            if (hitUpperMinus45.transform != transform)
+            //            {
+            //                rb.position -= new Vector3(0f, -stepSmooth * Time.deltaTime, 0f);
+            //            }
+            //        }
+            //    }
+            //}
+        }
+
+        private Vector3 spherePos;
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.black;
+            Gizmos.DrawSphere(spherePos, 0.05f);
         }
 
         [Header("Footstep Detection Settings")]
@@ -499,7 +594,6 @@ namespace LightPat.Core
 
             RaycastHit hit;
             bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Vector3.up * -1, out hit, checkDistance);
-            Debug.DrawRay(new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Vector3.up * -1, Color.red, 5f);
             return bHit;
         }
 
@@ -636,14 +730,7 @@ namespace LightPat.Core
 
         void OnTestAnim()
         {
-            StartCoroutine(TestAnim());
-        }
-
-        private IEnumerator TestAnim()
-        {
-            animator.SetBool("New", true);
-            yield return new WaitForSeconds(0.1f);
-            animator.SetBool("New", false);
+            animator.SetBool("New", !animator.GetBool("New"));
         }
 
         void OnSwitchCameras()

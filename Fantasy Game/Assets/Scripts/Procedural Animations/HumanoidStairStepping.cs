@@ -46,6 +46,9 @@ namespace LightPat.ProceduralAnimations
             upperRayStart = new Vector3(footBone.position.x, footBone.position.y + upperRayHeight, footBone.position.z + horizontalRayOffset);
             lowerRayStart = new Vector3(footBone.position.x, footBone.position.y + lowerRayHeight, footBone.position.z + horizontalRayOffset);
 
+            upperRayStart = RotateAroundPivot(upperRayStart, footBone.position, rootTransform.eulerAngles);
+            lowerRayStart = RotateAroundPivot(lowerRayStart, footBone.position, rootTransform.eulerAngles);
+
             Debug.DrawRay(upperRayStart, transform.forward * rayDistance, Color.black, Time.deltaTime);
             Debug.DrawRay(lowerRayStart, transform.forward * rayDistance, Color.red, Time.deltaTime);
 
@@ -65,8 +68,11 @@ namespace LightPat.ProceduralAnimations
                         otherFootLerpProgress = 0;
 
                         // Raycast vertically between the upper ray and lower ray to get the top point of the step
-                        Physics.Raycast(new Vector3(upperRayStart.x, upperRayStart.y, upperRayStart.z + horizontalRayOffset), Vector3.down, out verticalHit, upperRayStart.y - lowerRayStart.y);
-                        Debug.DrawRay(new Vector3(upperRayStart.x, upperRayStart.y, upperRayStart.z + horizontalRayOffset), Vector3.down * (upperRayStart.y - lowerRayStart.y), Color.green, 5f);
+                        Vector3 verticalRayStart = new Vector3(footBone.position.x, footBone.position.y + upperRayHeight, footBone.position.z + horizontalRayOffset * 2);
+                        verticalRayStart = RotateAroundPivot(verticalRayStart, footBone.position, rootTransform.eulerAngles);
+
+                        Physics.Raycast(verticalRayStart, Vector3.down, out verticalHit, upperRayStart.y - lowerRayStart.y);
+                        Debug.DrawRay(verticalRayStart, Vector3.down * (upperRayStart.y - lowerRayStart.y), Color.green, 5f);
 
                         newPosition = new Vector3(verticalHit.point.x, verticalHit.point.y + verticalOffset, verticalHit.point.z);
                     }
@@ -151,6 +157,14 @@ namespace LightPat.ProceduralAnimations
 
             Gizmos.color = Color.gray;
             Gizmos.DrawSphere(newPosition, 0.1f);
+        }
+
+        Vector3 RotateAroundPivot(Vector3 point, Vector3 pivot, Vector3 eulerAngles)
+        {
+            Vector3 dir = point - pivot; // get point direction relative to pivot
+            dir = Quaternion.Euler(eulerAngles) * dir; // rotate it
+            point = dir + pivot; // calculate rotated point
+            return point;
         }
     }
 }

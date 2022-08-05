@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
+using LightPat.Core;
 
 namespace LightPat.ProceduralAnimations
 {
@@ -14,27 +14,35 @@ namespace LightPat.ProceduralAnimations
         public float lowerRayHeight;
         public float rayDistance;
         public float horizontalRayOffset;
-        public float walkingLerpSpeed;
-        public float runningLerpSpeed;
+        public float lerpSpeed;
+        public float lerpSpeedMultiplier;
+        public float angularLerpSpeedMultiplier;
+        public float minimumLerpSpeed;
 
         private Vector3 upperRayStart;
         private Vector3 lowerRayStart;
         private Vector3 initialLocalPosition;
+        private Vector3 initialOtherLocalPosition;
         private Vector3 newPosition;
         private Vector3 oldPosition;
         
         private float lerpProgress = 1;
+        private float firstFootLerpProgress = 1;
+        private float otherFootLerpProgress = 1;
 
         private void Start()
         {
             // The upper ray starts at a set height above the position of the foot
             initialLocalPosition = transform.localPosition;
+            initialOtherLocalPosition = otherFootTarget.localPosition;
             newPosition = transform.position;
             oldPosition = transform.position;
         }
 
         private void Update()
         {
+            if (rootTransform.GetComponent<PlayerController>().moveInput == Vector2.zero) { return; }
+
             upperRayStart = new Vector3(footBone.position.x, footBone.position.y + upperRayHeight, footBone.position.z + horizontalRayOffset);
             lowerRayStart = new Vector3(footBone.position.x, footBone.position.y + lowerRayHeight, footBone.position.z + horizontalRayOffset);
 
@@ -53,6 +61,8 @@ namespace LightPat.ProceduralAnimations
                     {
                         // If we are in front of an object short enough for us to step on and we are not interpolating
                         lerpProgress = 0;
+                        firstFootLerpProgress = 0;
+                        otherFootLerpProgress = 0;
 
                         // Raycast vertically between the upper ray and lower ray to get the top point of the step
                         RaycastHit verticalHit;
@@ -83,18 +93,41 @@ namespace LightPat.ProceduralAnimations
 
             if (lerpProgress < 1)
             {
-                Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, lerpProgress);
-                // Scale height with how high the step is (use verticalHeight.distance)
-                interpolatedPosition.y += Mathf.Sin(lerpProgress * Mathf.PI) / 2;
+                Rigidbody rb = rootTransform.GetComponent<Rigidbody>();
+                float velocityAverage = Mathf.Abs(rb.velocity.x + rb.velocity.y + rb.velocity.z) * lerpSpeedMultiplier;
+                float angularVelocityAverage = Mathf.Abs(rb.angularVelocity.x + rb.angularVelocity.y + rb.angularVelocity.z) * angularLerpSpeedMultiplier;
 
-                transform.position = interpolatedPosition;
+                lerpSpeed = velocityAverage + angularVelocityAverage;
+                if (lerpSpeed < minimumLerpSpeed)
+                {
+                    lerpSpeed = minimumLerpSpeed;
+                }
 
-                lerpProgress += Time.deltaTime * walkingLerpSpeed;
+                if (firstFootLerpProgress < 1)
+                {
+                    Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, firstFootLerpProgress);
+                    // Scale height with how high the step is (use verticalHeight.distance)
+                    interpolatedPosition.y += Mathf.Sin(firstFootLerpProgress * Mathf.PI) / 2;
+
+                    transform.position = interpolatedPosition;
+                    firstFootLerpProgress += Time.deltaTime * lerpSpeed;
+                }
+                else
+                {
+                    Vector3 interpolatedPosition = Vector3.Lerp(new Vector3(oldPosition.x - 0.27f, oldPosition.y, oldPosition.z), new Vector3(newPosition.x - 0.27f, newPosition.y, newPosition.z), otherFootLerpProgress);
+                    interpolatedPosition.y += Mathf.Sin(otherFootLerpProgress * Mathf.PI) / 2;
+                    otherFootTarget.position = interpolatedPosition;
+                    otherFootLerpProgress += Time.deltaTime * lerpSpeed;
+                }
+
+                // Finish first foot lerp before second foot lerp
+                lerpProgress += Time.deltaTime * lerpSpeed / 2;
             }
             else
             {
                 // If we are not lerping
-                transform.localPosition = initialLocalPosition;
+                transform.localPosition = Vector3.Lerp(transform.localPosition, initialLocalPosition, lerpSpeed);
+                otherFootTarget.localPosition = Vector3.Lerp(otherFootTarget.localPosition, initialOtherLocalPosition, lerpSpeed);
             }
         }
 

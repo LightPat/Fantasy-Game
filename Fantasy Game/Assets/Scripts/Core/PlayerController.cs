@@ -412,7 +412,7 @@ namespace LightPat.Core
 
         [Header("Move Settings")]
         public float walkingSpeed = 5f;
-        private Vector2 moveInput;
+        [HideInInspector] public Vector2 moveInput;
         // lockMoveInput is a vector2 that has a higher priority than moveInput. This should only be assigned to make the player keep moving in a certain direction for a period of time.
         private Vector2? lockMoveInput;
         // stopMoveInput is a boolean to stop the player from moving

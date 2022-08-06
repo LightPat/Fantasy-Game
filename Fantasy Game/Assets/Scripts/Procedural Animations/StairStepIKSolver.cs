@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LightPat.Core;
 
 namespace LightPat.ProceduralAnimations
 {
@@ -9,7 +10,7 @@ namespace LightPat.ProceduralAnimations
         public HumanoidStairStepController controller;
         public Transform footBone;
         public bool permissionToLerp;
-        public bool permissionToMove;
+        public bool permissionToMove = true;
 
         private Vector3 initialLocalPosition;
         private Vector3 newPosition;
@@ -69,7 +70,7 @@ namespace LightPat.ProceduralAnimations
                 oldPosition = transform.position;
             }
 
-            if (lerpProgress < 1 & permissionToLerp)
+            if (lerpProgress < 1 & permissionToLerp & controller.rootTransform.GetComponent<PlayerController>().moveInput != Vector2.zero)
             {
                 // Scale lerp speed with velocity
                 Rigidbody rb = controller.rootTransform.GetComponent<Rigidbody>();
@@ -87,7 +88,7 @@ namespace LightPat.ProceduralAnimations
                 transform.position = interpolatedPosition;
                 lerpProgress += Time.deltaTime * lerpSpeed;
             }
-            else if (permissionToMove) // If we are not lerping
+            else if (permissionToMove)
             {
                 // Scale lerp speed with velocity
                 Rigidbody rb = controller.rootTransform.GetComponent<Rigidbody>();

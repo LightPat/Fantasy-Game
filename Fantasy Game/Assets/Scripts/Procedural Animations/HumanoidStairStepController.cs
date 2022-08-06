@@ -32,49 +32,45 @@ namespace LightPat.ProceduralAnimations
 
         private void Start()
         {
-            leftFootIK.permissionToLerp = true;
             rig = GetComponent<Rig>();
+            Time.timeScale = 0.1f;
         }
 
         private void Update()
         {
-            // Do raycasting here and assign a new position to each starStepIKSolver using a method
-            /*
-            Vector3 upperLeftRayStart = leftFootIK.footBone.position + leftFootIK.transform.forward * horizontalRayOffset;
-            upperLeftRayStart.y += upperRayHeight;
-            Vector3 lowerLeftRayStart = leftFootIK.footBone.position + leftFootIK.transform.forward * horizontalRayOffset;
-            lowerLeftRayStart.y += lowerRayHeight;
+            // Check which foot is in front of the other
+            StairStepIKSolver frontFoot;
+            StairStepIKSolver backFoot;
+            if (Vector3.Distance(leftFootIK.footBone.transform.position, rootTransform.position + rootTransform.forward * 5)
+                < Vector3.Distance(rightFootIK.footBone.transform.position, rootTransform.position + rootTransform.forward * 5))
+            {
+                // If the distance between the left foot and rootTransform is greater than the distance between the right foot and the rootTransform
+                frontFoot = leftFootIK;
+                backFoot = rightFootIK;
+            }
+            else
+            {
+                frontFoot = rightFootIK;
+                backFoot = leftFootIK;
+            }
 
-            Vector3 upperRightRayStart = rightFootIK.footBone.position + rightFootIK.transform.forward * horizontalRayOffset;
-            upperRightRayStart.y += upperRayHeight;
-            Vector3 lowerRightRayStart = rightFootIK.footBone.position + rightFootIK.transform.forward * horizontalRayOffset;
-            lowerRightRayStart.y += lowerRayHeight;
-
-            Debug.DrawRay(upperLeftRayStart, leftFootIK.transform.forward * rayDistance, Color.black, Time.deltaTime);
-            Debug.DrawRay(lowerLeftRayStart, leftFootIK.transform.forward * rayDistance, Color.red, Time.deltaTime);
-            Debug.DrawRay(upperRightRayStart, rightFootIK.transform.forward * rayDistance, Color.black, Time.deltaTime);
-            Debug.DrawRay(lowerRightRayStart, rightFootIK.transform.forward * rayDistance, Color.red, Time.deltaTime);
-            */
-
-            // Lerp root transform with other feet
+            // If either foot is lerping, activate the rig, otherwise, deactivate it
             if (leftFootIK.IsMoving() | rightFootIK.IsMoving())
             {
-                rig.weight = 1;
-                //rootTransform.position += rootTransform.forward * 0.01f;
+                rig.weight = Mathf.Lerp(rig.weight, 1, 7 * Time.deltaTime);
+                Rigidbody rootRigidbody = rootTransform.GetComponent<Rigidbody>();
+                //rootRigidbody.velocity = new Vector3(rootRigidbody.velocity.x, 0, rootRigidbody.velocity.z);
             }
             else
             {
-                rig.weight = 0;
+                rig.weight = Mathf.Lerp(rig.weight, 0, 7 * Time.deltaTime);
+
+                frontFoot.permissionToLerp = false;
+                backFoot.permissionToLerp = true;
             }
-            
-            if (leftFootIK.IsMoving())
-            {
-                rightFootIK.permissionToLerp = false;
-            }
-            else
-            {
-                rightFootIK.permissionToLerp = true;
-            }
+
+            frontFoot.rayDistance = rayDistance;
+            backFoot.rayDistance = rayDistance + Vector3.Distance(backFoot.transform.position, frontFoot.transform.position) + 0.1f;
 
             if (rootTransform.GetComponent<PlayerController>().moveInput == Vector2.zero)
             {
@@ -86,21 +82,12 @@ namespace LightPat.ProceduralAnimations
                 leftFootIK.permissionToMove = true;
                 rightFootIK.permissionToMove = true;
             }
-            // Handle choosing which foot moves first
         }
 
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), 0.1f);
-        }
-
-        Vector3 RotateAroundPivot(Vector3 point, Vector3 pivot, Vector3 eulerAngles)
-        {
-            Vector3 dir = point - pivot; // get point direction relative to pivot
-            dir = Quaternion.Euler(eulerAngles) * dir; // rotate it
-            point = dir + pivot; // calculate rotated point
-            return point;
         }
     }
 }

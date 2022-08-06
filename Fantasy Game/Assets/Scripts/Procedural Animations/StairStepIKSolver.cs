@@ -9,17 +9,21 @@ namespace LightPat.ProceduralAnimations
     {
         public HumanoidStairStepController controller;
         public Transform footBone;
+        public StairStepIKSolver otherFoot;
         public bool permissionToLerp;
         public bool permissionToMove = true;
+        public float rayDistance;
 
         private Vector3 initialLocalPosition;
         private Vector3 newPosition;
         private Vector3 oldPosition;
         private RaycastHit verticalHit;
         private float lerpProgress = 1;
+        private float initialFootHeight;
 
         private void Start()
         {
+            rayDistance = controller.rayDistance;
             initialLocalPosition = transform.localPosition;
             newPosition = transform.position;
             oldPosition = transform.position;
@@ -34,16 +38,16 @@ namespace LightPat.ProceduralAnimations
             Vector3 lowerRayStart = footBone.position + transform.forward * controller.horizontalRayOffset;
             lowerRayStart.y += controller.lowerRayHeight;
 
-            Debug.DrawRay(upperRayStart, transform.forward * controller.rayDistance, Color.black, Time.deltaTime);
-            Debug.DrawRay(lowerRayStart, transform.forward * controller.rayDistance, Color.red, Time.deltaTime);
+            Debug.DrawRay(upperRayStart, transform.forward * rayDistance, Color.black, Time.deltaTime);
+            Debug.DrawRay(lowerRayStart, transform.forward * rayDistance, Color.red, Time.deltaTime);
 
             RaycastHit lowerHit;
-            if (Physics.Raycast(lowerRayStart, transform.forward, out lowerHit, controller.rayDistance))
+            if (Physics.Raycast(lowerRayStart, transform.forward, out lowerHit, rayDistance))
             {
                 // If we hit ourself, ignore this frame
                 if (lowerHit.transform == controller.rootTransform) { return; }
 
-                if (!Physics.Raycast(upperRayStart, transform.forward, controller.rayDistance))
+                if (!Physics.Raycast(upperRayStart, transform.forward, rayDistance))
                 {
                     if (lerpProgress >= 1)
                     {
@@ -51,7 +55,7 @@ namespace LightPat.ProceduralAnimations
                         lerpProgress = 0;
 
                         // Raycast vertically between the endpoints of the upper ray and lower ray to get the top point of the step
-                        Vector3 verticalRayStart = upperRayStart + transform.forward * controller.rayDistance;
+                        Vector3 verticalRayStart = upperRayStart + transform.forward * rayDistance;
                         Physics.Raycast(verticalRayStart, Vector3.down, out verticalHit, upperRayStart.y - lowerRayStart.y);
                         Debug.DrawRay(verticalRayStart, Vector3.down * (upperRayStart.y - lowerRayStart.y), Color.green, 5f);
 
@@ -70,7 +74,8 @@ namespace LightPat.ProceduralAnimations
                 oldPosition = transform.position;
             }
 
-            if (lerpProgress < 1 & permissionToLerp & controller.rootTransform.GetComponent<PlayerController>().moveInput != Vector2.zero)
+            //  & controller.rootTransform.GetComponent<PlayerController>().moveInput != Vector2.zero
+            if (lerpProgress < 1 & permissionToLerp)
             {
                 // Scale lerp speed with velocity
                 Rigidbody rb = controller.rootTransform.GetComponent<Rigidbody>();

@@ -33,7 +33,6 @@ namespace LightPat.ProceduralAnimations
         private void Start()
         {
             rig = GetComponent<Rig>();
-            Time.timeScale = 0.1f;
         }
 
         private void Update()

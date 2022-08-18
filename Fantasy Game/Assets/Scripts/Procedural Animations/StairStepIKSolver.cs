@@ -38,12 +38,13 @@ namespace LightPat.ProceduralAnimations
             Vector3 lowerRayStart = footBone.position + transform.forward * controller.horizontalRayOffset;
             lowerRayStart.y += controller.lowerRayHeight;
 
-            Debug.DrawRay(upperRayStart, transform.forward * rayDistance, Color.black, Time.deltaTime);
-            Debug.DrawRay(lowerRayStart, transform.forward * rayDistance, Color.red, Time.deltaTime);
+            //Debug.DrawRay(upperRayStart, transform.forward * rayDistance, Color.black, Time.deltaTime);
+            //Debug.DrawRay(lowerRayStart, transform.forward * rayDistance, Color.red, Time.deltaTime);
 
             RaycastHit lowerHit;
             if (Physics.Raycast(lowerRayStart, transform.forward, out lowerHit, rayDistance))
             {
+                if (lowerHit.transform.CompareTag("Stairs")) { return; }
                 // If we hit ourself, ignore this frame
                 if (lowerHit.transform == controller.rootTransform) { return; }
 
@@ -108,18 +109,18 @@ namespace LightPat.ProceduralAnimations
             }
         }
 
-        private Vector3 gizmoPoint;
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.black;
-            Gizmos.DrawSphere(oldPosition, 0.1f);
+        //private Vector3 gizmoPoint;
+        //private void OnDrawGizmos()
+        //{
+        //    Gizmos.color = Color.black;
+        //    Gizmos.DrawSphere(oldPosition, 0.1f);
 
-            Gizmos.color = Color.gray;
-            Gizmos.DrawSphere(newPosition, 0.1f);
+        //    Gizmos.color = Color.gray;
+        //    Gizmos.DrawSphere(newPosition, 0.1f);
 
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(gizmoPoint, 0.1f);
-        }
+        //    Gizmos.color = Color.green;
+        //    Gizmos.DrawSphere(gizmoPoint, 0.1f);
+        //}
 
         public bool IsMoving()
         {

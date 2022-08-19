@@ -386,7 +386,14 @@ namespace LightPat.Core
             // Set IK weight to 1
             armsRig.weight = 1;
 
+            DestroyImmediate(target.GetComponentInParent<Rigidbody>());
             target.parent.GetComponentInChildren<Collider>().enabled = false;
+
+            Transform rightTarget = rightHand.transform.GetChild(0);
+            //if (target.position.y - transform.position.y > 0.3f)
+            //{
+            //    animator.SetBool("Crouching", true);
+            //}
 
             float lerpProgress = 0;
             Vector3 oldPosition = transform.position;
@@ -407,13 +414,11 @@ namespace LightPat.Core
                 float velocity = (transform.position - previous).magnitude / Time.deltaTime;
                 previous = transform.position;
                 animator.SetFloat("Speed", velocity);
-
                 yield return null;
             }
 
             lerpProgress = 0;
             // Lerp IK target position
-            Transform rightTarget = rightHand.transform.GetChild(0);
             oldPosition = rightTarget.position;
             rightTarget.GetComponent<MirrorTarget>().move = false;
             rightTarget.GetComponent<MirrorTarget>().rotate = false;
@@ -428,17 +433,24 @@ namespace LightPat.Core
             }
 
             // Set parent to bone tip
-            DestroyImmediate(target.GetComponentInParent<Rigidbody>());
             target.parent.SetParent(rightHand.data.tip, true);
-
+            //target.GetComponentInParent<Weapon>().positionOffset = target.parent.localPosition;
+            //target.GetComponentInParent<Weapon>().rotationOffset = target.parent.localEulerAngles;
+            //target.GetComponentInParent<Weapon>().fakeParent = rightHand.data.tip;
+            //target.parent.SetParent(null, true);
+            
             // Deactivate IK
             float weightProgress = 1;
             while (weightProgress > 0)
             {
-                armsRig.weight = weightProgress;
                 weightProgress -= Time.deltaTime * reachSpeed;
+                armsRig.weight = weightProgress;
+                animator.SetLayerWeight(1, 1 - weightProgress);
                 yield return null;
             }
+
+            rightTarget.GetComponent<MirrorTarget>().move = true;
+            rightTarget.GetComponent<MirrorTarget>().rotate = true;
 
             disableMoveInput = false;
             disableLookInput = false;

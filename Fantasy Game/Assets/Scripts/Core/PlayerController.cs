@@ -388,20 +388,33 @@ namespace LightPat.Core
 
             target.parent.GetComponentInChildren<Collider>().enabled = false;
 
-            // Move player body close so that arm can reach
-            // change distance check to only be on x and z axis
-            while (Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(target.position.x, 0, target.position.z)) > 0.7)
+            float lerpProgress = 0;
+            Vector3 oldPosition = transform.position;
+            Vector3 newPosition = target.position - transform.forward * 0.5f;
+            oldPosition.y = 0;
+            newPosition.y = 0;
+            Vector3 previous = transform.position;
+            // Move player body close to target so that arm can reach it
+            while (lerpProgress < 1)
             {
-                Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(target.position.x, 0, target.position.z));
-                // scale this force with how far away from object we are
-                rb.AddForce(transform.forward * crouchSpeed);
-                yield return new WaitForEndOfFrame();
+                // Interpolate towards target point
+                Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, lerpProgress);
+                interpolatedPosition.y = transform.position.y;
+                transform.position = interpolatedPosition;
+                lerpProgress += Time.deltaTime * reachSpeed;
+
+                // Have to calculate velocity for animator since we aren't using rigidbody
+                float velocity = (transform.position - previous).magnitude / Time.deltaTime;
+                previous = transform.position;
+                animator.SetFloat("Speed", velocity);
+
+                yield return null;
             }
 
-            float lerpProgress = 0;
+            lerpProgress = 0;
             // Lerp IK target position
             Transform rightTarget = rightHand.transform.GetChild(0);
-            Vector3 oldPosition = rightTarget.position;
+            oldPosition = rightTarget.position;
             rightTarget.GetComponent<MirrorTarget>().move = false;
             rightTarget.GetComponent<MirrorTarget>().rotate = false;
             while (lerpProgress < 1)
@@ -411,8 +424,7 @@ namespace LightPat.Core
                 //interpolatedPosition.z += Mathf.Sin(lerpProgress * Mathf.PI);
                 rightTarget.position = interpolatedPosition;
                 lerpProgress += Time.deltaTime * reachSpeed;
-                yield return new WaitForEndOfFrame();
-                Debug.Log(lerpProgress);
+                yield return null;
             }
 
             // Set parent to bone tip
@@ -424,8 +436,8 @@ namespace LightPat.Core
             while (weightProgress > 0)
             {
                 armsRig.weight = weightProgress;
-                weightProgress -= Time.deltaTime;
-                yield return new WaitForEndOfFrame();
+                weightProgress -= Time.deltaTime * reachSpeed;
+                yield return null;
             }
 
             disableMoveInput = false;

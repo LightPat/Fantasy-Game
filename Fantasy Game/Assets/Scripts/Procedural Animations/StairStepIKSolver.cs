@@ -44,7 +44,7 @@ namespace LightPat.ProceduralAnimations
             RaycastHit lowerHit;
             if (Physics.Raycast(lowerRayStart, transform.forward, out lowerHit, rayDistance))
             {
-                if (lowerHit.transform.CompareTag("Stairs")) { return; }
+                if (!lowerHit.transform.CompareTag("Stairs")) { return; }
                 // If we hit ourself, ignore this frame
                 if (lowerHit.transform == controller.rootTransform) { return; }
 

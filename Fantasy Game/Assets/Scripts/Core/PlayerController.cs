@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
+using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core
 {
@@ -245,101 +246,6 @@ namespace LightPat.Core
             {
                 rb.AddForce(new Vector3(0, (fallingGravityScale * -1), 0), ForceMode.VelocityChange);
             }
-
-            StepClimb();
-        }
-
-        [Header("Walk Up Stairs Settings")]
-        public float t = 0;
-        void StepClimb()
-        {
-            return;
-            
-
-            /*
-            // The height of stepRayUpper is the max height that we can step
-            // If our lower object's raycast is successful and our upper object's raycast is not successful, addForce
-            RaycastHit hitLower;
-            if (Physics.Raycast(stepRayLower.transform.position, transform.forward, out hitLower, 0.1f))
-            {
-                if (hitLower.transform != transform)
-                {
-                    //Debug.DrawRay(stepRayLower.transform.position, transform.forward, Color.red, 1f);
-                    //Debug.DrawRay(stepRayUpper.transform.position, transform.forward, Color.blue, 1f);
-                    RaycastHit hitUpper;
-                    if (!Physics.Raycast(stepRayUpper.transform.position, transform.forward, out hitUpper, 0.2f))
-                    {
-                        //rb.AddForce(0, stepSmooth, 0, ForceMode.VelocityChange);
-                        //rb.position -= new Vector3(0f, -stepSmooth * Time.deltaTime, 0f);
-                        //float targetHeight
-
-                        RaycastHit verticalHit;
-                        Physics.Raycast(new Vector3(hitLower.point.x, hitLower.point.y + maxStepHeight, hitLower.point.z), Vector3.down, out verticalHit, maxStepHeight);
-                        //Debug.DrawRay(new Vector3(hitLower.point.x, hitLower.point.y + maxStepHeight, hitLower.point.z), Vector3.down, Color.black, maxStepHeight);
-
-                        //animator.SetBool("Stairs", true);
-
-                        leftLegTarget.position = verticalHit.point;
-
-                        //Debug.Log(verticalHit.distance);
-
-                        // scale force with height of the step
-                        //Debug.Log(rb.velocity);
-                        //rb.AddForce(0, stepForce * verticalHit.distance, 0, ForceMode.VelocityChange);
-                        //Vector3 targetPosition = hitLower.point;
-                    }
-                    else
-                    {
-                        //animator.SetBool("Stairs", false);
-                    }
-                }
-                else
-                {
-                    //animator.SetBool("Stairs", false);
-                }
-            }
-            else
-            {
-                Debug.Log("Resetting Position");
-                leftLegTarget.localPosition = Vector3.zero;
-                //animator.SetBool("Stairs", false);
-            }*/
-
-            //RaycastHit hitLower45;
-            //if (Physics.Raycast(stepRayLower.transform.position, transform.TransformDirection(1.5f, 0, 1), out hitLower45, 0.1f))
-            //{
-            //    if (hitLower45.transform != transform)
-            //    {
-            //        RaycastHit hitUpper45;
-            //        if (!Physics.Raycast(stepRayUpper.transform.position, transform.TransformDirection(1.5f, 0, 1), out hitUpper45, 0.2f))
-            //        {
-            //            rb.position -= new Vector3(0f, -stepSmooth * Time.deltaTime, 0f);
-            //        }
-            //    }
-            //}
-
-            //RaycastHit hitLowerMinus45;
-            //if (Physics.Raycast(stepRayLower.transform.position, transform.TransformDirection(-1.5f, 0, 1), out hitLowerMinus45, 0.1f))
-            //{
-            //    if (hitLowerMinus45.transform != transform)
-            //    {
-            //        RaycastHit hitUpperMinus45;
-            //        if (!Physics.Raycast(stepRayUpper.transform.position, transform.TransformDirection(-1.5f, 0, 1), out hitUpperMinus45, 0.2f))
-            //        {
-            //            if (hitUpperMinus45.transform != transform)
-            //            {
-            //                rb.position -= new Vector3(0f, -stepSmooth * Time.deltaTime, 0f);
-            //            }
-            //        }
-            //    }
-            //}
-        }
-
-        private Vector3 spherePos;
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.black;
-            Gizmos.DrawSphere(spherePos, 0.05f);
         }
 
         [Header("Footstep Detection Settings")]
@@ -435,7 +341,9 @@ namespace LightPat.Core
 
         [Header("Interact Settings")]
         public float reach = 4f;
+        public float reachSpeed = 0.05f;
         public Transform weaponParent;
+        public Rig armsRig;
         public TwoBoneIKConstraint rightHand;
         public TwoBoneIKConstraint leftHand;
         void OnInteract()
@@ -454,32 +362,74 @@ namespace LightPat.Core
                 {
                     if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
 
-                    equippedWeapon = hit.transform.gameObject;
-                    ////equippedWeapon.transform.GetComponentInChildren<Collider>().enabled = false;
+                    StartCoroutine(PickUpItem(hit.transform.Find("ref_right_hand_grip")));
+                    //equippedWeapon = hit.transform.gameObject;
+                    //equippedWeapon.transform.SetParent(transform, true);
+                    //equippedWeapon.transform.GetComponentInChildren<Collider>().enabled = false;
                     //Destroy(equippedWeapon.GetComponent<Rigidbody>());
                     //equippedWeapon.transform.SetParent(weaponParent);
                     //equippedWeapon.transform.localRotation = Quaternion.identity;
                     //equippedWeapon.transform.localPosition = equippedWeapon.GetComponent<Weapon>().offset;
 
+                    //armsRig.weight = 1;
 
-
-                    rightHand.data.target = equippedWeapon.transform.Find("ref_right_hand_grip");
-                    leftHand.data.target = equippedWeapon.transform.Find("ref_left_hand_grip");
-                    GetComponent<RigBuilder>().Build();
-                    StartCoroutine(PickUpWeapon());
+                    //rightHand.transform.GetChild(0).GetComponent<MirrorTarget>().target = equippedWeapon.transform.Find("ref_right_hand_grip");
+                    //leftHand.transform.GetChild(0).GetComponent<MirrorTarget>().target = equippedWeapon.transform.Find("ref_left_hand_grip");
                 }
             }
         }
 
-        private IEnumerator PickUpWeapon()
+        private IEnumerator PickUpItem(Transform target)
         {
-            rightHand.weight = 0;
+            disableLookInput = true;
+            disableMoveInput = true;
+            // Set IK weight to 1
+            armsRig.weight = 1;
 
-            while (rightHand.weight != 1)
+            target.parent.GetComponentInChildren<Collider>().enabled = false;
+
+            // Move player body close so that arm can reach
+            // change distance check to only be on x and z axis
+            while (Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(target.position.x, 0, target.position.z)) > 0.7)
             {
-                rightHand.weight += 0.1f;
+                Vector3.Distance(new Vector3(transform.position.x, 0, transform.position.z), new Vector3(target.position.x, 0, target.position.z));
+                // scale this force with how far away from object we are
+                rb.AddForce(transform.forward * crouchSpeed);
                 yield return new WaitForEndOfFrame();
             }
+
+            float lerpProgress = 0;
+            // Lerp IK target position
+            Transform rightTarget = rightHand.transform.GetChild(0);
+            Vector3 oldPosition = rightTarget.position;
+            rightTarget.GetComponent<MirrorTarget>().move = false;
+            rightTarget.GetComponent<MirrorTarget>().rotate = false;
+            while (lerpProgress < 1)
+            {
+                Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, target.position, lerpProgress);
+                rightTarget.rotation = Quaternion.Slerp(rightTarget.rotation, target.rotation, lerpProgress);
+                //interpolatedPosition.z += Mathf.Sin(lerpProgress * Mathf.PI);
+                rightTarget.position = interpolatedPosition;
+                lerpProgress += Time.deltaTime * reachSpeed;
+                yield return new WaitForEndOfFrame();
+                Debug.Log(lerpProgress);
+            }
+
+            // Set parent to bone tip
+            DestroyImmediate(target.GetComponentInParent<Rigidbody>());
+            target.parent.SetParent(rightHand.data.tip, true);
+
+            // Deactivate IK
+            float weightProgress = 1;
+            while (weightProgress > 0)
+            {
+                armsRig.weight = weightProgress;
+                weightProgress -= Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+
+            disableMoveInput = false;
+            disableLookInput = false;
         }
 
         [Header("Jump Settings")]

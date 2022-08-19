@@ -82,11 +82,5 @@ namespace LightPat.ProceduralAnimations
                 rightFootIK.permissionToMove = true;
             }
         }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(new Vector3(transform.position.x, transform.position.y + 1.5f, transform.position.z), 0.1f);
-        }
     }
 }

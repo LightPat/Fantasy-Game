@@ -681,10 +681,11 @@ namespace LightPat.Core
 
         [Header("Attack Settings")]
         public float attackDamage = 10f;
+        public float attackReach = 3f;
         void OnAttack()
         {
             RaycastHit hit;
-            bool bHit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach);
+            bool bHit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackReach);
 
             if (bHit)
             {
@@ -700,11 +701,6 @@ namespace LightPat.Core
                     }
                 }
             }
-        }
-
-        void OnTestAnim()
-        {
-            animator.SetBool("New", !animator.GetBool("New"));
         }
 
         void OnSwitchCameras()

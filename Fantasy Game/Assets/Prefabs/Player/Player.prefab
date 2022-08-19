@@ -2132,7 +2132,7 @@ MonoBehaviour:
   checkDistance: 3
   sprintSpeed: 15
   toggleSprint: 1
-  crouchSpeed: 7
+  crouchSpeed: 3
   toggleCrouch: 1
   attackDamage: 10
 --- !u!114 &6765129139771697682

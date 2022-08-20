@@ -362,25 +362,14 @@ namespace LightPat.Core
                 {
                     if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
 
-                    StartCoroutine(PickUpItem(hit.transform.Find("ref_right_hand_grip")));
-                    //equippedWeapon = hit.transform.gameObject;
-                    //equippedWeapon.transform.SetParent(transform, true);
-                    //equippedWeapon.transform.GetComponentInChildren<Collider>().enabled = false;
-                    //Destroy(equippedWeapon.GetComponent<Rigidbody>());
-                    //equippedWeapon.transform.SetParent(weaponParent);
-                    //equippedWeapon.transform.localRotation = Quaternion.identity;
-                    //equippedWeapon.transform.localPosition = equippedWeapon.GetComponent<Weapon>().offset;
-
-                    //armsRig.weight = 1;
-
-                    //rightHand.transform.GetChild(0).GetComponent<MirrorTarget>().target = equippedWeapon.transform.Find("ref_right_hand_grip");
-                    //leftHand.transform.GetChild(0).GetComponent<MirrorTarget>().target = equippedWeapon.transform.Find("ref_left_hand_grip");
+                    StartCoroutine(PickUpWeapon(hit.transform.Find("ref_right_hand_grip")));
                 }
             }
         }
 
-        private IEnumerator PickUpItem(Transform target)
+        private IEnumerator PickUpWeapon(Transform target)
         {
+            equippedWeapon = target.parent.gameObject;
             disableLookInput = true;
             disableMoveInput = true;
             // Set IK weight to 1
@@ -434,10 +423,6 @@ namespace LightPat.Core
 
             // Set parent to bone tip
             target.parent.SetParent(rightHand.data.tip, true);
-            //target.GetComponentInParent<Weapon>().positionOffset = target.parent.localPosition;
-            //target.GetComponentInParent<Weapon>().rotationOffset = target.parent.localEulerAngles;
-            //target.GetComponentInParent<Weapon>().fakeParent = rightHand.data.tip;
-            //target.parent.SetParent(null, true);
             
             // Deactivate IK
             float weightProgress = 1;
@@ -445,7 +430,7 @@ namespace LightPat.Core
             {
                 weightProgress -= Time.deltaTime * reachSpeed;
                 armsRig.weight = weightProgress;
-                animator.SetLayerWeight(1, 1 - weightProgress);
+                //animator.SetLayerWeight(animator.GetLayerIndex(target.GetComponentInParent<Weapon>().weaponClass), 1 - weightProgress);
                 yield return null;
             }
 
@@ -454,6 +439,8 @@ namespace LightPat.Core
 
             disableMoveInput = false;
             disableLookInput = false;
+
+            OnSlot1();
         }
 
         [Header("Jump Settings")]
@@ -679,16 +666,66 @@ namespace LightPat.Core
             animator.SetBool("Crouching", false);
         }
 
+        [Header("Combat Settings")]
+        public float combatTransitionSpeed = 4f;
+        public float combatMoveSpeed;
+        public float dodgeForce;
+        public bool combatBool;
+        void OnSlot1()
+        {
+            combatBool = !combatBool;
+            animator.SetBool("Combat", combatBool);
+
+            // If we are not fighting
+            if (!combatBool)
+            {
+                if (equippedWeapon != null)
+                {
+                    StartCoroutine(ChangeLayerWeight(animator.GetLayerIndex(equippedWeapon.GetComponent<Weapon>().weaponClass), 0));
+                    equippedWeapon.SetActive(false); // replace with sheath animation
+                }
+                else
+                {
+                    StartCoroutine(ChangeLayerWeight(animator.GetLayerIndex("Fists"), 0));
+                }
+                return;
+            }
+
+            if (equippedWeapon != null)
+            {
+                // Use equippedWeapon's combat settings
+                StartCoroutine(ChangeLayerWeight(animator.GetLayerIndex(equippedWeapon.GetComponent<Weapon>().weaponClass), 1));
+                equippedWeapon.SetActive(true); // replace with sheath animation
+            }
+            else
+            {
+                StartCoroutine(ChangeLayerWeight(animator.GetLayerIndex("Fists"), 1));
+            }
+        }
+
+        private IEnumerator ChangeLayerWeight(int layerIndex, float targetWeight)
+        {
+            float lerpProgress = 0;
+
+            while (lerpProgress < 1)
+            {
+                animator.SetLayerWeight(layerIndex, Mathf.MoveTowards(animator.GetLayerWeight(layerIndex), targetWeight, Time.deltaTime * combatTransitionSpeed));
+                lerpProgress += Time.deltaTime * combatTransitionSpeed;
+                yield return null;
+            }
+        }
+
         [Header("Attack Settings")]
         public float attackDamage = 10f;
-        public float attackReach = 3f;
-        void OnAttack()
+        public float attackReach;
+        void OnAttack1(InputValue value)
         {
-            RaycastHit hit;
-            bool bHit = Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackReach);
+            animator.SetBool("Attack1", value.isPressed);
 
-            if (bHit)
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackReach))
             {
+                if (hit.transform == transform) { return; }
                 if (hit.transform.GetComponent<Attributes>())
                 {
                     if (equippedWeapon)
@@ -697,10 +734,16 @@ namespace LightPat.Core
                     }
                     else
                     {
+                        animator.SetTrigger("Left Click");
                         hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                     }
                 }
             }
+        }
+
+        void OnAttacked(GameObject attacker)
+        {
+            Debug.Log(name + " is being attacked by: " + attacker);
         }
 
         void OnSwitchCameras()
@@ -715,11 +758,6 @@ namespace LightPat.Core
                 firstPersonCamera.SetActive(true);
                 thirdPersonCamera.SetActive(false);
             }
-        }
-
-        void OnAttacked(GameObject value)
-        {
-            Debug.Log("I'm being attacked! " + value);
         }
 
         private PlayerInput playerInput;

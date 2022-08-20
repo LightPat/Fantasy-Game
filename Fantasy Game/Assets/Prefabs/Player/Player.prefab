@@ -454,7 +454,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 202610132}
   m_LocalRotation: {x: -7.1054274e-15, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.692, y: 2.1534882, z: -0.566}
+  m_LocalPosition: {x: 0.692, y: 2.1534882, z: -1.460043}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 1904363289}
@@ -484,7 +484,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 209266965}
   m_LocalRotation: {x: -7.1054274e-15, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.69265974, y: 2.1534882, z: -0.566}
+  m_LocalPosition: {x: -0.69265974, y: 2.1534882, z: -1.46}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 386261508}
@@ -534,9 +534,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 8953904574765873765}
-  moveSpeed: 0.1
   move: 1
-  rotationSpeed: 0.1
   rotate: 1
 --- !u!1 &386261507
 GameObject:
@@ -641,9 +639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 21488536724722676}
-  moveSpeed: 0.1
   move: 1
-  rotationSpeed: 0.1
   rotate: 1
 --- !u!1 &645005266
 GameObject:
@@ -2155,7 +2151,8 @@ MonoBehaviour:
   moveInput: {x: 0, y: 0}
   sensitivity: 0.2
   verticalLookBound: 65
-  reach: 10
+  reach: 4
+  reachSpeed: 1.5
   weaponParent: {fileID: 8953904574765873765}
   armsRig: {fileID: 1053763811}
   rightHand: {fileID: 1904363290}
@@ -2170,7 +2167,11 @@ MonoBehaviour:
   toggleSprint: 1
   crouchSpeed: 3
   toggleCrouch: 1
+  combatMoveSpeed: 0
+  dodgeForce: 0
+  combatBool: 0
   attackDamage: 10
+  attackReach: 4
 --- !u!114 &6765129139771697682
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2008,7 +2008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Effectors: []
 --- !u!114 &1340905460
 MonoBehaviour:
@@ -2167,7 +2167,8 @@ MonoBehaviour:
   toggleSprint: 1
   crouchSpeed: 3
   toggleCrouch: 1
-  combatMoveSpeed: 0
+  combatTransitionSpeed: 4
+  combatMoveSpeed: 2
   dodgeForce: 0
   combatBool: 0
   attackDamage: 10

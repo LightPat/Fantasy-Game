@@ -688,6 +688,7 @@ namespace LightPat.Core
                 {
                     StartCoroutine(ChangeLayerWeight(animator.GetLayerIndex("Fists"), 0));
                 }
+                currentSpeedTarget = walkingSpeed;
                 return;
             }
 
@@ -695,10 +696,12 @@ namespace LightPat.Core
             {
                 // Use equippedWeapon's combat settings
                 StartCoroutine(ChangeLayerWeight(animator.GetLayerIndex(equippedWeapon.GetComponent<Weapon>().weaponClass), 1));
-                equippedWeapon.SetActive(true); // replace with sheath animation
+                equippedWeapon.SetActive(true); // replace with unsheath animation
+                currentSpeedTarget = combatMoveSpeed; // replace with a variable from Weapon Component
             }
             else
             {
+                currentSpeedTarget = combatMoveSpeed;
                 StartCoroutine(ChangeLayerWeight(animator.GetLayerIndex("Fists"), 1));
             }
         }

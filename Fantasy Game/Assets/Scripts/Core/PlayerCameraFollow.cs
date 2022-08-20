@@ -8,7 +8,6 @@ namespace LightPat.Core
     {
         public Transform target;
         public float rotationSpeed;
-        [HideInInspector]
         public bool UpdateRotation;
 
         private void Update()

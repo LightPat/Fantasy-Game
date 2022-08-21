@@ -8,19 +8,12 @@ namespace LightPat.ProceduralAnimations
 {
     public class HumanoidStairStepController : MonoBehaviour
     {
-        [Header("New Settings")]
         public Transform rootTransform;
         public StairStepIKSolver leftFootIK;
         public StairStepIKSolver rightFootIK;
-
-        [Header("Old Settings")]
-        public Transform footBone;
-        public Transform otherFootTarget;
         public float upperRayHeight;
         public float lowerRayHeight;
-        // Create an upperRayDistance that goes longer than the lower ray so that you can account for the foot's space on the stair
         public float rayDistance;
-        public float stepDistance;
         public float horizontalRayOffset;
         public float lerpSpeedMultiplier;
         public float angularLerpSpeedMultiplier;
@@ -53,12 +46,13 @@ namespace LightPat.ProceduralAnimations
                 backFoot = leftFootIK;
             }
 
+            frontFoot.rayDistance = rayDistance;
+            backFoot.rayDistance = rayDistance + Vector3.Distance(backFoot.transform.position, frontFoot.transform.position);
+
             // If either foot is lerping, activate the rig, otherwise, deactivate it
             if (leftFootIK.IsMoving() | rightFootIK.IsMoving())
             {
                 rig.weight = Mathf.Lerp(rig.weight, 1, 7 * Time.deltaTime);
-                Rigidbody rootRigidbody = rootTransform.GetComponent<Rigidbody>();
-                //rootRigidbody.velocity = new Vector3(rootRigidbody.velocity.x, 0, rootRigidbody.velocity.z);
             }
             else
             {
@@ -68,10 +62,7 @@ namespace LightPat.ProceduralAnimations
                 backFoot.permissionToLerp = true;
             }
 
-            frontFoot.rayDistance = rayDistance;
-            backFoot.rayDistance = rayDistance + Vector3.Distance(backFoot.transform.position, frontFoot.transform.position) + 0.1f;
-
-            if (rootTransform.GetComponent<PlayerController>().moveInput == Vector2.zero)
+            if (rootTransform.GetComponent<RootMotionController>().moveInput == Vector2.zero)
             {
                 leftFootIK.permissionToMove = false;
                 rightFootIK.permissionToMove = false;

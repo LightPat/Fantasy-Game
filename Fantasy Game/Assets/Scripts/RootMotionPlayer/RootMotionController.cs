@@ -17,7 +17,7 @@ namespace LightPat.Core
             animator = GetComponentInChildren<Animator>();
         }
 
-        Vector2 moveInput;
+        [HideInInspector] public Vector2 moveInput;
         void OnMove(InputValue value)
         {
             if (sprinting & value.Get<Vector2>().y < 0) { sprinting = false; }

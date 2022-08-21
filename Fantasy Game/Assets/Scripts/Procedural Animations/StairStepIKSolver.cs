@@ -9,22 +9,20 @@ namespace LightPat.ProceduralAnimations
     {
         public HumanoidStairStepController controller;
         public Transform footBone;
-        public StairStepIKSolver otherFoot;
-        public bool permissionToLerp;
-        public bool permissionToMove = true;
-        public float rayDistance;
+        public StairStepIKSolver otherFootIK;
 
-        private Vector3 initialLocalPosition;
+        [HideInInspector] public bool permissionToLerp;
+        [HideInInspector] public bool permissionToMove = true;
+        [HideInInspector] public float lerpProgress = 1;
+        [HideInInspector] public float rayDistance;
+        
         private Vector3 newPosition;
         private Vector3 oldPosition;
         private RaycastHit verticalHit;
-        private float lerpProgress = 1;
-        private float initialFootHeight;
 
         private void Start()
         {
             rayDistance = controller.rayDistance;
-            initialLocalPosition = transform.localPosition;
             newPosition = transform.position;
             oldPosition = transform.position;
         }
@@ -33,49 +31,51 @@ namespace LightPat.ProceduralAnimations
         {
             // Shoot raycasts
             Vector3 upperRayStart = footBone.position + transform.forward * controller.horizontalRayOffset;
-            upperRayStart.y += controller.upperRayHeight;
+            upperRayStart.y = controller.rootTransform.position.y + controller.upperRayHeight;
 
             Vector3 lowerRayStart = footBone.position + transform.forward * controller.horizontalRayOffset;
             lowerRayStart.y += controller.lowerRayHeight;
 
-            //Debug.DrawRay(upperRayStart, transform.forward * rayDistance, Color.black, Time.deltaTime);
-            //Debug.DrawRay(lowerRayStart, transform.forward * rayDistance, Color.red, Time.deltaTime);
+            Debug.DrawRay(upperRayStart, transform.forward * rayDistance, Color.black, Time.deltaTime);
+            Debug.DrawRay(lowerRayStart, transform.forward * rayDistance, Color.red, Time.deltaTime);
 
-            RaycastHit lowerHit;
-            if (Physics.Raycast(lowerRayStart, transform.forward, out lowerHit, rayDistance))
-            {
-                if (!lowerHit.transform.CompareTag("Stairs")) { return; }
-                // If we hit ourself, ignore this frame
-                if (lowerHit.transform == controller.rootTransform) { return; }
-
-                if (!Physics.Raycast(upperRayStart, transform.forward, rayDistance))
+            while (true) {
+                RaycastHit lowerHit;
+                if (Physics.Raycast(lowerRayStart, transform.forward, out lowerHit, rayDistance))
                 {
-                    if (lerpProgress >= 1)
+                    if (!lowerHit.transform.CompareTag("Stairs")) { break; }
+                    // If we hit ourself, ignore this frame
+                    if (lowerHit.transform == controller.rootTransform) { break; }
+
+                    if (!Physics.Raycast(upperRayStart, transform.forward, rayDistance))
                     {
-                        // If we are in front of an object short enough for us to step on and we are not interpolating
-                        lerpProgress = 0;
+                        if (lerpProgress >= 1)
+                        {
+                            // If we are in front of an object short enough for us to step on and we are not interpolating
+                            lerpProgress = 0;
 
-                        // Raycast vertically between the endpoints of the upper ray and lower ray to get the top point of the step
-                        Vector3 verticalRayStart = upperRayStart + transform.forward * rayDistance;
-                        Physics.Raycast(verticalRayStart, Vector3.down, out verticalHit, upperRayStart.y - lowerRayStart.y);
-                        Debug.DrawRay(verticalRayStart, Vector3.down * (upperRayStart.y - lowerRayStart.y), Color.green, 5f);
+                            // Raycast vertically between the endpoints of the upper ray and lower ray to get the top point of the step
+                            Vector3 verticalRayStart = upperRayStart + transform.forward * rayDistance;
+                            Physics.Raycast(verticalRayStart, Vector3.down, out verticalHit, upperRayStart.y - lowerRayStart.y);
+                            Debug.DrawRay(verticalRayStart, Vector3.down * (upperRayStart.y - lowerRayStart.y), Color.green, 5f);
 
-                        newPosition = new Vector3(verticalHit.point.x, verticalHit.point.y + controller.stepLandingVerticalOffset, verticalHit.point.z) + transform.forward * controller.stepLandingHorizontalOffset;
+                            newPosition = new Vector3(verticalHit.point.x, verticalHit.point.y + controller.stepLandingVerticalOffset, verticalHit.point.z) + transform.forward * controller.stepLandingHorizontalOffset;
+                        }
+                    }
+                    else if (lerpProgress >= 1)
+                    {
+                        // If we are against a wall too high for us to step on
+                        oldPosition = transform.position;
                     }
                 }
                 else if (lerpProgress >= 1)
                 {
-                    // If we are against a wall too high for us to step on
+                    // If we have nothing in front of us
                     oldPosition = transform.position;
                 }
-            }
-            else if (lerpProgress >= 1)
-            {
-                // If we have nothing in front of us
-                oldPosition = transform.position;
+                break;
             }
 
-            //  & controller.rootTransform.GetComponent<PlayerController>().moveInput != Vector2.zero
             if (lerpProgress < 1 & permissionToLerp)
             {
                 // Scale lerp speed with velocity
@@ -105,7 +105,7 @@ namespace LightPat.ProceduralAnimations
                 {
                     lerpSpeed = controller.minimumLerpSpeed;
                 }
-                transform.localPosition = Vector3.Lerp(transform.localPosition, initialLocalPosition, lerpSpeed * Time.deltaTime); // lerp to this
+                transform.position = Vector3.Lerp(transform.position, footBone.position, lerpSpeed * Time.deltaTime);
             }
         }
 

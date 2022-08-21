@@ -20,6 +20,7 @@ namespace LightPat.Core
         Vector2 moveInput;
         void OnMove(InputValue value)
         {
+            if (sprinting & value.Get<Vector2>().y < 0) { sprinting = false; }
             if (!sprinting) { moveInput = value.Get<Vector2>(); }
         }
 

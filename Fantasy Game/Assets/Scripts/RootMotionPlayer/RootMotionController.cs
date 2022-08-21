@@ -51,12 +51,13 @@ namespace LightPat.Core
 
             float xTarget = moveInput.x;
             if (sprinting) { xTarget *= sprintTarget; }
-            float x = Mathf.MoveTowards(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
+            float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("x", x);
 
             float yTarget = moveInput.y;
             if (sprinting) { yTarget *= sprintTarget; }
-            float y = Mathf.MoveTowards(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
+            // float y = Mathf.SmoothDamp(animator.GetFloat("y"), yTarget, ref velocity, Time.deltaTime * moveTransitionSpeed, moveTransitionSpeed);
+            float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("y", y);
         }
 
@@ -75,7 +76,7 @@ namespace LightPat.Core
         bool ascending = true;
         void OnScaleSprint()
         {
-            if (sprinting & !crouching & moveInput == new Vector2(0,1))
+            if (sprinting & !crouching & moveInput.y > 0)
             {
                 if (ascending)
                 {

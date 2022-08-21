@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 6d224537f2cfde143928edf8e1194a03
+guid: 8a960727c9f162e42b8a4230184d0db6
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Sprint Forward
+    second: Running with Intention FL
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -35,13 +35,13 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Sprint Forward
+      name: Running with Intention FL
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 32
+      lastFrame: 42
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 45
       level: 0
       cycleOffset: 0
       loop: 0

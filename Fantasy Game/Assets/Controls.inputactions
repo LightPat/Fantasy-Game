@@ -114,7 +114,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "TapW",
+                    "name": "ScaleSprint",
                     "type": "Button",
                     "id": "0805ae69-110c-4224-ba6c-be2c8c328007",
                     "expectedControlType": "Button",
@@ -303,11 +303,11 @@
                 {
                     "name": "",
                     "id": "eee5dc7c-37f6-4740-ac94-4b88d99a68d5",
-                    "path": "<Keyboard>/w",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "TapW",
+                    "action": "ScaleSprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

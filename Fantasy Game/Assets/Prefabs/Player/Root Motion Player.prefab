@@ -992,7 +992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cb34a01506f60c4d97b1107c76509bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveTransitionSpeed: 5
+  moveTransitionSpeed: 2
   verticalLookBound: 80
   moveInput: {x: 0, y: 0}
 --- !u!1001 &7725200443667284195

@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 6d224537f2cfde143928edf8e1194a03
+guid: ed9453933fd9d6c4ba72b98feceb95c7
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Sprint Forward
+    second: Sprint FR
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -35,13 +35,13 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Sprint Forward
+      name: Sprint FR
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
       lastFrame: 32
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: -45
       level: 0
       cycleOffset: 0
       loop: 0

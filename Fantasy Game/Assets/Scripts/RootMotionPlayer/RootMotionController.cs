@@ -20,8 +20,9 @@ namespace LightPat.Core
         [HideInInspector] public Vector2 moveInput;
         void OnMove(InputValue value)
         {
-            if (sprinting & value.Get<Vector2>().y < 0) { sprinting = false; }
-            if (!sprinting) { moveInput = value.Get<Vector2>(); }
+            moveInput = value.Get<Vector2>();
+            if (moveInput.y <= 0 & sprinting) { sprintTarget = 2; }
+            if (moveInput == Vector2.zero & sprinting) { sprinting = false; }
         }
 
         Vector2 lookInput;
@@ -49,13 +50,13 @@ namespace LightPat.Core
             //animator.SetFloat("turn", turn);
 
             float xTarget = moveInput.x;
-            if (sprinting) { xTarget *= 2; }
-            float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
+            if (sprinting) { xTarget *= sprintTarget; }
+            float x = Mathf.MoveTowards(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("x", x);
 
             float yTarget = moveInput.y;
             if (sprinting) { yTarget *= sprintTarget; }
-            float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
+            float y = Mathf.MoveTowards(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("y", y);
         }
 
@@ -67,14 +68,31 @@ namespace LightPat.Core
             {
                 sprinting = !sprinting;
                 sprintTarget = 2;
+                ascending = true;
             }
         }
 
-        void OnTapW()
+        bool ascending = true;
+        void OnScaleSprint()
         {
-            if (sprinting & sprintTarget != 4 & !crouching)
+            if (sprinting & !crouching & moveInput == new Vector2(0,1))
             {
-                sprintTarget += 1;
+                if (ascending)
+                {
+                    sprintTarget += 1;
+                    if (sprintTarget == 4)
+                    {
+                        ascending = false;
+                    }
+                }
+                else
+                {
+                    sprintTarget -= 1;
+                    if (sprintTarget == 2)
+                    {
+                        ascending = true;
+                    }
+                }
             }
         }
 

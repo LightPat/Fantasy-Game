@@ -25,7 +25,8 @@ namespace LightPat.Core
         {
             lookInput = value.Get<Vector2>();
             transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
-            Camera.main.transform.Rotate(new Vector3(-lookInput.y * 0.2f, 0, 0));
+            Vector3 baseEulers = Camera.main.transform.eulerAngles;
+            Camera.main.transform.eulerAngles = new Vector3(baseEulers.x - lookInput.y * 0.2f, baseEulers.y + lookInput.x * 0.2f, baseEulers.z);
             //Camera.main.transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
         }
 

@@ -9,6 +9,8 @@ namespace LightPat.Core
     {
         public float moveTransitionSpeed;
         public float verticalLookBound;
+        public float sensitivity;
+        public float bodyRotationSpeed;
 
         Animator animator;
 
@@ -26,12 +28,12 @@ namespace LightPat.Core
         }
 
         Vector2 lookInput;
+        Vector3 bodyRotation;
         void OnLook(InputValue value)
         {
             lookInput = value.Get<Vector2>();
-            //transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
             Vector3 baseEulers = Camera.main.transform.eulerAngles;
-            Vector3 targetEulers = new Vector3(baseEulers.x - lookInput.y * 0.2f, baseEulers.y + lookInput.x * 0.2f, baseEulers.z);
+            Vector3 targetEulers = new Vector3(baseEulers.x - lookInput.y * sensitivity, baseEulers.y + lookInput.x * sensitivity, baseEulers.z);
             float upperBound = 360 - verticalLookBound;
             if (targetEulers.x > verticalLookBound & targetEulers.x < upperBound & lookInput.y < 0)
             {
@@ -42,12 +44,17 @@ namespace LightPat.Core
                 targetEulers.x = upperBound;
             }
             Camera.main.transform.eulerAngles = targetEulers;
+            bodyRotation = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + lookInput.x * sensitivity, transform.eulerAngles.z);
+            transform.eulerAngles = bodyRotation;
+            Debug.Log(bodyRotation);
+            //transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
         }
 
         private void Update()
         {
             //float turn = Mathf.Lerp(animator.GetFloat("turn"), lookInput.x, Time.deltaTime);
             //animator.SetFloat("turn", turn);
+            //transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, bodyRotation, Time.deltaTime * bodyRotationSpeed);
 
             float xTarget = moveInput.x;
             if (sprinting) { xTarget *= sprintTarget; }
@@ -105,6 +112,12 @@ namespace LightPat.Core
                 crouching = !crouching;
                 animator.SetBool("crouching", crouching);
             }
+        }
+
+        void OnSlot1()
+        {
+            //GetComponent<Rigidbody>().AddForce(Vector3.forward * 10, ForceMode.VelocityChange);
+            GetComponent<Rigidbody>().AddTorque(Vector3.up * 100, ForceMode.VelocityChange);
         }
     }
 }

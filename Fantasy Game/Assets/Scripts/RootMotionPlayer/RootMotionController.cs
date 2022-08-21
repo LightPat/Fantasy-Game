@@ -24,25 +24,25 @@ namespace LightPat.Core
         void OnLook(InputValue value)
         {
             lookInput = value.Get<Vector2>();
-            Debug.Log(lookInput);
             transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
-            //Camera.main.transform.Rotate(new Vector3(-lookInput.y, lookInput.x, 0) * 0.2f);
-            //Camera.main.transform.eulerAngles = new Vector3(Camera.main.transform.eulerAngles.x, Camera.main.transform.eulerAngles.y, 0);
+            Camera.main.transform.Rotate(new Vector3(-lookInput.y * 0.2f, 0, 0));
+            //Camera.main.transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
         }
 
         private void Update()
         {
-            float turn = Mathf.Lerp(animator.GetFloat("turn"), lookInput.x, Time.deltaTime * 4);
+            Debug.Log(transform.forward);
+            float turn = Mathf.Lerp(animator.GetFloat("turn"), lookInput.x, Time.deltaTime);
             animator.SetFloat("turn", turn);
 
             float xTarget = moveInput.x;
             if (sprinting) { xTarget *= 2; }
-            float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * 4);
+            float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime);
             animator.SetFloat("x", x);
 
             float yTarget = moveInput.y;
             if (sprinting) { yTarget *= sprintTarget; }
-            float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime * 4);
+            float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime);
             animator.SetFloat("y", y);
         }
 

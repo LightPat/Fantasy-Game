@@ -994,6 +994,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveTransitionSpeed: 4
   verticalLookBound: 80
+  sensitivity: 0.2
+  bodyRotationSpeed: 4
   moveInput: {x: 0, y: 0}
 --- !u!1001 &7725200443667284195
 PrefabInstance:

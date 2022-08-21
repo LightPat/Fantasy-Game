@@ -44,17 +44,17 @@ namespace LightPat.Core
                 targetEulers.x = upperBound;
             }
             Camera.main.transform.eulerAngles = targetEulers;
-            bodyRotation = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y + lookInput.x * sensitivity, transform.eulerAngles.z);
-            transform.eulerAngles = bodyRotation;
-            Debug.Log(bodyRotation);
-            //transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
+            bodyRotation = new Vector3(transform.eulerAngles.x, baseEulers.y + lookInput.x * sensitivity, transform.eulerAngles.z);
+            //transform.eulerAngles = bodyRotation;
+            //bodyOffset = transform.eulerAngles - bodyRotation;
+            //transform.eulerAngles -= bodyOffset;
         }
 
         private void Update()
         {
             //float turn = Mathf.Lerp(animator.GetFloat("turn"), lookInput.x, Time.deltaTime);
             //animator.SetFloat("turn", turn);
-            //transform.eulerAngles = Vector3.Lerp(transform.eulerAngles, bodyRotation, Time.deltaTime * bodyRotationSpeed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
 
             float xTarget = moveInput.x;
             if (sprinting) { xTarget *= sprintTarget; }

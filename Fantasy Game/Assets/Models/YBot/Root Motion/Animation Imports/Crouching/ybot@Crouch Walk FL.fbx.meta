@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 1d07c6de5d283534fbf73e114f08753a
+guid: 28b6ee95fe1028c43b3e92d2104a8c44
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Crouched Sneaking Right
+    second: Crouch Walk FL
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -35,13 +35,13 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Crouched Sneaking Right
+      name: Crouch Walk FL
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 66
+      lastFrame: 62
       wrapMode: 0
-      orientationOffsetY: 0
+      orientationOffsetY: 45
       level: 0
       cycleOffset: 0
       loop: 0

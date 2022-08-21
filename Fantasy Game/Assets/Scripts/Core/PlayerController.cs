@@ -409,8 +409,8 @@ namespace LightPat.Core
             lerpProgress = 0;
             // Lerp IK target position
             oldPosition = rightTarget.position;
-            rightTarget.GetComponent<MirrorTarget>().move = false;
-            rightTarget.GetComponent<MirrorTarget>().rotate = false;
+            rightTarget.GetComponent<FollowTarget>().move = false;
+            rightTarget.GetComponent<FollowTarget>().rotate = false;
             while (lerpProgress < 1)
             {
                 Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, target.position, lerpProgress);
@@ -434,8 +434,8 @@ namespace LightPat.Core
                 yield return null;
             }
 
-            rightTarget.GetComponent<MirrorTarget>().move = true;
-            rightTarget.GetComponent<MirrorTarget>().rotate = true;
+            rightTarget.GetComponent<FollowTarget>().move = true;
+            rightTarget.GetComponent<FollowTarget>().rotate = true;
 
             disableMoveInput = false;
             disableLookInput = false;

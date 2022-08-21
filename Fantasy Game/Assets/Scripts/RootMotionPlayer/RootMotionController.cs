@@ -28,7 +28,7 @@ namespace LightPat.Core
         void OnLook(InputValue value)
         {
             lookInput = value.Get<Vector2>();
-            transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
+            //transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
             Vector3 baseEulers = Camera.main.transform.eulerAngles;
             Vector3 targetEulers = new Vector3(baseEulers.x - lookInput.y * 0.2f, baseEulers.y + lookInput.x * 0.2f, baseEulers.z);
             float upperBound = 360 - verticalLookBound;

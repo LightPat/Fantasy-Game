@@ -8,15 +8,22 @@ namespace LightPat.Core
     public class RootMotionController : MonoBehaviour
     {
         public float moveTransitionSpeed;
-        public float verticalLookBound;
         public float sensitivity;
         public float bodyRotationSpeed;
+
+        public float mouseUpXRotLimit;
+        public float mouseDownXRotLimit;
 
         Animator animator;
 
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
+        }
+
+        void OnEscape()
+        {
+            disableLookInput = !disableLookInput;
         }
 
         [HideInInspector] public Vector2 moveInput;
@@ -27,33 +34,42 @@ namespace LightPat.Core
             if (moveInput == Vector2.zero & sprinting) { sprinting = false; }
         }
 
+        bool disableLookInput;
         Vector2 lookInput;
         Vector3 bodyRotation;
+        float rotationX;
+        float rotationY;
         void OnLook(InputValue value)
         {
+            if (disableLookInput) { return; }
+
             lookInput = value.Get<Vector2>();
-            Vector3 baseEulers = Camera.main.transform.eulerAngles;
-            Vector3 targetEulers = new Vector3(baseEulers.x - lookInput.y * sensitivity, baseEulers.y + lookInput.x * sensitivity, baseEulers.z);
-            float upperBound = 360 - verticalLookBound;
-            if (targetEulers.x > verticalLookBound & targetEulers.x < upperBound & lookInput.y < 0)
+
+            rotationX -= sensitivity * lookInput.y;
+            rotationY += sensitivity * lookInput.x;
+            rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
+            Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, 0);
+
+            if (rotationX <= 90)
             {
-                targetEulers.x = verticalLookBound;
+                bodyRotation = new Vector3(transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + lookInput.x * sensitivity, transform.eulerAngles.z);
             }
-            else if (targetEulers.x > verticalLookBound & targetEulers.x < upperBound & lookInput.y > 0)
-            {
-                targetEulers.x = upperBound;
-            }
-            Camera.main.transform.eulerAngles = targetEulers;
-            bodyRotation = new Vector3(transform.eulerAngles.x, baseEulers.y + lookInput.x * sensitivity, transform.eulerAngles.z);
-            //transform.eulerAngles = bodyRotation;
-            //bodyOffset = transform.eulerAngles - bodyRotation;
-            //transform.eulerAngles -= bodyOffset;
+        }
+
+        public void StartUpdateLookBound(float min, float max)
+        {
+            StartCoroutine(UpdateReferenceLookBound(min, max));
+        }
+
+        private IEnumerator UpdateReferenceLookBound(float min, float max)
+        {
+            yield return new WaitForSeconds(0.25f);
+            mouseUpXRotLimit = min;
+            mouseDownXRotLimit = max;
         }
 
         private void Update()
         {
-            //float turn = Mathf.Lerp(animator.GetFloat("turn"), lookInput.x, Time.deltaTime);
-            //animator.SetFloat("turn", turn);
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
 
             float xTarget = moveInput.x;

@@ -993,10 +993,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTransitionSpeed: 4
-  verticalLookBound: 80
   sensitivity: 0.2
   bodyRotationSpeed: 4
+  mouseUpXRotLimit: -90
+  mouseDownXRotLimit: 90
   moveInput: {x: 0, y: 0}
+  test: 1
 --- !u!1001 &7725200443667284195
 PrefabInstance:
   m_ObjectHideFlags: 0

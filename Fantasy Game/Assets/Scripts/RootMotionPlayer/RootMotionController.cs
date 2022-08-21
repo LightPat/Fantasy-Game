@@ -7,12 +7,10 @@ namespace LightPat.Core
 {
     public class RootMotionController : MonoBehaviour
     {
+        [Header("Animation Settings")]
         public float moveTransitionSpeed;
-        public float sensitivity;
-        public float bodyRotationSpeed;
-
-        public float mouseUpXRotLimit;
-        public float mouseDownXRotLimit;
+        public float moveLayerTransitionSpeed;
+        public float crouchTransitionSpeed;
 
         Animator animator;
 
@@ -33,6 +31,12 @@ namespace LightPat.Core
             if (moveInput.y <= 0 & sprinting) { sprintTarget = 2; }
             if (moveInput == Vector2.zero & sprinting) { sprinting = false; }
         }
+
+        [Header("Mouse Look Settings")]
+        public float sensitivity;
+        public float bodyRotationSpeed;
+        public float mouseUpXRotLimit;
+        public float mouseDownXRotLimit;
 
         bool disableLookInput;
         Vector2 lookInput;
@@ -79,9 +83,28 @@ namespace LightPat.Core
 
             float yTarget = moveInput.y;
             if (sprinting) { yTarget *= sprintTarget; }
-            // float y = Mathf.SmoothDamp(animator.GetFloat("y"), yTarget, ref velocity, Time.deltaTime * moveTransitionSpeed, moveTransitionSpeed);
             float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("y", y);
+
+            if (moveInput == Vector2.zero)
+            {
+                animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
+                animator.SetLayerWeight(animator.GetLayerIndex("Moving"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Moving")), 0, Time.deltaTime * moveLayerTransitionSpeed));
+            }
+            else
+            {
+                animator.SetFloat("idleTime", 0);
+                animator.SetLayerWeight(animator.GetLayerIndex("Moving"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Moving")), 1, Time.deltaTime * moveLayerTransitionSpeed));
+            }
+
+            if (crouching)
+            {
+                animator.SetLayerWeight(animator.GetLayerIndex("Crouching"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Crouching")), 1, Time.deltaTime * crouchTransitionSpeed));
+            }
+            else
+            {
+                animator.SetLayerWeight(animator.GetLayerIndex("Crouching"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Crouching")), 0, Time.deltaTime * crouchTransitionSpeed));
+            }
         }
 
         bool sprinting;
@@ -126,14 +149,7 @@ namespace LightPat.Core
             if (value.isPressed)
             {
                 crouching = !crouching;
-                animator.SetBool("crouching", crouching);
             }
-        }
-
-        void OnSlot1()
-        {
-            //GetComponent<Rigidbody>().AddForce(Vector3.forward * 10, ForceMode.VelocityChange);
-            GetComponent<Rigidbody>().AddTorque(Vector3.up * 100, ForceMode.VelocityChange);
         }
     }
 }

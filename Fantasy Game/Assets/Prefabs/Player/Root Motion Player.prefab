@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTransitionSpeed: 10
-  verticalLookBound: 90
+  verticalLookBound: 80
 --- !u!1001 &7725200443667284195
 PrefabInstance:
   m_ObjectHideFlags: 0

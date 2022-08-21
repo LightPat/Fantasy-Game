@@ -47,8 +47,6 @@ namespace LightPat.Core
             //float turn = Mathf.Lerp(animator.GetFloat("turn"), lookInput.x, Time.deltaTime);
             //animator.SetFloat("turn", turn);
 
-            //Debug.Log(Camera.main.transform.eulerAngles);
-
             float xTarget = moveInput.x;
             if (sprinting) { xTarget *= 2; }
             float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
@@ -73,9 +71,19 @@ namespace LightPat.Core
 
         void OnTapW()
         {
-            if (sprinting & sprintTarget != 4)
+            if (sprinting & sprintTarget != 4 & !crouching)
             {
                 sprintTarget += 1;
+            }
+        }
+
+        bool crouching;
+        void OnCrouch(InputValue value)
+        {
+            if (value.isPressed)
+            {
+                crouching = !crouching;
+                animator.SetBool("crouching", crouching);
             }
         }
     }

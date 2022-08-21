@@ -7,48 +7,61 @@ namespace LightPat.Core
 {
     public class RootMotionController : MonoBehaviour
     {
-        private Animator animator;
+        public float moveTransitionSpeed;
+        public float verticalLookBound;
+
+        Animator animator;
 
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
         }
 
-        public Vector2 moveInput;
+        Vector2 moveInput;
         void OnMove(InputValue value)
         {
             if (!sprinting) { moveInput = value.Get<Vector2>(); }
         }
 
-        public Vector2 lookInput;
+        Vector2 lookInput;
         void OnLook(InputValue value)
         {
             lookInput = value.Get<Vector2>();
             transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
             Vector3 baseEulers = Camera.main.transform.eulerAngles;
-            Camera.main.transform.eulerAngles = new Vector3(baseEulers.x - lookInput.y * 0.2f, baseEulers.y + lookInput.x * 0.2f, baseEulers.z);
-            //Camera.main.transform.Rotate(new Vector3(0, lookInput.x * 0.2f, 0));
+            Vector3 targetEulers = new Vector3(baseEulers.x - lookInput.y * 0.2f, baseEulers.y + lookInput.x * 0.2f, baseEulers.z);
+            float upperBound = 360 - verticalLookBound;
+            if (targetEulers.x > verticalLookBound & targetEulers.x < upperBound & lookInput.y < 0)
+            {
+                targetEulers.x = verticalLookBound;
+            }
+            else if (targetEulers.x > verticalLookBound & targetEulers.x < upperBound & lookInput.y > 0)
+            {
+                targetEulers.x = upperBound;
+            }
+            Camera.main.transform.eulerAngles = targetEulers;
         }
 
         private void Update()
         {
-            Debug.Log(transform.forward);
-            float turn = Mathf.Lerp(animator.GetFloat("turn"), lookInput.x, Time.deltaTime);
-            animator.SetFloat("turn", turn);
+            //float turn = Mathf.Lerp(animator.GetFloat("turn"), lookInput.x, Time.deltaTime);
+            //animator.SetFloat("turn", turn);
+
+            //Debug.Log(Camera.main.transform.eulerAngles);
 
             float xTarget = moveInput.x;
             if (sprinting) { xTarget *= 2; }
-            float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime);
+            float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("x", x);
 
             float yTarget = moveInput.y;
             if (sprinting) { yTarget *= sprintTarget; }
-            float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime);
+            float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("y", y);
         }
 
-        public bool sprinting;
-        public float sprintTarget;
+        bool sprinting;
+        float sprintTarget;
         void OnSprint(InputValue value)
         {
             if (value.isPressed & moveInput != Vector2.zero)

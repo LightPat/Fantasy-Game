@@ -92,10 +92,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cb34a01506f60c4d97b1107c76509bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveInput: {x: 0, y: 0}
-  lookInput: {x: 0, y: 0}
-  sprinting: 0
-  sprintTarget: 0
+  moveTransitionSpeed: 10
+  verticalLookBound: 90
 --- !u!1001 &7725200443667284195
 PrefabInstance:
   m_ObjectHideFlags: 0

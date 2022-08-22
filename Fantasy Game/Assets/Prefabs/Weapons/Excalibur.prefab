@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4476185}
   m_LocalRotation: {x: -0.50347936, y: -0.496319, z: -0.51002556, w: 0.48994884}
-  m_LocalPosition: {x: 0.107, y: -0.793, z: -0.14}
+  m_LocalPosition: {x: 0.014, y: -0.754, z: -0.161}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7871640728394659330}
@@ -220,3 +220,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   idealPersonality: 3232323232
   baseDamage: 50
+  weaponClass: Great Sword

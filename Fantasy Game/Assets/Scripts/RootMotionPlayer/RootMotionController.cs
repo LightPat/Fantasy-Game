@@ -13,10 +13,12 @@ namespace LightPat.Core
         public float crouchLayerTransitionSpeed;
 
         Animator animator;
+        Rigidbody rb;
 
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
+            rb = GetComponent<Rigidbody>();
         }
 
         void OnEscape()
@@ -60,11 +62,13 @@ namespace LightPat.Core
             }
         }
 
+        // Used in PlayerCameraFollow Script
         public void ResetCameraXRotation()
         {
             rotationX = 0;
         }
 
+        // Used in UpdatePlayerLookBound StateMachineBehaviour
         public void StartUpdateLookBound(float min, float max)
         {
             StartCoroutine(UpdateReferenceLookBound(min, max));
@@ -166,6 +170,14 @@ namespace LightPat.Core
             {
                 crouching = !crouching;
             }
+        }
+
+        [Header("Jump Settings")]
+        public float jumpHeight;
+        void OnJump()
+        {
+            float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+            rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
         }
     }
 }

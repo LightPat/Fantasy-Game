@@ -18,9 +18,28 @@ namespace LightPat.Core
         // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
         override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (animator.GetLayerWeight(layerIndex) == 1)
+            if (layerIndex == 0) // If we are the base layer
             {
-                animator.GetComponentInParent<RootMotionController>().StartUpdateLookBound(mouseUpXRotLimit, mouseDownXRotLimit);
+                bool otherLayerIsPlaying = false;
+                for (int i = 1; i < animator.layerCount; i++)
+                {
+                    if (animator.GetLayerWeight(i) > 0)
+                    {
+                        otherLayerIsPlaying = true;
+                        break;
+                    }
+                }
+
+                if (!otherLayerIsPlaying)
+                {
+                    animator.GetComponentInParent<RootMotionController>().mouseUpXRotLimit = mouseUpXRotLimit;
+                    animator.GetComponentInParent<RootMotionController>().mouseDownXRotLimit = mouseDownXRotLimit;
+                }
+            }
+            else if (animator.GetLayerWeight(layerIndex) == 1) // If we are any other layer
+            {
+                animator.GetComponentInParent<RootMotionController>().mouseUpXRotLimit = mouseUpXRotLimit;
+                animator.GetComponentInParent<RootMotionController>().mouseDownXRotLimit = mouseDownXRotLimit;
             }
         }
 

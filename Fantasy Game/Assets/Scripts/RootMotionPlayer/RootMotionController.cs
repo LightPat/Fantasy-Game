@@ -66,19 +66,6 @@ namespace LightPat.Core
             rotationX = 0;
         }
 
-        // Used in UpdatePlayerLookBound StateMachineBehaviour
-        public void StartUpdateLookBound(float min, float max)
-        {
-            StartCoroutine(UpdateReferenceLookBound(min, max));
-        }
-
-        private IEnumerator UpdateReferenceLookBound(float min, float max)
-        {
-            yield return new WaitForSeconds(0.25f);
-            mouseUpXRotLimit = min;
-            mouseDownXRotLimit = max;
-        }
-
         private void Update()
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);

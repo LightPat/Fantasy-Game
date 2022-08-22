@@ -68,7 +68,7 @@ namespace LightPat.Core
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle"))
             {
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
-                animator.Play("Idle.Landing", 0);
+                animator.Play("Base Layer.Landing", 0);
             }
         }
     }

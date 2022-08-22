@@ -7,6 +7,7 @@ namespace LightPat.Core
 {
     public class AirborneAnimationHandler : MonoBehaviour
     {
+        public float jumpHeight;
         public float airborneMoveSpeed;
 
         Animator animator;
@@ -34,8 +35,6 @@ namespace LightPat.Core
             }
         }
 
-        [Header("Jump Settings")]
-        public float jumpHeight;
         bool jumping;
         void OnJump()
         {

@@ -89,7 +89,7 @@ namespace LightPat.Core
             if (moveInput == Vector2.zero)
             {
                 // This is used so that some states that don't have exit transitions can "remember" that the user moved during their playtime
-                if (!animator.GetCurrentAnimatorStateInfo(0).IsTag("PauseIdleTime"))
+                if (!animator.GetCurrentAnimatorStateInfo(0).IsTag("PauseIdleTime") & !crouching)
                     animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
                 // Only change move layer weight if we are not in our idle loop
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
@@ -105,6 +105,7 @@ namespace LightPat.Core
 
             if (crouching)
             {
+                animator.SetFloat("idleTime", 0);
                 // Only change crouch layer weight if we are not in our idle loop
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
                     animator.SetLayerWeight(animator.GetLayerIndex("Crouching"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Crouching")), 1, Time.deltaTime * crouchLayerTransitionSpeed));

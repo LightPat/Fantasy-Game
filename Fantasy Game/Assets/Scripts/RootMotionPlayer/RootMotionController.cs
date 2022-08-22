@@ -60,6 +60,11 @@ namespace LightPat.Core
             }
         }
 
+        public void ResetCameraXRotation()
+        {
+            rotationX = 0;
+        }
+
         public void StartUpdateLookBound(float min, float max)
         {
             StartCoroutine(UpdateReferenceLookBound(min, max));

@@ -10,7 +10,7 @@ namespace LightPat.Core
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float moveLayerTransitionSpeed;
-        public float crouchTransitionSpeed;
+        public float crouchLayerTransitionSpeed;
 
         Animator animator;
 
@@ -37,12 +37,11 @@ namespace LightPat.Core
         public float bodyRotationSpeed;
         public float mouseUpXRotLimit;
         public float mouseDownXRotLimit;
+        public bool disableLookInput;
 
-        bool disableLookInput;
         Vector2 lookInput;
         Vector3 bodyRotation;
         float rotationX;
-        float rotationY;
         void OnLook(InputValue value)
         {
             if (disableLookInput) { return; }
@@ -50,9 +49,8 @@ namespace LightPat.Core
             lookInput = value.Get<Vector2>();
 
             rotationX -= sensitivity * lookInput.y;
-            rotationY += sensitivity * lookInput.x;
             rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
-            Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, 0);
+            Camera.main.transform.eulerAngles = new Vector3(rotationX, Camera.main.transform.eulerAngles.y + lookInput.x * sensitivity, 0);
 
             if (rotationX <= 90)
             {
@@ -88,22 +86,31 @@ namespace LightPat.Core
 
             if (moveInput == Vector2.zero)
             {
-                animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
-                animator.SetLayerWeight(animator.GetLayerIndex("Moving"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Moving")), 0, Time.deltaTime * moveLayerTransitionSpeed));
+                if (!animator.GetCurrentAnimatorStateInfo(0).IsTag("PauseIdleTime"))
+                    animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
+                // Only change move layer weight if we are not in our idle loop
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
+                    animator.SetLayerWeight(animator.GetLayerIndex("Moving"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Moving")), 0, Time.deltaTime * moveLayerTransitionSpeed));
             }
             else
             {
                 animator.SetFloat("idleTime", 0);
-                animator.SetLayerWeight(animator.GetLayerIndex("Moving"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Moving")), 1, Time.deltaTime * moveLayerTransitionSpeed));
+                // Only change move layer weight if we are not in our idle loop
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
+                    animator.SetLayerWeight(animator.GetLayerIndex("Moving"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Moving")), 1, Time.deltaTime * moveLayerTransitionSpeed));
             }
 
             if (crouching)
             {
-                animator.SetLayerWeight(animator.GetLayerIndex("Crouching"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Crouching")), 1, Time.deltaTime * crouchTransitionSpeed));
+                // Only change crouch layer weight if we are not in our idle loop
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
+                    animator.SetLayerWeight(animator.GetLayerIndex("Crouching"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Crouching")), 1, Time.deltaTime * crouchLayerTransitionSpeed));
             }
             else
             {
-                animator.SetLayerWeight(animator.GetLayerIndex("Crouching"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Crouching")), 0, Time.deltaTime * crouchTransitionSpeed));
+                // Only change crouch layer weight if we are not in our idle loop
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
+                    animator.SetLayerWeight(animator.GetLayerIndex("Crouching"), Mathf.MoveTowards(animator.GetLayerWeight(animator.GetLayerIndex("Crouching")), 0, Time.deltaTime * crouchLayerTransitionSpeed));
             }
         }
 

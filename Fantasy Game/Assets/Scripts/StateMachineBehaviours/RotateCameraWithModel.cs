@@ -12,7 +12,6 @@ namespace LightPat.Core
         public bool updateCameraRotation;
 
         private RigBuilder rigBuilder;
-        private Rig aimRig;
 
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -22,8 +21,7 @@ namespace LightPat.Core
             {
                 if (rigLayer.name == "AimRig")
                 {
-                    aimRig = rigLayer.rig;
-                    aimRig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
+                    rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
                     Camera.main.GetComponent<PlayerCameraFollow>().UpdateRotation = updateCameraRotation;
                     animator.GetComponentInParent<RootMotionController>().disableLookInput = updateCameraRotation;
                     break;

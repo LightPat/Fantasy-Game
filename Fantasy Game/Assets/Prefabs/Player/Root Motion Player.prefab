@@ -296,7 +296,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigBuilder: {fileID: 622696401}
   weightTarget: 1
-  weightSpeed: 4
+  weightSpeed: 1
 --- !u!1 &845293456
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,6 +916,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ebcbe4163dcf30419bdc3592fdc1f55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aimRig: {fileID: 667069535}
 --- !u!1 &8963344694420709462
 GameObject:
   m_ObjectHideFlags: 0
@@ -1016,6 +1017,7 @@ MonoBehaviour:
   bodyRotationSpeed: 4
   mouseUpXRotLimit: -90
   mouseDownXRotLimit: 90
+  disableLookInput: 0
 --- !u!1001 &7725200443667284195
 PrefabInstance:
   m_ObjectHideFlags: 0

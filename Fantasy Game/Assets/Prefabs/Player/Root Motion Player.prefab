@@ -917,7 +917,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aimRig: {fileID: 667069535}
-  speed: 10
+  speed: 20
 --- !u!1 &8963344694420709462
 GameObject:
   m_ObjectHideFlags: 0
@@ -1032,7 +1032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac14cd1754ed0d4478df12ffeab52931, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  speed: 15
   jumpHeight: 15
 --- !u!1001 &7725200443667284195
 PrefabInstance:

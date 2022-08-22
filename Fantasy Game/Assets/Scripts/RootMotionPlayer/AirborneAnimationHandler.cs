@@ -28,10 +28,10 @@ namespace LightPat.Core
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle") | animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
             {
-                Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y);
+                Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * speed;
                 moveForce.x -= rb.velocity.x;
                 moveForce.z -= rb.velocity.z;
-                rb.AddForce(moveForce * speed, ForceMode.VelocityChange);
+                rb.AddForce(moveForce, ForceMode.VelocityChange);
             }
         }
 
@@ -40,18 +40,22 @@ namespace LightPat.Core
         bool jumping;
         void OnJump()
         {
+            StartCoroutine(Jump());
+        }
+
+        private IEnumerator Jump()
+        {
             animator.SetBool("jumping", true);
+            while (true)
+            {
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Jump")) { break; }
+                yield return null;
+            }
+
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
-            StartCoroutine(t());
-        }
-
-        private IEnumerator t()
-        {
-            yield return null;
             animator.SetBool("jumping", false);
         }
-
         
         Vector2 moveInput;
         void OnMove(InputValue value)

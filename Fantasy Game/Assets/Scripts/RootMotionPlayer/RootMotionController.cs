@@ -42,6 +42,7 @@ namespace LightPat.Core
         Vector2 lookInput;
         Vector3 bodyRotation;
         float rotationX;
+        float rotationY;
         void OnLook(InputValue value)
         {
             if (disableLookInput) { return; }
@@ -49,8 +50,9 @@ namespace LightPat.Core
             lookInput = value.Get<Vector2>();
 
             rotationX -= sensitivity * lookInput.y;
+            rotationY += sensitivity * lookInput.x;
             rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
-            Camera.main.transform.eulerAngles = new Vector3(rotationX, Camera.main.transform.eulerAngles.y + lookInput.x * sensitivity, 0);
+            Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, 0);
 
             if (rotationX <= 90)
             {
@@ -86,6 +88,7 @@ namespace LightPat.Core
 
             if (moveInput == Vector2.zero)
             {
+                // This is used so that some states that don't have exit transitions can "remember" that the user moved during their playtime
                 if (!animator.GetCurrentAnimatorStateInfo(0).IsTag("PauseIdleTime"))
                     animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
                 // Only change move layer weight if we are not in our idle loop

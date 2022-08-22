@@ -9,13 +9,14 @@ namespace LightPat.ProceduralAnimations
     public class AimTargetIKSolver : MonoBehaviour
     {
         public Rig aimRig;
+        public float speed;
 
         float previousWeight;
 
         private void Update()
         {
             if (!Camera.main.GetComponent<PlayerCameraFollow>().UpdateRotation)
-                transform.position = Camera.main.transform.position + Camera.main.transform.forward;
+                transform.position = Vector3.Lerp(transform.position, Camera.main.transform.position + Camera.main.transform.forward, Time.deltaTime * speed);
 
             previousWeight = aimRig.weight;
         }

@@ -13,12 +13,10 @@ namespace LightPat.Core
         public float crouchLayerTransitionSpeed;
 
         Animator animator;
-        Rigidbody rb;
 
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
-            rb = GetComponent<Rigidbody>();
         }
 
         void OnEscape()
@@ -170,14 +168,6 @@ namespace LightPat.Core
             {
                 crouching = !crouching;
             }
-        }
-
-        [Header("Jump Settings")]
-        public float jumpHeight;
-        void OnJump()
-        {
-            float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-            rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
         }
     }
 }

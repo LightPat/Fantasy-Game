@@ -21,6 +21,17 @@ namespace LightPat.Core
 
         private void Update()
         {
+            //Debug.Log(animator.GetCurrentAnimatorStateInfo(0).length + " " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
+            {
+
+                if (animator.GetCurrentAnimatorStateInfo(0).length >
+                animator.GetCurrentAnimatorStateInfo(0).normalizedTime)
+                {
+                    //Debug.Log("Animation Finished Playing");
+                }
+            }
+
             animator.SetFloat("yVelocity", rb.velocity.y);
         }
 

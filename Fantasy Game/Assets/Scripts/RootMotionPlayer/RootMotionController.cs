@@ -7,10 +7,8 @@ namespace LightPat.Core
 {
     public class RootMotionController : MonoBehaviour
     {
-        [Header("Animation Settings")]
+        [Header("Animation Parameter Settings")]
         public float moveTransitionSpeed;
-        public float moveLayerTransitionSpeed;
-        public float crouchLayerTransitionSpeed;
 
         Animator animator;
         AnimationLayerWeightManager weightManager;

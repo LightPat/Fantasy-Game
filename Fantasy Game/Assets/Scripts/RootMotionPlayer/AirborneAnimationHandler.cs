@@ -7,11 +7,10 @@ namespace LightPat.Core
 {
     public class AirborneAnimationHandler : MonoBehaviour
     {
-        public float speed;
+        public float airborneMoveSpeed;
 
         Animator animator;
         Rigidbody rb;
-        bool falling;
 
         private void Start()
         {
@@ -28,7 +27,7 @@ namespace LightPat.Core
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle") | animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
             {
-                Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * speed;
+                Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * airborneMoveSpeed;
                 moveForce.x -= rb.velocity.x;
                 moveForce.z -= rb.velocity.z;
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
@@ -65,7 +64,7 @@ namespace LightPat.Core
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle"))
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle") | animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
             {
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
                 animator.Play("Base Layer.Landing", 0);

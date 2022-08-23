@@ -10,40 +10,21 @@ namespace LightPat.Core.Player
         public Transform target;
         public float rotationSpeed;
         public bool UpdateRotationWithTarget;
-        public int returnFrames;
-
-        bool previousRotationState;
-        int returnFrameCounter;
 
         private void Update()
         {
             transform.position = target.position;
 
-            // This is used for when we switch UpdateRotation to on; we save the camera's orientation
-            if (!previousRotationState & UpdateRotationWithTarget)
-            {
-                returnFrameCounter = 0;
-                player.ResetCameraXRotation();
-            }
-            // This is used for when we switch UpdateRotation to off; we return to the original vertical rotation
-            if (previousRotationState & !UpdateRotationWithTarget)
-            {
-                returnFrameCounter++;
-            }
-
-            // Return camera to a resting position if we exit a state where we were rotating with our target
-            if (returnFrameCounter != 0 & returnFrameCounter < returnFrames+1)
-            {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(5, player.rotationY, 0), rotationSpeed * Time.deltaTime);
-                returnFrameCounter++;
-            }
-
             if (UpdateRotationWithTarget)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
+                player.rotationX = 360 - transform.eulerAngles.x;
+                player.rotationY = transform.eulerAngles.y;
             }
-
-            previousRotationState = UpdateRotationWithTarget;
+            else
+            {
+                transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+            }
         }
     }
 }

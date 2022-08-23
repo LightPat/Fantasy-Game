@@ -23,63 +23,64 @@ namespace LightPat.Editor
                 if (modelImporter == null) { continue; }
 
                 // Convert model rigs to humanoid
-                modelImporter.animationType = ModelImporterAnimationType.Human;
-                modelImporter.avatarSetup = ModelImporterAvatarSetup.CopyFromOther;
-                modelImporter.sourceAvatar = srcAvatar;
-                modelImporter.animationCompression = ModelImporterAnimationCompression.Off;
-                modelImporter.SaveAndReimport();
+                //modelImporter.animationType = ModelImporterAnimationType.Human;
+                //modelImporter.avatarSetup = ModelImporterAvatarSetup.CopyFromOther;
+                //modelImporter.sourceAvatar = srcAvatar;
+                //modelImporter.animationCompression = ModelImporterAnimationCompression.Off;
+                //modelImporter.SaveAndReimport();
 
                 // Change animation clip settings
                 ModelImporterClipAnimation[] newClips = new ModelImporterClipAnimation[modelImporter.defaultClipAnimations.Length];
 
                 int counter = 0;
-                foreach (ModelImporterClipAnimation clip in modelImporter.defaultClipAnimations)
+                foreach (ModelImporterClipAnimation clip in modelImporter.clipAnimations)
                 {
-                    clip.name = Path.GetFileNameWithoutExtension(file);
-                    Debug.Log(clip.name);
+                    //clip.name = Path.GetFileNameWithoutExtension(file);
+                    //Debug.Log(clip.name);
 
-                    string[] loopTerms = { "Walk", "Run", "Crouch", "Sprint", "Idle" };
-                    foreach (string term in loopTerms)
-                    {
-                        if (clip.name.Contains(term))
-                        {
-                            clip.loopTime = true;
-                            break;
-                        }
-                    }
+                    //string[] loopTerms = { "Walk", "Run", "Crouch", "Sprint", "Idle" };
+                    //foreach (string term in loopTerms)
+                    //{
+                    //    if (clip.name.Contains(term))
+                    //    {
+                    //        clip.loopTime = true;
+                    //        break;
+                    //    }
+                    //}
 
-                    if (clip.name.Contains("Jump") | clip.name.Contains("Fall") | clip.name.Contains("Land"))
-                    {
-                        clip.loopTime = false;
-                        clip.lockRootRotation = true;
-                        clip.lockRootHeightY = true;
-                        clip.lockRootPositionXZ = true;
-                        clip.keepOriginalOrientation = true;
-                        clip.keepOriginalPositionXZ = true;
-                        clip.heightFromFeet = false;
-                        clip.keepOriginalPositionY = true;
-                    }
-                    else
-                    {
-                        clip.lockRootRotation = true;
-                        clip.lockRootHeightY = false;
-                        clip.lockRootPositionXZ = false;
-                        clip.keepOriginalOrientation = true;
-                        clip.keepOriginalPositionXZ = false;
-                        clip.heightFromFeet = true;
-                        clip.keepOriginalPositionY = false;
-                    }
+                    //if (clip.name.Contains("Jump") | clip.name.Contains("Fall") | clip.name.Contains("Land"))
+                    //{
+                    //    clip.loopTime = false;
+                    //    clip.lockRootRotation = true;
+                    //    clip.lockRootHeightY = true;
+                    //    clip.lockRootPositionXZ = true;
+                    //    clip.keepOriginalOrientation = true;
+                    //    clip.keepOriginalPositionXZ = true;
+                    //    clip.heightFromFeet = false;
+                    //    clip.keepOriginalPositionY = true;
+                    //}
+                    //else
+                    //{
+                    //    clip.lockRootRotation = true;
+                    //    clip.lockRootHeightY = false;
+                    //    clip.lockRootPositionXZ = false;
+                    //    clip.keepOriginalOrientation = true;
+                    //    clip.keepOriginalPositionXZ = false;
+                    //    clip.heightFromFeet = true;
+                    //    clip.keepOriginalPositionY = false;
+                    //}
 
-                    if (clip.name.Substring(clip.name.Length - 2) == "FL" | clip.name.Substring(clip.name.Length - 2) == "BR")
-                    {
-                        clip.rotationOffset = 45;
-                    }
-                    else if (clip.name.Substring(clip.name.Length - 2) == "FR" | clip.name.Substring(clip.name.Length - 2) == "BL")
-                    {
-                        clip.rotationOffset = -45;
-                    }
+                    //if (clip.name.Substring(clip.name.Length - 2) == "FL" | clip.name.Substring(clip.name.Length - 2) == "BR")
+                    //{
+                    //    clip.rotationOffset = 45;
+                    //}
+                    //else if (clip.name.Substring(clip.name.Length - 2) == "FR" | clip.name.Substring(clip.name.Length - 2) == "BL")
+                    //{
+                    //    clip.rotationOffset = -45;
+                    //}
 
                     newClips[counter] = clip;
+                    newClips[counter].lockRootHeightY = true;
                     counter++;
                 }
 

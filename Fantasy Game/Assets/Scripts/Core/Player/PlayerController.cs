@@ -13,12 +13,6 @@ namespace LightPat.Core.Player
         Animator animator;
         AnimationLayerWeightManager weightManager;
 
-        // Used in PlayerCameraFollow Script
-        public void ResetCameraXRotation()
-        {
-            rotationX = 5;
-        }
-
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
@@ -45,9 +39,9 @@ namespace LightPat.Core.Player
         public float mouseDownXRotLimit;
         public bool disableLookInput;
 
-        [HideInInspector] public float rotationX;
-        [HideInInspector] public float rotationY;
-        Vector2 lookInput;
+        public float rotationX;
+        public float rotationY;
+        public Vector2 lookInput;
         Vector3 bodyRotation;
 
         void OnLook(InputValue value)

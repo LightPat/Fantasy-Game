@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LightPat.Core;
-using UnityEditor;
+using LightPat.Core.Player;
 
 namespace LightPat.EnemyAI
 {

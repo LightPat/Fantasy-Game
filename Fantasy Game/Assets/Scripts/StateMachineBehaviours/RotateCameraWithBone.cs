@@ -7,7 +7,7 @@ using LightPat.Core.Player;
 
 namespace LightPat.StateMachineBehaviours
 {
-    public class RotateCameraWithModel : StateMachineBehaviour
+    public class RotateCameraWithBone : StateMachineBehaviour
     {
         public float aimWeightTarget;
         public bool updateCameraRotation;
@@ -23,7 +23,7 @@ namespace LightPat.StateMachineBehaviours
                 if (rigLayer.name == "AimRig")
                 {
                     rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
-                    Camera.main.GetComponent<PlayerCameraFollow>().UpdateRotation = updateCameraRotation;
+                    Camera.main.GetComponent<PlayerCameraFollow>().UpdateRotationWithTarget = updateCameraRotation;
                     animator.GetComponentInParent<PlayerController>().disableLookInput = updateCameraRotation;
                     break;
                 }

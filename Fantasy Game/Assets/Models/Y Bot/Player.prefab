@@ -218,7 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rigBuilder: {fileID: 7284513825097406218}
   weightTarget: 1
-  weightSpeed: 1
+  weightSpeed: 5
 --- !u!1 &7284513825124210128
 GameObject:
   m_ObjectHideFlags: 0
@@ -804,6 +804,8 @@ MonoBehaviour:
   mouseUpXRotLimit: -90
   mouseDownXRotLimit: 90
   disableLookInput: 0
+  rotationX: 0
+  rotationY: 0
   toggleSprint: 0
   toggleCrouch: 0
 --- !u!114 &7284513826171149810

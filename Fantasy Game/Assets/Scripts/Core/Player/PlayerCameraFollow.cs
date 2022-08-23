@@ -9,25 +9,41 @@ namespace LightPat.Core.Player
         public PlayerController player;
         public Transform target;
         public float rotationSpeed;
-        public bool UpdateRotation;
+        public bool UpdateRotationWithTarget;
+        public int returnFrames;
 
         bool previousRotationState;
+        int returnFrameCounter;
+
         private void Update()
         {
             transform.position = target.position;
 
-            if (UpdateRotation)
+            // This is used for when we switch UpdateRotation to on; we save the camera's orientation
+            if (!previousRotationState & UpdateRotationWithTarget)
             {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
-            }
-
-            // This is used for when we switch UpdateRotation to on, so that when we return we don't flip back to the wrong camera rotation
-            if (!previousRotationState & UpdateRotation)
-            {
+                returnFrameCounter = 0;
                 player.ResetCameraXRotation();
             }
+            // This is used for when we switch UpdateRotation to off; we return to the original vertical rotation
+            if (previousRotationState & !UpdateRotationWithTarget)
+            {
+                returnFrameCounter++;
+            }
 
-            previousRotationState = UpdateRotation;
+            // Return camera to a resting position if we exit a state where we were rotating with our target
+            if (returnFrameCounter != 0 & returnFrameCounter < returnFrames+1)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(5, player.rotationY, 0), rotationSpeed * Time.deltaTime);
+                returnFrameCounter++;
+            }
+
+            if (UpdateRotationWithTarget)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
+            }
+
+            previousRotationState = UpdateRotationWithTarget;
         }
     }
 }

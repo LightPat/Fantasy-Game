@@ -16,7 +16,7 @@ namespace LightPat.Core.Player
         // Used in PlayerCameraFollow Script
         public void ResetCameraXRotation()
         {
-            rotationX = 0;
+            rotationX = 5;
         }
 
         private void Start()
@@ -45,10 +45,11 @@ namespace LightPat.Core.Player
         public float mouseDownXRotLimit;
         public bool disableLookInput;
 
+        [HideInInspector] public float rotationX;
+        [HideInInspector] public float rotationY;
         Vector2 lookInput;
         Vector3 bodyRotation;
-        float rotationX;
-        float rotationY;
+
         void OnLook(InputValue value)
         {
             if (disableLookInput) { return; }

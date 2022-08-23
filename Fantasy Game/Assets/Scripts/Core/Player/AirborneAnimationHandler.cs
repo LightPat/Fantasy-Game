@@ -67,7 +67,6 @@ namespace LightPat.Core.Player
                 if (landing) { return; }
 
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
-                Debug.Log(collision.relativeVelocity);
 
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall"))
                 {

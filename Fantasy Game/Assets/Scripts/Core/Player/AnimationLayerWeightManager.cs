@@ -23,7 +23,7 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            animator = GetComponentInChildren<Animator>();
+            animator = GetComponent<Animator>();
             layerWeightTargets = new float[animator.layerCount];
 
             for (int i = 1; i < animator.layerCount; i++)

@@ -22,7 +22,7 @@ namespace LightPat.Core.Player
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
-            weightManager = GetComponent<AnimationLayerWeightManager>();
+            weightManager = GetComponentInChildren<AnimationLayerWeightManager>();
         }
 
         void OnEscape()
@@ -82,11 +82,9 @@ namespace LightPat.Core.Player
 
             if (moveInput == Vector2.zero)
             {
-                // Only change move layer weight and idle time if we are at rest
+                // Only change idle time if we are at rest
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
                 {
-                    // weightManager.SetLayerWeight("Moving", 0);
-
                     // This is used so that some states that don't have exit transitions can "remember" that the user moved during their playtime, also so that crouching and jumping is not considered "idle"
                     if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsTag("PauseIdleTime"))
                     {
@@ -98,31 +96,19 @@ namespace LightPat.Core.Player
                 if (animator.GetFloat("idleTime") > 10)
                     weightManager.SetLayerWeight("Idle Loop", 1);
             }
-            else // if moveInput is not Vector2.zero
+            else // If moveInput is not Vector2.zero
             {
                 animator.SetFloat("idleTime", 0);
-                // Only change move layer weight if we are not in our idle loop
-                //if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-                    // weightManager.SetLayerWeight("Moving", 1);
             }
 
             // Change the weight of the idle Loop once we have exited whatever idle animation we were in
             if (animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsName("Not Idle Looping"))
                 weightManager.SetLayerWeight("Idle Loop", 0);
 
+            // Don't want to enter idle loop while crouching
             if (crouching)
             {
                 animator.SetFloat("idleTime", 0);
-                // Only change crouch layer weight if we are not in our idle loop
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-                    weightManager.SetLayerWeight("Crouching", 1);
-            }
-            else
-            {
-                // Only change crouch layer weight if we are not in our idle loop
-                // TODO Double check this
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-                    weightManager.SetLayerWeight("Crouching", 0);
             }
 
             // If we jump set idleTime to 0
@@ -174,6 +160,14 @@ namespace LightPat.Core.Player
             if (value.isPressed)
             {
                 crouching = !crouching;
+                if (crouching)
+                {
+                    weightManager.SetLayerWeight("Crouching", 1);
+                }
+                else
+                {
+                    weightManager.SetLayerWeight("Crouching", 0);
+                }
             }
         }
     }

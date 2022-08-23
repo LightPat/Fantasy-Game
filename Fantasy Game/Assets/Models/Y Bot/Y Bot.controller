@@ -806,18 +806,6 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Idle Loop
-    m_StateMachine: {fileID: 5964724949196002717}
-    m_Mask: {fileID: 0}
-    m_Motions: []
-    m_Behaviours: []
-    m_BlendingMode: 0
-    m_SyncedLayerIndex: -1
-    m_DefaultWeight: 0
-    m_IKPass: 0
-    m_SyncedLayerAffectsTiming: 0
-    m_Controller: {fileID: 9100000}
-  - serializedVersion: 5
     m_Name: Crouching
     m_StateMachine: {fileID: -9024053182355996286}
     m_Mask: {fileID: 31900000, guid: 2c74a5165676302478b1176572834bad, type: 2}
@@ -834,6 +822,18 @@ AnimatorController:
     m_DefaultWeight: 0
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 1
+    m_Controller: {fileID: 9100000}
+  - serializedVersion: 5
+    m_Name: Idle Loop
+    m_StateMachine: {fileID: 5964724949196002717}
+    m_Mask: {fileID: 0}
+    m_Motions: []
+    m_Behaviours: []
+    m_BlendingMode: 0
+    m_SyncedLayerIndex: -1
+    m_DefaultWeight: 0
+    m_IKPass: 0
+    m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
 --- !u!1107 &151959357762285077
 AnimatorStateMachine:
@@ -1525,7 +1525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseUpXRotLimit: -30
+  mouseUpXRotLimit: -25
   mouseDownXRotLimit: 130
 --- !u!1102 &7060849373882091293
 AnimatorState:

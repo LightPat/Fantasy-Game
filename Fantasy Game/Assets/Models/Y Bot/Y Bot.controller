@@ -818,21 +818,6 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Moving
-    m_StateMachine: {fileID: -3490552273097036223}
-    m_Mask: {fileID: 31900000, guid: 2c74a5165676302478b1176572834bad, type: 2}
-    m_Motions:
-    - serializedVersion: 2
-      m_State: {fileID: 6631610051768041576}
-      m_Motion: {fileID: 20600000, guid: 78a6e28c9444828449dfecb9cd0a183d, type: 2}
-    m_Behaviours: []
-    m_BlendingMode: 0
-    m_SyncedLayerIndex: 0
-    m_DefaultWeight: 0
-    m_IKPass: 0
-    m_SyncedLayerAffectsTiming: 1
-    m_Controller: {fileID: 9100000}
-  - serializedVersion: 5
     m_Name: Crouching
     m_StateMachine: {fileID: -9024053182355996286}
     m_Mask: {fileID: 31900000, guid: 2c74a5165676302478b1176572834bad, type: 2}
@@ -840,7 +825,10 @@ AnimatorController:
     - serializedVersion: 2
       m_State: {fileID: 6631610051768041576}
       m_Motion: {fileID: 20600000, guid: 227410820cc805d4cace0104d934f22e, type: 2}
-    m_Behaviours: []
+    m_Behaviours:
+    - m_State: {fileID: 6631610051768041576}
+      m_StateMachineBehaviours:
+      - {fileID: 7044707695870798455}
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0
     m_DefaultWeight: 0
@@ -1525,6 +1513,20 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &7044707695870798455
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseUpXRotLimit: -30
+  mouseDownXRotLimit: 130
 --- !u!1102 &7060849373882091293
 AnimatorState:
   serializedVersion: 6

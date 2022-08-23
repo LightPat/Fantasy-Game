@@ -53,26 +53,43 @@ namespace LightPat.Editor
 
                 foreach (CapsuleCollider rootCol in rootCols)
                 {
-                    Vector3 pos = root.localPosition;
-                    Vector3 mirpos = mirroredRoot.localPosition;
-                    Quaternion rot = root.localRotation;
-                    Quaternion mirrot = mirroredRoot.localRotation;
-
-                    root.localPosition = Vector3.zero;
-                    mirroredRoot.localPosition = Vector3.zero;
-                    root.localRotation = Quaternion.identity;
-                    mirroredRoot.localRotation = Quaternion.identity;
-
                     CapsuleCollider col = mirroredRoot.gameObject.AddComponent<CapsuleCollider>();
                     col.center = rootCol.center;
                     col.radius = rootCol.radius;
                     col.height = rootCol.height;
                     col.direction = rootCol.direction;
 
-                    //root.localPosition = pos;
-                    //mirroredRoot.localPosition = mirpos;
-                    //root.localRotation = rot;
-                    //mirroredRoot.localRotation = mirrot;
+                    //if (rootCol.direction == 2) // z to x
+                    //{
+                    //    col.center = new Vector3(rootCol.center.z, rootCol.center.x, -rootCol.center.y);
+                    //    col.direction = 0;
+                    //}
+                    //if (rootCol.direction == 1) // y to x
+                    //{
+                    //    if (root.position.y < 0)
+                    //    {
+                    //        col.center = new Vector3(rootCol.center.z, -rootCol.center.x, rootCol.center.y);
+                    //    }
+                    //    else
+                    //    {
+                    //        col.center = new Vector3(rootCol.center.z, rootCol.center.x, rootCol.center.y);
+                    //    }
+
+                    //    col.direction = 0;
+                    //}
+                    if (rootCol.direction == 0) // x to y
+                    {
+                        if (root.localPosition.x < 0)
+                        {
+                            col.center = new Vector3(rootCol.center.z, rootCol.center.x, -rootCol.center.y);
+                        }
+                        else
+                        {
+                            col.center = new Vector3(rootCol.center.z, rootCol.center.x, rootCol.center.y);
+                        }
+
+                        col.direction = 1;
+                    }
                 }
             }
 

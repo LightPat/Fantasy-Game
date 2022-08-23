@@ -46,7 +46,7 @@ namespace LightPat.Editor
 
         static void CloneCapsuleCollidersInAllChildren(Transform root, Transform mirroredRoot)
         {
-            if (mirroredRoot.name == root.name)
+            if (mirroredRoot.name == root.name & !(root.name.Contains("Arm") | root.name.Contains("Index") | root.name.Contains("Middle") | root.name.Contains("Ring") | root.name.Contains("Pinky")))
             {
                 CapsuleCollider[] rootCols = root.GetComponents<CapsuleCollider>();
                 CapsuleCollider[] cols = new CapsuleCollider[rootCols.Length];
@@ -77,13 +77,23 @@ namespace LightPat.Editor
 
                     //    col.direction = 0;
                     //}
-                    if (rootCol.direction == 0) // x to y
-                    {
-                        //col.center = new Vector3(rootCol.center.z, rootCol.center.x, -rootCol.center.y);
-                        col.center = new Vector3(rootCol.center.z, -rootCol.center.x, rootCol.center.y);
+                    //if (rootCol.direction == 0) // x to y
+                    //{
+                    //    //col.center = new Vector3(rootCol.center.z, rootCol.center.x, -rootCol.center.y);
+                    //    col.center = new Vector3(rootCol.center.z, -rootCol.center.x, rootCol.center.y);
 
-                        col.direction = 1;
+                    //    col.direction = 1;
+                    //}
+
+                    if (rootCol.direction == 1) // y
+                    {
+                        col.center = new Vector3(-rootCol.center.x, -rootCol.center.y, rootCol.center.z);
                     }
+                    //else if (rootCol.direction == 2) // z
+                    //{
+                    //    col.center = new Vector3(rootCol.center.x, rootCol.center.y, rootCol.center.z);
+                    //    col.direction = 1;
+                    //}
                 }
             }
 

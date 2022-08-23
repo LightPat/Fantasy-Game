@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
+using LightPat.Core.Player;
 
-namespace LightPat.Core
+namespace LightPat.StateMachineBehaviours
 {
     public class RotateCameraWithModel : StateMachineBehaviour
     {
@@ -23,7 +24,7 @@ namespace LightPat.Core
                 {
                     rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
                     Camera.main.GetComponent<PlayerCameraFollow>().UpdateRotation = updateCameraRotation;
-                    animator.GetComponentInParent<RootMotionController>().disableLookInput = updateCameraRotation;
+                    animator.GetComponentInParent<PlayerController>().disableLookInput = updateCameraRotation;
                     break;
                 }
             }

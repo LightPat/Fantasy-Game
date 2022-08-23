@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LightPat.Core.Player;
 
-namespace LightPat.Core
+namespace LightPat.StateMachineBehaviours
 {
     public class UpdatePlayerLookBound : StateMachineBehaviour
     {
@@ -32,14 +33,14 @@ namespace LightPat.Core
 
                 if (!otherLayerIsPlaying)
                 {
-                    animator.GetComponentInParent<RootMotionController>().mouseUpXRotLimit = mouseUpXRotLimit;
-                    animator.GetComponentInParent<RootMotionController>().mouseDownXRotLimit = mouseDownXRotLimit;
+                    animator.GetComponentInParent<PlayerController>().mouseUpXRotLimit = mouseUpXRotLimit;
+                    animator.GetComponentInParent<PlayerController>().mouseDownXRotLimit = mouseDownXRotLimit;
                 }
             }
             else if (animator.GetLayerWeight(layerIndex) == 1) // If we are any other layer
             {
-                animator.GetComponentInParent<RootMotionController>().mouseUpXRotLimit = mouseUpXRotLimit;
-                animator.GetComponentInParent<RootMotionController>().mouseDownXRotLimit = mouseDownXRotLimit;
+                animator.GetComponentInParent<PlayerController>().mouseUpXRotLimit = mouseUpXRotLimit;
+                animator.GetComponentInParent<PlayerController>().mouseDownXRotLimit = mouseDownXRotLimit;
             }
         }
 

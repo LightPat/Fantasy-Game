@@ -59,12 +59,16 @@ namespace LightPat.Core.Player
             moveInput = value.Get<Vector2>();
         }
 
+        bool landing;
         private void OnCollisionEnter(Collision collision)
         {
-            if (IsAirborne() | IsJumping())
+            if ((IsAirborne() | IsJumping()) & !IsLanding())
             {
+                if (landing) { return; }
+
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
-                //Debug.Log(collision.relativeVelocity);
+                Debug.Log(collision.relativeVelocity);
+
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall"))
                 {
                     animator.Play("Base Layer.Land Flat On Stomach", 0);
@@ -73,7 +77,15 @@ namespace LightPat.Core.Player
                 {
                     animator.Play("Base Layer.Landing", 0);
                 }
+                landing = true;
+                StartCoroutine(ResetLandingBool());
             }
+        }
+
+        private IEnumerator ResetLandingBool()
+        {
+            yield return null;
+            landing = false;
         }
 
         bool IsAirborne()

@@ -38,17 +38,15 @@ namespace LightPat.Core.Player
         bool jumping;
         void OnJump()
         {
+            if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1) { return; }
             StartCoroutine(Jump());
         }
 
         private IEnumerator Jump()
         {
             animator.SetBool("jumping", true);
-            while (true)
-            {
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Jump")) { break; }
-                yield return null;
-            }
+
+            yield return null;
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
@@ -63,9 +61,10 @@ namespace LightPat.Core.Player
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (IsAirborne())
+            if (IsAirborne() | IsJumping())
             {
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
+                //Debug.Log(collision.relativeVelocity);
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall"))
                 {
                     animator.Play("Base Layer.Land Flat On Stomach", 0);
@@ -79,9 +78,17 @@ namespace LightPat.Core.Player
 
         bool IsAirborne()
         {
-            return animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle")
-                | animator.GetCurrentAnimatorStateInfo(0).IsName("Jump")
-                | animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall");
+            return animator.GetCurrentAnimatorStateInfo(0).IsTag("Airborne");
+        }
+
+        bool IsJumping()
+        {
+            return animator.GetCurrentAnimatorStateInfo(0).IsTag("Jumping");
+        }
+
+        bool IsLanding()
+        {
+            return animator.GetCurrentAnimatorStateInfo(0).IsTag("Landing");
         }
     }
 }

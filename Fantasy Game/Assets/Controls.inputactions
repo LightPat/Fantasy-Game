@@ -34,12 +34,12 @@
                 },
                 {
                     "name": "FreeLook",
-                    "type": "Button",
+                    "type": "Value",
                     "id": "b30ab0dc-64ea-438c-8105-eef8a274c2cd",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Sprint",

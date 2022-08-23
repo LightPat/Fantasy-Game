@@ -53,7 +53,6 @@ namespace LightPat.Core.Player
         void OnLook(InputValue value)
         {
             if (disableLookInput) { return; }
-
             lookInput = value.Get<Vector2>();
 
             rotationX -= sensitivity * lookInput.y;
@@ -188,9 +187,9 @@ namespace LightPat.Core.Player
         }
 
         bool freeLooking;
-        void OnFreeLook()
+        void OnFreeLook(InputValue value)
         {
-            freeLooking = !freeLooking;
+            freeLooking = value.isPressed;
         }
     }
 }

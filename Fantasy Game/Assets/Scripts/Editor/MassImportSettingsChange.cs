@@ -80,7 +80,7 @@ namespace LightPat.Editor
                     //}
 
                     newClips[counter] = clip;
-                    newClips[counter].lockRootHeightY = true;
+                    newClips[counter].lockRootHeightY = false;
                     counter++;
                 }
 

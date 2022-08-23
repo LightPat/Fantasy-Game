@@ -312,7 +312,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.2
+  m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.75
   m_HasExitTime: 1
@@ -436,7 +436,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 5432404702446049295, guid: 86da3b4a9568cd745959b466f1902571, type: 3}
-  m_Tag: 
+  m_Tag: Running Jump
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -800,7 +800,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.2
+  m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.73214287
   m_HasExitTime: 1
@@ -946,7 +946,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.2
+  m_TransitionDuration: 0.25
   m_TransitionOffset: 0
   m_ExitTime: 0.7222222
   m_HasExitTime: 1
@@ -1378,7 +1378,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 4
     m_ConditionEvent: yVelocity
-    m_EventTreshold: -15
+    m_EventTreshold: -7
   - m_ConditionMode: 3
     m_ConditionEvent: yVelocity
     m_EventTreshold: -30
@@ -1473,7 +1473,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: -2745361819937775981, guid: 330ea2e2d1d4c4749a9ab5ff00cf0ad4, type: 3}
-  m_Tag: 
+  m_Tag: Running Jump
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -1576,6 +1576,14 @@ BlendTree:
   m_Name: Landing Blend Tree
   m_Childs:
   - serializedVersion: 2
+    m_Motion: {fileID: -2143510264393907898, guid: 3768fd62d3ef15f48a93be8e0dd22570, type: 3}
+    m_Threshold: 0
+    m_Position: {x: 0, y: 0}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: x
+    m_Mirror: 0
+  - serializedVersion: 2
     m_Motion: {fileID: 1594963961931557034, guid: 76b639fb22358234d981f90ec9ed8abd, type: 3}
     m_Threshold: 5
     m_Position: {x: 0, y: 0}
@@ -1593,7 +1601,7 @@ BlendTree:
     m_Mirror: 0
   m_BlendParameter: landingVelocity
   m_BlendParameterY: x
-  m_MinThreshold: 5
+  m_MinThreshold: 0
   m_MaxThreshold: 15
   m_UseAutomaticThresholds: 0
   m_NormalizedBlendValues: 0
@@ -1647,7 +1655,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 6625310433640642591, guid: c099feeeb8e3d514aa20ba864015f505, type: 3}
-  m_Tag: 
+  m_Tag: Running Jump
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -2271,13 +2279,13 @@ AnimatorStateMachine:
     m_Position: {x: 530, y: 150, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 3190045629821792635}
-    m_Position: {x: 520, y: -20, z: 0}
+    m_Position: {x: 520, y: -30, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4527749040401159220}
-    m_Position: {x: 590, y: 60, z: 0}
+    m_Position: {x: 530, y: 20, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4216593724737416650}
-    m_Position: {x: 80, y: 30, z: 0}
+    m_Position: {x: 530, y: 80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7855617129448525611}
     m_Position: {x: 290, y: -30, z: 0}

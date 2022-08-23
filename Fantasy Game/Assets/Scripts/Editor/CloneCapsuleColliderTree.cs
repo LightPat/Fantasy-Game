@@ -79,14 +79,8 @@ namespace LightPat.Editor
                     //}
                     if (rootCol.direction == 0) // x to y
                     {
-                        if (root.localPosition.x < 0)
-                        {
-                            col.center = new Vector3(rootCol.center.z, rootCol.center.x, -rootCol.center.y);
-                        }
-                        else
-                        {
-                            col.center = new Vector3(rootCol.center.z, rootCol.center.x, rootCol.center.y);
-                        }
+                        //col.center = new Vector3(rootCol.center.z, rootCol.center.x, -rootCol.center.y);
+                        col.center = new Vector3(rootCol.center.z, -rootCol.center.x, rootCol.center.y);
 
                         col.direction = 1;
                     }

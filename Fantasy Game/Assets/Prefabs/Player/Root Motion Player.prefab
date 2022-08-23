@@ -1014,8 +1014,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTransitionSpeed: 4
-  moveLayerTransitionSpeed: 4
-  crouchLayerTransitionSpeed: 4
   moveInput: {x: 0, y: 0}
   sensitivity: 0.2
   bodyRotationSpeed: 4
@@ -1062,6 +1060,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equippedWeapon: {fileID: 0}
+  combat: 0
 --- !u!1001 &7725200443667284195
 PrefabInstance:
   m_ObjectHideFlags: 0

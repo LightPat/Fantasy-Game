@@ -7,7 +7,7 @@ namespace LightPat.Editor
     public class CreateBlendtreeAsset : MonoBehaviour
     {
 
-        [MenuItem("Tools/Animation/Asset from Blendtree")]
+        [MenuItem("Animation Tools/Asset from Blendtree")]
         static void CreateBlendtree()
         {
             string path = "Assets/";

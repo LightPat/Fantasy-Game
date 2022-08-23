@@ -8,7 +8,7 @@ namespace LightPat.Editor
     public class MirrorCapsuleColliderTree : MonoBehaviour
     {
         // This is meant to mirror a transform's tree of CapsuleColliders across axises
-        [MenuItem("Tools/Mirror Capsule Collider Tree")]
+        [MenuItem("Tools/Capsule Colliders/Mirror Capsule Collider Tree")]
         private static void NewMenuOption()
         {
             Transform[] selectedObjects = Selection.transforms;

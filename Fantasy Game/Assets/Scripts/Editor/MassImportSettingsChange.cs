@@ -8,7 +8,7 @@ namespace LightPat.Editor
 {
     public class MassImportSettingsChange : MonoBehaviour
     {
-        [MenuItem("Zdjskaldsa/Mass Import Settings Change")]
+        [MenuItem("Animation Tools/Mass Import Settings Change")]
         static void ChangeImportSettings()
         {
             Avatar srcAvatar = Selection.activeObject as Avatar;

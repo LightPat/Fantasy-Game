@@ -7,8 +7,8 @@ namespace LightPat.Editor
 {
     public class CloneCapsuleColliderTree : MonoBehaviour
     {
-        // This is meant to mirror a transform's tree of CapsuleColliders across axises
-        [MenuItem("Tools/Clone Capsule Collider Tree")]
+        // This is meant to clone a transform's tree of CapsuleColliders to an object with an identical transform structure
+        [MenuItem("Tools/Capsule Colliders/Clone Capsule Collider Tree")]
         private static void NewMenuOption()
         {
             Transform[] selectedObjects = Selection.transforms;

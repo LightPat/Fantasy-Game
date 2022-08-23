@@ -21,17 +21,6 @@ namespace LightPat.Core.Player
 
         private void Update()
         {
-            //Debug.Log(animator.GetCurrentAnimatorStateInfo(0).length + " " + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
-            {
-
-                if (animator.GetCurrentAnimatorStateInfo(0).length >
-                animator.GetCurrentAnimatorStateInfo(0).normalizedTime)
-                {
-                    //Debug.Log("Animation Finished Playing");
-                }
-            }
-
             animator.SetFloat("yVelocity", rb.velocity.y);
         }
 
@@ -74,11 +63,25 @@ namespace LightPat.Core.Player
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle") | animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
+            if (IsAirborne())
             {
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
-                animator.Play("Base Layer.Landing", 0);
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall"))
+                {
+                    animator.Play("Base Layer.Land Flat On Stomach", 0);
+                }
+                else
+                {
+                    animator.Play("Base Layer.Landing", 0);
+                }
             }
+        }
+
+        bool IsAirborne()
+        {
+            return animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle")
+                | animator.GetCurrentAnimatorStateInfo(0).IsName("Jump")
+                | animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall");
         }
     }
 }

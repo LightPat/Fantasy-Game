@@ -58,10 +58,7 @@ namespace LightPat.Core.Player
 
             rotationX -= sensitivity * lookInput.y;
             rotationY += sensitivity * lookInput.x;
-            if (mouseUpXRotLimit > -360 & mouseDownXRotLimit < 360)
-            {
-                rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
-            }
+            rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
             Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, 0);
 
             if (freeLooking) { return; }

@@ -19,6 +19,20 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 800, y: 120, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: 0}
+--- !u!114 &-8630663793772810827
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseUpXRotLimit: -25
+  mouseDownXRotLimit: 180
 --- !u!1101 &-8567829668629542248
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -41,6 +55,20 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &-8291549184907771800
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseUpXRotLimit: -25
+  mouseDownXRotLimit: 130
 --- !u!1102 &-7800726812101002309
 AnimatorState:
   serializedVersion: 6
@@ -483,6 +511,20 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-3816523001055613488
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseUpXRotLimit: -25
+  mouseDownXRotLimit: 130
 --- !u!1101 &-3697132796631974803
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1059,8 +1101,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseUpXRotLimit: -1000
-  mouseDownXRotLimit: 1000
+  mouseUpXRotLimit: -180
+  mouseDownXRotLimit: 180
 --- !u!1109 &1395005498015307952
 AnimatorTransition:
   m_ObjectHideFlags: 1
@@ -1351,7 +1393,8 @@ AnimatorState:
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -8630663793772810827}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1470,7 +1513,8 @@ AnimatorState:
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -3816523001055613488}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
@@ -1799,7 +1843,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -4384307810562988855}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: -8291549184907771800}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1

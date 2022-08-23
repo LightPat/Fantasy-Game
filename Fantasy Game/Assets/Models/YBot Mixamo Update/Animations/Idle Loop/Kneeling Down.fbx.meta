@@ -6,6 +6,9 @@ ModelImporter:
   - first:
       74: -203655887218126122
     second: mixamo.com
+  - first:
+      74: 5328921956098450455
+    second: Kneeling Down
   externalObjects: {}
   materials:
     materialImportMode: 2

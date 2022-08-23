@@ -12,6 +12,9 @@ ModelImporter:
   - first:
       74: -3893556837996224211
     second: Falling On Stomach
+  - first:
+      74: -2774682801919446664
+    second: Falling On Stomach Idle
   externalObjects: {}
   materials:
     materialImportMode: 2

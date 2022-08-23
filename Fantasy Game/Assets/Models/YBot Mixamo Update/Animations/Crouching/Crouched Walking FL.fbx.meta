@@ -6,6 +6,9 @@ ModelImporter:
   - first:
       74: -203655887218126122
     second: mixamo.com
+  - first:
+      74: -5145489071914459294
+    second: Crouched Walking FL
   externalObjects: {}
   materials:
     materialImportMode: 2

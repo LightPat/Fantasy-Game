@@ -6,6 +6,9 @@ ModelImporter:
   - first:
       74: -203655887218126122
     second: mixamo.com
+  - first:
+      74: 4569061997364264329
+    second: Arm Stretching
   externalObjects: {}
   materials:
     materialImportMode: 2

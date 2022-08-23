@@ -6,6 +6,9 @@ ModelImporter:
   - first:
       74: -203655887218126122
     second: mixamo.com
+  - first:
+      74: 8719481472752987794
+    second: Fast Crouch Walk FL
   externalObjects: {}
   materials:
     materialImportMode: 2

@@ -804,6 +804,7 @@ MonoBehaviour:
   mouseUpXRotLimit: -90
   mouseDownXRotLimit: 90
   disableLookInput: 0
+  disableCameraLookInput: 0
   rotationX: 0
   rotationY: 0
   lookInput: {x: 0, y: 0}
@@ -822,7 +823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpHeight: 6
-  airborneMoveSpeed: 5
+  airborneMoveSpeed: 10
 --- !u!114 &7284513826171149811
 MonoBehaviour:
   m_ObjectHideFlags: 0

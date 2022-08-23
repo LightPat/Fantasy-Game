@@ -17,15 +17,9 @@ namespace LightPat.Core.Player
 
         private void OnAnimatorMove()
         {
-            if (rb.velocity.y < -3.3 & !IsRunningJump())
-            {
-                transform.parent.position += new Vector3(animator.deltaPosition.x, 0, animator.deltaPosition.z);
-            }
-            else
-            {
-                transform.parent.position += animator.deltaPosition;
-            }
+            if (rb.velocity.y < -3.3 & !IsRunningJump()) { return; } // If we are not in a running jump, and our velocity is greater than -3.3; do not apply animator y root motion
 
+            transform.parent.position += animator.deltaPosition;
             transform.parent.rotation *= animator.deltaRotation;
         }
 

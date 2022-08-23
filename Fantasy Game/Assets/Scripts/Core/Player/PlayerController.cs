@@ -38,6 +38,7 @@ namespace LightPat.Core.Player
         public float mouseUpXRotLimit;
         public float mouseDownXRotLimit;
         public bool disableLookInput;
+        public bool disableCameraLookInput;
 
         public float rotationX;
         public float rotationY;
@@ -49,14 +50,21 @@ namespace LightPat.Core.Player
             if (disableLookInput) { return; }
             lookInput = value.Get<Vector2>();
 
-            rotationX -= sensitivity * lookInput.y;
             rotationY += sensitivity * lookInput.x;
-            rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
-            Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, 0);
+            if (!disableCameraLookInput)
+            {
+                rotationX -= sensitivity * lookInput.y;
+                rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
+                Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, 0);
+            }
 
             if (freeLooking) { return; }
 
-            if (rotationX <= 90)
+            if (disableCameraLookInput)
+            {
+                bodyRotation = new Vector3(transform.eulerAngles.x, rotationY + lookInput.x * sensitivity, transform.eulerAngles.z);
+            }
+            else if (rotationX <= 90)
             {
                 bodyRotation = new Vector3(transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + lookInput.x * sensitivity, transform.eulerAngles.z);
             }

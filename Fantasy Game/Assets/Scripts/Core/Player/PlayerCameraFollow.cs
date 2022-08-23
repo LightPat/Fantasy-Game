@@ -21,6 +21,7 @@ namespace LightPat.Core.Player
             {
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
 
+                // Track our vertical rotation
                 if (transform.eulerAngles.x > player.mouseDownXRotLimit) // If our number is greater than the positive look bound, make it a negative angle
                 {
                     player.rotationX = 360 - transform.eulerAngles.x;
@@ -29,9 +30,8 @@ namespace LightPat.Core.Player
                 {
                     player.rotationX = transform.eulerAngles.x;
                 }
-                player.rotationY = transform.eulerAngles.y;
             }
-            else if (previousRotationState)
+            else if (previousRotationState) // Set Z rotation to zero once we exit rotating with a bone
             {
                 transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
             }

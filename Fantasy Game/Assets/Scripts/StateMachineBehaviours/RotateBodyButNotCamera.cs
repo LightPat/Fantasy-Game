@@ -24,6 +24,7 @@ namespace LightPat.StateMachineBehaviours
                 {
                     rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
                     Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget = updateCameraRotation;
+                    animator.GetComponentInParent<PlayerController>().disableCameraLookInput = updateCameraRotation;
                     break;
                 }
             }
@@ -38,7 +39,7 @@ namespace LightPat.StateMachineBehaviours
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         //{
-
+            
         //}
 
         // OnStateMove is called right after Animator.OnAnimatorMove()

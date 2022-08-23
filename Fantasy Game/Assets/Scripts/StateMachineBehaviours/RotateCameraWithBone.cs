@@ -25,6 +25,7 @@ namespace LightPat.StateMachineBehaviours
                     rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
                     Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget = updateCameraRotation;
                     animator.GetComponentInParent<PlayerController>().disableLookInput = updateCameraRotation;
+                    animator.GetComponentInParent<PlayerController>().disableCameraLookInput = updateCameraRotation;
                     break;
                 }
             }

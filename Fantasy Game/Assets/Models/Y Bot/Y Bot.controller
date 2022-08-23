@@ -32,7 +32,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseUpXRotLimit: -25
-  mouseDownXRotLimit: 180
+  mouseDownXRotLimit: 160
 --- !u!1101 &-8567829668629542248
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -250,6 +250,20 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &-5730622288282679570
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseUpXRotLimit: -25
+  mouseDownXRotLimit: 130
 --- !u!1101 &-5291487194888627069
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -901,6 +915,22 @@ AnimatorController:
     - m_State: {fileID: 6631610051768041576}
       m_StateMachineBehaviours:
       - {fileID: 7044707695870798455}
+      - {fileID: 5966468372309466265}
+    - m_State: {fileID: -6053218306181249232}
+      m_StateMachineBehaviours:
+      - {fileID: 3388213649066017770}
+    - m_State: {fileID: 2528797295710188180}
+      m_StateMachineBehaviours:
+      - {fileID: 788551514813525243}
+    - m_State: {fileID: 7855617129448525611}
+      m_StateMachineBehaviours:
+      - {fileID: -5730622288282679570}
+    - m_State: {fileID: 4966372591346033793}
+      m_StateMachineBehaviours:
+      - {fileID: 4505625181896518891}
+    - m_State: {fileID: 4154268602477948625}
+      m_StateMachineBehaviours:
+      - {fileID: 8131177248216320005}
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0
     m_DefaultWeight: 0
@@ -1089,6 +1119,20 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &788551514813525243
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56dae0896f4235b42b63afa0a81f31cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimWeightTarget: 0
+  updateCameraRotation: 1
 --- !u!114 &906748665556285142
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1230,7 +1274,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Running Slide
+  m_Name: Slide
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1326,6 +1370,20 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &3388213649066017770
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56dae0896f4235b42b63afa0a81f31cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimWeightTarget: 0
+  updateCameraRotation: 1
 --- !u!1101 &3623339986474662176
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -1435,6 +1493,20 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &4505625181896518891
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseUpXRotLimit: -25
+  mouseDownXRotLimit: 130
 --- !u!1102 &4527349807836521554
 AnimatorState:
   serializedVersion: 6
@@ -1657,6 +1729,20 @@ AnimatorStateMachine:
   m_ExitPosition: {x: 550, y: 200, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -7800726812101002309}
+--- !u!114 &5966468372309466265
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56dae0896f4235b42b63afa0a81f31cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  aimWeightTarget: 1
+  updateCameraRotation: 0
 --- !u!114 &6256501501890803541
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1859,6 +1945,20 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &8131177248216320005
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066fbb989083f9642ac300c4616e2ecb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseUpXRotLimit: -25
+  mouseDownXRotLimit: 160
 --- !u!1102 &8209084332817934243
 AnimatorState:
   serializedVersion: 6

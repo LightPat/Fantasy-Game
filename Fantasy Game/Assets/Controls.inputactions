@@ -33,18 +33,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Interact",
+                    "name": "FreeLook",
                     "type": "Button",
-                    "id": "6fef270b-c192-4377-8859-d1c648c0694f",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Escape",
-                    "type": "Button",
-                    "id": "5e4f970b-e8d2-4a2a-9e14-573ceb07c6fd",
+                    "id": "b30ab0dc-64ea-438c-8105-eef8a274c2cd",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -60,6 +51,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "ScaleSprint",
+                    "type": "Button",
+                    "id": "0805ae69-110c-4224-ba6c-be2c8c328007",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Crouch",
                     "type": "Value",
                     "id": "4403cb97-386e-43da-a6dd-db49aed07f1f",
@@ -67,6 +67,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "6fef270b-c192-4377-8859-d1c648c0694f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Attack1",
@@ -87,24 +96,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "InventoryToggle",
-                    "type": "Button",
-                    "id": "80f7d9d7-7a38-43d2-aad9-3666c9432ae7",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "SwitchCameras",
-                    "type": "Button",
-                    "id": "b30ab0dc-64ea-438c-8105-eef8a274c2cd",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Slot1",
                     "type": "Button",
                     "id": "f3eaaee4-abd6-4e11-bb29-bbc7deac0786",
@@ -114,9 +105,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ScaleSprint",
+                    "name": "InventoryToggle",
                     "type": "Button",
-                    "id": "0805ae69-110c-4224-ba6c-be2c8c328007",
+                    "id": "80f7d9d7-7a38-43d2-aad9-3666c9432ae7",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Escape",
+                    "type": "Button",
+                    "id": "5e4f970b-e8d2-4a2a-9e14-573ceb07c6fd",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -214,67 +214,12 @@
                 },
                 {
                     "name": "",
-                    "id": "790e96ed-818e-4e21-8c3d-16f3e8989f44",
-                    "path": "<Keyboard>/escape",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "Escape",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1c21a038-ba66-4288-8139-ad0570adbf92",
-                    "path": "<Keyboard>/leftShift",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "Sprint",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "3a686e6a-cd94-4a27-b086-06567db4f750",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Attack1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "9fb5c9d6-e9d9-4137-9ebd-16c36c675df5",
-                    "path": "<Keyboard>/i",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "InventoryToggle",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "3301089d-3fd8-4245-b28d-e259a276b0cc",
-                    "path": "<Keyboard>/leftCtrl",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Crouch",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8fd90d13-f60f-405e-88e4-fed98c51b955",
-                    "path": "<Keyboard>/h",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "SwitchCameras",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -302,12 +247,67 @@
                 },
                 {
                     "name": "",
+                    "id": "8fd90d13-f60f-405e-88e4-fed98c51b955",
+                    "path": "<Keyboard>/h",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "FreeLook",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "eee5dc7c-37f6-4740-ac94-4b88d99a68d5",
                     "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "ScaleSprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1c21a038-ba66-4288-8139-ad0570adbf92",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3301089d-3fd8-4245-b28d-e259a276b0cc",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "790e96ed-818e-4e21-8c3d-16f3e8989f44",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Escape",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9fb5c9d6-e9d9-4137-9ebd-16c36c675df5",
+                    "path": "<Keyboard>/i",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "InventoryToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

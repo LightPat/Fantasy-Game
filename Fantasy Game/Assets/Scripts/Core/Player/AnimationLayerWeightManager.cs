@@ -21,6 +21,16 @@ namespace LightPat.Core.Player
             layerWeightTargets[layerIndex] = targetWeight;
         }
 
+        public float GetLayerWeight(string layerName)
+        {
+            return layerWeightTargets[animator.GetLayerIndex(layerName)];
+        }
+
+        public float GetLayerWeight(int layerIndex)
+        {
+            return layerWeightTargets[layerIndex];
+        }
+
         private void Start()
         {
             animator = GetComponent<Animator>();

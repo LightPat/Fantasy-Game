@@ -14,7 +14,7 @@ namespace LightPat.Editor
             Avatar srcAvatar = Selection.activeObject as Avatar;
 
             //string path = AssetDatabase.GetAssetPath(Selection.activeObject.GetInstanceID());
-            string path = "Assets/Models/YBot Mixamo Update/Animations";
+            string path = "Assets/Models/Y Bot/Animations";
 
             foreach (string file in Directory.GetFiles(path))
             {

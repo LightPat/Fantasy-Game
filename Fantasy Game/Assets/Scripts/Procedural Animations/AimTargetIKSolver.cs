@@ -14,7 +14,7 @@ namespace LightPat.ProceduralAnimations
 
         private void Update()
         {
-            if (!Camera.main.GetComponent<PlayerCameraFollow>().UpdateRotationWithTarget)
+            if (!Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget)
                 transform.position = Vector3.Lerp(transform.position, Camera.main.transform.position + Camera.main.transform.forward, Time.deltaTime * speed);
         }
     }

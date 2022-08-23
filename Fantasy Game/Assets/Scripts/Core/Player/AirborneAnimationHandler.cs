@@ -49,14 +49,11 @@ namespace LightPat.Core.Player
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             if (animator.GetFloat("y") < 1.1 & animator.GetFloat("y") > -1.1) // Standing Jump
             {
-                Debug.Log("Physics Jump");
+                yield return new WaitForSeconds(0.2f);
                 rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
-                yield return new WaitForSeconds(0.4f);
             }
             else // Running Jump
             {
-                Debug.Log("Running Jump");
-                //rb.AddForce(new Vector3(0, jumpForce, 0) / 2, ForceMode.VelocityChange);
                 yield return null;
             }
 

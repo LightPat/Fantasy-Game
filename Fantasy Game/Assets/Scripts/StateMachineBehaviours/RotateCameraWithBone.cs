@@ -23,7 +23,7 @@ namespace LightPat.StateMachineBehaviours
                 if (rigLayer.name == "AimRig")
                 {
                     rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
-                    Camera.main.GetComponent<PlayerCameraFollow>().UpdateRotationWithTarget = updateCameraRotation;
+                    Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget = updateCameraRotation;
                     animator.GetComponentInParent<PlayerController>().disableLookInput = updateCameraRotation;
                     break;
                 }

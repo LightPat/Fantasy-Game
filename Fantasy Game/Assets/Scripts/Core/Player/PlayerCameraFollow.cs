@@ -9,13 +9,15 @@ namespace LightPat.Core.Player
         public PlayerController player;
         public Transform target;
         public float rotationSpeed;
-        public bool UpdateRotationWithTarget;
+        public bool updateRotationWithTarget;
+        bool previousRotationState;
+
 
         private void Update()
         {
             transform.position = target.position;
 
-            if (UpdateRotationWithTarget)
+            if (updateRotationWithTarget)
             {
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
 
@@ -29,10 +31,12 @@ namespace LightPat.Core.Player
                 }
                 player.rotationY = transform.eulerAngles.y;
             }
-            else
+            else if (previousRotationState)
             {
                 transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
             }
+
+            previousRotationState = updateRotationWithTarget;
         }
     }
 }

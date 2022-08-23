@@ -33,6 +33,7 @@ namespace LightPat.Core.Player
                 moveForce.z -= rb.velocity.z;
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
             }
+            Debug.Log(rb.velocity + " " + rb.angularVelocity);
         }
 
         bool jumping;
@@ -46,10 +47,17 @@ namespace LightPat.Core.Player
         {
             animator.SetBool("jumping", true);
 
-            yield return null;
+            if (animator.GetFloat("y") < 1.1 & animator.GetFloat("y") > -1.1) // Standing Jump
+            {
+                float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
+                yield return new WaitForSeconds(0.2f);
+                rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
+            }
+            else // Running Jump
+            {
+                yield return null;
+            }
 
-            float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-            rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
             animator.SetBool("jumping", false);
         }
         

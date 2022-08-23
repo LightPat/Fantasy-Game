@@ -46,19 +46,34 @@ namespace LightPat.Editor
 
         static void CloneCapsuleCollidersInAllChildren(Transform root, Transform mirroredRoot)
         {
-            if (!mirroredRoot.GetComponent<CapsuleCollider>() & root.GetComponent<CapsuleCollider>())
+            if (mirroredRoot.name == root.name)
             {
-                CapsuleCollider rootCol = root.GetComponent<CapsuleCollider>();
-                CapsuleCollider col = mirroredRoot.gameObject.AddComponent<CapsuleCollider>();
-                col.center = rootCol.center;
-                col.center = new Vector3(col.center.x * -1, col.center.y, col.center.z);
-                col.radius = rootCol.radius;
-                col.height = rootCol.height;
-                col.direction = rootCol.direction;
-            }
-            else
-            {
-                Debug.Log(mirroredRoot + " already has a CapsuleCollider");
+                CapsuleCollider[] rootCols = root.GetComponents<CapsuleCollider>();
+                CapsuleCollider[] cols = new CapsuleCollider[rootCols.Length];
+
+                foreach (CapsuleCollider rootCol in rootCols)
+                {
+                    Vector3 pos = root.localPosition;
+                    Vector3 mirpos = mirroredRoot.localPosition;
+                    Quaternion rot = root.localRotation;
+                    Quaternion mirrot = mirroredRoot.localRotation;
+
+                    root.localPosition = Vector3.zero;
+                    mirroredRoot.localPosition = Vector3.zero;
+                    root.localRotation = Quaternion.identity;
+                    mirroredRoot.localRotation = Quaternion.identity;
+
+                    CapsuleCollider col = mirroredRoot.gameObject.AddComponent<CapsuleCollider>();
+                    col.center = rootCol.center;
+                    col.radius = rootCol.radius;
+                    col.height = rootCol.height;
+                    col.direction = rootCol.direction;
+
+                    //root.localPosition = pos;
+                    //mirroredRoot.localPosition = mirpos;
+                    //root.localRotation = rot;
+                    //mirroredRoot.localRotation = mirrot;
+                }
             }
 
             for (int i = 0; i < root.childCount; i++)

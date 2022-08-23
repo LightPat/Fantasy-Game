@@ -46,20 +46,19 @@ namespace LightPat.Editor
 
         static void CloneCapsuleCollidersInAllChildren(Transform root, Transform mirroredRoot)
         {
-            if (mirroredRoot.name == root.name)
+            if (!mirroredRoot.GetComponent<CapsuleCollider>() & root.GetComponent<CapsuleCollider>())
             {
-                CapsuleCollider[] rootCols = root.GetComponents<CapsuleCollider>();
-                CapsuleCollider[] cols = new CapsuleCollider[rootCols.Length];
-
-                foreach (CapsuleCollider rootCol in rootCols)
-                {
-                    CapsuleCollider col = mirroredRoot.gameObject.AddComponent<CapsuleCollider>();
-                    col.center = rootCol.center;
-                    col.center = new Vector3(col.center.x, col.center.y, col.center.z);
-                    col.radius = rootCol.radius;
-                    col.height = rootCol.height;
-                    col.direction = rootCol.direction;
-                }
+                CapsuleCollider rootCol = root.GetComponent<CapsuleCollider>();
+                CapsuleCollider col = mirroredRoot.gameObject.AddComponent<CapsuleCollider>();
+                col.center = rootCol.center;
+                col.center = new Vector3(col.center.x * -1, col.center.y, col.center.z);
+                col.radius = rootCol.radius;
+                col.height = rootCol.height;
+                col.direction = rootCol.direction;
+            }
+            else
+            {
+                Debug.Log(mirroredRoot + " already has a CapsuleCollider");
             }
 
             for (int i = 0; i < root.childCount; i++)

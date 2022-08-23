@@ -83,9 +83,9 @@ namespace LightPat.Core.Player
             if (moveInput == Vector2.zero)
             {
                 // Only change move layer weight and idle time if we are at rest
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
                 {
-                    weightManager.SetLayerWeight("Moving", 0);
+                    // weightManager.SetLayerWeight("Moving", 0);
 
                     // This is used so that some states that don't have exit transitions can "remember" that the user moved during their playtime, also so that crouching and jumping is not considered "idle"
                     if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsTag("PauseIdleTime"))
@@ -102,8 +102,8 @@ namespace LightPat.Core.Player
             {
                 animator.SetFloat("idleTime", 0);
                 // Only change move layer weight if we are not in our idle loop
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
-                    weightManager.SetLayerWeight("Moving", 1);
+                //if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+                    // weightManager.SetLayerWeight("Moving", 1);
             }
 
             // Change the weight of the idle Loop once we have exited whatever idle animation we were in
@@ -114,13 +114,14 @@ namespace LightPat.Core.Player
             {
                 animator.SetFloat("idleTime", 0);
                 // Only change crouch layer weight if we are not in our idle loop
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
                     weightManager.SetLayerWeight("Crouching", 1);
             }
             else
             {
                 // Only change crouch layer weight if we are not in our idle loop
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Idle"))
+                // TODO Double check this
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
                     weightManager.SetLayerWeight("Crouching", 0);
             }
 

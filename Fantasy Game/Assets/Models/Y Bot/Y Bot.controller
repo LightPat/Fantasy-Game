@@ -820,7 +820,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Moving
     m_StateMachine: {fileID: -3490552273097036223}
-    m_Mask: {fileID: 31900000, guid: 542097511a47b6e479086f5dadcb9c0e, type: 2}
+    m_Mask: {fileID: 31900000, guid: 2c74a5165676302478b1176572834bad, type: 2}
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 6631610051768041576}
@@ -835,11 +835,11 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Crouching
     m_StateMachine: {fileID: -9024053182355996286}
-    m_Mask: {fileID: 31900000, guid: 542097511a47b6e479086f5dadcb9c0e, type: 2}
+    m_Mask: {fileID: 31900000, guid: 2c74a5165676302478b1176572834bad, type: 2}
     m_Motions:
     - serializedVersion: 2
       m_State: {fileID: 6631610051768041576}
-      m_Motion: {fileID: 20600000, guid: e8abdb3407ff60e469e780ba2ef097dd, type: 2}
+      m_Motion: {fileID: 20600000, guid: 227410820cc805d4cace0104d934f22e, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0
@@ -1504,7 +1504,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Standing Idle
+  m_Name: Idle
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -1519,7 +1519,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -2143510264393907898, guid: c0d4ab04fb3463c4198e2428572f1edf, type: 3}
+  m_Motion: {fileID: 20600000, guid: 78a6e28c9444828449dfecb9cd0a183d, type: 2}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 

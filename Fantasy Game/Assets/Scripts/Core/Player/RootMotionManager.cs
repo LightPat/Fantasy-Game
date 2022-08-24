@@ -25,14 +25,16 @@ namespace LightPat.Core.Player
         {
             velocity = (rb.position - oldPos) / Time.deltaTime;
 
+            
             if (!IsGrounded() & prevBoolState)
             {
                 if (!forceTransferred)
                 {
-                    rb.AddForce(new Vector3(velocity.x, 0, velocity.z), ForceMode.VelocityChange);
                     forceTransferred = true;
+                    rb.AddForce(new Vector3(velocity.x, 0, velocity.z), ForceMode.VelocityChange);
                 }
             }
+
             if (IsGrounded() & !prevBoolState)
             {
                 forceTransferred = false;
@@ -41,8 +43,7 @@ namespace LightPat.Core.Player
             prevBoolState = IsGrounded();
             oldPos = rb.position;
         }
-
-        float min;
+        
         private void OnAnimatorMove()
         {
             // If we are not in a running jump or our velocity is greater than 3.3, do not apply root motion
@@ -73,7 +74,11 @@ namespace LightPat.Core.Player
             // May need to change 1.5f to be a different number if you switch the asset of the player model
 
             RaycastHit hit;
-            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z), Vector3.up * -1, out hit, 1);
+            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y, transform.position.z), Vector3.up * -1, out hit, 1);
+            if (hit.transform == transform.parent)
+            {
+                return true;
+            }
             return bHit;
         }
     }

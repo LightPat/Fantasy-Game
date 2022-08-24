@@ -35,8 +35,8 @@ namespace LightPat.ProceduralAnimations.Spider
             Vector3 lowerRayStart = footBone.position + transform.forward * controller.horizontalRayOffset;
             lowerRayStart.y += controller.lowerRayHeight;
 
-            Debug.DrawRay(upperRayStart, transform.forward * rayDistance, Color.black, Time.deltaTime);
-            Debug.DrawRay(lowerRayStart, transform.forward * rayDistance, Color.red, Time.deltaTime);
+            //Debug.DrawRay(upperRayStart, transform.forward * rayDistance, Color.black, Time.deltaTime);
+            //Debug.DrawRay(lowerRayStart, transform.forward * rayDistance, Color.red, Time.deltaTime);
 
             while (true) {
                 RaycastHit lowerHit;

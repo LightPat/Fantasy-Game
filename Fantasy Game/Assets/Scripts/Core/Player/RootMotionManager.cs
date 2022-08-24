@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 namespace LightPat.Core.Player
 {
@@ -47,16 +48,29 @@ namespace LightPat.Core.Player
         private void OnAnimatorMove()
         {
             // If we are not in a running jump or our velocity is greater than 3.3, do not apply root motion
-            if (!RootMotionCheck()) { return; }
+            if (!PhysicsCheck()) { return; }
+
+            transform.parent.rotation *= animator.deltaRotation;
+
+            // Check for collision
+            RaycastHit[] hits = Physics.RaycastAll(transform.parent.position, animator.deltaPosition, 2).OrderBy(h => h.distance).ToArray();
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.transform != transform.parent)
+                {
+                    Debug.Log(hit.transform);
+                    return;
+                }
+            }
 
             transform.parent.position += animator.deltaPosition;
-            transform.parent.rotation *= animator.deltaRotation;
         }
 
-        bool RootMotionCheck()
+        bool PhysicsCheck()
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") & rb.velocity.magnitude > 3.3) { return false; }
             if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running Jump") & rb.velocity.magnitude > 10.2) { return false; }
+
             return true;
         }
 

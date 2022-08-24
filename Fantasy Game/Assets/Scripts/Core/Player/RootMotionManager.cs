@@ -7,12 +7,10 @@ namespace LightPat.Core.Player
 {
     public class RootMotionManager : MonoBehaviour
     {
-        public Vector3 velocity;
-
+        Animator animator;
+        Rigidbody rb;
+        Vector3 transformVelocity;
         Vector3 oldPos;
-
-        private Animator animator;
-        private Rigidbody rb;
         bool prevBoolState;
         public bool forceTransferred;
 
@@ -24,46 +22,42 @@ namespace LightPat.Core.Player
 
         private void FixedUpdate()
         {
-            velocity = (rb.position - oldPos) / Time.deltaTime;
+            transformVelocity = (rb.position - oldPos) / Time.deltaTime;
 
-            
-            if (!IsGrounded() & prevBoolState)
+            bool isGrounded = IsGrounded();
+
+            if (!isGrounded & prevBoolState)
             {
                 if (!forceTransferred)
                 {
                     forceTransferred = true;
-                    rb.AddForce(new Vector3(velocity.x, 0, velocity.z), ForceMode.VelocityChange);
+                    rb.AddForce(new Vector3(transformVelocity.x, 0, transformVelocity.z), ForceMode.VelocityChange);
                 }
             }
 
-            if (IsGrounded() & !prevBoolState)
+            if (isGrounded & !prevBoolState)
             {
                 forceTransferred = false;
             }
 
-            prevBoolState = IsGrounded();
+            prevBoolState = isGrounded;
             oldPos = rb.position;
         }
 
+        public float sweepTestDistanceMultiplier;
         private void OnAnimatorMove()
         {
             // If we are not in a running jump or our velocity is greater than 3.3, do not apply root motion
             if (!PhysicsCheck()) { return; }
 
-            transform.parent.rotation *= animator.deltaRotation;
-
-            // Check for collision
-            RaycastHit[] hits = Physics.RaycastAll(transform.parent.position, animator.deltaPosition, 2).OrderBy(h => h.distance).ToArray();
-            foreach (RaycastHit hit in hits)
+            RaycastHit hit;
+            if (rb.SweepTest(animator.deltaPosition, out hit, animator.deltaPosition.magnitude * sweepTestDistanceMultiplier))
             {
-                if (hit.transform != transform.parent)
-                {
-                    Debug.Log(hit.transform);
-                    return;
-                }
+                return;
             }
 
             transform.parent.position += animator.deltaPosition;
+            transform.parent.rotation *= animator.deltaRotation;
         }
 
         bool PhysicsCheck()
@@ -74,20 +68,11 @@ namespace LightPat.Core.Player
             return true;
         }
 
+        public float isGroundedDistance;
         bool IsGrounded()
         {
-            // TODO this isn't really an elegant solution, if you stand on the edge of something it doesn't realize that you are still grouded
-            // If you check for velocity = 0 then you can double jump since the apex of your jump's velocity is 0
-            // Check if the player is touching a gameObject under them
-            // May need to change 1.5f to be a different number if you switch the asset of the player model
-
             RaycastHit hit;
-            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y, transform.position.z), Vector3.up * -1, out hit, 3);
-            if (hit.transform == transform.parent)
-            {
-                return true;
-            }
-            return bHit;
+            return rb.SweepTest(Vector3.down, out hit, isGroundedDistance);
         }
     }
 }

@@ -81,7 +81,7 @@ namespace LightPat.Core.Player
                 {
                     animator.Play("Land Flat On Stomach");
                 }
-                else if (moveInput.y > 0) // If I'm holding W, do the breakfall roll
+                else if (moveInput.y > 0 & collision.relativeVelocity.magnitude > 10) // If I'm holding W, do the breakfall roll
                 {
                     animator.Play("Breakfall Roll");
                 }

@@ -13,6 +13,15 @@ namespace LightPat.Core.Player
         Animator animator;
         AnimationLayerWeightManager weightManager;
 
+        public float maxStairStepDistance;
+        private void OnCollisionStay(Collision collision)
+        {
+            if (collision.transform.CompareTag("Stairs") & moveInput != Vector2.zero)
+            {
+                transform.Translate(new Vector3(0,0.01f,0));
+            }
+        }
+
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
@@ -21,9 +30,9 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            //disableLookInput = !disableLookInput;
+            disableLookInput = !disableLookInput;
             //GetComponent<Rigidbody>().AddForce(new Vector3(5, 0, 0), ForceMode.VelocityChange);
-            animator.SetTrigger("Test");
+            //animator.SetTrigger("Test");
         }
 
         [HideInInspector] public Vector2 moveInput;

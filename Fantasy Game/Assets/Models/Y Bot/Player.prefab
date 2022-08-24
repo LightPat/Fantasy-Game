@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70b342d8ce5c2fd48b8fa3147d48d1d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 1
+  m_Weight: 0
   m_Effectors:
   - m_Transform: {fileID: 7284513826399403738}
     m_Style:
@@ -87,7 +87,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7284513824820049013}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1400d481efaa9a744b45fe844dec533e, type: 3}
   m_Name: 
@@ -691,7 +691,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7284513826168738180}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e2b66acf05f95784a90a6038c97f8412, type: 3}
   m_Name: 
@@ -822,8 +822,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac14cd1754ed0d4478df12ffeab52931, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpHeight: 6
-  airborneMoveSpeed: 0
+  jumpHeight: 4
+  airborneMoveSpeed: 2
 --- !u!114 &7284513826171149811
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -906,7 +906,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7284513826399403716}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e2b66acf05f95784a90a6038c97f8412, type: 3}
   m_Name: 
@@ -2149,6 +2149,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0, z: 0}
   forceTransferred: 0
+  sweepTestDistanceMultiplier: 2
+  isGroundedDistance: 2
 --- !u!136 &6721924885171941239
 CapsuleCollider:
   m_ObjectHideFlags: 0

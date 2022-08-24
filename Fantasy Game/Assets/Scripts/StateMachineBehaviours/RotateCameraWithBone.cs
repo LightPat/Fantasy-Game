@@ -17,6 +17,7 @@ namespace LightPat.StateMachineBehaviours
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            if (!animator.GetComponent<RigBuilder>()) { return; }
             rigBuilder = animator.GetComponent<RigBuilder>();
             foreach (RigLayer rigLayer in rigBuilder.layers)
             {

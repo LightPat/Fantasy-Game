@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2059658e1fac8843958e217ee1194f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nameDisplay: {fileID: 0}
+  nameDisplay: {fileID: 4604779478868071989}
   rotationSpeed: 0.4
   animationSpeed: 0.02
   viewDistance: 30

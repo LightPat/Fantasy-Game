@@ -33,14 +33,20 @@ namespace LightPat.StateMachineBehaviours
 
                 if (!otherLayerIsPlaying)
                 {
-                    animator.GetComponentInParent<PlayerController>().mouseUpXRotLimit = mouseUpXRotLimit;
-                    animator.GetComponentInParent<PlayerController>().mouseDownXRotLimit = mouseDownXRotLimit;
+                    if (animator.GetComponentInParent<PlayerController>())
+                    {
+                        animator.GetComponentInParent<PlayerController>().mouseUpXRotLimit = mouseUpXRotLimit;
+                        animator.GetComponentInParent<PlayerController>().mouseDownXRotLimit = mouseDownXRotLimit;
+                    }
                 }
             }
             else if (animator.GetLayerWeight(layerIndex) == 1) // If we are any other layer
             {
-                animator.GetComponentInParent<PlayerController>().mouseUpXRotLimit = mouseUpXRotLimit;
-                animator.GetComponentInParent<PlayerController>().mouseDownXRotLimit = mouseDownXRotLimit;
+                if (animator.GetComponentInParent<PlayerController>())
+                {
+                    animator.GetComponentInParent<PlayerController>().mouseUpXRotLimit = mouseUpXRotLimit;
+                    animator.GetComponentInParent<PlayerController>().mouseDownXRotLimit = mouseDownXRotLimit;
+                }
             }
         }
 

@@ -14,9 +14,9 @@ namespace LightPat.Core
         [Header("Health")]
         public float maxHealth = 100f;
         private float HP;
-        [Header("Only assign for NPC/mobs")]
+        [Header("World Space Label : Only assign for enemies/NPCs/mobs")]
         public Renderer healthRenderer;
-        [Header("Only assign for player/allies/bosses")]
+        [Header("ScreenSpaceOverlay : Only assign for player/allies/bosses")]
         public Material imageMaterial;
         public TextMeshProUGUI healthPointsText;
 
@@ -32,8 +32,7 @@ namespace LightPat.Core
             SendMessage("OnAttacked", inflicter);
             if (HP <= 0)
             {
-                Debug.Log(name + "'s HP has reached " + HP + ", it is now dead.");
-                if (GetComponent<Animator>()) { GetComponent<Animator>().Play("Death"); }
+                if (GetComponentInChildren<Animator>()) { GetComponentInChildren<Animator>().Play("Death"); }
             }
 
             UpdateHPDisplay();

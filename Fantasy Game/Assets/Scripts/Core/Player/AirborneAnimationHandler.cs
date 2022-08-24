@@ -35,7 +35,6 @@ namespace LightPat.Core.Player
             }
         }
 
-        bool jumping;
         void OnJump()
         {
             if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1) { return; }

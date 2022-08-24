@@ -8,12 +8,27 @@ namespace LightPat.Core.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        [Header("Animation Parameter Settings")]
+        [Header("Animation Settings")]
         public float moveTransitionSpeed;
+        public float animatorSpeed = 1;
 
         Animator animator;
         AnimationLayerWeightManager weightManager;
 
+        void OnEscape()
+        {
+            disableLookInput = !disableLookInput;
+            //GetComponent<Rigidbody>().AddForce(new Vector3(5, 0, 0), ForceMode.VelocityChange);
+            //animator.SetTrigger("Test");
+        }
+
+        private void Start()
+        {
+            animator = GetComponentInChildren<Animator>();
+            weightManager = GetComponentInChildren<AnimationLayerWeightManager>();
+        }
+
+        // Simple stair walking
         private void OnCollisionStay(Collision collision)
         {
             if (collision.transform.CompareTag("Stairs") & moveInput != Vector2.zero)
@@ -32,19 +47,6 @@ namespace LightPat.Core.Player
                 if (translateDistance < 0) { return; }
                 transform.Translate(new Vector3(0, translateDistance, 0));
             }
-        }
-
-        private void Start()
-        {
-            animator = GetComponentInChildren<Animator>();
-            weightManager = GetComponentInChildren<AnimationLayerWeightManager>();
-        }
-
-        void OnEscape()
-        {
-            disableLookInput = !disableLookInput;
-            //GetComponent<Rigidbody>().AddForce(new Vector3(5, 0, 0), ForceMode.VelocityChange);
-            //animator.SetTrigger("Test");
         }
 
         [HideInInspector] public Vector2 moveInput;
@@ -95,6 +97,7 @@ namespace LightPat.Core.Player
 
         private void Update()
         {
+            animator.speed = animatorSpeed;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
 
             float xTarget = moveInput.x;

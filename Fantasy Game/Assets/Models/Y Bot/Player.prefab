@@ -2147,7 +2147,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 196383930f4501d4296410530737e34a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0, z: 0}
   forceTransferred: 0
   sweepTestDistanceMultiplier: 2
   isGroundedDistance: 2

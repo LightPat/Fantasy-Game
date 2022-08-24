@@ -14,7 +14,7 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            weightManager = GetComponent<AnimationLayerWeightManager>();
+            weightManager = GetComponentInChildren<AnimationLayerWeightManager>();
         }
 
         private void Update()

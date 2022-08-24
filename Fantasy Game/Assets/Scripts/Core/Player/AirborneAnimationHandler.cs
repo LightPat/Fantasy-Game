@@ -41,6 +41,7 @@ namespace LightPat.Core.Player
             StartCoroutine(Jump());
         }
 
+        public float idleJumpDelay;
         private IEnumerator Jump()
         {
             animator.SetBool("jumping", true);
@@ -48,7 +49,7 @@ namespace LightPat.Core.Player
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             if (animator.GetFloat("y") < 1.1 & animator.GetFloat("y") > -1.1 & animator.GetFloat("x") < 1.1 & animator.GetFloat("x") > -1.1) // Standing Jump
             {
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(idleJumpDelay);
                 rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
             }
             else // Running Jump

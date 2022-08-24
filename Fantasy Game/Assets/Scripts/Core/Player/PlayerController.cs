@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 namespace LightPat.Core.Player
 {
@@ -13,12 +14,23 @@ namespace LightPat.Core.Player
         Animator animator;
         AnimationLayerWeightManager weightManager;
 
-        public float maxStairStepDistance;
         private void OnCollisionStay(Collision collision)
         {
             if (collision.transform.CompareTag("Stairs") & moveInput != Vector2.zero)
             {
-                transform.Translate(new Vector3(0,0.01f,0));
+                float[] yPos = new float[collision.contactCount];
+                for (int i = 0; i < collision.contactCount; i++)
+                {
+                    yPos[i] = collision.GetContact(i).point.y;
+                }
+
+                float translateDistance = yPos.Max() - transform.position.y;
+
+                // TODO Change it so that we can't go up stairs that are too high for us
+                //if (collision.collider.bounds.size.y - translateDistance > maxStairStepDistance) { return; }
+
+                if (translateDistance < 0) { return; }
+                transform.Translate(new Vector3(0, translateDistance, 0));
             }
         }
 

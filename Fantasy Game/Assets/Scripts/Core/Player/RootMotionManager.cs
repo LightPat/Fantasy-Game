@@ -56,14 +56,9 @@ namespace LightPat.Core.Player
         bool RootMotionCheck()
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") & rb.velocity.magnitude > 3.3) { return false; }
-            if (IsRunningJump() & rb.velocity.magnitude > 7) { return false; }
+            if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running Jump") & rb.velocity.magnitude > 7) { return false; }
 
             return true;
-        }
-
-        bool IsRunningJump()
-        {
-            return animator.GetCurrentAnimatorStateInfo(0).IsTag("Running Jump");
         }
 
         bool IsGrounded()

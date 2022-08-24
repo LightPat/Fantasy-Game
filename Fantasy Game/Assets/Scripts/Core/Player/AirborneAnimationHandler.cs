@@ -66,24 +66,31 @@ namespace LightPat.Core.Player
             moveInput = value.Get<Vector2>();
         }
 
-        bool landing;
+        bool landingCollision;
         private void OnCollisionEnter(Collision collision)
         {
             if ((IsAirborne() | IsJumping()) & !IsLanding())
             {
-                if (landing) { return; }
+                if (landingCollision) { return; }
 
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
 
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall"))
+                Debug.Log(collision.relativeVelocity);
+
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall") | animator.GetCurrentAnimatorStateInfo(0).IsName("Falling On Stomach")) // Free fall 
                 {
-                    animator.Play("Base Layer.Land Flat On Stomach", 0);
+                    animator.Play("Land Flat On Stomach");
+                }
+                else if (moveInput.y > 0) // If I'm holding W, do the breakfall roll
+                {
+                    animator.Play("Breakfall Roll");
                 }
                 else
                 {
-                    animator.Play("Base Layer.Landing", 0);
+                    animator.Play("Landing");
                 }
-                landing = true;
+
+                landingCollision = true;
                 StartCoroutine(ResetLandingBool());
             }
         }
@@ -91,7 +98,7 @@ namespace LightPat.Core.Player
         private IEnumerator ResetLandingBool()
         {
             yield return null;
-            landing = false;
+            landingCollision = false;
         }
 
         bool IsAirborne()

@@ -21,7 +21,8 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            disableLookInput = !disableLookInput;
+            //disableLookInput = !disableLookInput;
+            GetComponent<Rigidbody>().AddForce(new Vector3(5, 0, 0), ForceMode.VelocityChange);
         }
 
         [HideInInspector] public Vector2 moveInput;
@@ -40,9 +41,9 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool disableCameraLookInput;
 
-        public float rotationX;
-        public float rotationY;
-        public Vector2 lookInput;
+        [HideInInspector] public float rotationX;
+        [HideInInspector] public float rotationY;
+        [HideInInspector] public Vector2 lookInput;
         Vector3 bodyRotation;
 
         void OnLook(InputValue value)

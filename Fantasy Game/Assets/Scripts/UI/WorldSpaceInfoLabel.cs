@@ -1,14 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace LightPat.UI
 {
     public class WorldSpaceInfoLabel : MonoBehaviour
     {
+        public TextMeshPro nameDisplay;
+
         public float rotationSpeed = 0.4f;
         public float animationSpeed = 0.02f;
         public float viewDistance = 10f;
+
+        private void Start()
+        {
+            nameDisplay.SetText(transform.parent.name);
+        }
 
         private void Update()
         {

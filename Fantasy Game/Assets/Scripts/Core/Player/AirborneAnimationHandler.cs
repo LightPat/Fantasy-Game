@@ -41,7 +41,7 @@ namespace LightPat.Core.Player
             StartCoroutine(Jump());
         }
 
-        public float idleJumpDelay;
+        public float jumpDelay;
         private IEnumerator Jump()
         {
             animator.SetBool("jumping", true);
@@ -49,7 +49,7 @@ namespace LightPat.Core.Player
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
             if (animator.GetFloat("y") < 1.1 & animator.GetFloat("y") > -1.1 & animator.GetFloat("x") < 1.1 & animator.GetFloat("x") > -1.1) // Standing Jump
             {
-                yield return new WaitForSeconds(idleJumpDelay);
+                yield return new WaitForSeconds(jumpDelay);
                 rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
             }
             else // Running Jump
@@ -74,8 +74,6 @@ namespace LightPat.Core.Player
                 if (landingCollision) { return; }
 
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
-
-                Debug.Log(collision.relativeVelocity);
 
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall") | animator.GetCurrentAnimatorStateInfo(0).IsName("Falling On Stomach")) // Free fall 
                 {

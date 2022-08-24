@@ -17,9 +17,19 @@ namespace LightPat.Core.Player
             weightManager = GetComponentInChildren<AnimationLayerWeightManager>();
         }
 
-        private void Update()
+        public float attackReach;
+        void OnInteract(InputValue value)
         {
-            
+            if (!value.isPressed) { return; }
+
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackReach))
+            {
+                if (hit.transform.GetComponent<Attributes>())
+                {
+                    hit.transform.GetComponent<Attributes>().InflictDamage(10, gameObject);
+                }
+            }
         }
 
         void OnSlot1()

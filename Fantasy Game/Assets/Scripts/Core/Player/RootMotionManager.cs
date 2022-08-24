@@ -44,15 +44,8 @@ namespace LightPat.Core.Player
             oldPos = rb.position;
         }
 
-        float min;
         private void OnAnimatorMove()
         {
-            if (rb.velocity.magnitude > min)
-            {
-                min = rb.velocity.magnitude;
-                Debug.Log(min);
-            }
-
             // If we are not in a running jump or our velocity is greater than 3.3, do not apply root motion
             if (!RootMotionCheck()) { return; }
 
@@ -63,8 +56,8 @@ namespace LightPat.Core.Player
         bool RootMotionCheck()
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") & rb.velocity.magnitude > 3.3) { return false; }
-            if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running Jump") & rb.velocity.magnitude > 10.2) { return false; }
-
+            if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running Jump") & rb.velocity.magnitude > 500) { return false; }
+            // 10.2
             return true;
         }
 

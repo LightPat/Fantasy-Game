@@ -47,7 +47,7 @@ namespace LightPat.Core.Player
             animator.SetBool("jumping", true);
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-            if (animator.GetFloat("y") < 1.1 & animator.GetFloat("y") > -1.1) // Standing Jump
+            if (animator.GetFloat("y") < 1.1 & animator.GetFloat("y") > -1.1 & animator.GetFloat("x") < 1.1 & animator.GetFloat("x") > -1.1) // Standing Jump
             {
                 yield return new WaitForSeconds(0.2f);
                 rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);

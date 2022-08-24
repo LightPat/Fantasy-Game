@@ -22,7 +22,8 @@ namespace LightPat.Core.Player
         void OnEscape()
         {
             //disableLookInput = !disableLookInput;
-            GetComponent<Rigidbody>().AddForce(new Vector3(5, 0, 0), ForceMode.VelocityChange);
+            //GetComponent<Rigidbody>().AddForce(new Vector3(5, 0, 0), ForceMode.VelocityChange);
+            animator.SetTrigger("Test");
         }
 
         [HideInInspector] public Vector2 moveInput;

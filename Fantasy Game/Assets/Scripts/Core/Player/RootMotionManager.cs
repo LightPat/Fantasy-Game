@@ -43,9 +43,16 @@ namespace LightPat.Core.Player
             prevBoolState = IsGrounded();
             oldPos = rb.position;
         }
-        
+
+        float min;
         private void OnAnimatorMove()
         {
+            if (rb.velocity.magnitude > min)
+            {
+                min = rb.velocity.magnitude;
+                Debug.Log(min);
+            }
+
             // If we are not in a running jump or our velocity is greater than 3.3, do not apply root motion
             if (!RootMotionCheck()) { return; }
 
@@ -56,7 +63,7 @@ namespace LightPat.Core.Player
         bool RootMotionCheck()
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") & rb.velocity.magnitude > 3.3) { return false; }
-            if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running Jump") & rb.velocity.magnitude > 7) { return false; }
+            if (animator.GetCurrentAnimatorStateInfo(0).IsTag("Running Jump") & rb.velocity.magnitude > 10.2) { return false; }
 
             return true;
         }
@@ -69,7 +76,7 @@ namespace LightPat.Core.Player
             // May need to change 1.5f to be a different number if you switch the asset of the player model
 
             RaycastHit hit;
-            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y, transform.position.z), Vector3.up * -1, out hit, 1);
+            bool bHit = Physics.Raycast(new Vector3(transform.position.x, transform.position.y, transform.position.z), Vector3.up * -1, out hit, 3);
             if (hit.transform == transform.parent)
             {
                 return true;

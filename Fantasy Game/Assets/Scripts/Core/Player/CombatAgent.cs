@@ -18,6 +18,7 @@ namespace LightPat.Core.Player
         }
 
         public float attackReach;
+        public float attackDamage;
         void OnInteract(InputValue value)
         {
             if (!value.isPressed) { return; }
@@ -27,7 +28,7 @@ namespace LightPat.Core.Player
             {
                 if (hit.transform.GetComponent<Attributes>())
                 {
-                    hit.transform.GetComponent<Attributes>().InflictDamage(10, gameObject);
+                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                 }
             }
         }

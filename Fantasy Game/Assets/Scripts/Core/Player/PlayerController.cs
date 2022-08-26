@@ -64,7 +64,6 @@ namespace LightPat.Core.Player
         public float mouseDownXRotLimit;
         public bool disableLookInput;
         public bool disableCameraLookInput;
-
         [HideInInspector] public float rotationX;
         [HideInInspector] public float rotationY;
         [HideInInspector] public Vector2 lookInput;

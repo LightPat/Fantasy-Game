@@ -29,7 +29,7 @@ namespace LightPat.Core
             UpdateHPDisplay();
         }
 
-        public float damageAnimSpeed;
+        float damageAnimSpeed;
         private void Update()
         {
             Vector2 interp = Vector2.MoveTowards(new Vector2(animator.GetFloat("damageX"), animator.GetFloat("damageY")), new Vector2(xTarget, yTarget), Time.deltaTime * damageAnimSpeed);
@@ -57,6 +57,8 @@ namespace LightPat.Core
                 xTarget = dir.x;
                 yTarget = dir.z;
                 reactDamage = true;
+
+                damageAnimSpeed = damage / 10;
             }
 
             if (HP <= 0)

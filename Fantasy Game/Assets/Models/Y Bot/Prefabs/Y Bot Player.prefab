@@ -842,6 +842,7 @@ MonoBehaviour:
   equippedWeapon: {fileID: 0}
   combat: 0
   attackReach: 4
+  attackDamage: 10
 --- !u!114 &1163105829
 MonoBehaviour:
   m_ObjectHideFlags: 0

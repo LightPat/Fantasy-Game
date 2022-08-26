@@ -785,10 +785,6 @@ MonoBehaviour:
   toggleSprint: 0
   toggleCrouch: 0
   reach: 5
-  reachSpeed: 1
-  armsRig: {fileID: 7284513825998588540}
-  rightHandTarget: {fileID: 7284513825465771983}
-  leftHandTarget: {fileID: 7284513826573182685}
 --- !u!114 &7284513826171149810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -818,6 +814,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equippedWeapon: {fileID: 0}
   combat: 0
+  reach: 4
+  reachSpeed: 1
+  armsRig: {fileID: 7284513825998588540}
+  rightHandTarget: {fileID: 7284513825465771983}
+  leftHandTarget: {fileID: 7284513826573182685}
   attackReach: 4
   attackDamage: 10
 --- !u!114 &1163105829

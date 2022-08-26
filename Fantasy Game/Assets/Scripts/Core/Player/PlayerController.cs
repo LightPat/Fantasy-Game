@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
-using UnityEngine.Animations.Rigging;
-using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {
@@ -224,12 +222,8 @@ namespace LightPat.Core.Player
             freeLooking = value.isPressed;
         }
 
-        [Header("Grab Weapon Settings")]
+        [Header("Interact Settings")]
         public float reach;
-        public float reachSpeed;
-        public Rig armsRig;
-        public Transform rightHandTarget;
-        public Transform leftHandTarget;
         void OnInteract()
         {
             RaycastHit hit;
@@ -238,16 +232,6 @@ namespace LightPat.Core.Player
                 if (hit.transform.GetComponent<Interactable>())
                 {
                     hit.transform.GetComponent<Interactable>().Invoke();
-                }
-                else if (hit.transform.GetComponent<Weapon>())
-                {
-                    //if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
-
-                    //StartCoroutine(PickUpWeapon(hit.transform.Find("ref_right_hand_grip")));
-                    armsRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
-                    armsRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-
-                    rightHandTarget.GetComponent<FollowTarget>().target = hit.transform.Find("ref_right_hand_grip");
                 }
             }
         }

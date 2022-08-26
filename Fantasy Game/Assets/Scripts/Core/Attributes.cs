@@ -35,10 +35,6 @@ namespace LightPat.Core
             Vector2 interp = Vector2.MoveTowards(new Vector2(animator.GetFloat("damageX"), animator.GetFloat("damageY")), new Vector2(xTarget, yTarget), Time.deltaTime * damageAnimSpeed);
             animator.SetFloat("damageX", interp.x);
             animator.SetFloat("damageY", interp.y);
-
-            animator.SetFloat("damageX", Mathf.Lerp(animator.GetFloat("damageX"), xTarget, Time.deltaTime * damageAnimSpeed));
-            animator.SetFloat("damageY", Mathf.Lerp(animator.GetFloat("damageY"), yTarget, Time.deltaTime * damageAnimSpeed));
-
             animator.SetBool("reactDamage", reactDamage);
 
             if (animator.GetFloat("damageX") == xTarget) { xTarget = 0; }

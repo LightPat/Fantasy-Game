@@ -52,34 +52,41 @@ namespace LightPat.Core.Player
         {
             Transform weapon = hit.transform;
 
-            armsRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
-            armsRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-            rightHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_right_hand_grip");
-            leftHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_left_hand_grip");
-
-            yield return new WaitUntil(() => armsRig.weight >= 0.9);
-
-            rightHandTarget.GetComponent<FollowTarget>().target = null;
-            leftHandTarget.GetComponent<FollowTarget>().target = null;
-
-            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
-            weapon.SetParent(weaponRig.transform);
-
-            // Set Multi Parent source objects
-            WeightedTransformArray sourceObjects = new WeightedTransformArray(0);
-            WeightedTransform rightHand = new WeightedTransform(rightHandIK.data.tip, 1);
-            WeightedTransform leftHand = new WeightedTransform(leftHandIK.data.tip, 1);
-            sourceObjects.Add(rightHand);
-            sourceObjects.Add(leftHand);
-            hit.transform.GetComponent<MultiParentConstraint>().data.sourceObjects = sourceObjects;
-            rigBuilder.Build();
-
             // Remove the physics and collider components
             Destroy(weapon.GetComponent<Rigidbody>());
             foreach (Collider c in weapon.GetComponentsInChildren<Collider>())
             {
                 c.enabled = false;
             }
+
+            // Reach out hands to grab weapon handle
+            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
+            armsRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
+            armsRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+            rightHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_right_hand_grip");
+            leftHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_left_hand_grip");
+
+            // Wait until hands have reached the weapon handle
+            yield return new WaitUntil(() => armsRig.weight >= 0.9);
+
+            // Don't move IK targets
+            rightHandTarget.GetComponent<FollowTarget>().target = null;
+            leftHandTarget.GetComponent<FollowTarget>().target = null;
+            
+            // Set parent to the weapon rig
+            weapon.SetParent(weaponRig.transform);
+
+            yield return null;
+
+            // Set Multi Parent Constraint source objects
+            WeightedTransformArray sourceObjects = new WeightedTransformArray(0);
+            WeightedTransform rightHand = new WeightedTransform(rightHandIK.data.tip, 1);
+            WeightedTransform leftHand = new WeightedTransform(leftHandIK.data.tip, 1);
+            sourceObjects.Add(rightHand);
+            sourceObjects.Add(leftHand);
+            weapon.GetComponent<MultiParentConstraint>().data.sourceObjects = sourceObjects;
+            rigBuilder.Build();
+            weaponRig.GetComponent<RigWeightTarget>().weightTarget = 1;
 
             // Set target back to the hand bone
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;

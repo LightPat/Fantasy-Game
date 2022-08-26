@@ -419,7 +419,7 @@ AnimatorStateMachine:
     m_Position: {x: 400, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6311359642887770909}
-    m_Position: {x: 390, y: -30, z: 0}
+    m_Position: {x: 400, y: -30, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 103361986583825830}
@@ -1301,7 +1301,7 @@ AnimatorController:
   - serializedVersion: 5
     m_Name: Hit Reaction
     m_StateMachine: {fileID: -4637111729883521914}
-    m_Mask: {fileID: 0}
+    m_Mask: {fileID: 31900000, guid: 0c9e53989f3a78345b7aa8b7d5a98a87, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 1

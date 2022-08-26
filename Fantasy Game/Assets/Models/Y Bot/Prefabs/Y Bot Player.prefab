@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7284513824820049012}
   - component: {fileID: 7284513824820048970}
-  - component: {fileID: 7284513824820048971}
   m_Layer: 0
   m_Name: LegsRig
   m_TagString: Untagged
@@ -80,30 +79,6 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
     m_Visible: 1
---- !u!114 &7284513824820048971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7284513824820049013}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1400d481efaa9a744b45fe844dec533e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rootTransform: {fileID: 7284513826171149820}
-  leftFootIK: {fileID: 7284513826399403739}
-  rightFootIK: {fileID: 7284513826168738202}
-  upperRayHeight: 0.7
-  lowerRayHeight: -0.11
-  rayDistance: 0.5
-  horizontalRayOffset: 0.3
-  lerpSpeedMultiplier: 2
-  angularLerpSpeedMultiplier: 0.1
-  minimumLerpSpeed: 5
-  stepLandingVerticalOffset: 0.3
-  stepLandingHorizontalOffset: 0.2
 --- !u!1 &7284513825001385110
 GameObject:
   m_ObjectHideFlags: 0
@@ -541,6 +516,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7284513825998588541}
   - component: {fileID: 7284513825998588540}
+  - component: {fileID: 975685839}
   m_Layer: 0
   m_Name: ArmsRig
   m_TagString: Untagged
@@ -594,6 +570,21 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
     m_Visible: 1
+--- !u!114 &975685839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7284513825998588542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb69ba7daf422f14db070dab539135d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rigBuilder: {fileID: 7284513825097406218}
+  weightTarget: 0
+  weightSpeed: 5
 --- !u!1 &7284513826139499302
 GameObject:
   m_ObjectHideFlags: 0
@@ -662,7 +653,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7284513826168738203}
-  - component: {fileID: 7284513826168738202}
   m_Layer: 0
   m_Name: RightLegIK_target
   m_TagString: Untagged
@@ -684,25 +674,6 @@ Transform:
   m_Father: {fileID: 7284513826523258241}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7284513826168738202
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7284513826168738180}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2b66acf05f95784a90a6038c97f8412, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 7284513824820048971}
-  footBone: {fileID: 7883265076578808138}
-  otherFootIK: {fileID: 7284513826399403739}
-  permissionToLerp: 0
-  permissionToMove: 1
-  lerpProgress: 1
-  rayDistance: 0
 --- !u!1 &7284513826171149821
 GameObject:
   m_ObjectHideFlags: 0
@@ -799,7 +770,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveTransitionSpeed: 4
-  animatorSpeed: 2
+  animatorSpeed: 1
+  idleLoopTransitionTime: 1000
   moveInput: {x: 0, y: 0}
   sensitivity: 0.2
   bodyRotationSpeed: 4
@@ -812,6 +784,11 @@ MonoBehaviour:
   lookInput: {x: 0, y: 0}
   toggleSprint: 0
   toggleCrouch: 0
+  reach: 5
+  reachSpeed: 1
+  armsRig: {fileID: 7284513825998588540}
+  rightHandTarget: {fileID: 7284513825465771983}
+  leftHandTarget: {fileID: 7284513826573182685}
 --- !u!114 &7284513826171149810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -901,7 +878,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7284513826399403738}
-  - component: {fileID: 7284513826399403739}
   m_Layer: 0
   m_Name: LeftLegIK_target
   m_TagString: Untagged
@@ -923,25 +899,6 @@ Transform:
   m_Father: {fileID: 7284513825359393560}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7284513826399403739
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7284513826399403716}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e2b66acf05f95784a90a6038c97f8412, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  controller: {fileID: 7284513824820048971}
-  footBone: {fileID: 5012324998464145671}
-  otherFootIK: {fileID: 7284513826168738202}
-  permissionToLerp: 0
-  permissionToMove: 1
-  lerpProgress: 1
-  rayDistance: 0
 --- !u!1 &7284513826523258242
 GameObject:
   m_ObjectHideFlags: 0
@@ -1243,6 +1200,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6514210125699187276, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
   m_PrefabInstance: {fileID: 7284513825097406262}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &8710511131708812802 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2158975759703390516, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
+  m_PrefabInstance: {fileID: 7284513825097406262}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3923597979658711489 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -3214267034143217929, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
@@ -1303,6 +1265,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -6874584590210671055, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
   m_PrefabInstance: {fileID: 7284513825097406262}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7293403312353941967 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9171100556185337, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
+  m_PrefabInstance: {fileID: 7284513825097406262}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7424439902332458352 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -9070493210130169274, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
@@ -1358,11 +1325,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: -6234591296559379751, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
   m_PrefabInstance: {fileID: 7284513825097406262}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &8710511131708812802 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2158975759703390516, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
-  m_PrefabInstance: {fileID: 7284513825097406262}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8664273276903326063 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -7121769801107515815, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
@@ -1406,11 +1368,6 @@ GameObject:
 --- !u!1 &6906859443719804319 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4237274458221626025, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
-  m_PrefabInstance: {fileID: 7284513825097406262}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &7293403312353941967 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9171100556185337, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
   m_PrefabInstance: {fileID: 7284513825097406262}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &7626462701074999911 stripped

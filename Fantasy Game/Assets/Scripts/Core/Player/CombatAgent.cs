@@ -19,7 +19,7 @@ namespace LightPat.Core.Player
 
         public float attackReach;
         public float attackDamage;
-        void OnInteract(InputValue value)
+        void OnAttack2(InputValue value) // TODO change this to attack1
         {
             if (!value.isPressed) { return; }
 
@@ -33,7 +33,7 @@ namespace LightPat.Core.Player
             }
         }
 
-        void OnSlot1()
+        void OnSlot1() // TODO not finished yet
         {
             combat = !combat;
             if (combat)

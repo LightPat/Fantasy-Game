@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
+using UnityEngine.Animations.Rigging;
+using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {
@@ -11,6 +13,7 @@ namespace LightPat.Core.Player
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float animatorSpeed = 1;
+        public float idleLoopTransitionTime = 10;
 
         Animator animator;
         AnimationLayerWeightManager weightManager;
@@ -50,8 +53,10 @@ namespace LightPat.Core.Player
         }
 
         [HideInInspector] public Vector2 moveInput;
+        bool disableMoveInput;
         void OnMove(InputValue value)
         {
+            if (disableMoveInput) { return; }
             moveInput = value.Get<Vector2>();
             if (moveInput.y <= 0 & sprinting) { sprintTarget = 2; }
             if (moveInput == Vector2.zero & sprinting) { sprinting = false; }
@@ -122,7 +127,7 @@ namespace LightPat.Core.Player
                 }
 
                 // Only change Idle Loop layer weight if idleTime is greater than 10 and we have no moveInput
-                if (animator.GetFloat("idleTime") > 10)
+                if (animator.GetFloat("idleTime") > idleLoopTransitionTime)
                     weightManager.SetLayerWeight("Idle Loop", 1);
             }
             else // If moveInput is not Vector2.zero
@@ -218,5 +223,109 @@ namespace LightPat.Core.Player
         {
             freeLooking = value.isPressed;
         }
+
+        [Header("Grab Weapon Settings")]
+        public float reach;
+        public float reachSpeed;
+        public Rig armsRig;
+        public Transform rightHandTarget;
+        public Transform leftHandTarget;
+        void OnInteract()
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach))
+            {
+                if (hit.transform.GetComponent<Interactable>())
+                {
+                    hit.transform.GetComponent<Interactable>().Invoke();
+                }
+                else if (hit.transform.GetComponent<Weapon>())
+                {
+                    //if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
+
+                    //StartCoroutine(PickUpWeapon(hit.transform.Find("ref_right_hand_grip")));
+                    armsRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
+                    armsRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+
+                    rightHandTarget.GetComponent<FollowTarget>().target = hit.transform.Find("ref_right_hand_grip");
+                }
+            }
+        }
+
+        /*
+        GameObject equippedWeapon = null;
+        private IEnumerator PickUpWeapon(Transform target)
+        {
+            equippedWeapon = target.parent.gameObject;
+            disableLookInput = true;
+            disableMoveInput = true;
+            // Set IK weight to 1
+            armsRig.weight = 1;
+
+            DestroyImmediate(target.GetComponentInParent<Rigidbody>());
+            target.parent.GetComponentInChildren<Collider>().enabled = false;
+
+            Transform rightTarget = rightHand.transform.GetChild(0);
+            //if (target.position.y - transform.position.y > 0.3f)
+            //{
+            //    animator.SetBool("Crouching", true);
+            //}
+
+            float lerpProgress = 0;
+            Vector3 oldPosition = transform.position;
+            Vector3 newPosition = target.position - transform.forward * 0.5f;
+            oldPosition.y = 0;
+            newPosition.y = 0;
+            Vector3 previous = transform.position;
+            // Move player body close to target so that arm can reach it
+            while (lerpProgress < 1)
+            {
+                // Interpolate towards target point
+                Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, lerpProgress);
+                interpolatedPosition.y = transform.position.y;
+                transform.position = interpolatedPosition;
+                lerpProgress += Time.deltaTime * reachSpeed;
+
+                // Have to calculate velocity for animator since we aren't using rigidbody
+                float velocity = (transform.position - previous).magnitude / Time.deltaTime;
+                previous = transform.position;
+                animator.SetFloat("Speed", velocity);
+                yield return null;
+            }
+
+            lerpProgress = 0;
+            // Lerp IK target position
+            oldPosition = rightTarget.position;
+            //rightTarget.GetComponent<MirrorTarget>().move = false;
+            //rightTarget.GetComponent<MirrorTarget>().rotate = false;
+            while (lerpProgress < 1)
+            {
+                Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, target.position, lerpProgress);
+                rightTarget.rotation = Quaternion.Slerp(rightTarget.rotation, target.rotation, lerpProgress);
+                //interpolatedPosition.z += Mathf.Sin(lerpProgress * Mathf.PI);
+                rightTarget.position = interpolatedPosition;
+                lerpProgress += Time.deltaTime * reachSpeed;
+                yield return null;
+            }
+
+            // Set parent to bone tip
+            target.parent.SetParent(rightHand.data.tip, true);
+
+            // Deactivate IK
+            float weightProgress = 1;
+            while (weightProgress > 0)
+            {
+                weightProgress -= Time.deltaTime * reachSpeed;
+                armsRig.weight = weightProgress;
+                //animator.SetLayerWeight(animator.GetLayerIndex(target.GetComponentInParent<Weapon>().weaponClass), 1 - weightProgress);
+                yield return null;
+            }
+
+            //rightTarget.GetComponent<MirrorTarget>().move = true;
+            //rightTarget.GetComponent<MirrorTarget>().rotate = true;
+
+            disableMoveInput = false;
+            disableLookInput = false;
+        }*/
     }
 }

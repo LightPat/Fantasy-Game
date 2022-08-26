@@ -642,7 +642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weightTarget: 0
-  weightSpeed: 1
+  weightSpeed: 5
 --- !u!1 &7284513826139499302
 GameObject:
   m_ObjectHideFlags: 0

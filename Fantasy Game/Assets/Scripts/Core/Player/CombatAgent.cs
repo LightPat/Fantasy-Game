@@ -83,7 +83,6 @@ namespace LightPat.Core.Player
             // Assign rig weights so that the arms interpolate into the weapon's animations
             weaponRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             armsRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-            armsRig.GetComponent<RigWeightTarget>().weightSpeed = 1;
 
             yield return new WaitUntil(() => armsRig.weight >= 0.99);
 

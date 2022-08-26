@@ -6,7 +6,6 @@
     "excludePlatforms": [
         "Android",
         "CloudRendering",
-        "Editor",
         "GameCoreScarlett",
         "GameCoreXboxOne",
         "iOS",

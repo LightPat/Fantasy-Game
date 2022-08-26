@@ -22,18 +22,13 @@ namespace LightPat.Core.Player
         [Header("Reach Procedural Anim Settings")]
         public float reach;
         public float reachSpeed;
-        
-        // For IK animation
+        public RigBuilder rigBuilder;
         public Rig armsRig;
-        public Transform rightHandTarget;
-        public Transform leftHandTarget;
-
-        // For MultiParentConstraint
+        public Rig weaponRig;
         public TwoBoneIKConstraint rightHandIK;
         public TwoBoneIKConstraint leftHandIK;
-        public RigBuilder rigBuilder;
-        public Rig weaponRig;
-
+        public Transform rightHandTarget;
+        public Transform leftHandTarget;
         void OnInteract()
         {
             RaycastHit hit;
@@ -76,8 +71,6 @@ namespace LightPat.Core.Player
             // Set parent to the weapon rig
             weapon.SetParent(weaponRig.transform);
 
-            yield return null;
-
             // Set Multi Parent Constraint source objects
             WeightedTransformArray sourceObjects = new WeightedTransformArray(0);
             WeightedTransform rightHand = new WeightedTransform(rightHandIK.data.tip, 1);
@@ -86,12 +79,17 @@ namespace LightPat.Core.Player
             sourceObjects.Add(leftHand);
             weapon.GetComponent<MultiParentConstraint>().data.sourceObjects = sourceObjects;
             rigBuilder.Build();
+
+            // Assign rig weights so that the arms interpolate into the weapon's animations
             weaponRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+            armsRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            armsRig.GetComponent<RigWeightTarget>().weightSpeed = 1;
+
+            yield return new WaitUntil(() => armsRig.weight >= 0.99);
 
             // Set target back to the hand bone
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
             leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
-            armsRig.GetComponent<RigWeightTarget>().weightTarget = 0;
         }
 
         public float attackReach;

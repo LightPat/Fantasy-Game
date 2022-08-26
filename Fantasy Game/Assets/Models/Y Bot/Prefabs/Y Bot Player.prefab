@@ -819,6 +819,8 @@ MonoBehaviour:
   armsRig: {fileID: 7284513825998588540}
   rightHandTarget: {fileID: 7284513825465771983}
   leftHandTarget: {fileID: 7284513826573182685}
+  rightHandIK: {fileID: 7284513826139499300}
+  leftHandIK: {fileID: 7284513825337906067}
   attackReach: 4
   attackDamage: 10
 --- !u!114 &1163105829

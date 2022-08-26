@@ -1317,7 +1317,10 @@ AnimatorController:
     m_Name: Great Sword
     m_StateMachine: {fileID: -3743321644665230209}
     m_Mask: {fileID: 31900000, guid: 2c74a5165676302478b1176572834bad, type: 2}
-    m_Motions: []
+    m_Motions:
+    - serializedVersion: 2
+      m_State: {fileID: 6631610051768041576}
+      m_Motion: {fileID: 20600000, guid: ad00a907309566c4eaea253327148bb9, type: 2}
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0

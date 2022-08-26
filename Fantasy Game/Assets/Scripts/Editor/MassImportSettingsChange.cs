@@ -70,7 +70,7 @@ namespace LightPat.Editor
                     else
                     {
                         clip.lockRootRotation = true;
-                        clip.lockRootHeightY = false;
+                        clip.lockRootHeightY = true;
                         clip.lockRootPositionXZ = false;
                         clip.keepOriginalOrientation = true;
                         clip.keepOriginalPositionXZ = false;

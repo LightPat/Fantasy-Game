@@ -9,7 +9,7 @@ namespace LightPat.Core
         public sbyte[] idealPersonality;
         public int baseDamage;
         public string weaponClass;
-        public Vector3 heldPositionOffset;
-        public Vector3 heldRotationOffset;
+        public Vector3 playerPositionOffset;
+        public Vector3 playerRotationOffset;
     }
 }

@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4476185}
   m_LocalRotation: {x: 0.44381094, y: -0.54878503, z: -0.44547105, w: 0.55083793}
-  m_LocalPosition: {x: 0.1096, y: -0.798, z: -0.1816}
+  m_LocalPosition: {x: 0.1096, y: -0.805, z: -0.1816}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7871640728394659330}
@@ -54,7 +54,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1072240810}
   m_LocalRotation: {x: 0.45098138, y: 0.5501721, z: 0.4455362, w: 0.5435293}
-  m_LocalPosition: {x: -0.0648, y: -0.977, z: -0.179}
+  m_LocalPosition: {x: -0.0648, y: -0.984, z: -0.179}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7871640728394659330}
@@ -222,5 +222,5 @@ MonoBehaviour:
   idealPersonality: 3232323232
   baseDamage: 50
   weaponClass: Great Sword
-  heldPositionOffset: {x: -0.06, y: 0.12, z: 0.11}
-  heldRotationOffset: {x: 7, y: 0, z: 0}
+  playerPositionOffset: {x: 0.055, y: 0.722, z: -0.531}
+  playerRotationOffset: {x: -39.2, y: 0, z: -3.98}

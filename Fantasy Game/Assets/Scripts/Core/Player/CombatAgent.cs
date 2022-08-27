@@ -23,6 +23,7 @@ namespace LightPat.Core.Player
         public float reach;
         public float reachSpeed;
         public Rig armsRig;
+        public Rig weaponRig;
         public TwoBoneIKConstraint rightHandIK;
         public TwoBoneIKConstraint leftHandIK;
         public Transform rightHandTarget;
@@ -46,6 +47,8 @@ namespace LightPat.Core.Player
         {
             Transform weapon = hit.transform;
 
+            GetComponent<PlayerController>().disableLookInput = true;
+
             // Remove the physics and collider components
             Destroy(weapon.GetComponent<Rigidbody>());
             foreach (Collider c in weapon.GetComponentsInChildren<Collider>())
@@ -54,11 +57,13 @@ namespace LightPat.Core.Player
             }
 
             // Reach out hands to grab weapon handle
-            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
             armsRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
             armsRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             rightHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_right_hand_grip");
             leftHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_left_hand_grip");
+
+            // Transition into the weapon's animations
+            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
 
             // Wait until hands have reached the weapon handle
             yield return new WaitUntil(() => armsRig.weight >= 0.9);
@@ -68,11 +73,8 @@ namespace LightPat.Core.Player
             leftHandTarget.GetComponent<FollowTarget>().target = null;
 
             // Parent weapon to the constraint object
-            weapon.SetParent(weaponSlot);
-            weapon.localPosition = weapon.GetComponent<Weapon>().playerPositionOffset;
-            weapon.localEulerAngles = weapon.GetComponent<Weapon>().playerRotationOffset;
+            weapon.SetParent(weaponSlot, true);
 
-            // Assign rig weights so that the arms interpolate into the weapon's animations
             armsRig.GetComponent<RigWeightTarget>().weightTarget = 0;
 
             yield return new WaitUntil(() => armsRig.weight <= 0.1);
@@ -80,8 +82,13 @@ namespace LightPat.Core.Player
             // Set target back to the hand bone
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
             leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
+
+            equippedWeapon = weapon.gameObject;
+
+            GetComponent<PlayerController>().disableLookInput = false;
         }
 
+        [Header("Attack Settings")]
         public float attackReach;
         public float attackDamage;
         void OnAttack2(InputValue value) // TODO change this to attack1

@@ -134,7 +134,7 @@ MonoBehaviour:
       m_Length: 6
       m_Item0:
         transform: {fileID: 4551923632342352629}
-        weight: 1
+        weight: 0
       m_Item1:
         transform: {fileID: 8601876944008912090}
         weight: 1
@@ -218,7 +218,7 @@ MonoBehaviour:
       m_Length: 6
       m_Item0:
         transform: {fileID: 8980853241695807742}
-        weight: 1
+        weight: 0
       m_Item1:
         transform: {fileID: 1455387347885199760}
         weight: 1
@@ -330,7 +330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weightTarget: 1
-  weightSpeed: 1
+  weightSpeed: 5
 --- !u!1 &7284513824820049013
 GameObject:
   m_ObjectHideFlags: 0
@@ -891,7 +891,7 @@ MonoBehaviour:
       size: 0.1
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 0
+    m_Visible: 1
   - m_Transform: {fileID: 7284513826573182685}
     m_Style:
       shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
@@ -899,7 +899,7 @@ MonoBehaviour:
       size: 0.1
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 0
+    m_Visible: 1
   - m_Transform: {fileID: 7284513826689833246}
     m_Style:
       shape: {fileID: 4300000, guid: c6793350c150f456688e39a81f97364a, type: 2}

@@ -11,5 +11,14 @@ namespace LightPat.Core
         public string weaponClass;
         public Vector3 playerPositionOffset;
         public Vector3 playerRotationOffset;
+
+        private void Update()
+        {
+            if (transform.parent != null)
+            {
+                transform.localPosition = Vector3.Lerp(transform.localPosition, playerPositionOffset, Time.deltaTime * 8);
+                transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(playerRotationOffset), Time.deltaTime * 8);
+            }
+        }
     }
 }

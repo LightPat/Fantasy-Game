@@ -43,6 +43,11 @@ namespace LightPat.Core.Player
             }
         }
 
+
+        [Header("ASSIGN")]
+        public Transform weaponSlot;
+        public Transform right;
+        public Transform left;
         private IEnumerator SetupWeaponConstraint(RaycastHit hit)
         {
             Transform weapon = hit.transform;
@@ -55,7 +60,7 @@ namespace LightPat.Core.Player
             }
 
             // Reach out hands to grab weapon handle
-            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
+            //weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
             armsRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
             armsRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             rightHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_right_hand_grip");
@@ -67,24 +72,31 @@ namespace LightPat.Core.Player
             // Don't move IK targets
             rightHandTarget.GetComponent<FollowTarget>().target = null;
             leftHandTarget.GetComponent<FollowTarget>().target = null;
-            
+
             // Set parent to the weapon rig
-            weapon.SetParent(weaponRig.transform);
+            weapon.SetParent(weaponSlot);
+            weapon.localPosition = Vector3.zero;
+            weapon.localEulerAngles = Vector3.zero;
 
             // Set Multi Parent Constraint source objects
-            WeightedTransformArray sourceObjects = new WeightedTransformArray(0);
-            WeightedTransform rightHand = new WeightedTransform(rightHandIK.data.tip, 1);
-            WeightedTransform leftHand = new WeightedTransform(leftHandIK.data.tip, 1);
-            sourceObjects.Add(rightHand);
-            sourceObjects.Add(leftHand);
-            weapon.GetComponent<MultiParentConstraint>().data.sourceObjects = sourceObjects;
-            rigBuilder.Build();
+            //WeightedTransformArray sourceObjects = new WeightedTransformArray(0);
+            //WeightedTransform rightHand = new WeightedTransform(rightHandIK.data.tip, 1);
+            //WeightedTransform leftHand = new WeightedTransform(leftHandIK.data.tip, 1);
+            //sourceObjects.Add(rightHand);
+            //sourceObjects.Add(leftHand);
+            //weapon.GetComponent<MultiParentConstraint>().data.sourceObjects = sourceObjects;
+            //rigBuilder.Build();
 
             // Assign rig weights so that the arms interpolate into the weapon's animations
             weaponRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             armsRig.GetComponent<RigWeightTarget>().weightTarget = 0;
 
-            yield return new WaitUntil(() => armsRig.weight >= 0.99);
+            // TODO
+            //Transform m = weapon.Find("Model");
+            //m.localPosition += weapon.GetComponent<Weapon>().heldPositionOffset;
+            //m.localEulerAngles += weapon.GetComponent<Weapon>().heldRotationOffset;
+
+            yield return new WaitUntil(() => armsRig.weight <= 0.1);
 
             // Set target back to the hand bone
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;

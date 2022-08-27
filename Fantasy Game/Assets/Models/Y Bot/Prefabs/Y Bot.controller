@@ -210,7 +210,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: idleTime
-    m_EventTreshold: 10
+    m_EventTreshold: 10000
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -1326108920939567133}
   m_Solo: 0
@@ -1324,7 +1324,7 @@ AnimatorController:
     m_Behaviours: []
     m_BlendingMode: 0
     m_SyncedLayerIndex: 0
-    m_DefaultWeight: 0
+    m_DefaultWeight: 1
     m_IKPass: 0
     m_SyncedLayerAffectsTiming: 1
     m_Controller: {fileID: 9100000}

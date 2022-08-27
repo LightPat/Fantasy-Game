@@ -13,10 +13,14 @@ namespace LightPat.Core.Player
         public bool combat;
 
         AnimationLayerWeightManager weightManager;
+        Animator animator;
+        RigBuilder rigBuilder;
 
         private void Start()
         {
             weightManager = GetComponentInChildren<AnimationLayerWeightManager>();
+            animator = GetComponentInChildren<Animator>();
+            rigBuilder = GetComponentInChildren<RigBuilder>();
         }
 
         [Header("Reach Procedural Anim Settings")]
@@ -37,7 +41,6 @@ namespace LightPat.Core.Player
                 if (hit.transform.GetComponent<Weapon>())
                 {
                     //if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
-
                     StartCoroutine(EquipWeapon(hit));
                 }
             }
@@ -64,6 +67,8 @@ namespace LightPat.Core.Player
 
             // Transition into the weapon's animations
             weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
+            combat = true;
+            animator.SetBool("combat", combat);
 
             // Wait until hands have reached the weapon handle
             yield return new WaitUntil(() => armsRig.weight >= 0.9);
@@ -86,6 +91,7 @@ namespace LightPat.Core.Player
             equippedWeapon = weapon.gameObject;
 
             GetComponent<PlayerController>().disableLookInput = false;
+            OnSlot1();
         }
 
         [Header("Attack Settings")]
@@ -107,31 +113,55 @@ namespace LightPat.Core.Player
 
         void OnSlot1() // TODO not finished yet
         {
+            if (equippedWeapon == null) { return; }
+
+            if (!combat)
+            {
+                StartCoroutine(DrawWeapon());
+            }
+            else // If we are in combat mode
+            {
+                StartCoroutine(StowWeapon());
+            }
             combat = !combat;
-            if (combat)
-            {
-                if (equippedWeapon == null)
-                {
-                    weightManager.SetLayerWeight("Fists", 1);
-                }
-                else
-                {
-                    // GetComponent<Weapon>().weaponClass;
-                    weightManager.SetLayerWeight("", 1);
-                }
-            }
-            else
-            {
-                if (equippedWeapon == null)
-                {
-                    weightManager.SetLayerWeight("Fists", 0);
-                }
-                else
-                {
-                    // GetComponent<Weapon>().weaponClass;
-                    weightManager.SetLayerWeight("", 1);
-                }
-            }
+            animator.SetBool("combat", combat);
+        }
+
+        private IEnumerator DrawWeapon()
+        {
+            animator.SetBool("stowWeapon", true);
+            yield return null;
+            animator.SetBool("stowWeapon", false);
+
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Draw To Combat"));
+            weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(0, 1); // Change right hand weight to 1
+            weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(2, 0); // Change spine's weight to 0
+            equippedWeapon.GetComponent<Weapon>().ChangeOffset("transition"); // Switch to one handed offset values
+
+            // Wait for animation to finish, then change offset and weights
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+            weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(1, 1); // Change left hand weight to 1
+            equippedWeapon.GetComponent<Weapon>().ChangeOffset("player");
+        }
+
+        public MultiParentConstraint weaponConstraint;
+        private IEnumerator StowWeapon()
+        {
+            animator.SetBool("stowWeapon", true);
+            weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(1, 0); // Change left hand weight to 0
+            equippedWeapon.GetComponent<Weapon>().ChangeOffset("transition"); // Switch to one handed offset values
+            yield return null;
+            animator.SetBool("stowWeapon", false);
+
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow Weapon")); // TODO change this to tag
+            // Switch to spine mode
+            weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(0, 0); // Change right hand weight to 0
+            weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(2, 1); // Change spine's weight to 1
+            equippedWeapon.GetComponent<Weapon>().ChangeOffset("stowed");
+
+            // Wait for the stow animation to finish playing, then change the layer weight
+            //yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+            //weightManager.SetLayerWeight(equippedWeapon.GetComponent<Weapon>().weaponClass, 0);
         }
     }
 }

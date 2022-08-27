@@ -10,7 +10,6 @@ namespace LightPat.Core.Player
     public class CombatAgent : MonoBehaviour
     {
         public GameObject equippedWeapon = null;
-        public bool combat;
 
         AnimationLayerWeightManager weightManager;
         Animator animator;
@@ -67,8 +66,7 @@ namespace LightPat.Core.Player
 
             // Transition into the weapon's animations
             weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
-            combat = true;
-            animator.SetBool("combat", combat);
+            animator.SetBool("combat", true);
 
             // Wait until hands have reached the weapon handle
             yield return new WaitUntil(() => armsRig.weight >= 0.9);
@@ -111,11 +109,18 @@ namespace LightPat.Core.Player
             }
         }
 
+        public float drawSpeed = 1;
+        bool stowDrawRunning;
         void OnSlot1() // TODO not finished yet
         {
+            if (stowDrawRunning) { return; }
             if (equippedWeapon == null) { return; }
+            if ((animator.GetCurrentAnimatorStateInfo(0).IsTag("Draw Weapon") | animator.GetCurrentAnimatorStateInfo(0).IsTag("Stow Weapon"))
+                | animator.IsInTransition(0)) { return; }
 
-            if (!combat)
+            animator.SetFloat("drawSpeed", drawSpeed);
+
+            if (!animator.GetBool("combat"))
             {
                 StartCoroutine(DrawWeapon());
             }
@@ -123,12 +128,11 @@ namespace LightPat.Core.Player
             {
                 StartCoroutine(StowWeapon());
             }
-            combat = !combat;
-            animator.SetBool("combat", combat);
         }
 
         private IEnumerator DrawWeapon()
         {
+            stowDrawRunning = true;
             animator.SetBool("stowWeapon", true);
             yield return null;
             animator.SetBool("stowWeapon", false);
@@ -142,19 +146,23 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
             weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(1, 1); // Change left hand weight to 1
             equippedWeapon.GetComponent<Weapon>().ChangeOffset("player");
+
+            animator.SetBool("combat", true);
+            stowDrawRunning = false;
         }
 
         public MultiParentConstraint weaponConstraint;
         private IEnumerator StowWeapon()
         {
+            stowDrawRunning = true;
             animator.SetBool("stowWeapon", true);
             weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(1, 0); // Change left hand weight to 0
             equippedWeapon.GetComponent<Weapon>().ChangeOffset("transition"); // Switch to one handed offset values
             yield return null;
             animator.SetBool("stowWeapon", false);
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow Weapon")); // TODO change this to tag
-            // Switch to spine mode
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow Weapon"));
+            // Switch to stowed mode
             weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(0, 0); // Change right hand weight to 0
             weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(2, 1); // Change spine's weight to 1
             equippedWeapon.GetComponent<Weapon>().ChangeOffset("stowed");
@@ -162,6 +170,8 @@ namespace LightPat.Core.Player
             // Wait for the stow animation to finish playing, then change the layer weight
             //yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
             //weightManager.SetLayerWeight(equippedWeapon.GetComponent<Weapon>().weaponClass, 0);
+            animator.SetBool("combat", false);
+            stowDrawRunning = false;
         }
     }
 }

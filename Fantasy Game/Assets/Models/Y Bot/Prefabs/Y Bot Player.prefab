@@ -1303,7 +1303,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equippedWeapon: {fileID: 0}
-  combat: 0
   reach: 4
   reachSpeed: 5
   armsRig: {fileID: 7284513825998588540}
@@ -1315,6 +1314,7 @@ MonoBehaviour:
   weaponSlot: {fileID: 198613696}
   attackReach: 4
   attackDamage: 10
+  drawSpeed: 1
   weaponConstraint: {fileID: 198613697}
 --- !u!114 &1163105829
 MonoBehaviour:

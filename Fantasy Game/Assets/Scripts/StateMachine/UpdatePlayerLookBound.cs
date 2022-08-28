@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using LightPat.Core.Player;
 
-namespace LightPat.StateMachineBehaviours
+namespace LightPat.StateMachine
 {
     public class UpdatePlayerLookBound : StateMachineBehaviour
     {

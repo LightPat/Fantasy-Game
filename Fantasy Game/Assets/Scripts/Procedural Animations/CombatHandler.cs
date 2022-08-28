@@ -4,8 +4,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
+using LightPat.Core.Player;
+using LightPat.Core;
 
-namespace LightPat.Core.Player
+namespace LightPat.ProceduralAnimations
 {
     public class CombatHandler : MonoBehaviour
     {
@@ -203,9 +205,9 @@ namespace LightPat.Core.Player
             // Wait for the stow animation to finish playing, then change the layer weight
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
             weightManager.SetLayerWeight(slot1Weapon.GetComponent<Weapon>().weaponClass, 0);
+            leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = 5;
             equippedWeapon = null;
             stowDrawRunning = false;
-            leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = 5;
         }
     }
 }

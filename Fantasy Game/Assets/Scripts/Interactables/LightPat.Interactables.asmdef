@@ -1,0 +1,17 @@
+{
+    "name": "LightPat.Interactables",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d6368fe0d738db94590a540041116a0c",
+        "GUID:f4e8ad42b28a7364f8fc49ee074da19b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

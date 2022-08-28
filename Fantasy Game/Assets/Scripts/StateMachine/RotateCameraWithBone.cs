@@ -5,9 +5,9 @@ using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
 using LightPat.Core.Player;
 
-namespace LightPat.StateMachineBehaviours
+namespace LightPat.StateMachine
 {
-    public class RotateBodyButNotCamera : StateMachineBehaviour
+    public class RotateCameraWithBone : StateMachineBehaviour
     {
         public float aimWeightTarget;
         public bool updateCameraRotation;
@@ -17,6 +17,7 @@ namespace LightPat.StateMachineBehaviours
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            if (!animator.GetComponent<RigBuilder>()) { return; }
             rigBuilder = animator.GetComponent<RigBuilder>();
             foreach (RigLayer rigLayer in rigBuilder.layers)
             {
@@ -24,6 +25,7 @@ namespace LightPat.StateMachineBehaviours
                 {
                     rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
                     Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget = updateCameraRotation;
+                    animator.GetComponentInParent<PlayerController>().disableLookInput = updateCameraRotation;
                     animator.GetComponentInParent<PlayerController>().disableCameraLookInput = updateCameraRotation;
                     break;
                 }
@@ -39,7 +41,7 @@ namespace LightPat.StateMachineBehaviours
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         //{
-            
+
         //}
 
         // OnStateMove is called right after Animator.OnAnimatorMove()

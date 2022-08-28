@@ -1,0 +1,16 @@
+{
+    "name": "LightPat.FriendlyAI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f4e8ad42b28a7364f8fc49ee074da19b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

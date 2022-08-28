@@ -5,12 +5,12 @@ using LightPat.Core;
 
 public class WeaponManager : MonoBehaviour
 {
-    public GameObject equippedWeapon { get; private set; }
+    public Weapon equippedWeapon;
     public List<Weapon> weapons;
 
     public void DrawWeapon(int slot)
     {
-        equippedWeapon = weapons[slot].gameObject;
+        equippedWeapon = weapons[slot];
     }
 
     public void StowWeapon()
@@ -20,6 +20,8 @@ public class WeaponManager : MonoBehaviour
 
     public Weapon GetWeapon(int slot)
     {
+        if (slot >= weapons.Count) { return null; }
+
         return weapons[slot];
     }
 

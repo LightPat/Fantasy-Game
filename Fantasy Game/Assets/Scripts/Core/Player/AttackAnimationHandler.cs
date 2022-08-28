@@ -25,6 +25,7 @@ namespace LightPat.Core.Player
         [Header("Reach Procedural Anim Settings")]
         public float reach;
         public float reachSpeed;
+        [Header("Rigging Assignments")]
         public Rig rightArmRig;
         public Rig leftArmRig;
         public TwoBoneIKConstraint rightHandIK;
@@ -32,7 +33,9 @@ namespace LightPat.Core.Player
         public Transform rightHandTarget;
         public Transform leftHandTarget;
         public Transform weaponParent;
-        public Transform backStowSlot;
+        [Header("Stow Points")]
+        public Transform spineStow;
+        public Transform leftHipStow;
         void OnInteract()
         {
             RaycastHit hit;
@@ -40,17 +43,26 @@ namespace LightPat.Core.Player
             {
                 if (hit.transform.GetComponent<Weapon>())
                 {
-                    //if (weaponManager.equippedWeapon != null) { weaponManager.equippedWeapon.SetActive(false); }
+                    if (equipWeaponRunning) { return; }
+
+                    // If we already have a weapon equipped stow the weapon
+                    if (weaponManager.equippedWeapon != null) { StartCoroutine(StowWeapon()); }
+
                     StartCoroutine(EquipWeapon(hit));
                 }
             }
         }
 
+        bool equipWeaponRunning;
         private IEnumerator EquipWeapon(RaycastHit hit)
         {
+            equipWeaponRunning = true;
+            // Wait until our stow or draw coroutine is finished
+            yield return new WaitUntil(() => !stowDrawRunning);
+
             Transform weapon = hit.transform;
 
-            GetComponent<PlayerController>().disableLookInput = true;
+            playerController.disableLookInput = true;
 
             // Remove the physics and collider components
             Destroy(weapon.GetComponent<Rigidbody>());
@@ -79,7 +91,7 @@ namespace LightPat.Core.Player
             // Don't move IK target while reparenting
             rightHandTarget.GetComponent<FollowTarget>().target = null;
 
-            // Parent weapon to the constraint object
+            // Parent weapon to the constraint object, typically this is the right hand
             weapon.SetParent(weaponParent, true);
 
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
@@ -90,11 +102,11 @@ namespace LightPat.Core.Player
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
 
             weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
-            weaponManager.DrawWeapon(0);
+            weaponManager.DrawWeapon(weaponManager.weapons.Count-1); // Draw most recently added weapon
 
-            GetComponent<PlayerController>().disableLookInput = false;
+            playerController.disableLookInput = false;
             animator.SetBool("pickUpWeapon", false);
-            //OnSlot1();
+            equipWeaponRunning = false;
         }
 
         [Header("Attack1 Settings")]
@@ -138,7 +150,7 @@ namespace LightPat.Core.Player
         }
 
         bool stowDrawRunning;
-        void OnSlot1() // TODO not finished yet
+        void OnSlot0() // TODO not finished yet
         {
             if (stowDrawRunning) { return; }
             if (weaponManager.GetWeapon(0) == null) { return; }
@@ -148,34 +160,63 @@ namespace LightPat.Core.Player
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Weapon Combat Idle"))
             {
                 StartCoroutine(StowWeapon());
+
+                if (weaponManager.equippedWeapon != weaponManager.GetWeapon(0))
+                {
+                    StartCoroutine(DrawWeapon(0));
+                }
             }
             else
             {
-                StartCoroutine(DrawWeapon());
+                StartCoroutine(DrawWeapon(0));
             }
         }
 
-        private IEnumerator DrawWeapon()
+        void OnSlot1()
         {
+            if (stowDrawRunning) { return; }
+            if (weaponManager.GetWeapon(1) == null) { return; }
+            if ((animator.GetCurrentAnimatorStateInfo(0).IsTag("Draw Weapon") | animator.GetCurrentAnimatorStateInfo(0).IsTag("Stow Weapon"))
+                | animator.IsInTransition(0)) { return; }
+
+            if (animator.GetCurrentAnimatorStateInfo(1).IsName("Weapon Combat Idle"))
+            {
+                StartCoroutine(StowWeapon());
+
+                if (weaponManager.equippedWeapon != weaponManager.GetWeapon(1))
+                {
+                    StartCoroutine(DrawWeapon(1));
+                }
+            }
+            else
+            {
+                StartCoroutine(DrawWeapon(1));
+            }
+        }
+
+        private IEnumerator DrawWeapon(int slotIndex)
+        {
+            yield return new WaitUntil(() => !stowDrawRunning);
+
             stowDrawRunning = true;
             
             float originalSpeed = playerController.animatorSpeed;
-            playerController.animatorSpeed = weaponManager.GetWeapon(0).drawSpeed;
+            playerController.animatorSpeed = weaponManager.GetWeapon(slotIndex).drawSpeed;
 
             animator.SetBool("stowWeapon", true);
-            weightManager.SetLayerWeight(weaponManager.GetWeapon(0).weaponClass, 1);
+            weightManager.SetLayerWeight(weaponManager.GetWeapon(slotIndex).weaponClass, 1);
             yield return null;
             animator.SetBool("stowWeapon", false);
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Draw To Combat"));
             // Switch to player mode
-            weaponManager.GetWeapon(0).transform.SetParent(weaponParent, true);
-            weaponManager.GetWeapon(0).ChangeOffset("player");
+            weaponManager.GetWeapon(slotIndex).transform.SetParent(weaponParent, true);
+            weaponManager.GetWeapon(slotIndex).ChangeOffset("player");
 
             // Wait for animation to finish, then change offset and weights
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
 
-            weaponManager.DrawWeapon(0);
+            weaponManager.DrawWeapon(slotIndex);
 
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             leftHandTarget.GetComponent<FollowTarget>().target = weaponManager.equippedWeapon.transform.Find("ref_left_hand_grip");
@@ -189,7 +230,7 @@ namespace LightPat.Core.Player
             stowDrawRunning = true;
             
             float originalSpeed = playerController.animatorSpeed;
-            playerController.animatorSpeed = weaponManager.GetWeapon(0).drawSpeed;
+            playerController.animatorSpeed = weaponManager.equippedWeapon.drawSpeed;
 
             animator.SetBool("stowWeapon", true);
 
@@ -202,12 +243,12 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow Weapon"));
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
             // Switch to stowed mode
-            weaponManager.equippedWeapon.transform.SetParent(backStowSlot, true);
+            weaponManager.equippedWeapon.transform.SetParent(spineStow, true);
             weaponManager.equippedWeapon.GetComponent<Weapon>().ChangeOffset("stowed");
 
             // Wait for the stow animation to finish playing, then change the layer weight
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
-            weightManager.SetLayerWeight(weaponManager.GetWeapon(0).weaponClass, 0);
+            weightManager.SetLayerWeight(weaponManager.equippedWeapon.weaponClass, 0);
             weaponManager.StowWeapon();
 
             playerController.animatorSpeed = originalSpeed;

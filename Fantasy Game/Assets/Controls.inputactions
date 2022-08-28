@@ -96,9 +96,18 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Slot1",
+                    "name": "Slot0",
                     "type": "Button",
                     "id": "f3eaaee4-abd6-4e11-bb29-bbc7deac0786",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Slot1",
+                    "type": "Button",
+                    "id": "65e4db01-e51d-4599-9481-f9f3d31511ee",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -230,7 +239,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Slot1",
+                    "action": "Slot0",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -308,6 +317,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "InventoryToggle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2dd882ce-7823-479e-b82d-800bec21f27e",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slot1",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

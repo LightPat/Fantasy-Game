@@ -53,13 +53,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1072240810}
-  m_LocalRotation: {x: 0.45098138, y: 0.5501721, z: 0.4455362, w: 0.5435293}
-  m_LocalPosition: {x: -0.0648, y: 0.07, z: -0.12}
+  m_LocalRotation: {x: -0.30654013, y: -0.33394402, z: 0.5463185, w: 0.7043086}
+  m_LocalPosition: {x: 0.1184, y: 0.0631, z: 0.0883}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7871640728394659330}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 90.696, z: 78.684}
+  m_LocalEulerAnglesHint: {x: -3.837, y: -53.818, z: 77.548}
 --- !u!1 &7060736401106005488
 GameObject:
   m_ObjectHideFlags: 0
@@ -222,11 +222,11 @@ MonoBehaviour:
   idealPersonality: 3232323232
   baseDamage: 50
   weaponClass: Great Sword
-  playerPositionOffset: {x: -0.007, y: -0.182, z: 0.146}
-  playerRotationOffset: {x: -147.027, y: -178.386, z: 177.973}
-  stowedPositionOffset: {x: 0.083, y: 0.95, z: -0.316}
-  stowedRotationOffset: {x: -4.463, y: -13.264, z: -178.766}
+  playerPositionOffset: {x: 0.326, y: 0.024, z: 0.139}
+  playerRotationOffset: {x: -0.843, y: -17.474, z: 90.639}
   transitionPositionOffset: {x: 0.286, y: -0.016, z: 0.132}
   transitionRotationOffset: {x: -38.143, y: -16.481, z: 80.868}
-  targetLocalPosition: {x: 0, y: 0, z: 0}
-  targetLocalRotation: {x: 0, y: 0, z: 0}
+  stowedPositionOffset: {x: 0.083, y: 0.95, z: -0.316}
+  stowedRotationOffset: {x: -4.463, y: -13.264, z: -178.766}
+  settingOffsets: 0
+  offsetType: 

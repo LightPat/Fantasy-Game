@@ -22,6 +22,9 @@ namespace LightPat.Core
         Vector3 targetLocalPosition;
         Vector3 targetLocalRotation;
 
+        public bool settingOffsets;
+        public string offsetType;
+
         public void ChangeOffset(string offsetType)
         {
             if (offsetType == "player")
@@ -51,8 +54,17 @@ namespace LightPat.Core
         {
             if (transform.parent != null)
             {
-                transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, Time.deltaTime * 8);
-                transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(targetLocalRotation), Time.deltaTime * 8);
+                if (settingOffsets)
+                {
+                    ChangeOffset(offsetType);
+                    transform.localPosition = targetLocalPosition;
+                    transform.localRotation = Quaternion.Euler(targetLocalRotation);
+                }
+                else
+                {
+                    transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, Time.deltaTime * 8);
+                    transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(targetLocalRotation), Time.deltaTime * 8);
+                }
             }
         }
     }

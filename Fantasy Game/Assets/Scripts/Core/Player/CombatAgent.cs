@@ -116,13 +116,13 @@ namespace LightPat.Core.Player
         {
             if (!value.isPressed) { return; }
 
-            if (!animator.GetBool("combat"))
+            if (!animator.GetBool("fistCombat"))
             {
-                animator.SetBool("combat", true);
+                animator.SetBool("fistCombat", true);
             }
             else
             {
-                animator.SetBool("combat", false);
+                animator.SetBool("fistCombat", false);
             }
         }
 
@@ -145,15 +145,6 @@ namespace LightPat.Core.Player
             {
                 StartCoroutine(DrawWeapon());
             }
-
-            //if (!animator.GetBool("combat"))
-            //{
-            //    StartCoroutine(DrawWeapon());
-            //}
-            //else // If we are in combat mode
-            //{
-            //    StartCoroutine(StowWeapon());
-            //}
         }
 
         private IEnumerator DrawWeapon()

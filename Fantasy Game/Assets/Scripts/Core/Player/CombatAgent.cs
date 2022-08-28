@@ -66,10 +66,10 @@ namespace LightPat.Core.Player
 
             // Transition into the weapon's animations
             weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
-            animator.SetBool("combat", true);
 
             // Wait until hands have reached the weapon handle
             yield return new WaitUntil(() => armsRig.weight >= 0.9);
+            animator.SetBool("pickUpWeapon", true);
 
             // Don't move IK targets
             rightHandTarget.GetComponent<FollowTarget>().target = null;
@@ -89,14 +89,17 @@ namespace LightPat.Core.Player
             equippedWeapon = weapon.gameObject;
 
             GetComponent<PlayerController>().disableLookInput = false;
-            OnSlot1();
+            animator.SetBool("pickUpWeapon", false);
+            //OnSlot1();
         }
 
         [Header("Attack Settings")]
         public float attackReach;
         public float attackDamage;
-        void OnAttack2(InputValue value) // TODO change this to attack1
+        void OnAttack1(InputValue value) // TODO change this to attack1
         {
+            animator.SetBool("attack1", value.isPressed);
+            GetComponent<PlayerController>().rotateBodyWithCamera = value.isPressed;
             if (!value.isPressed) { return; }
 
             RaycastHit hit;
@@ -106,6 +109,20 @@ namespace LightPat.Core.Player
                 {
                     hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                 }
+            }
+        }
+
+        void OnAttack2(InputValue value)
+        {
+            if (!value.isPressed) { return; }
+
+            if (!animator.GetBool("combat"))
+            {
+                animator.SetBool("combat", true);
+            }
+            else
+            {
+                animator.SetBool("combat", false);
             }
         }
 
@@ -120,20 +137,30 @@ namespace LightPat.Core.Player
 
             animator.SetFloat("drawSpeed", drawSpeed);
 
-            if (!animator.GetBool("combat"))
-            {
-                StartCoroutine(DrawWeapon());
-            }
-            else // If we are in combat mode
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Weapon Combat Idle"))
             {
                 StartCoroutine(StowWeapon());
             }
+            else
+            {
+                StartCoroutine(DrawWeapon());
+            }
+
+            //if (!animator.GetBool("combat"))
+            //{
+            //    StartCoroutine(DrawWeapon());
+            //}
+            //else // If we are in combat mode
+            //{
+            //    StartCoroutine(StowWeapon());
+            //}
         }
 
         private IEnumerator DrawWeapon()
         {
             stowDrawRunning = true;
             animator.SetBool("stowWeapon", true);
+            weightManager.SetLayerWeight(equippedWeapon.GetComponent<Weapon>().weaponClass, 1);
             yield return null;
             animator.SetBool("stowWeapon", false);
 
@@ -147,7 +174,6 @@ namespace LightPat.Core.Player
             weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(1, 1); // Change left hand weight to 1
             equippedWeapon.GetComponent<Weapon>().ChangeOffset("player");
 
-            animator.SetBool("combat", true);
             stowDrawRunning = false;
         }
 
@@ -168,9 +194,8 @@ namespace LightPat.Core.Player
             equippedWeapon.GetComponent<Weapon>().ChangeOffset("stowed");
 
             // Wait for the stow animation to finish playing, then change the layer weight
-            //yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
-            //weightManager.SetLayerWeight(equippedWeapon.GetComponent<Weapon>().weaponClass, 0);
-            animator.SetBool("combat", false);
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
+            weightManager.SetLayerWeight(equippedWeapon.GetComponent<Weapon>().weaponClass, 0);
             stowDrawRunning = false;
         }
     }

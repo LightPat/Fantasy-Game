@@ -67,6 +67,7 @@ namespace LightPat.Core.Player
         public float mouseDownXRotLimit;
         public bool disableLookInput;
         public bool disableCameraLookInput;
+        public bool rotateBodyWithCamera;
         [HideInInspector] public float rotationX;
         [HideInInspector] public float rotationY;
         [HideInInspector] public Vector2 lookInput;
@@ -100,7 +101,15 @@ namespace LightPat.Core.Player
         private void Update()
         {
             animator.speed = animatorSpeed;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
+
+            if (rotateBodyWithCamera)
+            {
+                transform.rotation = Quaternion.Euler(bodyRotation);
+            }
+            else
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
+            }
 
             float xTarget = moveInput.x;
             if (sprinting) { xTarget *= sprintTarget; }

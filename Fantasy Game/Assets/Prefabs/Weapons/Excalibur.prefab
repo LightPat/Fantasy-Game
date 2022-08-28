@@ -222,7 +222,7 @@ MonoBehaviour:
   idealPersonality: 3232323232
   baseDamage: 50
   weaponClass: Great Sword
-  drawSpeedMultiplier: 1
+  drawSpeed: 1
   playerPositionOffset: {x: 0.326, y: 0.024, z: 0.139}
   playerRotationOffset: {x: -0.843, y: -17.474, z: 90.639}
   stowedPositionOffset: {x: 0.083, y: 0.95, z: -0.316}

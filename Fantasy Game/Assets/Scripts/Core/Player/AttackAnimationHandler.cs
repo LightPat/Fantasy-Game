@@ -11,6 +11,7 @@ namespace LightPat.Core.Player
     {
         AnimatorLayerWeightManager weightManager;
         Animator animator;
+        PlayerController playerController;
         WeaponManager weaponManager;
 
         private void Start()
@@ -18,6 +19,7 @@ namespace LightPat.Core.Player
             weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
             weaponManager = GetComponent<WeaponManager>();
+            playerController = GetComponent<PlayerController>();
         }
 
         [Header("Reach Procedural Anim Settings")]
@@ -130,7 +132,7 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                GetComponent<PlayerController>().rotateBodyWithCamera = value.isPressed;
+                playerController.rotateBodyWithCamera = value.isPressed;
                 animator.SetBool("attack2", value.isPressed);
             }
         }
@@ -142,8 +144,6 @@ namespace LightPat.Core.Player
             if (weaponManager.GetWeapon(0) == null) { return; }
             if ((animator.GetCurrentAnimatorStateInfo(0).IsTag("Draw Weapon") | animator.GetCurrentAnimatorStateInfo(0).IsTag("Stow Weapon"))
                 | animator.IsInTransition(0)) { return; }
-
-            animator.SetFloat("drawSpeed", weaponManager.GetWeapon(0).drawSpeedMultiplier);
 
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Weapon Combat Idle"))
             {
@@ -158,6 +158,10 @@ namespace LightPat.Core.Player
         private IEnumerator DrawWeapon()
         {
             stowDrawRunning = true;
+            
+            float originalSpeed = playerController.animatorSpeed;
+            playerController.animatorSpeed = weaponManager.GetWeapon(0).drawSpeed;
+
             animator.SetBool("stowWeapon", true);
             weightManager.SetLayerWeight(weaponManager.GetWeapon(0).weaponClass, 1);
             yield return null;
@@ -176,12 +180,17 @@ namespace LightPat.Core.Player
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             leftHandTarget.GetComponent<FollowTarget>().target = weaponManager.equippedWeapon.transform.Find("ref_left_hand_grip");
 
+            playerController.animatorSpeed = originalSpeed;
             stowDrawRunning = false;
         }
 
         private IEnumerator StowWeapon()
         {
             stowDrawRunning = true;
+            
+            float originalSpeed = playerController.animatorSpeed;
+            playerController.animatorSpeed = weaponManager.GetWeapon(0).drawSpeed;
+
             animator.SetBool("stowWeapon", true);
 
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
@@ -202,6 +211,8 @@ namespace LightPat.Core.Player
             weightManager.SetLayerWeight(weaponManager.GetWeapon(0).weaponClass, 0);
             leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = 5;
             weaponManager.StowWeapon();
+
+            playerController.animatorSpeed = originalSpeed;
             stowDrawRunning = false;
         }
     }

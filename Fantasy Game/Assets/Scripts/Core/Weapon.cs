@@ -10,7 +10,7 @@ namespace LightPat.Core
         public sbyte[] idealPersonality;
         public int baseDamage;
         public string weaponClass;
-        public float drawSpeedMultiplier = 1;
+        public float drawSpeed = 1;
 
         [Header("Equipped Animation Offsets")]
         public Vector3 playerPositionOffset;

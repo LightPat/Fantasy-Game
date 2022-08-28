@@ -408,7 +408,7 @@ GameObject:
   - component: {fileID: 1655502015}
   - component: {fileID: 1655502017}
   m_Layer: 0
-  m_Name: GreatSwordRig
+  m_Name: WeaponRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1455,7 +1455,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85a3165032590e4180a6bc8d2133305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equippedWeapon: {fileID: 0}
   reach: 4
   reachSpeed: 5
   rightArmRig: {fileID: 2513949398972815566}
@@ -1464,11 +1463,10 @@ MonoBehaviour:
   leftHandIK: {fileID: 7284513825337906067}
   rightHandTarget: {fileID: 7708844698936418226}
   leftHandTarget: {fileID: 7284513826573182685}
-  weaponSlot: {fileID: 1618465678}
+  weaponParent: {fileID: 1618465678}
   backStowSlot: {fileID: 685456554}
   attackReach: 4
   attackDamage: 10
-  slot1Weapon: {fileID: 0}
   drawSpeed: 1
 --- !u!114 &1163105829
 MonoBehaviour:

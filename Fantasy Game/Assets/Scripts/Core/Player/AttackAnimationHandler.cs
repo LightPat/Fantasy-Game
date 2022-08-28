@@ -9,15 +9,15 @@ namespace LightPat.Core.Player
 {
     public class AttackAnimationHandler : MonoBehaviour
     {
-        public GameObject equippedWeapon;
-
         AnimatorLayerWeightManager weightManager;
         Animator animator;
+        WeaponManager weaponManager;
 
         private void Start()
         {
             weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
+            weaponManager = GetComponent<WeaponManager>();
         }
 
         [Header("Reach Procedural Anim Settings")]
@@ -29,7 +29,7 @@ namespace LightPat.Core.Player
         public TwoBoneIKConstraint leftHandIK;
         public Transform rightHandTarget;
         public Transform leftHandTarget;
-        public Transform weaponSlot;
+        public Transform weaponParent;
         public Transform backStowSlot;
         void OnInteract()
         {
@@ -38,7 +38,7 @@ namespace LightPat.Core.Player
             {
                 if (hit.transform.GetComponent<Weapon>())
                 {
-                    //if (equippedWeapon != null) { equippedWeapon.SetActive(false); }
+                    //if (weaponManager.equippedWeapon != null) { weaponManager.equippedWeapon.SetActive(false); }
                     StartCoroutine(EquipWeapon(hit));
                 }
             }
@@ -78,7 +78,7 @@ namespace LightPat.Core.Player
             rightHandTarget.GetComponent<FollowTarget>().target = null;
 
             // Parent weapon to the constraint object
-            weapon.SetParent(weaponSlot, true);
+            weapon.SetParent(weaponParent, true);
 
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
 
@@ -87,8 +87,8 @@ namespace LightPat.Core.Player
             // Set target back to the hand bone since this is the hand that controls the weapon
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
 
-            slot1Weapon = weapon.gameObject;
-            equippedWeapon = slot1Weapon;
+            weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
+            weaponManager.DrawWeapon(0);
 
             GetComponent<PlayerController>().disableLookInput = false;
             animator.SetBool("pickUpWeapon", false);
@@ -116,7 +116,7 @@ namespace LightPat.Core.Player
 
         void OnAttack2(InputValue value)
         {
-            if (equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
+            if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
             {
                 if (!value.isPressed) { return; }
                 if (!animator.GetBool("fistCombat"))
@@ -136,13 +136,12 @@ namespace LightPat.Core.Player
         }
 
         [Header("Slot 1")]
-        public GameObject slot1Weapon = null;
         public float drawSpeed = 1;
         bool stowDrawRunning;
         void OnSlot1() // TODO not finished yet
         {
             if (stowDrawRunning) { return; }
-            if (slot1Weapon == null) { return; }
+            if (weaponManager.GetWeapon(0) == null) { return; }
             if ((animator.GetCurrentAnimatorStateInfo(0).IsTag("Draw Weapon") | animator.GetCurrentAnimatorStateInfo(0).IsTag("Stow Weapon"))
                 | animator.IsInTransition(0)) { return; }
 
@@ -162,22 +161,22 @@ namespace LightPat.Core.Player
         {
             stowDrawRunning = true;
             animator.SetBool("stowWeapon", true);
-            weightManager.SetLayerWeight(slot1Weapon.GetComponent<Weapon>().weaponClass, 1);
+            weightManager.SetLayerWeight(weaponManager.GetWeapon(0).weaponClass, 1);
             yield return null;
             animator.SetBool("stowWeapon", false);
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Draw To Combat"));
             // Switch to player mode
-            slot1Weapon.transform.SetParent(weaponSlot, true);
-            slot1Weapon.GetComponent<Weapon>().ChangeOffset("player");
+            weaponManager.GetWeapon(0).transform.SetParent(weaponParent, true);
+            weaponManager.GetWeapon(0).ChangeOffset("player");
 
             // Wait for animation to finish, then change offset and weights
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
 
-            equippedWeapon = slot1Weapon;
+            weaponManager.DrawWeapon(0);
 
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-            leftHandTarget.GetComponent<FollowTarget>().target = equippedWeapon.transform.Find("ref_left_hand_grip");
+            leftHandTarget.GetComponent<FollowTarget>().target = weaponManager.equippedWeapon.transform.Find("ref_left_hand_grip");
 
             stowDrawRunning = false;
         }
@@ -197,14 +196,14 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow Weapon"));
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
             // Switch to stowed mode
-            equippedWeapon.transform.SetParent(backStowSlot, true);
-            equippedWeapon.GetComponent<Weapon>().ChangeOffset("stowed");
+            weaponManager.equippedWeapon.transform.SetParent(backStowSlot, true);
+            weaponManager.equippedWeapon.GetComponent<Weapon>().ChangeOffset("stowed");
 
             // Wait for the stow animation to finish playing, then change the layer weight
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
-            weightManager.SetLayerWeight(slot1Weapon.GetComponent<Weapon>().weaponClass, 0);
+            weightManager.SetLayerWeight(weaponManager.GetWeapon(0).weaponClass, 0);
             leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = 5;
-            equippedWeapon = null;
+            weaponManager.StowWeapon();
             stowDrawRunning = false;
         }
     }

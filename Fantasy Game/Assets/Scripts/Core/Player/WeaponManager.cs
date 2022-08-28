@@ -5,26 +5,26 @@ using LightPat.Core;
 
 public class WeaponManager : MonoBehaviour
 {
-    public Weapon[] weapons;
+    public GameObject equippedWeapon { get; private set; }
+    public List<Weapon> weapons;
+
+    public void DrawWeapon(int slot)
+    {
+        equippedWeapon = weapons[slot].gameObject;
+    }
+
+    public void StowWeapon()
+    {
+        equippedWeapon = null;
+    }
+
+    public Weapon GetWeapon(int slot)
+    {
+        return weapons[slot];
+    }
 
     public void AddWeapon(Weapon weapon)
     {
-        Weapon[] newWeapons = new Weapon[weapons.Length + 1];
-
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            newWeapons[i] = weapons[i];
-            if (i + 1 == weapons.Length)
-            {
-                newWeapons[i + 1] = weapon;
-            }
-
-            weapons = newWeapons;
-
-            foreach (Weapon w in weapons)
-            {
-                Debug.Log(w);
-            }
-        }
+        weapons.Add(weapon);
     }
 }

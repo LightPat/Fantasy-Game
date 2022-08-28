@@ -14,8 +14,6 @@ namespace LightPat.Core
         [Header("Equipped Animation Offsets")]
         public Vector3 playerPositionOffset;
         public Vector3 playerRotationOffset;
-        public Vector3 transitionPositionOffset;
-        public Vector3 transitionRotationOffset;
         public Vector3 stowedPositionOffset;
         public Vector3 stowedRotationOffset;
 
@@ -37,11 +35,6 @@ namespace LightPat.Core
                 targetLocalPosition = stowedPositionOffset;
                 targetLocalRotation = stowedRotationOffset;
             }
-            else if (offsetType == "transition")
-            {
-                targetLocalPosition = transitionPositionOffset;
-                targetLocalRotation = transitionRotationOffset;
-            }
         }
 
         private void Start()
@@ -62,8 +55,10 @@ namespace LightPat.Core
                 }
                 else
                 {
-                    transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, Time.deltaTime * 8);
-                    transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.Euler(targetLocalRotation), Time.deltaTime * 8);
+                    //transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, Time.deltaTime * 4);
+                    //transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(targetLocalRotation), Time.deltaTime * 4);
+                    transform.localPosition = targetLocalPosition;
+                    transform.localRotation = Quaternion.Euler(targetLocalRotation);
                 }
             }
         }

@@ -19,8 +19,7 @@ namespace LightPat.ProceduralAnimations
         private void Update()
         {
             if (rig.weight == weightTarget) { return; }
-
-            if (Mathf.Abs(weightTarget - rig.weight) > 0.1)
+            if (Mathf.Abs(weightTarget - rig.weight) > 0.0001)
             {
                 rig.weight = Mathf.Lerp(rig.weight, weightTarget, Time.deltaTime * weightSpeed);
             }

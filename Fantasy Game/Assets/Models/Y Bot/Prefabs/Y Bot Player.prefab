@@ -1464,12 +1464,12 @@ MonoBehaviour:
   leftHandIK: {fileID: 7284513825337906067}
   rightHandTarget: {fileID: 7708844698936418226}
   leftHandTarget: {fileID: 7284513826573182685}
-  weaponSlot: {fileID: 198613696}
+  weaponSlot: {fileID: 1618465678}
+  backStowSlot: {fileID: 685456554}
   attackReach: 4
   attackDamage: 10
   slot1Weapon: {fileID: 0}
   drawSpeed: 1
-  weaponConstraint: {fileID: 198613697}
 --- !u!114 &1163105829
 MonoBehaviour:
   m_ObjectHideFlags: 0

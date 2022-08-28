@@ -18,18 +18,16 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            if (Time.timeScale == 0)
-            {
-                Time.timeScale = 1;
-            }
-            else
-            {
-                Time.timeScale = 0;
-            }
+            //if (Time.timeScale == 0)
+            //{
+            //    Time.timeScale = 1;
+            //}
+            //else
+            //{
+            //    Time.timeScale = 0;
+            //}
 
             disableLookInput = !disableLookInput;
-            //GetComponent<Rigidbody>().AddForce(new Vector3(5, 0, 0), ForceMode.VelocityChange);
-            //animator.SetTrigger("Test");
         }
 
         private void Start()

@@ -7,7 +7,7 @@ using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {
-    public class CombatAgent : MonoBehaviour
+    public class CombatHandler : MonoBehaviour
     {
         public GameObject equippedWeapon = null;
 

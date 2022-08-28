@@ -19,13 +19,13 @@ namespace LightPat.Util
         private void Update()
         {
             if (rig.weight == weightTarget) { return; }
-            if (Mathf.Abs(weightTarget - rig.weight) > 0.0001)
+            if (Mathf.Abs(weightTarget - rig.weight) > 0.2)
             {
                 rig.weight = Mathf.Lerp(rig.weight, weightTarget, Time.deltaTime * weightSpeed);
             }
             else
             {
-                rig.weight = weightTarget;
+                rig.weight = Mathf.MoveTowards(rig.weight, weightTarget, Time.deltaTime * weightSpeed / 2);
             }
         }
     }

@@ -194,7 +194,6 @@ namespace LightPat.Core.Player
             animator.SetBool("stowWeapon", true);
 
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-            leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = 30;
             leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
             yield return null;
             animator.SetBool("stowWeapon", false);
@@ -209,7 +208,6 @@ namespace LightPat.Core.Player
             // Wait for the stow animation to finish playing, then change the layer weight
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
             weightManager.SetLayerWeight(weaponManager.GetWeapon(0).weaponClass, 0);
-            leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = 5;
             weaponManager.StowWeapon();
 
             playerController.animatorSpeed = originalSpeed;

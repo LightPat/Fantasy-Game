@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
-using LightPat.ProceduralAnimations;
 using LightPat.Core.Player;
 using LightPat.Core;
 
 namespace LightPat.ProceduralAnimations
 {
-    public class CombatHandler : MonoBehaviour
+    public class AttackAnimationHandler : MonoBehaviour
     {
         public GameObject equippedWeapon;
 

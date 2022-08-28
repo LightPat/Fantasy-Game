@@ -135,8 +135,6 @@ namespace LightPat.Core.Player
             }
         }
 
-        [Header("Slot 1")]
-        public float drawSpeed = 1;
         bool stowDrawRunning;
         void OnSlot1() // TODO not finished yet
         {
@@ -145,7 +143,7 @@ namespace LightPat.Core.Player
             if ((animator.GetCurrentAnimatorStateInfo(0).IsTag("Draw Weapon") | animator.GetCurrentAnimatorStateInfo(0).IsTag("Stow Weapon"))
                 | animator.IsInTransition(0)) { return; }
 
-            animator.SetFloat("drawSpeed", drawSpeed);
+            animator.SetFloat("drawSpeed", weaponManager.GetWeapon(0).drawSpeedMultiplier);
 
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Weapon Combat Idle"))
             {

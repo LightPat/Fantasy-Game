@@ -530,7 +530,7 @@ MonoBehaviour:
       size: 0.1
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
+    m_Visible: 0
   - m_Transform: {fileID: 0}
     m_Style:
       shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
@@ -1255,7 +1255,7 @@ MonoBehaviour:
       size: 0.1
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
+    m_Visible: 0
   - m_Transform: {fileID: 0}
     m_Style:
       shape: {fileID: 4300000, guid: c6793350c150f456688e39a81f97364a, type: 2}
@@ -1271,7 +1271,7 @@ MonoBehaviour:
       size: 0.3
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
+    m_Visible: 0
 --- !u!114 &975685839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2783,7 +2783,7 @@ CapsuleCollider:
   m_Height: 0.53667456
   m_Direction: 1
   m_Center: {x: 0.009763837, y: 0.2152519, z: -0.0020252615}
---- !u!114 &341759171
+--- !u!114 &6782326009548432426
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2792,7 +2792,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7626462701074999911}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5436433f2059b4848b97937169b38fe5, type: 3}
+  m_Script: {fileID: 11500000, guid: d37d4dd4f8c770840933613e8b3b12b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   transitionSpeed: 4

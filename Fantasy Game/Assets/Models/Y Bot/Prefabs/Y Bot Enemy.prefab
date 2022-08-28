@@ -65,7 +65,7 @@ MonoBehaviour:
   personalityValues: 
   physicalValues: 
   magicalValues: 
-  maxHealth: 100
+  maxHealth: 100000
   healthRenderer: {fileID: 5899139564344805879}
   imageMaterial: {fileID: 0}
   healthPointsText: {fileID: 0}

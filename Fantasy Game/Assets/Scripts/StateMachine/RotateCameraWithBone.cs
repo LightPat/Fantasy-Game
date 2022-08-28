@@ -2,8 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using LightPat.ProceduralAnimations;
 using LightPat.Core.Player;
+using LightPat.Util;
 
 namespace LightPat.StateMachine
 {

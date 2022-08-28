@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
+using LightPat.Util;
 
 namespace LightPat.Core.Player
 {
@@ -14,7 +15,7 @@ namespace LightPat.Core.Player
         public float idleLoopTransitionTime = 10;
 
         Animator animator;
-        AnimationLayerWeightManager weightManager;
+        AnimatorLayerWeightManager weightManager;
 
         void OnEscape()
         {
@@ -33,7 +34,7 @@ namespace LightPat.Core.Player
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
-            weightManager = GetComponentInChildren<AnimationLayerWeightManager>();
+            weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
         }
 
         // Simple stair walking

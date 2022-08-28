@@ -6,11 +6,15 @@ namespace LightPat.ProceduralAnimations
 {
     public class HintPositionSolver : MonoBehaviour
     {
-        public Transform targetBone;
+        public Transform shoulder;
+        public Transform wrist;
 
         private void Update()
         {
-            // If bone cross the body we want to flip our X position
+            Vector3 wristPosition = wrist.position + wrist.up * -1;
+            Vector3 shoulderPosition = shoulder.position + shoulder.up;
+
+            transform.position = (shoulderPosition + wristPosition) / 2;
         }
     }
 }

@@ -57,12 +57,9 @@ namespace LightPat.Core.Player
             }
 
             // Reach out hands to grab weapon handle
-            leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
             rightArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
-            leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             rightHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_right_hand_grip");
-            leftHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_left_hand_grip");
 
             // Transition into the weapon's animations
             weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
@@ -71,9 +68,13 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => rightArmRig.weight >= 0.9);
             animator.SetBool("pickUpWeapon", true);
 
-            // Don't move IK targets
+            // Activate secondary hand
+            leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
+            leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+            leftHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_left_hand_grip");
+
+            // Don't move IK target while reparenting
             rightHandTarget.GetComponent<FollowTarget>().target = null;
-            //leftHandTarget.GetComponent<FollowTarget>().target = null;
 
             // Parent weapon to the constraint object
             weapon.SetParent(weaponSlot, true);
@@ -82,9 +83,8 @@ namespace LightPat.Core.Player
 
             yield return new WaitUntil(() => rightArmRig.weight <= 0.1);
 
-            // Set target back to the hand bone
+            // Set target back to the hand bone since this is the hand that controls the weapon
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-            //leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
 
             slot1Weapon = weapon.gameObject;
             equippedWeapon = slot1Weapon;
@@ -189,14 +189,14 @@ namespace LightPat.Core.Player
             stowDrawRunning = true;
             animator.SetBool("stowWeapon", true);
             //weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(1, 0); // Change left hand weight to 0
-            slot1Weapon.GetComponent<Weapon>().ChangeOffset("transition"); // Switch to one handed offset values
+            //slot1Weapon.GetComponent<Weapon>().ChangeOffset("transition"); // Switch to one handed offset values
 
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
             leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
             yield return null;
             animator.SetBool("stowWeapon", false);
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow Weapon"));
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow To Idle"));
             // Switch to stowed mode
             weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(0, 0); // Change right hand weight to 0
             weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().SetObjectWeightTarget(2, 1); // Change spine's weight to 1
@@ -205,6 +205,7 @@ namespace LightPat.Core.Player
             // Wait for the stow animation to finish playing, then change the layer weight
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
             weightManager.SetLayerWeight(slot1Weapon.GetComponent<Weapon>().weaponClass, 0);
+            //weaponConstraint.GetComponent<MultiParentConstraintWeightManager>().weightSpeed = 5;
             equippedWeapon = null;
             stowDrawRunning = false;
         }

@@ -22,6 +22,7 @@ namespace LightPat.Core
         Vector3 targetLocalPosition;
         Vector3 targetLocalRotation;
 
+        [Header("Used for setting offsets")]
         public bool settingOffsets;
         public string offsetType;
 

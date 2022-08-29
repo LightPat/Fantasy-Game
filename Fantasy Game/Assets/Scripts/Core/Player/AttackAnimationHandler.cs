@@ -93,6 +93,11 @@ namespace LightPat.Core.Player
 
             // Parent weapon to the constraint object, typically this is the right hand
             weapon.SetParent(weaponParent, true);
+            Sheath sheath = weapon.GetComponentInChildren<Sheath>();
+            if (sheath)
+            {
+                sheath.transform.SetParent(leftHipStow, true);
+            }
 
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
 

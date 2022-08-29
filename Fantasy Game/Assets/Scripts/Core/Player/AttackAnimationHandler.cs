@@ -243,8 +243,18 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow Weapon"));
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
             // Switch to stowed mode
-            weaponManager.equippedWeapon.transform.SetParent(spineStow, true);
-            weaponManager.equippedWeapon.GetComponent<Weapon>().ChangeOffset("stowed");
+
+            // Check weapon component for what to stow
+            if (weaponManager.equippedWeapon.stowPoint == "Spine")
+            {
+                weaponManager.equippedWeapon.transform.SetParent(spineStow, true);
+            }
+            else if (weaponManager.equippedWeapon.stowPoint == "Left Hip")
+            {
+                weaponManager.equippedWeapon.transform.SetParent(leftHipStow, true);
+            }
+            
+            weaponManager.equippedWeapon.ChangeOffset("stowed");
 
             // Wait for the stow animation to finish playing, then change the layer weight
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));

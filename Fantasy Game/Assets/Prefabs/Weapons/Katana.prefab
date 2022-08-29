@@ -163,12 +163,12 @@ MonoBehaviour:
   idealPersonality: 
   baseDamage: 50
   weaponClass: Great Sword
-  stowPoint: Spine
+  stowPoint: Left Hip
   drawSpeed: 1
   playerPositionOffset: {x: 0.345, y: 0.017, z: 0.159}
   playerRotationOffset: {x: 193.022, y: 157.456, z: 89.103}
-  stowedPositionOffset: {x: 0, y: 0, z: 0}
-  stowedRotationOffset: {x: 0, y: 0, z: 0}
+  stowedPositionOffset: {x: -0.243, y: 0.549, z: 0.259}
+  stowedRotationOffset: {x: -26.165, y: 180, z: 0}
   settingOffsets: 0
   offsetType: 
 --- !u!1 &6085640905189597076

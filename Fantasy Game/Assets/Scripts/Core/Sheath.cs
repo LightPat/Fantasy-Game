@@ -6,7 +6,7 @@ namespace LightPat.Core
 {
     public class Sheath : MonoBehaviour
     {
-        public bool updateTransform;
+        public bool hasPlayer;
 
         [Header("Equipped Animation Offsets")]
         public Vector3 stowedPositionOffset;
@@ -18,7 +18,7 @@ namespace LightPat.Core
 
         private void Update()
         {
-            if (updateTransform)
+            if (hasPlayer)
             {
                 if (!settingOffsets)
                 {

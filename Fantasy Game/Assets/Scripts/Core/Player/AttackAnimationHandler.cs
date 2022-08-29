@@ -81,7 +81,6 @@ namespace LightPat.Core.Player
 
             // Wait until hands have reached the weapon handle
             yield return new WaitUntil(() => rightArmRig.weight >= 0.9);
-            animator.SetBool("pickUpWeapon", true);
 
             // Activate secondary hand
             leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
@@ -98,7 +97,7 @@ namespace LightPat.Core.Player
             {
                 sheath.transform.gameObject.SetActive(true);
                 sheath.transform.SetParent(GetStowPoint(weapon.GetComponent<Weapon>().stowPoint), true);
-                sheath.updateTransform = true;
+                sheath.hasPlayer = true;
             }
 
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
@@ -112,7 +111,6 @@ namespace LightPat.Core.Player
             weaponManager.DrawWeapon(weaponManager.weapons.Count-1); // Draw most recently added weapon
 
             playerController.disableLookInput = false;
-            animator.SetBool("pickUpWeapon", false);
             equipWeaponRunning = false;
         }
 
@@ -161,20 +159,14 @@ namespace LightPat.Core.Player
         {
             if (stowDrawRunning) { return; }
             if (weaponManager.GetWeapon(0) == null) { return; }
-            if ((animator.GetCurrentAnimatorStateInfo(0).IsTag("Draw Weapon") | animator.GetCurrentAnimatorStateInfo(0).IsTag("Stow Weapon"))
-                | animator.IsInTransition(0)) { return; }
 
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Weapon Combat Idle"))
+            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(0))
             {
                 StartCoroutine(StowWeapon());
-
-                if (weaponManager.equippedWeapon != weaponManager.GetWeapon(0))
-                {
-                    StartCoroutine(DrawWeapon(0));
-                }
             }
             else
             {
+                if (weaponManager.equippedWeapon != null) { StartCoroutine(StowWeapon()); }
                 StartCoroutine(DrawWeapon(0));
             }
         }
@@ -182,22 +174,32 @@ namespace LightPat.Core.Player
         void OnSlot1()
         {
             if (stowDrawRunning) { return; }
-            if (weaponManager.GetWeapon(1) == null) { return; }
-            if ((animator.GetCurrentAnimatorStateInfo(0).IsTag("Draw Weapon") | animator.GetCurrentAnimatorStateInfo(0).IsTag("Stow Weapon"))
-                | animator.IsInTransition(0)) { return; }
+            if (weaponManager.GetWeapon(0) == null) { return; }
 
-            if (animator.GetCurrentAnimatorStateInfo(1).IsName("Weapon Combat Idle"))
+            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(1))
             {
                 StartCoroutine(StowWeapon());
-
-                if (weaponManager.equippedWeapon != weaponManager.GetWeapon(1))
-                {
-                    StartCoroutine(DrawWeapon(1));
-                }
             }
             else
             {
+                if (weaponManager.equippedWeapon != null) { StartCoroutine(StowWeapon()); }
                 StartCoroutine(DrawWeapon(1));
+            }
+        }
+
+        void OnSlot2()
+        {
+            if (stowDrawRunning) { return; }
+            if (weaponManager.GetWeapon(0) == null) { return; }
+
+            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(2))
+            {
+                StartCoroutine(StowWeapon());
+            }
+            else
+            {
+                if (weaponManager.equippedWeapon != null) { StartCoroutine(StowWeapon()); }
+                StartCoroutine(DrawWeapon(2));
             }
         }
 
@@ -210,18 +212,19 @@ namespace LightPat.Core.Player
             float originalSpeed = playerController.animatorSpeed;
             playerController.animatorSpeed = weaponManager.GetWeapon(slotIndex).drawSpeed;
 
-            animator.SetBool("stowWeapon", true);
+            animator.SetBool("drawWeapon", true);
             weightManager.SetLayerWeight(weaponManager.GetWeapon(slotIndex).weaponClass, 1);
             yield return null;
-            animator.SetBool("stowWeapon", false);
+            animator.SetBool("drawWeapon", false);
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Draw To Combat"));
+            int animLayerIndex = animator.GetLayerIndex(weaponManager.GetWeapon(slotIndex).weaponClass);
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Draw To Combat"));
             // Switch to player mode
             weaponManager.GetWeapon(slotIndex).transform.SetParent(weaponParent, true);
             weaponManager.GetWeapon(slotIndex).ChangeOffset("player");
 
             // Wait for animation to finish, then change offset and weights
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).length <= animator.GetCurrentAnimatorStateInfo(animLayerIndex).normalizedTime);
 
             weaponManager.DrawWeapon(slotIndex);
 
@@ -229,6 +232,7 @@ namespace LightPat.Core.Player
             leftHandTarget.GetComponent<FollowTarget>().target = weaponManager.equippedWeapon.transform.Find("ref_left_hand_grip");
 
             playerController.animatorSpeed = originalSpeed;
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Idle"));
             stowDrawRunning = false;
         }
 
@@ -247,10 +251,10 @@ namespace LightPat.Core.Player
             animator.SetBool("stowWeapon", false);
 
             // Wait for stow weapon animation to finish
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).IsName("Stow Weapon"));
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+            int animLayerIndex = animator.GetLayerIndex(weaponManager.equippedWeapon.weaponClass);
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Stow Weapon"));
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).length <= animator.GetCurrentAnimatorStateInfo(animLayerIndex).normalizedTime);
             // Switch to stowed mode
-
             // Check weapon component for where to stow
             weaponManager.equippedWeapon.transform.SetParent(GetStowPoint(weaponManager.equippedWeapon.stowPoint), true);
             weaponManager.equippedWeapon.ChangeOffset("stowed");
@@ -261,6 +265,7 @@ namespace LightPat.Core.Player
             weaponManager.StowWeapon();
 
             playerController.animatorSpeed = originalSpeed;
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Idle"));
             stowDrawRunning = false;
         }
 

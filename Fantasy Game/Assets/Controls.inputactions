@@ -114,6 +114,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Slot2",
+                    "type": "Button",
+                    "id": "b24fe4d5-297f-4433-a0a4-959a65280533",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "InventoryToggle",
                     "type": "Button",
                     "id": "80f7d9d7-7a38-43d2-aad9-3666c9432ae7",
@@ -328,6 +337,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Slot1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "543f8fa2-28bd-4c17-a979-ef11ef4f000e",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slot2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

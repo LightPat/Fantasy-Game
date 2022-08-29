@@ -37,26 +37,23 @@ namespace LightPat.Core.Player
 
         void OnJump()
         {
-            if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1) { return; }
+            if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1 | animator.IsInTransition(0)) { return; }
             StartCoroutine(Jump());
         }
 
-        public float jumpDelay;
+        public float jumpForceDelay;
         private IEnumerator Jump()
         {
             animator.SetBool("jumping", true);
 
             float jumpForce = Mathf.Sqrt(jumpHeight * -2 * Physics.gravity.y);
-            if (animator.GetFloat("y") < 1.1 & animator.GetFloat("y") > -1.1 & animator.GetFloat("x") < 1.1 & animator.GetFloat("x") > -1.1) // Standing Jump
+            if (!animator.GetBool("running"))
             {
-                yield return new WaitForSeconds(jumpDelay);
+                yield return new WaitForSeconds(jumpForceDelay);
                 rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
             }
-            else // Running Jump
-            {
-                yield return null;
-            }
 
+            yield return null;
             animator.SetBool("jumping", false);
         }
         
@@ -66,37 +63,24 @@ namespace LightPat.Core.Player
             moveInput = value.Get<Vector2>();
         }
 
-        bool landingCollision;
+        bool landingCollisionRunning;
         private void OnCollisionEnter(Collision collision)
         {
+            if (landingCollisionRunning) { return; }
+
             if ((IsAirborne() | IsJumping()) & !IsLanding())
             {
-                if (landingCollision) { return; }
-
                 animator.SetFloat("landingVelocity", collision.relativeVelocity.magnitude);
 
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Free Fall") | animator.GetCurrentAnimatorStateInfo(0).IsName("Falling On Stomach")) // Free fall 
-                {
-                    animator.Play("Land Flat On Stomach");
-                }
-                else if (moveInput.y > 0 & collision.relativeVelocity.magnitude > 10) // If I'm holding W, do the breakfall roll
-                {
-                    animator.Play("Breakfall Roll");
-                }
-                else
-                {
-                    animator.Play("Landing");
-                }
-
-                landingCollision = true;
+                landingCollisionRunning = true;
                 StartCoroutine(ResetLandingBool());
             }
         }
 
         private IEnumerator ResetLandingBool()
         {
-            yield return null;
-            landingCollision = false;
+            yield return new WaitUntil(() => !(IsAirborne() | IsJumping()) & !IsLanding());
+            landingCollisionRunning = false;
         }
 
         bool IsAirborne()

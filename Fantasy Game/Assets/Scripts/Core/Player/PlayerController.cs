@@ -64,8 +64,8 @@ namespace LightPat.Core.Player
         {
             if (disableMoveInput) { return; }
             moveInput = value.Get<Vector2>();
-            if (moveInput.y <= 0 & sprinting) { sprintTarget = 2; }
-            if (moveInput == Vector2.zero & sprinting) { sprinting = false; }
+            if (moveInput.y <= 0 & running) { runTarget = 2; }
+            if (moveInput == Vector2.zero & running) { running = false; }
         }
 
         [Header("Mouse Look Settings")]
@@ -120,12 +120,12 @@ namespace LightPat.Core.Player
             }
 
             float xTarget = moveInput.x;
-            if (sprinting) { xTarget *= sprintTarget; }
+            if (running) { xTarget *= runTarget; }
             float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("x", x);
 
             float yTarget = moveInput.y;
-            if (sprinting) { yTarget *= sprintTarget; }
+            if (running) { yTarget *= runTarget; }
             float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("y", y);
 
@@ -166,37 +166,59 @@ namespace LightPat.Core.Player
 
         [Header("NOT FUNCTIONAL YET")]
         public bool toggleSprint;
-        bool sprinting;
-        float sprintTarget;
+        bool running;
+        float runTarget;
         void OnSprint(InputValue value)
         {
-            if (value.isPressed & moveInput != Vector2.zero)
+            running = value.isPressed;
+            animator.SetBool("running", running);
+            runTarget = 2;
+            ascending = true;
+
+            if (!value.isPressed)
             {
-                sprinting = !sprinting;
-                sprintTarget = 2;
-                ascending = true;
+                animator.SetBool("sprinting", false);
             }
         }
 
         bool ascending = true;
         void OnScaleSprint()
         {
-            if (sprinting & !crouching & moveInput.y > 0)
+            if (running & !crouching & moveInput.y > 0)
             {
                 if (ascending)
                 {
-                    sprintTarget += 1;
-                    if (sprintTarget == 4)
+                    runTarget += 1;
+
+                    if (runTarget == 4)
+                    {
+                        animator.SetBool("sprinting", true);
+                    }
+                    else
+                    {
+                        animator.SetBool("sprinting", false);
+                    }
+
+                    if (runTarget == 4)
                     {
                         ascending = false;
                     }
                 }
                 else
                 {
-                    sprintTarget -= 1;
-                    if (sprintTarget == 2)
+                    runTarget -= 1;
+                    if (runTarget == 2)
                     {
                         ascending = true;
+                    }
+
+                    if (runTarget == 4)
+                    {
+                        animator.SetBool("sprinting", true);
+                    }
+                    else
+                    {
+                        animator.SetBool("sprinting", false);
                     }
                 }
             }
@@ -208,29 +230,23 @@ namespace LightPat.Core.Player
         {
             if (value.isPressed)
             {
-                if (sprinting & weightManager.GetLayerWeight(animator.GetLayerIndex("Crouching")) == 0)
+                //  & weightManager.GetLayerWeight(animator.GetLayerIndex("Crouching")) == 0
+                if (running)
                 {
-                    animator.SetBool("sliding", true);
+                    animator.SetBool("crouching", true);
                     StartCoroutine(ResetSlide());
                     return;
                 }
-
-                crouching = !crouching;
-                if (crouching)
-                {
-                    weightManager.SetLayerWeight("Crouching", 1);
-                }
-                else
-                {
-                    weightManager.SetLayerWeight("Crouching", 0);
-                }
             }
+
+            crouching = value.isPressed;
+            animator.SetBool("crouching", crouching);
         }
 
         private IEnumerator ResetSlide()
         {
             yield return null;
-            animator.SetBool("sliding", false);
+            animator.SetBool("crouching", false);
         }
 
         bool freeLooking;

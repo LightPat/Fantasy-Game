@@ -40,6 +40,7 @@ namespace LightPat.Core.Player
                 forceTransferred = false;
             }
 
+            animator.SetBool("falling", !isGrounded);
             prevBoolState = isGrounded;
             oldPos = rb.position;
         }

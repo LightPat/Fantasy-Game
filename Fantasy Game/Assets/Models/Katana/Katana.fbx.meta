@@ -3,7 +3,17 @@ guid: e900a6da34cd2444e84b853a35b11640
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mikazukimunechika_bladecover_material
+    second: {fileID: 2100000, guid: 29964541772c6e340ae418045756ee9f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: mikazukimunechika_material
+    second: {fileID: 2100000, guid: d1bbd49b02bc5a549b608706ed5bfbe9, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -85,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.002
+    globalScale: 0.2
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

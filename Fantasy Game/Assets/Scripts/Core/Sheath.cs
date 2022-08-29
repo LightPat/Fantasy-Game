@@ -6,6 +6,8 @@ namespace LightPat.Core
 {
     public class Sheath : MonoBehaviour
     {
+        public bool updateTransform;
+
         [Header("Equipped Animation Offsets")]
         public Vector3 stowedPositionOffset;
         public Vector3 stowedRotationOffset;
@@ -16,16 +18,14 @@ namespace LightPat.Core
 
         private void Update()
         {
-            if (transform.parent != null)
+            if (updateTransform)
             {
-                if (settingOffsets)
+                if (!settingOffsets)
                 {
-
-                }
-                else
-                {
-                    transform.localPosition = Vector3.Lerp(transform.localPosition, stowedPositionOffset, Time.deltaTime * 5);
-                    transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(stowedRotationOffset), Time.deltaTime * 5);
+                    //transform.localPosition = Vector3.Lerp(transform.localPosition, stowedPositionOffset, Time.deltaTime * 5);
+                    //transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(stowedRotationOffset), Time.deltaTime * 5);
+                    transform.localPosition = stowedPositionOffset;
+                    transform.localRotation = Quaternion.Euler(stowedRotationOffset);
                 }
             }
         }

@@ -93,10 +93,12 @@ namespace LightPat.Core.Player
 
             // Parent weapon to the constraint object, typically this is the right hand
             weapon.SetParent(weaponParent, true);
-            Sheath sheath = weapon.GetComponentInChildren<Sheath>();
+            Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
             if (sheath)
             {
-                sheath.transform.SetParent(leftHipStow, true);
+                sheath.transform.gameObject.SetActive(true);
+                sheath.transform.SetParent(GetStowPoint(weapon.GetComponent<Weapon>().stowPoint), true);
+                sheath.updateTransform = true;
             }
 
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
@@ -249,16 +251,8 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(0).length <= animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
             // Switch to stowed mode
 
-            // Check weapon component for what to stow
-            if (weaponManager.equippedWeapon.stowPoint == "Spine")
-            {
-                weaponManager.equippedWeapon.transform.SetParent(spineStow, true);
-            }
-            else if (weaponManager.equippedWeapon.stowPoint == "Left Hip")
-            {
-                weaponManager.equippedWeapon.transform.SetParent(leftHipStow, true);
-            }
-            
+            // Check weapon component for where to stow
+            weaponManager.equippedWeapon.transform.SetParent(GetStowPoint(weaponManager.equippedWeapon.stowPoint), true);
             weaponManager.equippedWeapon.ChangeOffset("stowed");
 
             // Wait for the stow animation to finish playing, then change the layer weight
@@ -268,6 +262,23 @@ namespace LightPat.Core.Player
 
             playerController.animatorSpeed = originalSpeed;
             stowDrawRunning = false;
+        }
+
+        private Transform GetStowPoint(string stowType)
+        {
+            if (stowType == "Spine")
+            {
+                return spineStow;
+            }
+            else if (stowType == "Left Hip")
+            {
+                return leftHipStow;
+            }
+            else
+            {
+                Debug.LogWarning("The weapon you are trying to stow has an invalid stow type");
+                return null;
+            }
         }
     }
 }

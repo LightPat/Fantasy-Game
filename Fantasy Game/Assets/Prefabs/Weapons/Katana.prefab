@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6595901965400185233}
   - component: {fileID: 2126984628650712491}
   - component: {fileID: 6053532380025883078}
+  - component: {fileID: 1293063680}
   m_Layer: 0
   m_Name: Sheath
   m_TagString: Untagged
@@ -96,6 +97,23 @@ CapsuleCollider:
   m_Height: 0.015347627
   m_Direction: 1
   m_Center: {x: 1.09139364e-10, y: -0.00728323, z: 0.00020568559}
+--- !u!114 &1293063680
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3631370415057668737}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157828378874e5b409c3526a504aa629, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateTransform: 0
+  stowedPositionOffset: {x: 0.094, y: 0.339, z: -0.225}
+  stowedRotationOffset: {x: -7.713, y: -100.845, z: 0.716}
+  settingOffsets: 0
+  offsetType: 
 --- !u!1 &5321369179267701678
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,12 +181,12 @@ MonoBehaviour:
   idealPersonality: 
   baseDamage: 50
   weaponClass: Great Sword
-  stowPoint: Left Hip
+  stowPoint: Spine
   drawSpeed: 1
   playerPositionOffset: {x: 0.345, y: 0.017, z: 0.159}
   playerRotationOffset: {x: 193.022, y: 157.456, z: 89.103}
-  stowedPositionOffset: {x: -0.243, y: 0.549, z: 0.259}
-  stowedRotationOffset: {x: -26.165, y: 180, z: 0}
+  stowedPositionOffset: {x: 0.168, y: 0.879, z: -0.218}
+  stowedRotationOffset: {x: 187.713, y: 79.155, z: -179.284}
   settingOffsets: 0
   offsetType: 
 --- !u!1 &6085640905189597076

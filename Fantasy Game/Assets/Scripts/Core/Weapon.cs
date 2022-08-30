@@ -58,8 +58,8 @@ namespace LightPat.Core
                 }
                 else
                 {
-                    transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, Time.deltaTime * 5);
-                    transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(targetLocalRotation), Time.deltaTime * 5);
+                    transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, Time.deltaTime * 8);
+                    transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(targetLocalRotation), Time.deltaTime * 8);
                     //transform.localPosition = targetLocalPosition;
                     //transform.localRotation = Quaternion.Euler(targetLocalRotation);
                 }

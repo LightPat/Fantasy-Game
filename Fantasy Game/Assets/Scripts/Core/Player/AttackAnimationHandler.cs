@@ -154,6 +154,18 @@ namespace LightPat.Core.Player
             }
         }
 
+        void OnMelee()
+        {
+            animator.SetBool("melee", true);
+            StartCoroutine(ResetMeleeBool());
+        }
+
+        private IEnumerator ResetMeleeBool()
+        {
+            yield return null;
+            animator.SetBool("melee", false);
+        }
+
         bool stowDrawRunning;
         void OnSlot0() // TODO not finished yet
         {

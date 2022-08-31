@@ -66,10 +66,6 @@ namespace LightPat.Core.Player
 
             // Remove the physics and collider components
             Destroy(weapon.GetComponent<Rigidbody>());
-            foreach (Collider c in weapon.GetComponentsInChildren<Collider>())
-            {
-                c.enabled = false;
-            }
 
             // Reach out hands to grab weapon handle
             rightArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
@@ -123,13 +119,21 @@ namespace LightPat.Core.Player
             GetComponent<PlayerController>().rotateBodyWithCamera = value.isPressed;
             if (!value.isPressed) { return; }
 
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, attackReach))
+            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, attackReach);
+            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+
+            foreach (RaycastHit hit in allHits)
             {
+                if (hit.transform == transform)
+                {
+                    continue;
+                }
+
                 if (hit.transform.GetComponent<Attributes>())
                 {
                     hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                 }
+                break;
             }
         }
 

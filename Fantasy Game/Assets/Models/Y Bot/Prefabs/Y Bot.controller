@@ -257,7 +257,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 5538955743437511279, guid: 8be5789adf5ba5646a4cddce5fcc2269, type: 3}
-  m_Tag: 
+  m_Tag: CollisionAttack
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -1002,7 +1002,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: -8562180348299694220, guid: 3e5df43564610054a92f2c0674ab72aa, type: 3}
-  m_Tag: 
+  m_Tag: CollisionAttack
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -1460,7 +1460,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: -1377856401102043265, guid: b4d6cae3fc58c0343825e3c3a52b2ce5, type: 3}
-  m_Tag: 
+  m_Tag: CollisionAttack
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -3923,7 +3923,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: -5858946132713572406, guid: b85d4ec56ef96874aa4a72bc1272d105, type: 3}
-  m_Tag: 
+  m_Tag: CollisionAttack
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -4907,7 +4907,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: -4621807632254752658, guid: 055a42854b33eee4e8d1042f90d0d6d1, type: 3}
-  m_Tag: 
+  m_Tag: CollisionAttack
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -5522,7 +5522,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: -7767004024987517720, guid: 8a2d5c3fddf0c0d43a13404ddb6521bf, type: 3}
-  m_Tag: 
+  m_Tag: CollisionAttack
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -5603,7 +5603,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: -9012975650063311509, guid: d238919cbe5c3e24c813e9d8570e2d75, type: 3}
-  m_Tag: 
+  m_Tag: CollisionAttack
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 

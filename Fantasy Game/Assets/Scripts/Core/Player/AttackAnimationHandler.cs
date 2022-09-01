@@ -119,6 +119,7 @@ namespace LightPat.Core.Player
             GetComponent<PlayerController>().rotateBodyWithCamera = value.isPressed;
             if (!value.isPressed) { return; }
 
+            if (weaponManager.equippedWeapon != null) { return; }
             RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, attackReach);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
@@ -131,9 +132,30 @@ namespace LightPat.Core.Player
 
                 if (hit.transform.GetComponent<Attributes>())
                 {
-                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
+                    //hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
                 }
                 break;
+            }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (weaponManager.equippedWeapon == null) { return; }
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.weaponClass)).IsTag("CollisionAttack"))
+            {
+                return;
+            }
+
+            for (int i = 0; i < collision.contactCount; i++)
+            {
+                // If the collision is detected on one of our equippedWeapon's colliders
+                if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponManager.equippedWeapon)
+                {
+                    if (collision.transform.GetComponent<Attributes>())
+                    {
+                        collision.transform.GetComponent<Attributes>().InflictDamage(weaponManager.equippedWeapon.baseDamage, gameObject);
+                    }
+                }
             }
         }
 

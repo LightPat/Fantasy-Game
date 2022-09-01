@@ -16,9 +16,10 @@ namespace LightPat.Core
         private float HP;
         [Header("World Space Label : Only assign for enemies/NPCs/mobs")]
         public Renderer healthRenderer;
+        public TextMeshPro healthPointsWorldText;
         [Header("ScreenSpaceOverlay : Only assign for player/allies/bosses")]
         public Material imageMaterial;
-        public TextMeshProUGUI healthPointsText;
+        public TextMeshProUGUI healthPointsUIText;
 
         Animator animator = null;
 
@@ -75,11 +76,12 @@ namespace LightPat.Core
             if (healthRenderer != null)
             {
                 healthRenderer.material.SetFloat("healthPercentage", HP / maxHealth);
+                healthPointsWorldText.SetText(HP + " / " + maxHealth);
             }
             else // If we are the player, we have to edit the material directly (limitation of unity's canvas renderer)
             {
                 imageMaterial.SetFloat("healthPercentage", HP / maxHealth);
-                healthPointsText.SetText(HP + " / " + maxHealth);
+                healthPointsUIText.SetText(HP + " / " + maxHealth);
             }
         }
 

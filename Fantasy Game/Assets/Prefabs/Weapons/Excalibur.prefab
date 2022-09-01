@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   idealPersonality: 3232323232
-  baseDamage: 50
+  baseDamage: 1
   weaponClass: Great Sword
   stowPoint: Spine
   drawSpeed: 1

@@ -19,7 +19,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5161507660053458650
 Transform:
   m_ObjectHideFlags: 0
@@ -109,7 +109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 157828378874e5b409c3526a504aa629, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  updateTransform: 0
+  hasPlayer: 0
   stowedPositionOffset: {x: 0.094, y: 0.339, z: -0.225}
   stowedRotationOffset: {x: -7.713, y: -100.845, z: 0.716}
   settingOffsets: 0
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   idealPersonality: 
-  baseDamage: 50
+  baseDamage: 1
   weaponClass: Great Sword
   stowPoint: Spine
   drawSpeed: 1

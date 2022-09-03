@@ -9,6 +9,7 @@ namespace LightPat.Util
     {
         public float weightTarget;
         public float weightSpeed;
+        public bool instantWeight;
         Rig rig;
 
         private void Start()
@@ -19,6 +20,8 @@ namespace LightPat.Util
         private void Update()
         {
             if (rig.weight == weightTarget) { return; }
+            if (instantWeight) { rig.weight = weightTarget; return; }
+
             if (Mathf.Abs(weightTarget - rig.weight) > 0.1)
             {
                 rig.weight = Mathf.Lerp(rig.weight, weightTarget, Time.deltaTime * weightSpeed);

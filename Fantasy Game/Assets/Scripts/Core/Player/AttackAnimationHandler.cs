@@ -32,7 +32,9 @@ namespace LightPat.Core.Player
         public TwoBoneIKConstraint leftHandIK;
         public Transform rightHandTarget;
         public Transform leftHandTarget;
-        public Transform weaponParent;
+        [Header("Weapon Grip Points")]
+        public Transform greatSwordGrip;
+        public Transform rifleGrip;
         [Header("Stow Points")]
         public Transform spineStow;
         public Transform leftHipStow;
@@ -67,6 +69,10 @@ namespace LightPat.Core.Player
             // Remove the physics and collider components
             Destroy(weapon.GetComponent<Rigidbody>());
 
+            // Change grip weight
+            Transform gripPoint = GetGripPoint(weapon.GetComponent<Weapon>().weaponClass);
+            gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+
             // Reach out hands to grab weapon handle
             rightArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
@@ -84,10 +90,13 @@ namespace LightPat.Core.Player
             leftHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_left_hand_grip");
 
             // Don't move IK target while reparenting
-            rightHandTarget.GetComponent<FollowTarget>().target = null;
+            if (weapon.GetComponent<Weapon>().weaponClass != "Rifle")
+            {
+                rightHandTarget.GetComponent<FollowTarget>().target = null;
+            }
 
             // Parent weapon to the constraint object, typically this is the right hand
-            weapon.SetParent(weaponParent, true);
+            weapon.SetParent(gripPoint, true);
             Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
             if (sheath)
             {
@@ -96,12 +105,13 @@ namespace LightPat.Core.Player
                 sheath.hasPlayer = true;
             }
 
-            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-
-            yield return new WaitUntil(() => rightArmRig.weight <= 0.1);
-
-            // Set target back to the hand bone since this is the hand that controls the weapon
-            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
+            if (weapon.GetComponent<Weapon>().weaponClass != "Rifle")
+            {
+                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                yield return new WaitUntil(() => rightArmRig.weight <= 0.1);
+                // Set target back to the hand bone since this is the hand that controls the weapon
+                rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
+            }
 
             weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
             weaponManager.DrawWeapon(weaponManager.weapons.Count-1); // Draw most recently added weapon
@@ -218,7 +228,7 @@ namespace LightPat.Core.Player
         void OnSlot1()
         {
             if (stowDrawRunning) { return; }
-            if (weaponManager.GetWeapon(0) == null) { return; }
+            if (weaponManager.GetWeapon(1) == null) { return; }
 
             if (weaponManager.equippedWeapon == weaponManager.GetWeapon(1))
             {
@@ -240,7 +250,7 @@ namespace LightPat.Core.Player
         void OnSlot2()
         {
             if (stowDrawRunning) { return; }
-            if (weaponManager.GetWeapon(0) == null) { return; }
+            if (weaponManager.GetWeapon(2) == null) { return; }
 
             if (weaponManager.equippedWeapon == weaponManager.GetWeapon(2))
             {
@@ -276,7 +286,7 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).length <= animator.GetCurrentAnimatorStateInfo(animLayerIndex).normalizedTime);
 
             // Switch to player mode
-            weaponManager.GetWeapon(slotIndex).transform.SetParent(weaponParent, true);
+            weaponManager.GetWeapon(slotIndex).transform.SetParent(GetGripPoint(weaponManager.GetWeapon(slotIndex).GetComponent<Weapon>().weaponClass), true);
             weaponManager.GetWeapon(slotIndex).ChangeOffset("player");
 
             // Wait for animation to finish, then change offset and weights
@@ -361,7 +371,7 @@ namespace LightPat.Core.Player
 
             animator.SetBool("switchWeapon", false);
             // Switch to player mode
-            weaponManager.GetWeapon(slotIndex).transform.SetParent(weaponParent, true);
+            weaponManager.GetWeapon(slotIndex).transform.SetParent(GetGripPoint(weaponManager.GetWeapon(slotIndex).GetComponent<Weapon>().weaponClass), true);
             weaponManager.GetWeapon(slotIndex).ChangeOffset("player");
 
             // Wait for draw animation to finish, then change offset and weights
@@ -375,8 +385,6 @@ namespace LightPat.Core.Player
             playerController.animatorSpeed = originalSpeed;
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Draw To Combat"));
             stowDrawRunning = false;
-
-            //StartCoroutine(DrawWeapon(slotIndex));
         }
 
         private Transform GetStowPoint(string stowType)
@@ -392,6 +400,23 @@ namespace LightPat.Core.Player
             else
             {
                 Debug.LogWarning("The weapon you are trying to stow has an invalid stow type");
+                return null;
+            }
+        }
+
+        private Transform GetGripPoint(string weaponClass)
+        {
+            if (weaponClass == "Great Sword")
+            {
+                return greatSwordGrip;
+            }
+            else if (weaponClass == "Rifle")
+            {
+                return rifleGrip;
+            }
+            else
+            {
+                Debug.LogWarning("The weapon you are trying to reparent has an invalid weapon class");
                 return null;
             }
         }

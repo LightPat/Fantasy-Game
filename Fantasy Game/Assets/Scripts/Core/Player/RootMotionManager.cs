@@ -12,7 +12,7 @@ namespace LightPat.Core.Player
         Vector3 transformVelocity;
         Vector3 oldPos;
         bool prevBoolState;
-        public bool forceTransferred;
+        bool forceTransferred;
 
         private void Start()
         {

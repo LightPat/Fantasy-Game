@@ -24,6 +24,7 @@ namespace LightPat.Core
 
         [Header("Used for setting offsets")]
         public bool settingOffsets;
+        public bool disableRotation;
         public string offsetType;
 
         public void ChangeOffset(string offsetType)
@@ -54,11 +55,13 @@ namespace LightPat.Core
                 {
                     ChangeOffset(offsetType);
                     transform.localPosition = targetLocalPosition;
+                    if (disableRotation) { return; }
                     transform.localRotation = Quaternion.Euler(targetLocalRotation);
                 }
                 else
                 {
                     transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, Time.deltaTime * 8);
+                    if (disableRotation) { return; }
                     transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(targetLocalRotation), Time.deltaTime * 8);
                     //transform.localPosition = targetLocalPosition;
                     //transform.localRotation = Quaternion.Euler(targetLocalRotation);

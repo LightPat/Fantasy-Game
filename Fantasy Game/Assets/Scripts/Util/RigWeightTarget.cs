@@ -11,10 +11,12 @@ namespace LightPat.Util
         public float weightSpeed;
         public bool instantWeight;
         Rig rig;
+        Animator animator;
 
         private void Start()
         {
             rig = GetComponent<Rig>();
+            animator = GetComponentInParent<Animator>();
         }
 
         private void Update()
@@ -24,7 +26,7 @@ namespace LightPat.Util
 
             if (Mathf.Abs(weightTarget - rig.weight) > 0.1)
             {
-                rig.weight = Mathf.Lerp(rig.weight, weightTarget, Time.deltaTime * weightSpeed);
+                rig.weight = Mathf.Lerp(rig.weight, weightTarget, Time.deltaTime * weightSpeed * animator.speed);
             }
             else
             {

@@ -69,7 +69,7 @@ MonoBehaviour:
   baseDamage: 0
   weaponClass: Rifle
   stowPoint: Spine
-  drawSpeed: 2
+  drawSpeed: 1.5
   playerPositionOffset: {x: 0, y: 0, z: 0}
   playerRotationOffset: {x: 0, y: 0, z: 0}
   transitionPositionOffset: {x: -0.061, y: 0.15, z: -0.304}

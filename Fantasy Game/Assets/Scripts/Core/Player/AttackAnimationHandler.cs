@@ -68,6 +68,154 @@ namespace LightPat.Core.Player
             }
         }
 
+        [Header("Attack1 Settings")]
+        public float attackReach;
+        public float attackDamage;
+        void OnAttack1(InputValue value) // TODO change this to attack1
+        {
+            animator.SetBool("attack1", value.isPressed);
+            if (!value.isPressed) { return; }
+
+            if (weaponManager.equippedWeapon != null) { return; }
+            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, attackReach);
+            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+
+            foreach (RaycastHit hit in allHits)
+            {
+                if (hit.transform == transform)
+                {
+                    continue;
+                }
+
+                if (hit.transform.GetComponent<Attributes>())
+                {
+                    //hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
+                }
+                break;
+            }
+        }
+
+        void OnAttack2(InputValue value)
+        {
+            if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
+            {
+                if (!value.isPressed) { return; }
+                if (!animator.GetBool("fistCombat"))
+                {
+                    animator.SetBool("fistCombat", true);
+                }
+                else
+                {
+                    animator.SetBool("fistCombat", false);
+                }
+            }
+            else // If we have an equipped weapon do the secondary attack
+            {
+                animator.SetBool("attack2", value.isPressed);
+            }
+        }
+
+        void OnMelee()
+        {
+            animator.SetBool("melee", true);
+            StartCoroutine(ResetMeleeBool());
+        }
+
+        private IEnumerator ResetMeleeBool()
+        {
+            yield return null;
+            animator.SetBool("melee", false);
+        }
+
+        bool stowDrawRunning;
+        void OnSlot0() // TODO not finished yet
+        {
+            if (stowDrawRunning) { return; }
+            if (weaponManager.GetWeapon(0) == null) { return; }
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.GetWeapon(0).weaponClass)).IsName("Idle")) { return; }
+
+            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(0))
+            {
+
+                StartCoroutine(StowWeapon());
+            }
+            else
+            {
+                if (weaponManager.equippedWeapon != null)
+                {
+                    //StartCoroutine(SwitchWeapon(0));
+                    return;
+                }
+
+                StartCoroutine(DrawWeapon(0));
+            }
+        }
+
+        void OnSlot1()
+        {
+            if (stowDrawRunning) { return; }
+            if (weaponManager.GetWeapon(1) == null) { return; }
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.GetWeapon(1).weaponClass)).IsName("Idle")) { return; }
+
+            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(1))
+            {
+                StartCoroutine(StowWeapon());
+            }
+            else
+            {
+                if (weaponManager.equippedWeapon != null)
+                {
+                    //StartCoroutine(SwitchWeapon(1));
+                    return;
+                }
+
+                StartCoroutine(DrawWeapon(1));
+            }
+        }
+
+        void OnSlot2()
+        {
+            if (stowDrawRunning) { return; }
+            if (weaponManager.GetWeapon(2) == null) { return; }
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.GetWeapon(2).weaponClass)).IsName("Idle")) { return; }
+
+            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(2))
+            {
+                StartCoroutine(StowWeapon());
+            }
+            else
+            {
+                if (weaponManager.equippedWeapon != null)
+                {
+                    //StartCoroutine(SwitchWeapon(2));
+                    return;
+                }
+
+                StartCoroutine(DrawWeapon(2));
+            }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (weaponManager.equippedWeapon == null) { return; }
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.weaponClass)).IsTag("CollisionAttack"))
+            {
+                return;
+            }
+
+            for (int i = 0; i < collision.contactCount; i++)
+            {
+                // If the collision is detected on one of our equippedWeapon's colliders
+                if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponManager.equippedWeapon)
+                {
+                    if (collision.transform.GetComponent<Attributes>())
+                    {
+                        collision.transform.GetComponent<Attributes>().InflictDamage(weaponManager.equippedWeapon.baseDamage, gameObject);
+                    }
+                }
+            }
+        }
+
         private IEnumerator EquipRifle(RaycastHit hit)
         {
             equipWeaponRunning = true;
@@ -162,158 +310,10 @@ namespace LightPat.Core.Player
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
 
             weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
-            weaponManager.DrawWeapon(weaponManager.weapons.Count-1); // Draw most recently added weapon
+            weaponManager.DrawWeapon(weaponManager.weapons.Count - 1); // Draw most recently added weapon
 
             playerController.disableLookInput = false;
             equipWeaponRunning = false;
-        }
-
-        [Header("Attack1 Settings")]
-        public float attackReach;
-        public float attackDamage;
-        void OnAttack1(InputValue value) // TODO change this to attack1
-        {
-            animator.SetBool("attack1", value.isPressed);
-            if (!value.isPressed) { return; }
-
-            if (weaponManager.equippedWeapon != null) { return; }
-            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, attackReach);
-            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
-
-            foreach (RaycastHit hit in allHits)
-            {
-                if (hit.transform == transform)
-                {
-                    continue;
-                }
-
-                if (hit.transform.GetComponent<Attributes>())
-                {
-                    //hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
-                }
-                break;
-            }
-        }
-
-        private void OnCollisionEnter(Collision collision)
-        {
-            if (weaponManager.equippedWeapon == null) { return; }
-            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.weaponClass)).IsTag("CollisionAttack"))
-            {
-                return;
-            }
-
-            for (int i = 0; i < collision.contactCount; i++)
-            {
-                // If the collision is detected on one of our equippedWeapon's colliders
-                if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponManager.equippedWeapon)
-                {
-                    if (collision.transform.GetComponent<Attributes>())
-                    {
-                        collision.transform.GetComponent<Attributes>().InflictDamage(weaponManager.equippedWeapon.baseDamage, gameObject);
-                    }
-                }
-            }
-        }
-
-        void OnAttack2(InputValue value)
-        {
-            if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
-            {
-                if (!value.isPressed) { return; }
-                if (!animator.GetBool("fistCombat"))
-                {
-                    animator.SetBool("fistCombat", true);
-                }
-                else
-                {
-                    animator.SetBool("fistCombat", false);
-                }
-            }
-            else // If we have an equipped weapon do the secondary attack
-            {
-                animator.SetBool("attack2", value.isPressed);
-            }
-        }
-
-        void OnMelee()
-        {
-            animator.SetBool("melee", true);
-            StartCoroutine(ResetMeleeBool());
-        }
-
-        private IEnumerator ResetMeleeBool()
-        {
-            yield return null;
-            animator.SetBool("melee", false);
-        }
-
-        bool stowDrawRunning;
-        void OnSlot0() // TODO not finished yet
-        {
-            if (stowDrawRunning) { return; }
-            if (weaponManager.GetWeapon(0) == null) { return; }
-            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.GetWeapon(0).weaponClass)).IsName("Idle")) { return; }
-
-            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(0))
-            {
-                
-                StartCoroutine(StowWeapon());
-            }
-            else
-            {
-                if (weaponManager.equippedWeapon != null)
-                {
-                    //StartCoroutine(SwitchWeapon(0));
-                    return;
-                }
-
-                StartCoroutine(DrawWeapon(0));
-            }
-        }
-
-        void OnSlot1()
-        {
-            if (stowDrawRunning) { return; }
-            if (weaponManager.GetWeapon(1) == null) { return; }
-            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.GetWeapon(1).weaponClass)).IsName("Idle")) { return; }
-
-            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(1))
-            {
-                StartCoroutine(StowWeapon());
-            }
-            else
-            {
-                if (weaponManager.equippedWeapon != null)
-                {
-                    //StartCoroutine(SwitchWeapon(1));
-                    return;
-                }
-
-                StartCoroutine(DrawWeapon(1));
-            }
-        }
-
-        void OnSlot2()
-        {
-            if (stowDrawRunning) { return; }
-            if (weaponManager.GetWeapon(2) == null) { return; }
-            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.GetWeapon(2).weaponClass)).IsName("Idle")) { return; }
-
-            if (weaponManager.equippedWeapon == weaponManager.GetWeapon(2))
-            {
-                StartCoroutine(StowWeapon());
-            }
-            else
-            {
-                if (weaponManager.equippedWeapon != null)
-                {
-                    //StartCoroutine(SwitchWeapon(2));
-                    return;
-                }
-
-                StartCoroutine(DrawWeapon(2));
-            }
         }
 
         private IEnumerator DrawWeapon(int slotIndex)

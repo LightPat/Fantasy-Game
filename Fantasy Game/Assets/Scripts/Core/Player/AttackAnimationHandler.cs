@@ -328,7 +328,7 @@ namespace LightPat.Core.Player
 
             int animLayerIndex = animator.GetLayerIndex(weaponManager.GetWeapon(slotIndex).weaponClass);
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Draw Weapon"));
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).length <= animator.GetCurrentAnimatorStateInfo(animLayerIndex).normalizedTime);
+            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Switch to player mode
             weaponManager.GetWeapon(slotIndex).transform.SetParent(GetGripPoint(weaponManager.GetWeapon(slotIndex).GetComponent<Weapon>().weaponClass), true);
@@ -358,13 +358,15 @@ namespace LightPat.Core.Player
 
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
             leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
+            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
             yield return null;
             animator.SetBool("stowWeapon", false);
 
             // Wait for stow weapon animation to finish
             int animLayerIndex = animator.GetLayerIndex(weaponManager.equippedWeapon.weaponClass);
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Stow Weapon"));
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).length <= animator.GetCurrentAnimatorStateInfo(animLayerIndex).normalizedTime);
+            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
             // Switch to stowed mode
             // Check weapon component for where to stow
             weaponManager.equippedWeapon.transform.SetParent(GetStowPoint(weaponManager.equippedWeapon.stowPoint), true);
@@ -397,7 +399,7 @@ namespace LightPat.Core.Player
             // Wait until stow animation finishes playing and we start drawing the other weapon
             int animLayerIndex = animator.GetLayerIndex(weaponManager.equippedWeapon.weaponClass);
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Stow Weapon"));
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).length <= animator.GetCurrentAnimatorStateInfo(animLayerIndex).normalizedTime);
+            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
             // Switch to stowed mode
             // Check weapon component for where to stow
             weaponManager.equippedWeapon.transform.SetParent(GetStowPoint(weaponManager.equippedWeapon.stowPoint), true);
@@ -420,7 +422,7 @@ namespace LightPat.Core.Player
             weaponManager.GetWeapon(slotIndex).ChangeOffset("player");
 
             // Wait for draw animation to finish, then change offset and weights
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).length <= animator.GetCurrentAnimatorStateInfo(animLayerIndex).normalizedTime);
+            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             weaponManager.DrawWeapon(slotIndex);
 

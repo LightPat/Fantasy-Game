@@ -178,6 +178,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d7cff49c03c2ac4c8027bca190eb671, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rightHandGrip: {fileID: 8712646920768113520}
+  leftHandGrip: {fileID: 1759096557103307721}
   idealPersonality: 
   baseDamage: 1
   weaponClass: Great Sword
@@ -185,9 +187,12 @@ MonoBehaviour:
   drawSpeed: 1
   playerPositionOffset: {x: 0.345, y: 0.017, z: 0.159}
   playerRotationOffset: {x: 193.022, y: 157.456, z: 89.103}
+  transitionPositionOffset: {x: 0.345, y: 0.017, z: 0.159}
+  transitionRotationOffset: {x: 193.022, y: 157.456, z: 89.103}
   stowedPositionOffset: {x: 0.168, y: 0.879, z: -0.218}
   stowedRotationOffset: {x: 187.713, y: 79.155, z: -179.284}
   settingOffsets: 0
+  disableRotation: 0
   offsetType: 
 --- !u!1 &6085640905189597076
 GameObject:

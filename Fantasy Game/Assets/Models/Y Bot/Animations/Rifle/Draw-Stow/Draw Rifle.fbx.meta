@@ -41,8 +41,8 @@ ModelImporter:
       name: Draw Rifle
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 0
-      lastFrame: 212
+      firstFrame: 10
+      lastFrame: 70
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

@@ -6,6 +6,9 @@ namespace LightPat.Core
 {
     public class Weapon : MonoBehaviour
     {
+        public Transform rightHandGrip;
+        public Transform leftHandGrip;
+
         [Header("Weapon Settings")]
         public sbyte[] idealPersonality;
         public int baseDamage;
@@ -16,6 +19,8 @@ namespace LightPat.Core
         [Header("Equipped Animation Offsets")]
         public Vector3 playerPositionOffset;
         public Vector3 playerRotationOffset;
+        public Vector3 transitionPositionOffset;
+        public Vector3 transitionRotationOffset;
         public Vector3 stowedPositionOffset;
         public Vector3 stowedRotationOffset;
 
@@ -38,6 +43,11 @@ namespace LightPat.Core
             {
                 targetLocalPosition = stowedPositionOffset;
                 targetLocalRotation = stowedRotationOffset;
+            }
+            else if (offsetType == "transition")
+            {
+                targetLocalPosition = transitionPositionOffset;
+                targetLocalRotation = transitionRotationOffset;
             }
         }
 

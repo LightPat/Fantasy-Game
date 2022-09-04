@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 1618465678}
   - component: {fileID: 1618465679}
   m_Layer: 0
-  m_Name: RightGreatSwordGrip
+  m_Name: GreatSwordGrip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -812,7 +812,7 @@ GameObject:
   - component: {fileID: 4841106127612753273}
   - component: {fileID: 487299898}
   m_Layer: 0
-  m_Name: StowTransition
+  m_Name: RifleStowTransition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

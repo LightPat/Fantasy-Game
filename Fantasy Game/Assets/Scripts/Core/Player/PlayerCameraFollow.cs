@@ -12,7 +12,6 @@ namespace LightPat.Core.Player
         public bool updateRotationWithTarget;
         bool previousRotationState;
 
-
         private void Update()
         {
             transform.position = target.position;

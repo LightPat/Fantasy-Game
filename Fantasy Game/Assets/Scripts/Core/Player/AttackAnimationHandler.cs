@@ -50,20 +50,73 @@ namespace LightPat.Core.Player
                     // If we already have a weapon equipped stow the weapon
                     if (weaponManager.equippedWeapon != null) { StartCoroutine(StowWeapon()); }
 
-                    StartCoroutine(EquipWeapon(hit));
+                    string weaponClass = hit.transform.GetComponent<Weapon>().weaponClass;
+                    if (weaponClass == "Great Sword")
+                    {
+                        StartCoroutine(EquipGreatSword(hit));
+                    }
+                    else if (weaponClass == "Rifle")
+                    {
+                        StartCoroutine(EquipRifle(hit));
+                    }
+                    else
+                    {
+                        Debug.LogWarning("You are trying to equip a weapon with an invalid weapon class " + hit.transform.GetComponent<Weapon>());
+                    }
                 }
             }
         }
 
-        bool equipWeaponRunning;
-        private IEnumerator EquipWeapon(RaycastHit hit)
+        private IEnumerator EquipRifle(RaycastHit hit)
         {
             equipWeaponRunning = true;
             // Wait until our stow or draw coroutine is finished
             yield return new WaitUntil(() => !stowDrawRunning);
 
             Transform weapon = hit.transform;
+            playerController.disableLookInput = true;
 
+            // Remove the physics and collider components
+            Destroy(weapon.GetComponent<Rigidbody>());
+
+            // Change grip weight
+            Transform gripPoint = GetGripPoint(weapon.GetComponent<Weapon>().weaponClass);
+            gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+
+            // Reach out hands to grab weapon handle
+            rightArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
+            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+            rightHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_right_hand_grip");
+
+            // Transition into the weapon's animations
+            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
+
+            // Wait until hands have reached the weapon handle
+            yield return new WaitUntil(() => rightArmRig.weight >= 0.9);
+
+            // Activate secondary hand
+            leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
+            leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+            leftHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_left_hand_grip");
+
+            // Parent weapon to the constraint object, typically this is the right hand
+            weapon.SetParent(gripPoint, true);
+
+            weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
+            weaponManager.DrawWeapon(weaponManager.weapons.Count - 1); // Draw most recently added weapon
+
+            playerController.disableLookInput = false;
+            equipWeaponRunning = false;
+        }
+
+        bool equipWeaponRunning;
+        private IEnumerator EquipGreatSword(RaycastHit hit)
+        {
+            equipWeaponRunning = true;
+            // Wait until our stow or draw coroutine is finished
+            yield return new WaitUntil(() => !stowDrawRunning);
+
+            Transform weapon = hit.transform;
             playerController.disableLookInput = true;
 
             // Remove the physics and collider components
@@ -90,10 +143,7 @@ namespace LightPat.Core.Player
             leftHandTarget.GetComponent<FollowTarget>().target = weapon.Find("ref_left_hand_grip");
 
             // Don't move IK target while reparenting
-            if (weapon.GetComponent<Weapon>().weaponClass != "Rifle")
-            {
-                rightHandTarget.GetComponent<FollowTarget>().target = null;
-            }
+            rightHandTarget.GetComponent<FollowTarget>().target = null;
 
             // Parent weapon to the constraint object, typically this is the right hand
             weapon.SetParent(gripPoint, true);
@@ -105,13 +155,10 @@ namespace LightPat.Core.Player
                 sheath.hasPlayer = true;
             }
 
-            if (weapon.GetComponent<Weapon>().weaponClass != "Rifle")
-            {
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                yield return new WaitUntil(() => rightArmRig.weight <= 0.1);
-                // Set target back to the hand bone since this is the hand that controls the weapon
-                rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-            }
+            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            yield return new WaitUntil(() => rightArmRig.weight <= 0.1);
+            // Set target back to the hand bone since this is the hand that controls the weapon
+            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
 
             weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
             weaponManager.DrawWeapon(weaponManager.weapons.Count-1); // Draw most recently added weapon
@@ -126,7 +173,6 @@ namespace LightPat.Core.Player
         void OnAttack1(InputValue value) // TODO change this to attack1
         {
             animator.SetBool("attack1", value.isPressed);
-            GetComponent<PlayerController>().rotateBodyWithCamera = value.isPressed;
             if (!value.isPressed) { return; }
 
             if (weaponManager.equippedWeapon != null) { return; }
@@ -185,7 +231,6 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                playerController.rotateBodyWithCamera = value.isPressed;
                 animator.SetBool("attack2", value.isPressed);
             }
         }

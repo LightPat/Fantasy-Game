@@ -19,13 +19,13 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            if (Time.timeScale == 0)
+            if (Time.timeScale == 0.5f)
             {
                 Time.timeScale = 1;
             }
             else
             {
-                Time.timeScale = 0;
+                Time.timeScale = 0.5f;
             }
 
             disableLookInput = !disableLookInput;
@@ -104,21 +104,13 @@ namespace LightPat.Core.Player
             {
                 bodyRotation = new Vector3(transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + lookInput.x * sensitivity, transform.eulerAngles.z);
             }
+
+            if (rotateBodyWithCamera)
+                transform.eulerAngles = bodyRotation;
         }
 
         private void Update()
         {
-            animator.speed = animatorSpeed;
-
-            if (rotateBodyWithCamera)
-            {
-                transform.rotation = Quaternion.Euler(bodyRotation);
-            }
-            else
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
-            }
-
             float xTarget = moveInput.x;
             if (running) { xTarget *= runTarget; }
             float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
@@ -162,6 +154,16 @@ namespace LightPat.Core.Player
 
             // If we jump set idleTime to 0
             if (animator.GetBool("jumping")) { animator.SetFloat("idleTime", 0); }
+
+            animator.speed = animatorSpeed;
+        }
+
+        private void LateUpdate()
+        {
+            if (!rotateBodyWithCamera)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
+            }
         }
 
         [Header("NOT FUNCTIONAL YET")]

@@ -15,26 +15,27 @@ namespace LightPat.Core.Player
         public float idleLoopTransitionTime = 10;
 
         Animator animator;
-        AnimatorLayerWeightManager weightManager;
+        Rigidbody rb;
 
         void OnEscape()
         {
-            if (Time.timeScale == 0.3f)
-            {
-                Time.timeScale = 1;
-            }
-            else
-            {
-                Time.timeScale = 0.3f;
-            }
+            push = true;
+            //if (Time.timeScale == 0.3f)
+            //{
+            //    Time.timeScale = 1;
+            //}
+            //else
+            //{
+            //    Time.timeScale = 0.3f;
+            //}
 
             //disableLookInput = !disableLookInput;
         }
 
         private void Start()
         {
-            animator = GetComponent<Animator>();
-            weightManager = GetComponent<AnimatorLayerWeightManager>();
+            animator = GetComponentInChildren<Animator>();
+            rb = GetComponent<Rigidbody>();
         }
 
         // Simple stair walking
@@ -104,9 +105,6 @@ namespace LightPat.Core.Player
             {
                 bodyRotation = new Vector3(transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + lookInput.x * sensitivity, transform.eulerAngles.z);
             }
-
-            if (rotateBodyWithCamera)
-                transform.eulerAngles = bodyRotation;
         }
 
         private void Update()
@@ -158,11 +156,19 @@ namespace LightPat.Core.Player
             animator.speed = animatorSpeed;
         }
 
-        private void LateUpdate()
+        bool push;
+        Vector3 prev;
+        private void FixedUpdate()
         {
-            if (!rotateBodyWithCamera)
+            if (rotateBodyWithCamera)
+                rb.MoveRotation(Quaternion.Euler(bodyRotation));
+            else
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.fixedDeltaTime * bodyRotationSpeed));
+
+            if (push)
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
+                rb.AddForce(transform.forward * 50, ForceMode.VelocityChange);
+                push = false;
             }
         }
 

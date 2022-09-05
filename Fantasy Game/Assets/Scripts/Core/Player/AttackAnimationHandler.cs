@@ -36,8 +36,8 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            weightManager = GetComponent<AnimatorLayerWeightManager>();
-            animator = GetComponent<Animator>();
+            weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
+            animator = GetComponentInChildren<Animator>();
             weaponManager = GetComponent<WeaponManager>();
             playerController = GetComponent<PlayerController>();
         }

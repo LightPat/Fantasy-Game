@@ -15,7 +15,7 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            animator = GetComponent<Animator>();
+            animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody>();
         }
 
@@ -29,10 +29,10 @@ namespace LightPat.Core.Player
         {
             if (animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle") | animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
             {
-                Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * airborneMoveSpeed;
-                moveForce.x -= rb.velocity.x;
-                moveForce.z -= rb.velocity.z;
-                rb.AddForce(moveForce, ForceMode.VelocityChange);
+                //Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * airborneMoveSpeed;
+                //moveForce.x -= rb.velocity.x;
+                //moveForce.z -= rb.velocity.z;
+                //rb.AddForce(moveForce, ForceMode.VelocityChange);
             }
         }
 

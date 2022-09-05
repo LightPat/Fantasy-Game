@@ -49,13 +49,45 @@ namespace LightPat.Core.Player
             {
                 if (hit.transform.GetComponent<Weapon>())
                 {
-                    //if (equipWeaponRunning) { return; }
+                    if (equipWeaponRunning) { return; }
 
-                    // If we already have a weapon equipped stow the weapon
-                    //if (weaponManager.equippedWeapon != null) { StartCoroutine(StowWeapon()); }
+                    // If we already have a weapon equipped just put the weapon we click in our reserves
+                    if (weaponManager.equippedWeapon == null)
+                    {
+                        StartCoroutine(EquipWeapon(hit));
+                    }
+                    else
+                    {
+                        Weapon weapon = hit.transform.GetComponent<Weapon>();
 
-                    StartCoroutine(EquipWeapon(hit));
+                        // Remove the physics and collider components
+                        Destroy(weapon.GetComponent<Rigidbody>());
 
+                        // Parent weapon to stowPoint
+                        weapon.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
+                        weapon.ChangeOffset("stowed");
+
+                        if (weapon.weaponClass == "Rifle")
+                        {
+                            // Do nothing
+                        }
+                        else if (weapon.weaponClass == "Great Sword")
+                        {
+                            Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                            if (sheath)
+                            {
+                                sheath.gameObject.SetActive(true);
+                                sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
+                                sheath.hasPlayer = true;
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.weaponClass);
+                        }
+
+                        weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
+                    }
                 }
             }
         }
@@ -145,8 +177,10 @@ namespace LightPat.Core.Player
                 StartCoroutine(DrawWeapon(slot));
         }
 
+        bool equipWeaponRunning;
         private IEnumerator EquipWeapon(RaycastHit hit)
         {
+            equipWeaponRunning = true;
             Weapon weapon = hit.transform.GetComponent<Weapon>();
 
             // Remove the physics and collider components
@@ -200,6 +234,7 @@ namespace LightPat.Core.Player
 
             weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
             weaponManager.DrawWeapon(weaponManager.weapons.Count - 1); // Draw most recently added weapon
+            equipWeaponRunning = false;
         }
 
         private IEnumerator StowWeapon()

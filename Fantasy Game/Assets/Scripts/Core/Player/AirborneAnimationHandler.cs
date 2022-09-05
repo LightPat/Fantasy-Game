@@ -15,13 +15,14 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            animator = GetComponentInChildren<Animator>();
+            animator = GetComponent<Animator>();
             rb = GetComponent<Rigidbody>();
         }
 
         private void Update()
         {
             animator.SetFloat("yVelocity", rb.velocity.y);
+            animator.SetBool("falling", !IsGrounded());
         }
 
         private void FixedUpdate()
@@ -53,7 +54,7 @@ namespace LightPat.Core.Player
                 rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
             }
 
-            yield return null;
+            yield return new WaitForFixedUpdate();
             animator.SetBool("jumping", false);
         }
         
@@ -96,6 +97,13 @@ namespace LightPat.Core.Player
         bool IsLanding()
         {
             return animator.GetCurrentAnimatorStateInfo(0).IsTag("Landing");
+        }
+
+        public float isGroundedDistance;
+        bool IsGrounded()
+        {
+            RaycastHit hit;
+            return rb.SweepTest(Vector3.down, out hit, isGroundedDistance);
         }
     }
 }

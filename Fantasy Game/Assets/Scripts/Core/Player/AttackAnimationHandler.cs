@@ -36,8 +36,8 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
-            animator = GetComponentInChildren<Animator>();
+            weightManager = GetComponent<AnimatorLayerWeightManager>();
+            animator = GetComponent<Animator>();
             weaponManager = GetComponent<WeaponManager>();
             playerController = GetComponent<PlayerController>();
         }
@@ -170,7 +170,7 @@ namespace LightPat.Core.Player
 
         private IEnumerator ResetMeleeBool()
         {
-            yield return null;
+            yield return new WaitForFixedUpdate();
             animator.SetBool("melee", false);
         }
 
@@ -280,7 +280,7 @@ namespace LightPat.Core.Player
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
 
             animator.SetBool("stow" + chosenWeapon.weaponClass, true);
-            yield return null;
+            yield return new WaitForFixedUpdate();
             animator.SetBool("stow" + chosenWeapon.weaponClass, false);
 
             // Parent weapon to move with right hand
@@ -308,7 +308,7 @@ namespace LightPat.Core.Player
             Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
             animator.SetBool("draw" + chosenWeapon.weaponClass, true);
-            yield return null;
+            yield return new WaitForFixedUpdate();
             animator.SetBool("draw" + chosenWeapon.weaponClass, false);
 
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");

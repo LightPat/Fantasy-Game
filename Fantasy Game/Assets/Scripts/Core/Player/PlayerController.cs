@@ -33,8 +33,8 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            animator = GetComponentInChildren<Animator>();
-            weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
+            animator = GetComponent<Animator>();
+            weightManager = GetComponent<AnimatorLayerWeightManager>();
         }
 
         // Simple stair walking
@@ -247,7 +247,7 @@ namespace LightPat.Core.Player
 
         private IEnumerator ResetSlide()
         {
-            yield return null;
+            yield return new WaitForFixedUpdate();
             animator.SetBool("crouching", false);
         }
 

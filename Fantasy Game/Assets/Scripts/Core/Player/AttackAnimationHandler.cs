@@ -182,6 +182,13 @@ namespace LightPat.Core.Player
             }
             else if (weapon.weaponClass == "Great Sword")
             {
+                Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                if (sheath)
+                {
+                    sheath.gameObject.SetActive(true);
+                    sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
+                    sheath.hasPlayer = true;
+                }
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                 yield return new WaitUntil(() => rightArmRig.weight == 0);
                 rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;

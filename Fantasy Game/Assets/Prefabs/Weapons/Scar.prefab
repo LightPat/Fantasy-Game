@@ -66,7 +66,7 @@ MonoBehaviour:
   rightHandGrip: {fileID: 1649158069711076073}
   leftHandGrip: {fileID: 1649158070069413448}
   idealPersonality: 
-  baseDamage: 0
+  baseDamage: 1
   weaponClass: Rifle
   stowPoint: Spine
   drawSpeed: 1

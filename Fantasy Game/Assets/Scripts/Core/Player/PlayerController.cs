@@ -19,13 +19,13 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            if (Time.timeScale == 0.1f)
+            if (Time.timeScale == 0.3f)
             {
                 Time.timeScale = 1;
             }
             else
             {
-                Time.timeScale = 0.1f;
+                Time.timeScale = 0.3f;
             }
 
             //disableLookInput = !disableLookInput;

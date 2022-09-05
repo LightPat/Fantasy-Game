@@ -271,6 +271,7 @@ namespace LightPat.Core.Player
         private IEnumerator StowWeapon()
         {
             Weapon chosenWeapon = weaponManager.equippedWeapon;
+            animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
 
             // Turn off hand IKs
             leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
@@ -305,7 +306,7 @@ namespace LightPat.Core.Player
         private IEnumerator DrawWeapon(int slotIndex)
         {
             Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
-
+            animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
             animator.SetBool("draw" + chosenWeapon.weaponClass, true);
             yield return null;
             animator.SetBool("draw" + chosenWeapon.weaponClass, false);

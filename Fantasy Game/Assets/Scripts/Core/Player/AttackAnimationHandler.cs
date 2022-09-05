@@ -44,9 +44,16 @@ namespace LightPat.Core.Player
 
         void OnInteract()
         {
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach))
+            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, reach);
+            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+
+            foreach (RaycastHit hit in allHits)
             {
+                if (hit.transform == transform)
+                {
+                    continue;
+                }
+
                 if (hit.transform.GetComponent<Weapon>())
                 {
                     if (equipWeaponRunning) { return; }
@@ -89,6 +96,7 @@ namespace LightPat.Core.Player
                         weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
                     }
                 }
+                break;
             }
         }
 
@@ -188,8 +196,16 @@ namespace LightPat.Core.Player
 
             if (weaponManager.equippedWeapon == chosenWeapon)
                 StartCoroutine(StowWeapon());
+            else if (weaponManager.equippedWeapon != null)
+                StartCoroutine(SwitchWeapon(slot));
             else
                 StartCoroutine(DrawWeapon(slot));
+        }
+
+        private IEnumerator SwitchWeapon(int slotIndex)
+        {
+            yield return StowWeapon();
+            yield return DrawWeapon(slotIndex);
         }
 
         bool equipWeaponRunning;
@@ -281,6 +297,9 @@ namespace LightPat.Core.Player
             chosenWeapon.transform.SetParent(GetStowPoint(chosenWeapon.stowPoint), true);
             chosenWeapon.ChangeOffset("stowed");
             weaponManager.StowWeapon();
+
+            // Used for switching weapons
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsName("Empty"));
         }
 
         private IEnumerator DrawWeapon(int slotIndex)

@@ -261,13 +261,21 @@ namespace LightPat.Core.Player
         public float reach;
         void OnInteract()
         {
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, reach))
+            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
+            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+
+            foreach (RaycastHit hit in allHits)
             {
+                if (hit.transform == transform)
+                {
+                    continue;
+                }
+
                 if (hit.transform.GetComponent<Interactable>())
                 {
                     hit.transform.GetComponent<Interactable>().Invoke();
                 }
+                break;
             }
         }
     }

@@ -19,16 +19,16 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            if (Time.timeScale == 0.5f)
+            if (Time.timeScale == 0.1f)
             {
                 Time.timeScale = 1;
             }
             else
             {
-                Time.timeScale = 0.5f;
+                Time.timeScale = 0.1f;
             }
 
-            disableLookInput = !disableLookInput;
+            //disableLookInput = !disableLookInput;
         }
 
         private void Start()
@@ -121,39 +121,39 @@ namespace LightPat.Core.Player
             float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("y", y);
 
-            if (moveInput == Vector2.zero)
-            {
-                // Only change idle time if we are at rest
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-                {
-                    // This is used so that some states that don't have exit transitions can "remember" that the user moved during their playtime, also so that crouching and jumping is not considered "idle"
-                    if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsTag("PauseIdleTime"))
-                    {
-                        animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
-                    }
-                }
+            //if (moveInput == Vector2.zero)
+            //{
+            //    // Only change idle time if we are at rest
+            //    if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
+            //    {
+            //        // This is used so that some states that don't have exit transitions can "remember" that the user moved during their playtime, also so that crouching and jumping is not considered "idle"
+            //        if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsTag("PauseIdleTime"))
+            //        {
+            //            animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
+            //        }
+            //    }
 
-                // Only change Idle Loop layer weight if idleTime is greater than 10 and we have no moveInput
-                if (animator.GetFloat("idleTime") > idleLoopTransitionTime)
-                    weightManager.SetLayerWeight("Idle Loop", 1);
-            }
-            else // If moveInput is not Vector2.zero
-            {
-                animator.SetFloat("idleTime", 0);
-            }
+            //    // Only change Idle Loop layer weight if idleTime is greater than 10 and we have no moveInput
+            //    if (animator.GetFloat("idleTime") > idleLoopTransitionTime)
+            //        weightManager.SetLayerWeight("Idle Loop", 1);
+            //}
+            //else // If moveInput is not Vector2.zero
+            //{
+            //    animator.SetFloat("idleTime", 0);
+            //}
 
-            // Change the weight of the idle Loop once we have exited whatever idle animation we were in
-            if (animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsName("Not Idle Looping"))
-                weightManager.SetLayerWeight("Idle Loop", 0);
+            //// Change the weight of the idle Loop once we have exited whatever idle animation we were in
+            //if (animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsName("Not Idle Looping"))
+            //    weightManager.SetLayerWeight("Idle Loop", 0);
 
-            // Don't want to enter idle loop while crouching
-            if (crouching)
-            {
-                animator.SetFloat("idleTime", 0);
-            }
+            //// Don't want to enter idle loop while crouching
+            //if (crouching)
+            //{
+            //    animator.SetFloat("idleTime", 0);
+            //}
 
-            // If we jump set idleTime to 0
-            if (animator.GetBool("jumping")) { animator.SetFloat("idleTime", 0); }
+            //// If we jump set idleTime to 0
+            //if (animator.GetBool("jumping")) { animator.SetFloat("idleTime", 0); }
 
             animator.speed = animatorSpeed;
         }

@@ -95,28 +95,43 @@ namespace LightPat.Core.Player
         [Header("Attack1 Settings")]
         public float attackReach;
         public float attackDamage;
-        void OnAttack1(InputValue value) // TODO change this to attack1
+        void OnAttack1(InputValue value)
         {
             animator.SetBool("attack1", value.isPressed);
             if (!value.isPressed) { return; }
 
-            if (weaponManager.equippedWeapon != null) { return; }
-            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, attackReach);
-            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
-
-            foreach (RaycastHit hit in allHits)
+            if (weaponManager.equippedWeapon == null) { return; }
+            string weaponClass = weaponManager.equippedWeapon.weaponClass;
+            if (weaponClass == "Great Sword")
             {
-                if (hit.transform == transform)
-                {
-                    continue;
-                }
-
-                if (hit.transform.GetComponent<Attributes>())
-                {
-                    //hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
-                }
-                break;
+                
             }
+            else if (weaponClass == "Rifle")
+            {
+                RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+
+                foreach (RaycastHit hit in allHits)
+                {
+                    if (hit.transform == transform)
+                    {
+                        continue;
+                    }
+
+                    if (hit.transform.GetComponent<Attributes>())
+                    {
+                        hit.transform.GetComponent<Attributes>().InflictDamage(weaponManager.equippedWeapon.baseDamage, gameObject);
+                    }
+                    break;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Invalid weapon class attacking " + weaponClass);
+            }
+
+            
+            
         }
 
         void OnAttack2(InputValue value)

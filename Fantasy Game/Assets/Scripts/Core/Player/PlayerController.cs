@@ -105,6 +105,9 @@ namespace LightPat.Core.Player
             {
                 bodyRotation = new Vector3(transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + lookInput.x * sensitivity, transform.eulerAngles.z);
             }
+
+            if (rotateBodyWithCamera)
+                transform.rotation = Quaternion.Euler(bodyRotation);
         }
 
         private void Update()
@@ -156,14 +159,19 @@ namespace LightPat.Core.Player
             animator.speed = animatorSpeed;
         }
 
+        private void LateUpdate()
+        {
+            if (!rotateBodyWithCamera)
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
+        }
+
         bool push;
-        Vector3 prev;
         private void FixedUpdate()
         {
-            if (rotateBodyWithCamera)
-                rb.MoveRotation(Quaternion.Euler(bodyRotation));
-            else
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.fixedDeltaTime * bodyRotationSpeed));
+            //if (rotateBodyWithCamera)
+            //    rb.MoveRotation(Quaternion.Euler(bodyRotation));
+            //else
+            //    rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.fixedDeltaTime * bodyRotationSpeed));
 
             if (push)
             {

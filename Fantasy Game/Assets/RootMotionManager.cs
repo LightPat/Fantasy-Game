@@ -14,11 +14,18 @@ namespace LightPat.Core.Player
             animator = GetComponent<Animator>();
         }
 
+        public float drag;
         private void OnAnimatorMove()
         {
-            Vector3 newVelocity = Vector3.MoveTowards(rb.velocity, animator.velocity, 1);
+            Vector3 newVelocity = Vector3.MoveTowards(rb.velocity, animator.velocity, drag);
             newVelocity.y = rb.velocity.y;
             rb.velocity = newVelocity;
         }
+
+        //private void OnAnimatorMove()
+        //{
+        //    transform.parent.position += animator.deltaPosition;
+        //    transform.parent.rotation *= animator.deltaRotation;
+        //}
     }
 }

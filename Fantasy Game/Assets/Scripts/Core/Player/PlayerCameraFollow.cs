@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LightPat.Util;
 
 namespace LightPat.Core.Player
 {
     public class PlayerCameraFollow : MonoBehaviour
     {
         public PlayerController player;
+        public RigWeightTarget aimRig;
         public Transform target;
         public float rotationSpeed;
         public bool updateRotationWithTarget;
@@ -18,7 +20,8 @@ namespace LightPat.Core.Player
 
             if (updateRotationWithTarget)
             {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
+                //transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
+                transform.rotation = target.rotation;
 
                 // Track our vertical rotation
                 if (transform.eulerAngles.x > player.mouseDownXRotLimit) // If our number is greater than the positive look bound, make it a negative angle

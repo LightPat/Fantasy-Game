@@ -13,8 +13,8 @@ namespace LightPat.ProceduralAnimations
 
         private void Update()
         {
-            if (!Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget)
-                transform.position = Camera.main.transform.position + Camera.main.transform.forward * 3;
+            //if (!Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget)
+            transform.position = Camera.main.transform.position + Camera.main.transform.forward * 3;
         }
     }
 }

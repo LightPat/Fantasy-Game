@@ -54,7 +54,7 @@ namespace LightPat.Core.Player
                 rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
             }
 
-            yield return new WaitForFixedUpdate();
+            yield return null;
             animator.SetBool("jumping", false);
         }
         

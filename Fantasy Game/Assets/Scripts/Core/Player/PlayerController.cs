@@ -261,7 +261,7 @@ namespace LightPat.Core.Player
 
         private IEnumerator ResetSlide()
         {
-            yield return new WaitForFixedUpdate();
+            yield return null;
             animator.SetBool("crouching", false);
         }
 

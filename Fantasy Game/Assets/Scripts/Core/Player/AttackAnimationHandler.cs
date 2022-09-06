@@ -31,7 +31,6 @@ namespace LightPat.Core.Player
 
         AnimatorLayerWeightManager weightManager;
         Animator animator;
-        PlayerController playerController;
         WeaponManager weaponManager;
 
         private void Start()
@@ -39,7 +38,6 @@ namespace LightPat.Core.Player
             weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
             weaponManager = GetComponent<WeaponManager>();
-            playerController = GetComponent<PlayerController>();
         }
 
         void OnInteract()
@@ -137,9 +135,6 @@ namespace LightPat.Core.Player
             {
                 Debug.LogWarning("Invalid weapon class attacking " + weaponClass);
             }
-
-            
-            
         }
 
         void OnAttack2(InputValue value)
@@ -191,6 +186,7 @@ namespace LightPat.Core.Player
 
         private void QuerySlot(int slot)
         {
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             Weapon chosenWeapon = weaponManager.GetWeapon(slot);
             if (chosenWeapon == null) { return; }
 
@@ -200,78 +196,6 @@ namespace LightPat.Core.Player
                 StartCoroutine(SwitchWeapon(slot));
             else
                 StartCoroutine(DrawWeapon(slot));
-        }
-
-        private IEnumerator SwitchWeapon(int slotIndex)
-        {
-            // Stow equipped weapon
-            Weapon equippedWeapon = weaponManager.equippedWeapon;
-            animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
-
-            // Turn off hand IKs
-            leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
-            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-            leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-
-            animator.SetBool("stow" + equippedWeapon.weaponClass, true);
-            yield return null;
-            animator.SetBool("stow" + equippedWeapon.weaponClass, false);
-
-            // Parent weapon to move with right hand
-            equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon.weaponClass), true);
-            equippedWeapon.ChangeOffset("transition");
-            GetGripPoint(equippedWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
-
-            // Wait until stow animation has started playing
-            int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
-
-            // Start drawing next weapon once stow animation has finished playing
-            Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
-            animator.SetBool("draw" + chosenWeapon.weaponClass, true);
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
-            animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
-            animator.SetBool("draw" + chosenWeapon.weaponClass, false);
-
-            // Change to stowed mode
-            weightManager.SetLayerWeight(equippedWeapon.weaponClass, 0);
-            equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
-            equippedWeapon.ChangeOffset("stowed");
-            weaponManager.StowWeapon();
-
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
-
-            // Parent weapon to move with right hand
-            GetGripPoint(chosenWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
-            chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon.weaponClass), true);
-            chosenWeapon.ChangeOffset("transition");
-
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
-
-            // Change to player mode
-            weightManager.SetLayerWeight(chosenWeapon.weaponClass, 1);
-            chosenWeapon.transform.SetParent(GetGripPoint(chosenWeapon.weaponClass), true);
-            chosenWeapon.ChangeOffset("player");
-            weaponManager.DrawWeapon(slotIndex);
-
-            // Turn on hand IKs
-            if (chosenWeapon.weaponClass == "Rifle")
-            {
-                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-            }
-            else if (chosenWeapon.weaponClass == "Great Sword")
-            {
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-            }
-            else
-            {
-                Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.weaponClass);
-            }
         }
 
         bool equipWeaponRunning;
@@ -384,6 +308,78 @@ namespace LightPat.Core.Player
             chosenWeapon.ChangeOffset("transition");
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
+            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+
+            // Change to player mode
+            weightManager.SetLayerWeight(chosenWeapon.weaponClass, 1);
+            chosenWeapon.transform.SetParent(GetGripPoint(chosenWeapon.weaponClass), true);
+            chosenWeapon.ChangeOffset("player");
+            weaponManager.DrawWeapon(slotIndex);
+
+            // Turn on hand IKs
+            if (chosenWeapon.weaponClass == "Rifle")
+            {
+                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
+                rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
+                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+            }
+            else if (chosenWeapon.weaponClass == "Great Sword")
+            {
+                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
+            }
+            else
+            {
+                Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.weaponClass);
+            }
+        }
+
+        private IEnumerator SwitchWeapon(int slotIndex)
+        {
+            // Stow equipped weapon
+            Weapon equippedWeapon = weaponManager.equippedWeapon;
+            animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
+
+            // Turn off hand IKs
+            leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
+            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
+            leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+
+            animator.SetBool("stow" + equippedWeapon.weaponClass, true);
+            yield return null;
+            animator.SetBool("stow" + equippedWeapon.weaponClass, false);
+
+            // Parent weapon to move with right hand
+            equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon.weaponClass), true);
+            equippedWeapon.ChangeOffset("transition");
+            GetGripPoint(equippedWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
+
+            // Wait until stow animation has started playing
+            int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
+
+            // Start drawing next weapon once stow animation has finished playing
+            Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
+            animator.SetBool("draw" + chosenWeapon.weaponClass, true);
+            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+            animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
+            animator.SetBool("draw" + chosenWeapon.weaponClass, false);
+
+            // Change to stowed mode
+            weightManager.SetLayerWeight(equippedWeapon.weaponClass, 0);
+            equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
+            equippedWeapon.ChangeOffset("stowed");
+            weaponManager.StowWeapon();
+
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
+
+            // Parent weapon to move with right hand
+            GetGripPoint(chosenWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+            chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon.weaponClass), true);
+            chosenWeapon.ChangeOffset("transition");
+
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Change to player mode

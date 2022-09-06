@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
-using LightPat.Util;
 
 namespace LightPat.Core.Player
 {

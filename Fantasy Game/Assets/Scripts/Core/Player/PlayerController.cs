@@ -19,7 +19,6 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            push = true;
             //if (Time.timeScale == 0.3f)
             //{
             //    Time.timeScale = 1;
@@ -29,6 +28,7 @@ namespace LightPat.Core.Player
             //    Time.timeScale = 0.3f;
             //}
 
+            rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
             //disableLookInput = !disableLookInput;
         }
 
@@ -163,21 +163,6 @@ namespace LightPat.Core.Player
         {
             if (!rotateBodyWithCamera)
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
-        }
-
-        bool push;
-        private void FixedUpdate()
-        {
-            //if (rotateBodyWithCamera)
-            //    rb.MoveRotation(Quaternion.Euler(bodyRotation));
-            //else
-            //    rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.fixedDeltaTime * bodyRotationSpeed));
-
-            if (push)
-            {
-                rb.AddForce(transform.forward * 50, ForceMode.VelocityChange);
-                push = false;
-            }
         }
 
         [Header("NOT FUNCTIONAL YET")]

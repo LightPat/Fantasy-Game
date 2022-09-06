@@ -27,12 +27,16 @@ namespace LightPat.Core.Player
 
         private void FixedUpdate()
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Falling Idle") | animator.GetCurrentAnimatorStateInfo(0).IsName("Jump"))
+            if (IsAirborne())
             {
-                //Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * airborneMoveSpeed;
-                //moveForce.x -= rb.velocity.x;
-                //moveForce.z -= rb.velocity.z;
-                //rb.AddForce(moveForce, ForceMode.VelocityChange);
+                Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * airborneMoveSpeed;
+                // If rigidbody's velocity magnitude is greater than moveForce's magnitude
+                if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude > new Vector2(moveForce.x, moveForce.z).magnitude) { return; }
+
+                moveForce.x -= rb.velocity.x;
+                moveForce.z -= rb.velocity.z;
+
+                rb.AddForce(moveForce, ForceMode.VelocityChange);
             }
         }
 

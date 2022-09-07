@@ -323,7 +323,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 20600000, guid: 5a3ea7ff75c0e8f40b6e50ea4fd8e30e, type: 2}
+  m_Motion: {fileID: 20600000, guid: ddfd5d7921b673a4c987e6474df552e3, type: 2}
   m_Tag: Jumping
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -1702,7 +1702,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Landing
-  m_Speed: 1
+  m_Speed: 2
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -8585438410772315069}
@@ -3443,24 +3443,24 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Hit Reaction
-    m_StateMachine: {fileID: -1120041930800309451}
-    m_Mask: {fileID: 0}
-    m_Motions: []
-    m_Behaviours: []
-    m_BlendingMode: 1
-    m_SyncedLayerIndex: -1
-    m_DefaultWeight: 1
-    m_IKPass: 0
-    m_SyncedLayerAffectsTiming: 0
-    m_Controller: {fileID: 9100000}
-  - serializedVersion: 5
     m_Name: Airborne
     m_StateMachine: {fileID: 313334890031361459}
     m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
+    m_SyncedLayerIndex: -1
+    m_DefaultWeight: 1
+    m_IKPass: 0
+    m_SyncedLayerAffectsTiming: 0
+    m_Controller: {fileID: 9100000}
+  - serializedVersion: 5
+    m_Name: Hit Reaction
+    m_StateMachine: {fileID: -1120041930800309451}
+    m_Mask: {fileID: 0}
+    m_Motions: []
+    m_Behaviours: []
+    m_BlendingMode: 1
     m_SyncedLayerIndex: -1
     m_DefaultWeight: 1
     m_IKPass: 0
@@ -4367,6 +4367,18 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &2259074690835511774
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56dae0896f4235b42b63afa0a81f31cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1107 &2279858263301175705
 AnimatorStateMachine:
   serializedVersion: 6
@@ -5255,7 +5267,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 20600000, guid: ebffcf4d5ed0c414d8367f622eed37f0, type: 2}
+  m_Motion: {fileID: 20600000, guid: ddfd5d7921b673a4c987e6474df552e3, type: 2}
   m_Tag: Jumping
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -5910,7 +5922,8 @@ AnimatorState:
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 2086485013085692712}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 2259074690835511774}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1

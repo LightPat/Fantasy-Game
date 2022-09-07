@@ -1669,7 +1669,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveTransitionSpeed: 5
   animatorSpeed: 1
-  idleLoopTransitionTime: 1000
   moveInput: {x: 0, y: 0}
   sensitivity: 0.2
   bodyRotationSpeed: 4
@@ -1696,12 +1695,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac14cd1754ed0d4478df12ffeab52931, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpHeight: 4
-  runningJumpForce: 10
-  airborneMoveSpeed: 0
+  jumpHeight: 3
+  airborneMoveSpeed: 3
   jumpForceDelay: 0
-  breakfallRollThreshold: 3
-  isGroundedDistance: 3
+  runningJumpHeight: 2
+  breakfallRollThreshold: 10
+  isGroundedDistance: 2
 --- !u!114 &7284513826171149811
 MonoBehaviour:
   m_ObjectHideFlags: 0

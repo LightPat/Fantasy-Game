@@ -9,8 +9,10 @@ namespace LightPat.Core.Player
     public class AirborneAnimationHandler : MonoBehaviour
     {
         public float jumpHeight;
-        public float runningJumpForce;
         public float airborneMoveSpeed;
+        public float jumpForceDelay;
+        [Header("Running Jump Settings")]
+        public float runningJumpHeight;
 
         Animator animator;
         Rigidbody rb;
@@ -45,7 +47,7 @@ namespace LightPat.Core.Player
             // If we were falling on the last frame and we are not on this one
             if (!prevGrounded & isGrounded)
             {
-                if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude > breakfallRollThreshold)
+                if (rb.velocity.magnitude > breakfallRollThreshold)
                     animator.SetBool("breakfallRoll", true);
                     animator.SetFloat("landingAngle", Vector2.SignedAngle(new Vector2(rb.velocity.x, rb.velocity.z), new Vector2(transform.forward.x, transform.forward.z)));
             }
@@ -74,7 +76,6 @@ namespace LightPat.Core.Player
             StartCoroutine(Jump());
         }
 
-        public float jumpForceDelay;
         private IEnumerator Jump()
         {
             animator.SetBool("jumping", true);
@@ -88,7 +89,8 @@ namespace LightPat.Core.Player
             else
             {
                 // Jump in direction rigidbody is moving
-                rb.AddForce(rb.velocity + transform.up * runningJumpForce, ForceMode.VelocityChange);
+                float jumpForce = Mathf.Sqrt(runningJumpHeight * -2 * Physics.gravity.y);
+                rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
             }
 
             yield return null;

@@ -102,7 +102,7 @@ namespace LightPat.Core.Player
             }
             else if (rotationX <= 90)
             {
-                bodyRotation = new Vector3(transform.eulerAngles.x, Camera.main.transform.eulerAngles.y + lookInput.x * sensitivity, transform.eulerAngles.z);
+                bodyRotation = new Vector3(transform.eulerAngles.x, rotationY + lookInput.x * sensitivity, transform.eulerAngles.z);
             }
 
             if (rotateBodyWithCamera)

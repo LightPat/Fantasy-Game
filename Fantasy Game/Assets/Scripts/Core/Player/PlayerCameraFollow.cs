@@ -7,35 +7,44 @@ namespace LightPat.Core.Player
 {
     public class PlayerCameraFollow : MonoBehaviour
     {
-        public PlayerController player;
-        public RigWeightTarget aimRig;
+        public PlayerController playerController;
         public Transform target;
-        public float rotationSpeed;
+        public float zRotDecay;
         public bool updateRotationWithTarget;
+
         bool previousRotationState;
 
         private void Update()
         {
             transform.position = target.position;
 
-            if (updateRotationWithTarget)
+            if (updateRotationWithTarget & !previousRotationState)
             {
-                //transform.rotation = Quaternion.RotateTowards(transform.rotation, target.rotation, rotationSpeed * Time.deltaTime);
-                transform.rotation = target.rotation;
-
-                // Track our vertical rotation
-                if (transform.eulerAngles.x > player.mouseDownXRotLimit) // If our number is greater than the positive look bound, make it a negative angle
+                playerController.aimRig.weightTarget = 0;
+                playerController.disableLookInput = true;
+            }
+            else if (!updateRotationWithTarget & previousRotationState)
+            {
+                if (transform.eulerAngles.x > playerController.mouseDownXRotLimit) // If our vertical rotation is greater than the positive look bound, make it a negative angle
                 {
-                    player.rotationX = 360 - transform.eulerAngles.x;
+                    playerController.rotationX = 360 - transform.eulerAngles.x;
                 }
                 else
                 {
-                    player.rotationX = transform.eulerAngles.x;
+                    playerController.rotationX = transform.eulerAngles.x;
                 }
+                playerController.rotationY = transform.eulerAngles.y;
+                playerController.aimRig.weightTarget = 1;
+                playerController.disableLookInput = false;
             }
-            else if (previousRotationState) // Set Z rotation to zero once we exit rotating with a bone
+
+            if (updateRotationWithTarget)
             {
-                transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+                transform.rotation = target.rotation;
+            }
+            else // Interpolate z rotation to 0
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0), Time.deltaTime * zRotDecay);
             }
 
             previousRotationState = updateRotationWithTarget;

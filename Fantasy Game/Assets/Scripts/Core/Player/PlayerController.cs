@@ -9,6 +9,8 @@ namespace LightPat.Core.Player
 {
     public class PlayerController : MonoBehaviour
     {
+        [Header("Used in player camera follow")]
+        public RigWeightTarget aimRig;
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float animatorSpeed = 1;
@@ -18,17 +20,17 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            //if (Time.timeScale == 0.3f)
-            //{
-            //    Time.timeScale = 1;
-            //}
-            //else
-            //{
-            //    Time.timeScale = 0.3f;
-            //}
+            if (Time.timeScale == 0.3f)
+            {
+                Time.timeScale = 1;
+            }
+            else
+            {
+                Time.timeScale = 0.3f;
+            }
 
             //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
-            disableLookInput = !disableLookInput;
+            //disableLookInput = !disableLookInput;
         }
 
         private void Start()
@@ -91,19 +93,12 @@ namespace LightPat.Core.Player
             {
                 rotationX -= sensitivity * lookInput.y;
                 rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
-                Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, 0);
+                Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, Camera.main.transform.eulerAngles.z);
             }
 
             if (freeLooking) { return; }
 
-            if (disableCameraLookInput)
-            {
-                bodyRotation = new Vector3(transform.eulerAngles.x, rotationY + lookInput.x * sensitivity, transform.eulerAngles.z);
-            }
-            else if (rotationX <= 90)
-            {
-                bodyRotation = new Vector3(transform.eulerAngles.x, rotationY + lookInput.x * sensitivity, transform.eulerAngles.z);
-            }
+            bodyRotation = new Vector3(transform.eulerAngles.x, rotationY + lookInput.x * sensitivity, transform.eulerAngles.z);
 
             if (rotateBodyWithCamera)
                 transform.rotation = Quaternion.Euler(bodyRotation);

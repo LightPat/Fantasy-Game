@@ -1667,6 +1667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cb34a01506f60c4d97b1107c76509bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  aimRig: {fileID: 7284513825018453871}
   moveTransitionSpeed: 5
   animatorSpeed: 1
   moveInput: {x: 0, y: 0}

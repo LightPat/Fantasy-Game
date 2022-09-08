@@ -32,6 +32,11 @@ namespace LightPat.Core
         public bool disableRotation;
         public string offsetType;
 
+        public virtual void Attack()
+        {
+            Debug.Log("Attack() hasn't been implemented yet on this weapon");
+        }
+
         public void ChangeOffset(string offsetType)
         {
             if (offsetType == "player")

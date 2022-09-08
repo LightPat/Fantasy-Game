@@ -108,28 +108,31 @@ namespace LightPat.Core.Player
 
             if (weaponManager.equippedWeapon == null) { return; }
             string weaponClass = weaponManager.equippedWeapon.weaponClass;
+
+            weaponManager.equippedWeapon.GetComponent<Weapon>().Attack();
+
             if (weaponClass == "Great Sword")
             {
                 
             }
             else if (weaponClass == "Rifle")
             {
-                RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
-                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                //RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
+                //System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
-                foreach (RaycastHit hit in allHits)
-                {
-                    if (hit.transform == transform)
-                    {
-                        continue;
-                    }
+                //foreach (RaycastHit hit in allHits)
+                //{
+                //    if (hit.transform == transform)
+                //    {
+                //        continue;
+                //    }
 
-                    if (hit.transform.GetComponent<Attributes>())
-                    {
-                        hit.transform.GetComponent<Attributes>().InflictDamage(weaponManager.equippedWeapon.baseDamage, gameObject);
-                    }
-                    break;
-                }
+                //    if (hit.transform.GetComponent<Attributes>())
+                //    {
+                //        hit.transform.GetComponent<Attributes>().InflictDamage(weaponManager.equippedWeapon.baseDamage, gameObject);
+                //    }
+                //    break;
+                //}
             }
             else
             {

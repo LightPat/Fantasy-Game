@@ -83,6 +83,31 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!1101 &-8990734045905099621
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: breakfallRoll
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: 6724248638485501052}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.25
+  m_TransitionOffset: 0
+  m_ExitTime: 0.63414633
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
 --- !u!1101 &-8971457356158483014
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -489,7 +514,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -4129871352879360726}
-    m_Position: {x: 370, y: 110, z: 0}
+    m_Position: {x: 370, y: 60, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4205595342016466835}
     m_Position: {x: 300, y: 190, z: 0}
@@ -498,7 +523,7 @@ AnimatorStateMachine:
     m_Position: {x: 600, y: 190, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6724248638485501052}
-    m_Position: {x: 410, y: 20, z: 0}
+    m_Position: {x: 370, y: 120, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions:
@@ -508,7 +533,7 @@ AnimatorStateMachine:
   m_AnyStatePosition: {x: 50, y: 20, z: 0}
   m_EntryPosition: {x: 50, y: 120, z: 0}
   m_ExitPosition: {x: 800, y: 120, z: 0}
-  m_ParentStateMachinePosition: {x: 30, y: 190, z: 0}
+  m_ParentStateMachinePosition: {x: 50, y: 180, z: 0}
   m_DefaultState: {fileID: -4129871352879360726}
 --- !u!1101 &-7733959334649681583
 AnimatorStateTransition:
@@ -3009,6 +3034,7 @@ AnimatorState:
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
+  - {fileID: -8990734045905099621}
   - {fileID: -2177802076086448664}
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
@@ -3431,9 +3457,9 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Draw/Stow Weapon
-    m_StateMachine: {fileID: 7224468235215806421}
-    m_Mask: {fileID: 31900000, guid: 8dd74061585cc8a4195f6f9588a2c3e5, type: 2}
+    m_Name: Airborne
+    m_StateMachine: {fileID: 313334890031361459}
+    m_Mask: {fileID: 0}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -3443,9 +3469,9 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   - serializedVersion: 5
-    m_Name: Airborne
-    m_StateMachine: {fileID: 313334890031361459}
-    m_Mask: {fileID: 0}
+    m_Name: Draw/Stow Weapon
+    m_StateMachine: {fileID: 7224468235215806421}
+    m_Mask: {fileID: 31900000, guid: 8dd74061585cc8a4195f6f9588a2c3e5, type: 2}
     m_Motions: []
     m_Behaviours: []
     m_BlendingMode: 0
@@ -4623,7 +4649,7 @@ BlendTree:
     m_Motion: {fileID: 1929582258458290316, guid: f6f3b5a1b0663c9449df4eb3f4cfb13f, type: 3}
     m_Threshold: -180
     m_Position: {x: 0, y: 0}
-    m_TimeScale: -1
+    m_TimeScale: -1.1
     m_CycleOffset: 0
     m_DirectBlendParameter: x
     m_Mirror: 0
@@ -4631,7 +4657,7 @@ BlendTree:
     m_Motion: {fileID: 1929582258458290316, guid: 0e0dd9bcfa43e354f80b20c6b923f90f, type: 3}
     m_Threshold: -135
     m_Position: {x: -1, y: -1}
-    m_TimeScale: -1
+    m_TimeScale: -1.1
     m_CycleOffset: 0
     m_DirectBlendParameter: x
     m_Mirror: 0
@@ -4679,7 +4705,7 @@ BlendTree:
     m_Motion: {fileID: 1929582258458290316, guid: c77a10d1824d88b4fa9fc4ae873611be, type: 3}
     m_Threshold: 135
     m_Position: {x: 1, y: -1}
-    m_TimeScale: -1
+    m_TimeScale: -1.1
     m_CycleOffset: 0
     m_DirectBlendParameter: x
     m_Mirror: 0
@@ -4687,7 +4713,7 @@ BlendTree:
     m_Motion: {fileID: 1929582258458290316, guid: ad3176eb110c59e4e9274f18c0d72866, type: 3}
     m_Threshold: 180
     m_Position: {x: 0, y: -1}
-    m_TimeScale: -1
+    m_TimeScale: -1.1
     m_CycleOffset: 0
     m_DirectBlendParameter: x
     m_Mirror: 0

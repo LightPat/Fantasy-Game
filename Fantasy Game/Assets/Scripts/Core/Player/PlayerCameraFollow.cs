@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LightPat.Util;
 
 namespace LightPat.Core.Player
 {
@@ -12,6 +13,16 @@ namespace LightPat.Core.Player
         public bool updateRotationWithTarget;
 
         bool previousRotationState;
+        Animator playerAnimator;
+        WeaponManager playerWeaponManager;
+        AnimatorLayerWeightManager layerWeightManager;
+
+        private void Start()
+        {
+            playerAnimator = playerController.GetComponentInChildren<Animator>();
+            playerWeaponManager = playerController.GetComponent<WeaponManager>();
+            layerWeightManager = playerController.GetComponentInChildren<AnimatorLayerWeightManager>();
+        }
 
         private void Update()
         {
@@ -19,8 +30,10 @@ namespace LightPat.Core.Player
 
             if (updateRotationWithTarget & !previousRotationState)
             {
-                playerController.aimRig.weightTarget = 0;
+                playerController.neckAimRig.weightTarget = 0;
                 playerController.disableLookInput = true;
+                if (playerWeaponManager.equippedWeapon != null)
+                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.weaponClass), 0);
             }
             else if (!updateRotationWithTarget & previousRotationState)
             {
@@ -33,8 +46,10 @@ namespace LightPat.Core.Player
                     playerController.rotationX = transform.eulerAngles.x;
                 }
                 playerController.rotationY = transform.eulerAngles.y;
-                playerController.aimRig.weightTarget = 1;
+                playerController.neckAimRig.weightTarget = 1;
                 playerController.disableLookInput = false;
+                if (playerWeaponManager.equippedWeapon != null)
+                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.weaponClass), 1);
             }
 
             if (updateRotationWithTarget)

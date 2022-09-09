@@ -19,6 +19,7 @@ namespace LightPat.Core.Player
         public TwoBoneIKConstraint leftHandIK;
         public Transform rightHandTarget;
         public Transform leftHandTarget;
+        public Rig spineAimRig;
         [Header("Weapon Grip Points")]
         public Transform greatSwordGrip;
         public Transform rifleGrip;
@@ -237,6 +238,7 @@ namespace LightPat.Core.Player
             if (weapon.weaponClass == "Rifle")
             {
                 rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             }
             else if (weapon.weaponClass == "Great Sword")
             {
@@ -280,6 +282,19 @@ namespace LightPat.Core.Player
             equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon.weaponClass), true);
             equippedWeapon.ChangeOffset("transition");
             GetGripPoint(equippedWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
+
+            if (equippedWeapon.weaponClass == "Rifle")
+            {
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            }
+            else if (equippedWeapon.weaponClass == "Great Sword")
+            {
+                // Do nothing
+            }
+            else
+            {
+                Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + equippedWeapon + " " + equippedWeapon.weaponClass);
+            }
 
             // Wait until stow animation has finished playing
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
@@ -326,6 +341,7 @@ namespace LightPat.Core.Player
                 rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             }
             else if (chosenWeapon.weaponClass == "Great Sword")
             {
@@ -363,6 +379,19 @@ namespace LightPat.Core.Player
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
 
+            if (equippedWeapon.weaponClass == "Rifle")
+            {
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            }
+            else if (equippedWeapon.weaponClass == "Great Sword")
+            {
+                // Do nothing
+            }
+            else
+            {
+                Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + equippedWeapon + " " + equippedWeapon.weaponClass);
+            }
+
             // Start drawing next weapon once stow animation has finished playing
             Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
             animator.SetBool("draw" + chosenWeapon.weaponClass, true);
@@ -398,6 +427,7 @@ namespace LightPat.Core.Player
                 rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             }
             else if (chosenWeapon.weaponClass == "Great Sword")
             {

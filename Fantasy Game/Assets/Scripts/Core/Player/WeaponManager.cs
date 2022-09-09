@@ -35,6 +35,11 @@ namespace LightPat.Core.Player
             weapons.Add(weapon);
         }
 
+        public int GetEquippedWeaponIndex()
+        {
+            return weapons.FindIndex(equippedWeapon => weapons.Contains(equippedWeapon));
+        }
+
         private void Start()
         {
             playerController = GetComponent<PlayerController>();

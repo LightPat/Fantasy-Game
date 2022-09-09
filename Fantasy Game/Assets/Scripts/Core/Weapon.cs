@@ -34,7 +34,7 @@ namespace LightPat.Core
 
         public virtual void Attack()
         {
-            Debug.Log("Attack() hasn't been implemented yet on this weapon");
+            Debug.LogWarning("Attack() hasn't been implemented yet on this weapon");
         }
 
         public void ChangeOffset(string offsetType)

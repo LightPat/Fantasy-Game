@@ -10,7 +10,8 @@ namespace LightPat.Core.Player
     public class PlayerController : MonoBehaviour
     {
         [Header("Used in player camera follow")]
-        public RigWeightTarget aimRig;
+        public RigWeightTarget neckAimRig;
+        public RigWeightTarget spineAimRig;
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float animatorSpeed = 1;
@@ -20,13 +21,13 @@ namespace LightPat.Core.Player
 
         void OnEscape()
         {
-            if (Time.timeScale == 0.3f)
+            if (Time.timeScale == 0.1f)
             {
                 Time.timeScale = 1;
             }
             else
             {
-                Time.timeScale = 0.3f;
+                Time.timeScale = 0.1f;
             }
 
             //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
@@ -78,8 +79,8 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool disableCameraLookInput;
         public bool rotateBodyWithCamera;
-        [HideInInspector] public float rotationX;
-        [HideInInspector] public float rotationY;
+        public float rotationX;
+        public float rotationY;
         [HideInInspector] public Vector2 lookInput;
         Vector3 bodyRotation;
 

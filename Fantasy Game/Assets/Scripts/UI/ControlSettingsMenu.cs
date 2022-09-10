@@ -5,6 +5,7 @@ using LightPat.Core;
 using TMPro;
 using System;
 using UnityEngine.UI;
+using LightPat.Core.Player;
 
 namespace LightPat.UI
 {

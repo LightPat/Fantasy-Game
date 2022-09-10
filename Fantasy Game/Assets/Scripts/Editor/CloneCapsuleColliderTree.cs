@@ -7,8 +7,8 @@ namespace LightPat.Editor
 {
     public class CloneCapsuleColliderTree : MonoBehaviour
     {
-        // This is meant to mirror a transform's tree of CapsuleColliders across axises
-        [MenuItem("Tools/Clone Capsule Collider Tree")]
+        // This is meant to clone a transform's tree of CapsuleColliders to an object with an identical transform structure
+        [MenuItem("Tools/Capsule Colliders/Clone Capsule Collider Tree")]
         private static void NewMenuOption()
         {
             Transform[] selectedObjects = Selection.transforms;
@@ -46,19 +46,55 @@ namespace LightPat.Editor
 
         static void CloneCapsuleCollidersInAllChildren(Transform root, Transform mirroredRoot)
         {
-            if (!mirroredRoot.GetComponent<CapsuleCollider>() & root.GetComponent<CapsuleCollider>())
+            if (mirroredRoot.name == root.name & !(root.name.Contains("Arm") | root.name.Contains("Index") | root.name.Contains("Middle") | root.name.Contains("Ring") | root.name.Contains("Pinky")))
             {
-                CapsuleCollider rootCol = root.GetComponent<CapsuleCollider>();
-                CapsuleCollider col = mirroredRoot.gameObject.AddComponent<CapsuleCollider>();
-                col.center = rootCol.center;
-                col.center = new Vector3(col.center.x * -1, col.center.y, col.center.z);
-                col.radius = rootCol.radius;
-                col.height = rootCol.height;
-                col.direction = rootCol.direction;
-            }
-            else
-            {
-                Debug.Log(mirroredRoot + " already has a CapsuleCollider");
+                CapsuleCollider[] rootCols = root.GetComponents<CapsuleCollider>();
+                CapsuleCollider[] cols = new CapsuleCollider[rootCols.Length];
+
+                foreach (CapsuleCollider rootCol in rootCols)
+                {
+                    CapsuleCollider col = mirroredRoot.gameObject.AddComponent<CapsuleCollider>();
+                    col.center = rootCol.center;
+                    col.radius = rootCol.radius;
+                    col.height = rootCol.height;
+                    col.direction = rootCol.direction;
+
+                    //if (rootCol.direction == 2) // z to x
+                    //{
+                    //    col.center = new Vector3(rootCol.center.z, rootCol.center.x, -rootCol.center.y);
+                    //    col.direction = 0;
+                    //}
+                    //if (rootCol.direction == 1) // y to x
+                    //{
+                    //    if (root.position.y < 0)
+                    //    {
+                    //        col.center = new Vector3(rootCol.center.z, -rootCol.center.x, rootCol.center.y);
+                    //    }
+                    //    else
+                    //    {
+                    //        col.center = new Vector3(rootCol.center.z, rootCol.center.x, rootCol.center.y);
+                    //    }
+
+                    //    col.direction = 0;
+                    //}
+                    //if (rootCol.direction == 0) // x to y
+                    //{
+                    //    //col.center = new Vector3(rootCol.center.z, rootCol.center.x, -rootCol.center.y);
+                    //    col.center = new Vector3(rootCol.center.z, -rootCol.center.x, rootCol.center.y);
+
+                    //    col.direction = 1;
+                    //}
+
+                    if (rootCol.direction == 1) // y
+                    {
+                        col.center = new Vector3(-rootCol.center.x, -rootCol.center.y, rootCol.center.z);
+                    }
+                    //else if (rootCol.direction == 2) // z
+                    //{
+                    //    col.center = new Vector3(rootCol.center.x, rootCol.center.y, rootCol.center.z);
+                    //    col.direction = 1;
+                    //}
+                }
             }
 
             for (int i = 0; i < root.childCount; i++)

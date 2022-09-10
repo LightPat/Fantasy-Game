@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LightPat.Core;
-using UnityEditor;
+using LightPat.Core.Player;
 
 namespace LightPat.EnemyAI
 {
@@ -198,7 +198,6 @@ namespace LightPat.EnemyAI
 
         void OnAttacked(GameObject attacker)
         {
-            Debug.Log(name + " is being attacked by: " + attacker);
             target = attacker.transform;
         }
     }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LightPat.Core.TextDialogue;
 using LightPat.Core;
 
 namespace LightPat.Interactables

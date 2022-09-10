@@ -7,7 +7,6 @@ namespace LightPat
 {
     public class LoopThroughHierarchy : MonoBehaviour
     {
-        [MenuItem("Tools/Loop Through Hierarchy")]
         private static void NewMenuOption()
         {
             PhysicMaterial mat = (PhysicMaterial)AssetDatabase.LoadAssetAtPath("Assets/Player.physicMaterial", typeof(PhysicMaterial));

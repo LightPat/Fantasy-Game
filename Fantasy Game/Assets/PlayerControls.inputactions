@@ -96,33 +96,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Slot0",
-                    "type": "Button",
-                    "id": "f3eaaee4-abd6-4e11-bb29-bbc7deac0786",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Slot1",
-                    "type": "Button",
-                    "id": "65e4db01-e51d-4599-9481-f9f3d31511ee",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Slot2",
-                    "type": "Button",
-                    "id": "b24fe4d5-297f-4433-a0a4-959a65280533",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "InventoryToggle",
                     "type": "Button",
                     "id": "80f7d9d7-7a38-43d2-aad9-3666c9432ae7",
@@ -135,6 +108,15 @@
                     "name": "Pause",
                     "type": "Button",
                     "id": "5e4f970b-e8d2-4a2a-9e14-573ceb07c6fd",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Slot",
+                    "type": "Button",
+                    "id": "c04277a9-1367-48bb-8fea-37ae8c753f8b",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -243,17 +225,6 @@
                 },
                 {
                     "name": "",
-                    "id": "103d8798-24ac-465c-8a38-eb3d17b6dae6",
-                    "path": "<Keyboard>/1",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "Slot0",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "82857a4f-6ffd-4b1f-aeec-2f830270c862",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
@@ -320,34 +291,45 @@
                 },
                 {
                     "name": "",
-                    "id": "2dd882ce-7823-479e-b82d-800bec21f27e",
-                    "path": "<Keyboard>/2",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "Slot1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "543f8fa2-28bd-4c17-a979-ef11ef4f000e",
-                    "path": "<Keyboard>/3",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "Slot2",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "be27b70f-ce8c-403c-88f1-01aabbc49f0d",
                     "path": "<Keyboard>/v",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
                     "action": "Melee",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4506f962-e852-4f76-bd16-c8665109f97a",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "Scale",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Slot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9c380eef-279b-401c-abf6-d3a5b1888c56",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "Scale(factor=2)",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Slot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0431528c-3f6d-461e-baa6-86d8c2005c46",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "Scale(factor=3)",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Slot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -414,7 +396,7 @@
                     "path": "<Keyboard>/1",
                     "interactions": "",
                     "processors": "Scale",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "ChooseOption",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -425,7 +407,7 @@
                     "path": "<Keyboard>/2",
                     "interactions": "",
                     "processors": "Scale(factor=2)",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "ChooseOption",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -436,7 +418,7 @@
                     "path": "<Keyboard>/3",
                     "interactions": "",
                     "processors": "Scale(factor=3)",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "ChooseOption",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -537,7 +519,7 @@
                     "path": "<Keyboard>/i",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "InventoryToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -548,7 +530,7 @@
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "InventoryToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -570,7 +552,7 @@
                     "path": "<Keyboard>/r",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "ResetInspectForces",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -581,7 +563,7 @@
                     "path": "<Mouse>/scroll",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "ZoomInspectCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -592,7 +574,7 @@
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "RotateInspectCamera",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -603,7 +585,7 @@
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "Keyboard and Mouse",
                     "action": "RotateInspectWeapon",
                     "isComposite": false,
                     "isPartOfComposite": false

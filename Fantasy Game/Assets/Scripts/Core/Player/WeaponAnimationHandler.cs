@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using LightPat.Util;
+using System;
 
 namespace LightPat.Core.Player
 {
@@ -173,23 +174,10 @@ namespace LightPat.Core.Player
             animator.SetBool("melee", false);
         }
 
-        void OnSlot0()
+        void OnSlot(InputValue value)
         {
-            QuerySlot(0);
-        }
+            int slot = Convert.ToInt32(value.Get()) - 1;
 
-        void OnSlot1()
-        {
-            QuerySlot(1);
-        }
-
-        void OnSlot2()
-        {
-            QuerySlot(2);
-        }
-
-        private void QuerySlot(int slot)
-        {
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             Weapon chosenWeapon = weaponManager.GetWeapon(slot);
             if (chosenWeapon == null) { return; }

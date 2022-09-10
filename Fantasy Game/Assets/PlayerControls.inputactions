@@ -96,6 +96,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "QueryWeaponSlot",
+                    "type": "Button",
+                    "id": "c04277a9-1367-48bb-8fea-37ae8c753f8b",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "InventoryToggle",
                     "type": "Button",
                     "id": "80f7d9d7-7a38-43d2-aad9-3666c9432ae7",
@@ -114,9 +123,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Slot",
+                    "name": "Ability",
                     "type": "Button",
-                    "id": "c04277a9-1367-48bb-8fea-37ae8c753f8b",
+                    "id": "c66746a0-13bc-4e4c-ab04-a8a9af683084",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -307,7 +316,7 @@
                     "interactions": "",
                     "processors": "Scale",
                     "groups": "Keyboard and Mouse",
-                    "action": "Slot",
+                    "action": "QueryWeaponSlot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -318,7 +327,7 @@
                     "interactions": "",
                     "processors": "Scale(factor=2)",
                     "groups": "Keyboard and Mouse",
-                    "action": "Slot",
+                    "action": "QueryWeaponSlot",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -329,7 +338,18 @@
                     "interactions": "",
                     "processors": "Scale(factor=3)",
                     "groups": "Keyboard and Mouse",
-                    "action": "Slot",
+                    "action": "QueryWeaponSlot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8be7568d-32a1-42cc-a194-0c63ce5e6ba6",
+                    "path": "<Keyboard>/g",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Ability",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

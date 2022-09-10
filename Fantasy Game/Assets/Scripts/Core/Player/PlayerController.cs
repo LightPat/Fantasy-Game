@@ -19,23 +19,6 @@ namespace LightPat.Core.Player
         Animator animator;
         Rigidbody rb;
 
-        //void OnEscape()
-        //{
-        //    if (Time.timeScale == 0.1f)
-        //    {
-        //        Time.timeScale = 1;
-        //        Time.fixedDeltaTime = 0.02f;
-        //    }
-        //    else
-        //    {
-        //        Time.timeScale = 0.1f;
-        //        Time.fixedDeltaTime = 0.02f * Time.timeScale;
-        //    }
-
-        //    //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
-        //    //disableLookInput = !disableLookInput;
-        //}
-
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
@@ -91,10 +74,10 @@ namespace LightPat.Core.Player
             if (disableLookInput) { return; }
             lookInput = value.Get<Vector2>();
 
-            rotationY += sensitivity * lookInput.x;
+            rotationY += lookInput.x * sensitivity * Time.timeScale;
             if (!disableCameraLookInput)
             {
-                rotationX -= sensitivity * lookInput.y;
+                rotationX -= lookInput.y * sensitivity * Time.timeScale;
                 rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
                 Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, Camera.main.transform.eulerAngles.z);
             }
@@ -107,6 +90,8 @@ namespace LightPat.Core.Player
 
         private void Update()
         {
+            Debug.Log(Time.timeScale + " " + Time.fixedDeltaTime);
+
             if (!rotateBodyWithCamera)
                 rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed));
 
@@ -147,6 +132,23 @@ namespace LightPat.Core.Player
             if (animator.GetBool("jumping")) { animator.SetFloat("idleTime", 0); }
 
             animator.speed = animatorSpeed;
+        }
+
+        void OnAbility()
+        {
+            if (Time.timeScale == 1)
+            {
+                Time.timeScale = 0.5f;
+                //Time.fixedDeltaTime = 0.02f * Time.timeScale;
+            }
+            else
+            {
+                Time.timeScale = 1;
+                //Time.fixedDeltaTime = 0.02f;
+            }
+
+            //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
+            //disableLookInput = !disableLookInput;
         }
 
         [Header("NOT FUNCTIONAL YET")]

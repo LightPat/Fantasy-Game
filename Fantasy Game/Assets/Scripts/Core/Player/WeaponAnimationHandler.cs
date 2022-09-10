@@ -174,7 +174,7 @@ namespace LightPat.Core.Player
             animator.SetBool("melee", false);
         }
 
-        void OnSlot(InputValue value)
+        void OnQueryWeaponSlot(InputValue value)
         {
             int slot = Convert.ToInt32(value.Get()) - 1;
 

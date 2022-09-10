@@ -6,9 +6,8 @@ namespace LightPat.Core
 {
     public abstract class Menu : MonoBehaviour
     {
+        [HideInInspector] public GameObject childMenu;
         protected GameObject lastMenu;
-        [HideInInspector]
-        public GameObject childMenu;
 
         public void QuitGame()
         {

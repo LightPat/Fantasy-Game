@@ -1,5 +1,5 @@
 {
-    "name": "Controls",
+    "name": "PlayerControls",
     "maps": [
         {
             "name": "First Person",
@@ -132,7 +132,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Escape",
+                    "name": "Pause",
                     "type": "Button",
                     "id": "5e4f970b-e8d2-4a2a-9e14-573ceb07c6fd",
                     "expectedControlType": "Button",
@@ -303,7 +303,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
-                    "action": "Escape",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -448,7 +448,7 @@
             "id": "7f9faa64-5e1e-46e4-b309-3dbf64375570",
             "actions": [
                 {
-                    "name": "Escape",
+                    "name": "Pause",
                     "type": "Button",
                     "id": "8e86885d-ee59-46a6-ac14-cb0e8f848da0",
                     "expectedControlType": "Button",
@@ -465,7 +465,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
-                    "action": "Escape",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

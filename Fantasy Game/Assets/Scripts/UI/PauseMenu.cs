@@ -2,11 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LightPat.Core;
-using UnityEngine.UI;
 
 namespace LightPat.UI
 {
-    public class EscapeMenu : Menu
+    public class PauseMenu : Menu
     {
         public GameObject displaySettingsMenu;
         public GameObject controlSettingsMenu;

@@ -19,22 +19,22 @@ namespace LightPat.Core.Player
         Animator animator;
         Rigidbody rb;
 
-        void OnEscape()
-        {
-            if (Time.timeScale == 0.1f)
-            {
-                Time.timeScale = 1;
-                Time.fixedDeltaTime = 0.02f;
-            }
-            else
-            {
-                Time.timeScale = 0.1f;
-                Time.fixedDeltaTime = 0.02f * Time.timeScale;
-            }
+        //void OnEscape()
+        //{
+        //    if (Time.timeScale == 0.1f)
+        //    {
+        //        Time.timeScale = 1;
+        //        Time.fixedDeltaTime = 0.02f;
+        //    }
+        //    else
+        //    {
+        //        Time.timeScale = 0.1f;
+        //        Time.fixedDeltaTime = 0.02f * Time.timeScale;
+        //    }
 
-            //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
-            //disableLookInput = !disableLookInput;
-        }
+        //    //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
+        //    //disableLookInput = !disableLookInput;
+        //}
 
         private void Start()
         {

@@ -7,18 +7,21 @@ namespace LightPat.Core.Player
     public class WeaponManager : MonoBehaviour
     {
         public Weapon equippedWeapon;
-        public List<Weapon> weapons;
-
+        
+        List<Weapon> weapons = new List<Weapon>();
         PlayerController playerController;
+        PlayerHUD playerHUD;
 
         public void DrawWeapon(int slot)
         {
+            playerHUD.ChangeSlotStyle(slot, TMPro.FontStyles.Bold);
             equippedWeapon = weapons[slot];
             playerController.rotateBodyWithCamera = true;
         }
 
         public void StowWeapon()
         {
+            playerHUD.ChangeSlotStyle(GetEquippedWeaponIndex(), TMPro.FontStyles.Normal);
             equippedWeapon = null;
             playerController.rotateBodyWithCamera = false;
         }
@@ -30,19 +33,30 @@ namespace LightPat.Core.Player
             return weapons[slot];
         }
 
-        public void AddWeapon(Weapon weapon)
+        public int AddWeapon(Weapon weapon)
         {
             weapons.Add(weapon);
-        }
-
-        public int GetEquippedWeaponIndex()
-        {
-            return weapons.FindIndex(equippedWeapon => weapons.Contains(equippedWeapon));
+            int slot = weapons.Count - 1;
+            playerHUD.UpdateSlotText(slot);
+            return slot;
         }
 
         private void Start()
         {
             playerController = GetComponent<PlayerController>();
+            playerHUD = GetComponentInChildren<PlayerHUD>();
+        }
+        int GetEquippedWeaponIndex()
+        {
+            int counter = 0;
+            foreach (Weapon weapon in weapons)
+            {
+                if (weapon == equippedWeapon)
+                    return counter;
+                counter++;
+            }
+
+            return -1;
         }
     }
 }

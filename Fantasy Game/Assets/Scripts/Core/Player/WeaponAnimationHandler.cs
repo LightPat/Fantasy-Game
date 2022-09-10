@@ -7,7 +7,7 @@ using LightPat.Util;
 
 namespace LightPat.Core.Player
 {
-    public class AttackAnimationHandler : MonoBehaviour
+    public class WeaponAnimationHandler : MonoBehaviour
     {
         [Header("Reach Procedural Anim Settings")]
         public float reach;
@@ -258,8 +258,8 @@ namespace LightPat.Core.Player
                 Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.weaponClass);
             }
 
-            weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
-            weaponManager.DrawWeapon(weaponManager.weapons.Count - 1); // Draw most recently added weapon
+            int slot = weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
+            weaponManager.DrawWeapon(slot); // Draw most recently added weapon
             equipWeaponRunning = false;
         }
 

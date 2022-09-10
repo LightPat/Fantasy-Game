@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-namespace LightPat.UI.HUD
+namespace LightPat.Core.Player
 {
     public class InventoryWeaponIcon : MonoBehaviour
     {

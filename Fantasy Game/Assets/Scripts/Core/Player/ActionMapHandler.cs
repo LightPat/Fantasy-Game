@@ -30,7 +30,7 @@ namespace LightPat.Core.Player
             {
                 Cursor.lockState = CursorLockMode.None;
                 HUD.SetActive(false);
-                inventoryObject = Instantiate(inventoryPrefab);
+                inventoryObject = Instantiate(inventoryPrefab, transform);
                 playerInput.SwitchCurrentActionMap("Inventory");
             }
             else

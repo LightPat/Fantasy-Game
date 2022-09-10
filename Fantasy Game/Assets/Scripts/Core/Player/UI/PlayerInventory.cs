@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
-using LightPat.UI.HUD;
 
 namespace LightPat.Core.Player
 {

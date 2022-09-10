@@ -150,14 +150,32 @@ namespace LightPat.Core.Player
         float runTarget;
         void OnSprint(InputValue value)
         {
-            running = value.isPressed;
-            animator.SetBool("running", running);
-            runTarget = 2;
-            ascending = true;
-
-            if (!value.isPressed)
+            if (toggleSprint)
             {
-                animator.SetBool("sprinting", false);
+                if (value.isPressed)
+                {
+                    running = !running;
+                    animator.SetBool("running", running);
+                    runTarget = 2;
+                    ascending = true;
+
+                    if (!running)
+                    {
+                        animator.SetBool("sprinting", false);
+                    }
+                }
+            }
+            else
+            {
+                running = value.isPressed;
+                animator.SetBool("running", running);
+                runTarget = 2;
+                ascending = true;
+
+                if (!value.isPressed)
+                {
+                    animator.SetBool("sprinting", false);
+                }
             }
         }
 

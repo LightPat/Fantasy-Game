@@ -228,7 +228,6 @@ namespace LightPat.Core.Player
         {
             if (value.isPressed)
             {
-                //  & weightManager.GetLayerWeight(animator.GetLayerIndex("Crouching")) == 0
                 if (running)
                 {
                     animator.SetBool("crouching", true);
@@ -237,8 +236,19 @@ namespace LightPat.Core.Player
                 }
             }
 
-            crouching = value.isPressed;
-            animator.SetBool("crouching", crouching);
+            if (toggleCrouch)
+            {
+                if (value.isPressed)
+                {
+                    crouching = !crouching;
+                    animator.SetBool("crouching", crouching);
+                }
+            }
+            else
+            {
+                crouching = value.isPressed;
+                animator.SetBool("crouching", crouching);
+            }
         }
 
         private IEnumerator ResetSlide()

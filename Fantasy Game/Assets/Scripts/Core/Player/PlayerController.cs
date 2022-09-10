@@ -99,8 +99,6 @@ namespace LightPat.Core.Player
                 Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, Camera.main.transform.eulerAngles.z);
             }
 
-            if (freeLooking) { return; }
-
             bodyRotation = new Vector3(transform.eulerAngles.x, rotationY + lookInput.x * sensitivity, transform.eulerAngles.z);
 
             if (rotateBodyWithCamera)
@@ -234,12 +232,6 @@ namespace LightPat.Core.Player
         {
             yield return null;
             animator.SetBool("crouching", false);
-        }
-
-        bool freeLooking;
-        void OnFreeLook(InputValue value)
-        {
-            freeLooking = value.isPressed;
         }
 
         [Header("Interact Settings")]

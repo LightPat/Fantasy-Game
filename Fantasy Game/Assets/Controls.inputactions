@@ -33,15 +33,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "FreeLook",
-                    "type": "Value",
-                    "id": "b30ab0dc-64ea-438c-8105-eef8a274c2cd",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "Sprint",
                     "type": "Value",
                     "id": "e4dcd947-4af8-4317-a83a-106b7f922bed",
@@ -96,6 +87,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Melee",
+                    "type": "Button",
+                    "id": "f8ac8b1e-4ed8-4202-b9a0-74b442d3d4e9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Slot0",
                     "type": "Button",
                     "id": "f3eaaee4-abd6-4e11-bb29-bbc7deac0786",
@@ -135,15 +135,6 @@
                     "name": "Escape",
                     "type": "Button",
                     "id": "5e4f970b-e8d2-4a2a-9e14-573ceb07c6fd",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Melee",
-                    "type": "Button",
-                    "id": "f8ac8b1e-4ed8-4202-b9a0-74b442d3d4e9",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -269,17 +260,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Attack2",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8fd90d13-f60f-405e-88e4-fed98c51b955",
-                    "path": "<Keyboard>/h",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "FreeLook",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

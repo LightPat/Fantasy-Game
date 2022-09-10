@@ -109,6 +109,9 @@ namespace LightPat.Core.Player
 
         private void Update()
         {
+            if (!rotateBodyWithCamera)
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed));
+
             float xTarget = moveInput.x;
             if (running) { xTarget *= runTarget; }
             float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
@@ -146,12 +149,6 @@ namespace LightPat.Core.Player
             if (animator.GetBool("jumping")) { animator.SetFloat("idleTime", 0); }
 
             animator.speed = animatorSpeed;
-        }
-
-        private void LateUpdate()
-        {
-            if (!rotateBodyWithCamera)
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed));
         }
 
         [Header("NOT FUNCTIONAL YET")]

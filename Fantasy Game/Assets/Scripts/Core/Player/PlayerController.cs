@@ -47,13 +47,10 @@ namespace LightPat.Core.Player
         }
 
         [HideInInspector] public Vector2 moveInput;
-        bool disableMoveInput;
         void OnMove(InputValue value)
         {
-            if (disableMoveInput) { return; }
             moveInput = value.Get<Vector2>();
             if (moveInput.y <= 0 & running) { runTarget = 2; }
-            if (moveInput == Vector2.zero & running) { running = false; }
         }
 
         [Header("Mouse Look Settings")]
@@ -90,8 +87,6 @@ namespace LightPat.Core.Player
 
         private void Update()
         {
-            Debug.Log(Time.timeScale + " " + Time.fixedDeltaTime);
-
             if (!rotateBodyWithCamera)
                 rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed));
 
@@ -139,12 +134,10 @@ namespace LightPat.Core.Player
             if (Time.timeScale == 1)
             {
                 Time.timeScale = 0.5f;
-                //Time.fixedDeltaTime = 0.02f * Time.timeScale;
             }
             else
             {
                 Time.timeScale = 1;
-                //Time.fixedDeltaTime = 0.02f;
             }
 
             //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);

@@ -24,10 +24,12 @@ namespace LightPat.Core.Player
             if (Time.timeScale == 0.1f)
             {
                 Time.timeScale = 1;
+                Time.fixedDeltaTime = 0.02f;
             }
             else
             {
                 Time.timeScale = 0.1f;
+                Time.fixedDeltaTime = 0.02f * Time.timeScale;
             }
 
             //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
@@ -79,8 +81,8 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool disableCameraLookInput;
         public bool rotateBodyWithCamera;
-        public float rotationX;
-        public float rotationY;
+        [HideInInspector] public float rotationX;
+        [HideInInspector] public float rotationY;
         [HideInInspector] public Vector2 lookInput;
         Vector3 bodyRotation;
 
@@ -102,7 +104,7 @@ namespace LightPat.Core.Player
             bodyRotation = new Vector3(transform.eulerAngles.x, rotationY + lookInput.x * sensitivity, transform.eulerAngles.z);
 
             if (rotateBodyWithCamera)
-                transform.rotation = Quaternion.Euler(bodyRotation);
+                rb.MoveRotation(Quaternion.Euler(bodyRotation));
         }
 
         private void Update()
@@ -149,7 +151,7 @@ namespace LightPat.Core.Player
         private void LateUpdate()
         {
             if (!rotateBodyWithCamera)
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed));
         }
 
         [Header("NOT FUNCTIONAL YET")]

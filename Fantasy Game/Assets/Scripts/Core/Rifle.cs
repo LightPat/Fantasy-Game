@@ -29,8 +29,9 @@ namespace LightPat.Core
             }
         }
 
-        private void Start()
+        private new void Start()
         {
+            base.Start();
             weaponClass = "Rifle";
         }
     }

@@ -24,13 +24,12 @@ namespace LightPat.Core
         public Vector3 stowedPositionOffset;
         public Vector3 stowedRotationOffset;
 
-        protected Vector3 targetLocalPosition;
-        protected Vector3 targetLocalRotation;
+        public Vector3 targetLocalPosition;
+        public Vector3 targetLocalRotation;
 
         public bool disableUpdate;
         [Header("Used for setting offsets")]
         public bool settingOffsets;
-        public bool disableRotation;
         public string offsetType;
 
         public virtual void Attack1()
@@ -62,7 +61,7 @@ namespace LightPat.Core
             }
         }
 
-        private void Start()
+        protected void Start()
         {
             targetLocalPosition = playerPositionOffset;
             targetLocalRotation = playerRotationOffset;
@@ -74,22 +73,16 @@ namespace LightPat.Core
 
             if (transform.parent != null)
             {
-                if (transform.parent.name == "Y Bot Player") { return; }
-
                 if (settingOffsets)
                 {
                     ChangeOffset(offsetType);
                     transform.localPosition = targetLocalPosition;
-                    if (disableRotation) { return; }
                     transform.localRotation = Quaternion.Euler(targetLocalRotation);
                 }
                 else
                 {
                     transform.localPosition = Vector3.Lerp(transform.localPosition, targetLocalPosition, Time.deltaTime * 8);
-                    if (disableRotation) { return; }
                     transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(targetLocalRotation), Time.deltaTime * 8);
-                    //transform.localPosition = targetLocalPosition;
-                    //transform.localRotation = Quaternion.Euler(targetLocalRotation);
                 }
             }
         }

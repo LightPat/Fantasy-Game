@@ -158,8 +158,26 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                animator.SetBool("attack2", value.isPressed);
+                //animator.SetBool("attack2", value.isPressed);
+                animator.SetBool("attack2", true);
+
+                if (weaponManager.equippedWeapon.weaponClass == "Great Sword")
+                {
+
+                }
             }
+        }
+
+        Vector2 moveInput;
+        void OnMove()
+        {
+
+        }
+
+        Vector2 lookInput;
+        void OnLook()
+        {
+
         }
 
         void OnMelee()

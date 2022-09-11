@@ -46,7 +46,7 @@ namespace LightPat.Core.Player
             }
         }
 
-        [HideInInspector] public Vector2 moveInput;
+        Vector2 moveInput;
         void OnMove(InputValue value)
         {
             moveInput = value.Get<Vector2>();
@@ -63,7 +63,7 @@ namespace LightPat.Core.Player
         public bool rotateBodyWithCamera;
         [HideInInspector] public float rotationX;
         [HideInInspector] public float rotationY;
-        [HideInInspector] public Vector2 lookInput;
+        Vector2 lookInput;
         Vector3 bodyRotation;
 
         void OnLook(InputValue value)
@@ -144,7 +144,7 @@ namespace LightPat.Core.Player
             //disableLookInput = !disableLookInput;
         }
 
-        [Header("NOT FUNCTIONAL YET")]
+        [Header("Misc Settings")]
         public bool toggleSprint;
         bool running;
         float runTarget;

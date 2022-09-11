@@ -3083,7 +3083,7 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 3
     m_ConditionEvent: idleTime
-    m_EventTreshold: 60
+    m_EventTreshold: 50000
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 2746544707827558902}
   m_Solo: 0

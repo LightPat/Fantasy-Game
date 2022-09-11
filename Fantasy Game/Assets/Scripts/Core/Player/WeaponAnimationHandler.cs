@@ -34,12 +34,14 @@ namespace LightPat.Core.Player
         AnimatorLayerWeightManager weightManager;
         Animator animator;
         WeaponManager weaponManager;
+        PlayerController playerController;
 
         private void Start()
         {
             weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
             weaponManager = GetComponent<WeaponManager>();
+            playerController = GetComponent<PlayerController>();
         }
 
         void OnInteract()
@@ -100,9 +102,6 @@ namespace LightPat.Core.Player
             }
         }
 
-        [Header("Attack1 Settings")]
-        public float attackReach;
-        public float attackDamage;
         void OnAttack1(InputValue value)
         {
             animator.SetBool("attack1", value.isPressed);
@@ -111,7 +110,7 @@ namespace LightPat.Core.Player
             if (weaponManager.equippedWeapon == null) { return; }
             string weaponClass = weaponManager.equippedWeapon.weaponClass;
 
-            weaponManager.equippedWeapon.GetComponent<Weapon>().Attack();
+            weaponManager.equippedWeapon.GetComponent<Weapon>().Attack1();
 
             if (weaponClass == "Great Sword")
             {
@@ -159,25 +158,59 @@ namespace LightPat.Core.Player
             else // If we have an equipped weapon do the secondary attack
             {
                 //animator.SetBool("attack2", value.isPressed);
-                animator.SetBool("attack2", true);
 
-                if (weaponManager.equippedWeapon.weaponClass == "Great Sword")
+                if (value.isPressed)
                 {
+                    animator.SetBool("attack2", !animator.GetBool("attack2"));
+                    blocking = animator.GetBool("attack2");
 
-                }
+                    if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
+                    {
+                        // Procedural Block
+                        playerController.disableLookInput = blocking;
+
+                        if (blocking)
+                        {
+                            rightArmRig.GetComponent<RigWeightTarget>().instantWeight = true;
+                            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                        }                            
+                        else
+                        {
+                            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                            rightArmRig.GetComponent<RigWeightTarget>().instantWeight = false;
+                        }
+
+                        rightHandTarget.GetComponent<FollowTarget>().move = !blocking;
+                        rightHandTarget.GetComponent<FollowTarget>().rotate = !blocking;
+
+                        //rightHandTarget.rotation = Quaternion.Euler(weaponManager.equippedWeapon.GetComponent<GreatSword>().blockingRotation);
+                    }
+                }                
             }
         }
 
-        Vector2 moveInput;
-        void OnMove()
-        {
-
-        }
-
+        [Header("Testing")]
+        public Vector3 offset;
+        public float forwardMult;
+        bool blocking;
         Vector2 lookInput;
-        void OnLook()
+        void OnLook(InputValue value)
         {
+            if (!animator.GetBool("attack2")) { return; }
 
+            lookInput = value.Get<Vector2>() * playerController.sensitivity * Time.timeScale;
+
+            // Rotate camera only up and down
+            playerController.rotationX -= lookInput.y * playerController.sensitivity * Time.timeScale;
+            playerController.rotationX = Mathf.Clamp(playerController.rotationX, playerController.mouseUpXRotLimit, playerController.mouseDownXRotLimit);
+            Camera.main.transform.eulerAngles = new Vector3(playerController.rotationX, playerController.rotationY, Camera.main.transform.eulerAngles.z);
+
+            // Rotate sword by moving your mouse left and right
+            rightHandTarget.RotateAround(rightHandTarget.position, transform.forward, lookInput.x);
+            // Move sword vertically by moving your mouse up and down
+            rightHandTarget.position = Camera.main.transform.position + Camera.main.transform.forward * forwardMult;
+            rightHandTarget.localPosition += offset;
+            //rightHandTarget.localPosition = new Vector3(rightHandTarget.localPosition.x, rightHandTarget.localPosition.y + lookInput.y * 0.01f, rightHandTarget.localPosition.z);
         }
 
         void OnMelee()

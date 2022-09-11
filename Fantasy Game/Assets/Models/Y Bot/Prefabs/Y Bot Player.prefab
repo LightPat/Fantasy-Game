@@ -385,6 +385,14 @@ MonoBehaviour:
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
     m_Visible: 1
+  - m_Transform: {fileID: 0}
+    m_Style:
+      shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
+      color: {r: 0, g: 1, b: 0, a: 0.5}
+      size: 0.2
+      position: {x: 0, y: 0, z: 0}
+      rotation: {x: 0, y: 0, z: 0}
+    m_Visible: 1
 --- !u!114 &1655502017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,7 +462,7 @@ MonoBehaviour:
       size: 0.1
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 0
+    m_Visible: 1
   - m_Transform: {fileID: 0}
     m_Style:
       shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
@@ -1733,7 +1741,6 @@ MonoBehaviour:
   spineAimRig: {fileID: 6763357609041427354}
   moveTransitionSpeed: 5
   animatorSpeed: 1
-  moveInput: {x: 0, y: 0}
   sensitivity: 0.2
   bodyRotationSpeed: 4
   mouseUpXRotLimit: -90
@@ -1743,7 +1750,6 @@ MonoBehaviour:
   rotateBodyWithCamera: 0
   rotationX: 0
   rotationY: 0
-  lookInput: {x: 0, y: 0}
   toggleSprint: 0
   toggleCrouch: 0
   reach: 5
@@ -1792,8 +1798,8 @@ MonoBehaviour:
   greatSwordStowTransition: {fileID: 6381947534667186072}
   spineStow: {fileID: 685456554}
   leftHipStow: {fileID: 8313513781927897783}
-  attackReach: 4
-  attackDamage: 10
+  offset: {x: 0.1, y: -0.5, z: 0}
+  forwardMult: 0.5
 --- !u!114 &1163105829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1827,7 +1833,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equippedWeapon: {fileID: 0}
-  weapons: []
 --- !u!114 &3945321872001441854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1840,7 +1845,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87269e2a3adad5b45b3e519667abbfd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HUD: {fileID: 7942297508958650870}
   inventoryPrefab: {fileID: 3796279741549607518, guid: 36e75a8d8c990124b85798f499c524d9, type: 3}
   pausePrefab: {fileID: 7261538855375635446, guid: 28e6f708d26a6eb4e8bdc88b90ceb96d, type: 3}
 --- !u!1 &7284513826573182686
@@ -2224,11 +2228,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00bebf8763c746b40a0a107515aa6e14, type: 3}
---- !u!1 &7942297508958650870 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5017756944073760394, guid: 00bebf8763c746b40a0a107515aa6e14, type: 3}
-  m_PrefabInstance: {fileID: 3141844425697091452}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &3764687619974300267 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2280169044744494359, guid: 00bebf8763c746b40a0a107515aa6e14, type: 3}
@@ -2326,6 +2325,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
+--- !u!4 &4574459911224855332 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6515712193588681746, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
+  m_PrefabInstance: {fileID: 7284513825097406262}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &166794980786246738 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -1781356600409242780, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
@@ -2689,11 +2693,6 @@ GameObject:
 --- !u!1 &5976470401596678734 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5195048882033904264, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
-  m_PrefabInstance: {fileID: 7284513825097406262}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &4574459911224855332 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6515712193588681746, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
   m_PrefabInstance: {fileID: 7284513825097406262}
   m_PrefabAsset: {fileID: 0}
 --- !u!136 &4203814480446809361
@@ -3377,9 +3376,9 @@ MonoBehaviour:
     m_Active: 1
   - m_Rig: {fileID: 5863527714193081494}
     m_Active: 1
-  - m_Rig: {fileID: 1655502015}
-    m_Active: 1
   - m_Rig: {fileID: 2513949398972815566}
+    m_Active: 1
+  - m_Rig: {fileID: 1655502015}
     m_Active: 1
   - m_Rig: {fileID: 7284513825998588540}
     m_Active: 1

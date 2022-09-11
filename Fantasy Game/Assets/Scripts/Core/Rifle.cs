@@ -12,7 +12,7 @@ namespace LightPat.Core
         public float bulletForce;
         public float maxRange;
 
-        public override void Attack()
+        public override void Attack1()
         {
             GameObject g = Instantiate(bullet, projectileSpawn.position, projectileSpawn.rotation);
             g.GetComponent<Projectile>().inflicter = gameObject;

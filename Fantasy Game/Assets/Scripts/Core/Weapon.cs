@@ -32,9 +32,14 @@ namespace LightPat.Core
         public bool disableRotation;
         public string offsetType;
 
-        public virtual void Attack()
+        public virtual void Attack1()
         {
-            Debug.LogWarning("Attack() hasn't been implemented yet on this weapon");
+            Debug.LogWarning("Attack1() hasn't been implemented yet on this weapon");
+        }
+
+        public virtual void Attack2()
+        {
+            Debug.LogWarning("Attack2() hasn't been implemented yet on this weapon");
         }
 
         public void ChangeOffset(string offsetType)
@@ -66,6 +71,8 @@ namespace LightPat.Core
         {
             if (transform.parent != null)
             {
+                if (transform.parent.name == "Y Bot Player") { return; }
+
                 if (settingOffsets)
                 {
                     ChangeOffset(offsetType);

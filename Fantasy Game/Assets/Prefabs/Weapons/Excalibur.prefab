@@ -23,13 +23,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4476185}
-  m_LocalRotation: {x: 0.44381094, y: -0.54878503, z: -0.44547105, w: 0.55083793}
-  m_LocalPosition: {x: 0.1096, y: 0.295, z: -0.12}
+  m_LocalRotation: {x: 0.036284205, y: -0.1831093, z: -0.682701, w: 0.7064516}
+  m_LocalPosition: {x: -0.065, y: 0.298, z: -0.231}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7871640728394659330}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: -89.786, z: -77.926}
+  m_LocalEulerAnglesHint: {x: -11.464, y: -18.333, z: -86.185}
 --- !u!1 &1072240810
 GameObject:
   m_ObjectHideFlags: 0
@@ -166,7 +166,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7871640728394659330}
   - component: {fileID: 209492641}
-  - component: {fileID: 7871640728394659328}
+  - component: {fileID: 783794268}
   m_Layer: 0
   m_Name: Excalibur
   m_TagString: Untagged
@@ -207,7 +207,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &7871640728394659328
+--- !u!114 &783794268
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -216,12 +216,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7871640728394659331}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d7cff49c03c2ac4c8027bca190eb671, type: 3}
+  m_Script: {fileID: 11500000, guid: 4088df93a0717754a944afd69ce2c81a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rightHandGrip: {fileID: 4476186}
   leftHandGrip: {fileID: 1072240811}
-  idealPersonality: 3232323232
+  idealPersonality: 
   baseDamage: 1
   weaponClass: Great Sword
   stowPoint: Spine
@@ -235,3 +235,5 @@ MonoBehaviour:
   settingOffsets: 0
   disableRotation: 0
   offsetType: 
+  blockingPosition: {x: 0, y: 0, z: 0}
+  blockingRotation: {x: 0, y: 0, z: 0}

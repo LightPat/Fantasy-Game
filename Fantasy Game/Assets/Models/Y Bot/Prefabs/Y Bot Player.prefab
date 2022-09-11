@@ -1722,9 +1722,8 @@ MonoBehaviour:
   leftHipStow: {fileID: 8313513781927897783}
   blockingSensitivity: 0.01
   initialblockingYOffset: 1.25
-  downLimit: 0
-  upLimit: 1.5
-  horizontalLimit: 0.9
+  blockingVerticalLimit: 1.5
+  blockingHorizontalLimit: 0.9
   pivotForward: 0.7
   lookOffset: {x: 90, y: 0, z: 0}
 --- !u!114 &1163105829

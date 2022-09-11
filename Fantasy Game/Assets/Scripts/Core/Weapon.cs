@@ -27,7 +27,7 @@ namespace LightPat.Core
         protected Vector3 targetLocalPosition;
         protected Vector3 targetLocalRotation;
 
-        public bool stop;
+        public bool disableUpdate;
         [Header("Used for setting offsets")]
         public bool settingOffsets;
         public bool disableRotation;
@@ -70,7 +70,7 @@ namespace LightPat.Core
 
         private void Update()
         {
-            if (stop) { return; }
+            if (disableUpdate) { return; }
 
             if (transform.parent != null)
             {

@@ -7,6 +7,5 @@ namespace LightPat.Core
     public class GreatSword : Weapon
     {
         public Vector3 blockingPosition;
-        public Vector3 blockingRotation;
     }
 }

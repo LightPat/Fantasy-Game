@@ -236,5 +236,5 @@ MonoBehaviour:
   settingOffsets: 0
   disableRotation: 0
   offsetType: 
-  blockingPosition: {x: 0.04, y: 0, z: 0.5}
+  blockingPosition: {x: 0.04, y: 1.25, z: 0.5}
   blockingRotation: {x: 0, y: 0, z: 0}

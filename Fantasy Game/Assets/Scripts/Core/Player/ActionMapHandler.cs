@@ -14,6 +14,8 @@ namespace LightPat.Core.Player
         {
             playerInput = GetComponent<PlayerInput>();
             HUD = transform.Find("PlayerHUD").gameObject;
+            if (playerInput.currentActionMap.name == "First Person")
+                Cursor.lockState = CursorLockMode.Locked;
             if (HUD == null)
                 Debug.LogError("Player HUD not found " + this);
         }

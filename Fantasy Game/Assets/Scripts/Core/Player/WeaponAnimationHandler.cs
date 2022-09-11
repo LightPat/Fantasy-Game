@@ -144,7 +144,7 @@ namespace LightPat.Core.Player
             {
                 animator.SetBool("attack2", value.isPressed);
 
-                if (weaponManager.equippedWeapon.GetComponent<GreatSword>()) // Procedural Block
+                if (weaponManager.equippedWeapon.weaponClass == "Great Sword") // Procedural Block
                 {
                     blocking = value.isPressed;
                     playerController.disableLookInput = blocking;
@@ -168,7 +168,7 @@ namespace LightPat.Core.Player
                         rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                     }
                 }
-                else if (weaponManager.equippedWeapon.GetComponent<Rifle>())
+                else if (weaponManager.equippedWeapon.weaponClass == "Rifle")
                 {
                     // Aim down sights
                 }

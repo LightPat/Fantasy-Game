@@ -24,8 +24,8 @@ namespace LightPat.Core
         public Vector3 stowedPositionOffset;
         public Vector3 stowedRotationOffset;
 
-        public Vector3 targetLocalPosition;
-        public Vector3 targetLocalRotation;
+        Vector3 targetLocalPosition;
+        Vector3 targetLocalRotation;
 
         public bool disableUpdate;
         [Header("Used for setting offsets")]

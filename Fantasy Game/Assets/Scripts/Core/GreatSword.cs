@@ -6,13 +6,8 @@ namespace LightPat.Core
 {
     public class GreatSword : Weapon
     {
-        [Header("Great Sword Specific")]
         public Vector3 blockingPosition;
         public Vector3 blockingRotation;
-
-        //private void Start()
-        //{
-        //    weaponClass = "Great Sword";
-        //}
+        public float blockingYOffset;
     }
 }

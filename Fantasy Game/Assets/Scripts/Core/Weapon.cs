@@ -24,9 +24,10 @@ namespace LightPat.Core
         public Vector3 stowedPositionOffset;
         public Vector3 stowedRotationOffset;
 
-        Vector3 targetLocalPosition;
-        Vector3 targetLocalRotation;
+        protected Vector3 targetLocalPosition;
+        protected Vector3 targetLocalRotation;
 
+        public bool stop;
         [Header("Used for setting offsets")]
         public bool settingOffsets;
         public bool disableRotation;
@@ -69,6 +70,8 @@ namespace LightPat.Core
 
         private void Update()
         {
+            if (stop) { return; }
+
             if (transform.parent != null)
             {
                 if (transform.parent.name == "Y Bot Player") { return; }

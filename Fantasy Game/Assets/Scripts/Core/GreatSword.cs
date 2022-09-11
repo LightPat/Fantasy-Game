@@ -8,6 +8,5 @@ namespace LightPat.Core
     {
         public Vector3 blockingPosition;
         public Vector3 blockingRotation;
-        public float blockingYOffset;
     }
 }

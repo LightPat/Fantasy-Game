@@ -11,7 +11,6 @@ namespace LightPat.Core.Player
     {
         [Header("Used in player camera follow")]
         public RigWeightTarget neckAimRig;
-        public RigWeightTarget spineAimRig;
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float animatorSpeed = 1;

@@ -158,11 +158,12 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                animator.SetBool("attack2", value.isPressed);
+                //animator.SetBool("attack2", value.isPressed);
 
                 if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
                 {
                     blocking = value.isPressed;
+                    //animator.SetBool("attack2", blocking);
                     // Procedural Block
                     playerController.disableLookInput = blocking;
                     weaponManager.equippedWeapon.stop = blocking;
@@ -171,21 +172,23 @@ namespace LightPat.Core.Player
                     {
                         weaponManager.equippedWeapon.transform.SetParent(greatSwordBlocking, true);
                         rightHandTarget.GetComponent<FollowTarget>().target = weaponManager.equippedWeapon.rightHandGrip;
-                        rightArmRig.GetComponent<RigWeightTarget>().instantWeight = true;
                         rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                        weaponManager.equippedWeapon.transform.localPosition = weaponManager.equippedWeapon.GetComponent<GreatSword>().blockingPosition;
-                        weaponManager.equippedWeapon.transform.localEulerAngles = weaponManager.equippedWeapon.GetComponent<GreatSword>().blockingRotation;
+                        Transform weapon = weaponManager.equippedWeapon.transform;
+                        weapon.localPosition = weapon.GetComponent<GreatSword>().blockingPosition;
+                        weapon.localEulerAngles = weapon.GetComponent<GreatSword>().blockingRotation;
 
-                        weaponManager.equippedWeapon.transform.position = new Vector3(weaponManager.equippedWeapon.transform.position.x,
-                            transform.position.y + weaponManager.equippedWeapon.GetComponent<GreatSword>().blockingYOffset,
-                            weaponManager.equippedWeapon.transform.position.z);
+                        weapon.position = new Vector3(weapon.position.x, transform.position.y + initialblockingYOffset, weapon.transform.position.z);
+
+                        startingLocPos = weaponManager.equippedWeapon.transform.localPosition;
+                        
+                        verticalOffset = 0;
+                        horizontalOffset = 0;
                     }
                     else
                     {
                         weaponManager.equippedWeapon.transform.SetParent(greatSwordGrip, true);
                         rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
                         rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                        rightArmRig.GetComponent<RigWeightTarget>().instantWeight = false;
                     }
                 }
                 else if (weaponManager.equippedWeapon.GetComponent<Rifle>())
@@ -195,25 +198,60 @@ namespace LightPat.Core.Player
             }
         }
 
-        [Header("Testing")]
-        public float pivotYOffset;
+        [Header("Blocking Testing")]
+        public float blockingSensitivity;
+        public float initialblockingYOffset;
+        public float downLimit;
+        public float upLimit;
+        public float horizontalLimit;
         bool blocking;
         Vector2 lookInput;
+        Vector3 startingLocPos;
+        float verticalOffset;
+        float horizontalOffset;
         void OnLook(InputValue value)
         {
             if (!blocking) { return; }
 
-            lookInput = value.Get<Vector2>() * playerController.sensitivity * Time.timeScale;
+            lookInput = value.Get<Vector2>();
 
             // Rotate camera only up and down
-            playerController.rotationX -= lookInput.y * playerController.sensitivity * Time.timeScale;
-            playerController.rotationX = Mathf.Clamp(playerController.rotationX, playerController.mouseUpXRotLimit, playerController.mouseDownXRotLimit);
-            Camera.main.transform.eulerAngles = new Vector3(playerController.rotationX, playerController.rotationY, Camera.main.transform.eulerAngles.z);
+            //playerController.rotationX -= lookInput.y * playerController.sensitivity * Time.timeScale;
+            //playerController.rotationX = Mathf.Clamp(playerController.rotationX, playerController.mouseUpXRotLimit, playerController.mouseDownXRotLimit);
+            //Camera.main.transform.eulerAngles = new Vector3(playerController.rotationX, playerController.rotationY, Camera.main.transform.eulerAngles.z);
 
-            Vector3 pivot = transform.position + transform.forward;
-            pivot.y += pivotYOffset;
+            Transform t = weaponManager.equippedWeapon.transform;
+            float attempt = verticalOffset + lookInput.y * blockingSensitivity * Time.timeScale * playerController.sensitivity;
+            if (attempt <= upLimit & attempt > downLimit)
+            {
+                verticalOffset += lookInput.y * blockingSensitivity * Time.timeScale * playerController.sensitivity;
+            }
+
+            attempt = horizontalOffset + lookInput.x * blockingSensitivity * Time.timeScale * playerController.sensitivity;
+            if (Mathf.Abs(attempt) <= horizontalLimit)
+            {
+                horizontalOffset += lookInput.x * blockingSensitivity * Time.timeScale * playerController.sensitivity;
+            }
+            Vector3 horizontal = Vector3.right * horizontalOffset;
+
+            t.localPosition = new Vector3(startingLocPos.x + horizontal.x, startingLocPos.y + verticalOffset, startingLocPos.z + horizontal.z);
+        }
+
+        public float pivotForward;
+        public Vector3 lookOffset;
+        private void Update()
+        {
+            if (!blocking) { return; }
+
+            Vector3 pivot = Camera.main.transform.position + Camera.main.transform.forward * pivotForward;
             gizmoPoint = pivot;
-            weaponManager.equippedWeapon.transform.RotateAround(pivot, transform.forward, lookInput.x * playerController.sensitivity * Time.timeScale);
+
+            // Make Y axis look at pivot point
+            Transform weapon = weaponManager.equippedWeapon.transform;
+            var point = pivot - weapon.position;
+            var rot = Quaternion.LookRotation(point, Vector3.up);
+            weapon.rotation = rot;
+            weapon.eulerAngles += lookOffset;
         }
 
         Vector3 gizmoPoint;

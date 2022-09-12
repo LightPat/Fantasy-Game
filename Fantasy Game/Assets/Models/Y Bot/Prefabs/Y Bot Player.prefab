@@ -1828,7 +1828,7 @@ MonoBehaviour:
   blockingSensitivity: 0.01
   blockingVerticalLimit: 1.5
   blockingHorizontalLimit: 0.9
-  blockingPivotForwardMultiplier: 0
+  blockingPivotForwardMultiplier: 0.7
   ADSParent: {fileID: 4763284015918277974}
 --- !u!114 &1163105829
 MonoBehaviour:

@@ -8,6 +8,7 @@ namespace LightPat.ProceduralAnimations
     {
         public Transform shoulder;
         public Transform wrist;
+        public Vector3 offset;
 
         private void Update()
         {
@@ -15,6 +16,7 @@ namespace LightPat.ProceduralAnimations
             Vector3 shoulderPosition = shoulder.position + shoulder.up;
 
             transform.position = (shoulderPosition + wristPosition) / 2;
+            transform.localPosition += offset;
         }
     }
 }

@@ -112,18 +112,18 @@ namespace LightPat.Core.Player
 
             weaponManager.equippedWeapon.GetComponent<Weapon>().Attack1();
 
-            if (weaponClass == "Great Sword")
-            {
+            //if (weaponClass == "Great Sword")
+            //{
                 
-            }
-            else if (weaponClass == "Rifle")
-            {
+            //}
+            //else if (weaponClass == "Rifle")
+            //{
                 
-            }
-            else
-            {
-                Debug.LogWarning("Invalid weapon class attacking " + weaponClass);
-            }
+            //}
+            //else
+            //{
+            //    Debug.LogWarning("Invalid weapon class attacking " + weaponClass);
+            //}
         }
 
         void OnAttack2(InputValue value)
@@ -146,7 +146,9 @@ namespace LightPat.Core.Player
 
                 if (weaponManager.equippedWeapon.weaponClass == "Great Sword") // Procedural Block
                 {
-                    blocking = value.isPressed;
+                    if (!value.isPressed) { return; }
+
+                    blocking = !blocking;
                     playerController.disableLookInput = blocking;
                     weaponManager.equippedWeapon.disableUpdate = blocking;
 

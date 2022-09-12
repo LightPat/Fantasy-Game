@@ -370,7 +370,7 @@ MonoBehaviour:
       size: 0.3
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 0
+    m_Visible: 1
   - m_Transform: {fileID: 0}
     m_Style:
       shape: {fileID: 4300000, guid: c6793350c150f456688e39a81f97364a, type: 2}
@@ -439,6 +439,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shoulder: {fileID: 516619163063119531}
   wrist: {fileID: 8980853241695807742}
+  offset: {x: 0, y: -1, z: 0}
 --- !u!1 &644895910363922107
 GameObject:
   m_ObjectHideFlags: 0
@@ -1573,6 +1574,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   shoulder: {fileID: 4936371722118223810}
   wrist: {fileID: 4551923632342352629}
+  offset: {x: 0, y: -1, z: 0}
 --- !u!1 &7284513825998588542
 GameObject:
   m_ObjectHideFlags: 0
@@ -1651,7 +1653,7 @@ MonoBehaviour:
       size: 0.3
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 0
+    m_Visible: 1
 --- !u!114 &975685839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1828,7 +1830,7 @@ MonoBehaviour:
   blockingSensitivity: 0.01
   blockingVerticalLimit: 1.5
   blockingHorizontalLimit: 0.9
-  blockingPivotForwardMultiplier: 0.7
+  blockingPivotForwardMultiplier: 0.5
   ADSParent: {fileID: 4763284015918277974}
 --- !u!114 &1163105829
 MonoBehaviour:

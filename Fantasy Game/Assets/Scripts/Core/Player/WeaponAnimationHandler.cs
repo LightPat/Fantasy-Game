@@ -170,15 +170,32 @@ namespace LightPat.Core.Player
                 }
                 else if (weaponManager.equippedWeapon.weaponClass == "Rifle")
                 {
+                    if (!value.isPressed) { return; }
+
                     // Aim down sights
+                    aimDownSights = !aimDownSights;
+                    weaponManager.equippedWeapon.disableUpdate = aimDownSights;
+
+                    if (aimDownSights)
+                    {
+                        weaponManager.equippedWeapon.transform.SetParent(ADSParent, true);
+                        //ADSParent.GetComponent<MultiPositionConstraint>().data.offset = weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset;
+                    }
+                    else
+                    {
+                        weaponManager.equippedWeapon.transform.SetParent(rifleGrip, true);
+                    }
                 }
             }
         }
+
+        bool aimDownSights;
 
         [Header("Great Sword Blocking Settings")]
         public float blockingSensitivity;
         public float blockingVerticalLimit;
         public float blockingHorizontalLimit;
+        public float blockingPivotForwardMultiplier;
         Vector3 blockingStartLocPos;
         Vector2 lookInput;
         float verticalOffset;
@@ -211,18 +228,27 @@ namespace LightPat.Core.Player
             weaponManager.equippedWeapon.transform.localPosition = new Vector3(blockingStartLocPos.x + horizontal.x, blockingStartLocPos.y + verticalOffset, blockingStartLocPos.z + horizontal.z);
         }
 
-        public float pivotForward;
+        [Header("Rifle Aim Down Sights Settings")]
+        public Transform ADSParent;
         private void Update()
         {
-            if (!blocking) { return; }
-
-            Vector3 pivot = Camera.main.transform.position + Camera.main.transform.forward * pivotForward;
-            // Make Y axis look at pivot point
-            Transform weapon = weaponManager.equippedWeapon.transform;
-            Vector3 point = pivot - weapon.position;
-            Quaternion rot = Quaternion.LookRotation(point, Vector3.up);
-            weapon.rotation = rot;
-            weapon.eulerAngles += new Vector3(90, 0, 0);
+            if (blocking)
+            {
+                Vector3 pivot = Camera.main.transform.position + Camera.main.transform.forward * blockingPivotForwardMultiplier;
+                // Make Y axis look at pivot point
+                Transform weapon = weaponManager.equippedWeapon.transform;
+                Vector3 point = pivot - weapon.position;
+                Quaternion rot = Quaternion.LookRotation(point, Vector3.up);
+                weapon.rotation = rot;
+                weapon.eulerAngles += new Vector3(90, 0, 0);
+            }
+            
+            if (aimDownSights)
+            {
+                Transform weapon = weaponManager.equippedWeapon.transform;
+                weapon.localPosition = Vector3.Lerp(weapon.localPosition, weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset, Time.deltaTime * 8);
+                weapon.localEulerAngles = Vector3.zero;
+            }
         }
 
         void OnMelee()

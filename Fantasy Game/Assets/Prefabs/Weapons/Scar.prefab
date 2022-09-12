@@ -77,13 +77,14 @@ MonoBehaviour:
   transitionRotationOffset: {x: 0, y: 0, z: 0}
   stowedPositionOffset: {x: 0.129, y: 0.55, z: -0.286}
   stowedRotationOffset: {x: 84.473, y: -52.856, z: 216.79}
+  disableUpdate: 0
   settingOffsets: 0
-  disableRotation: 0
   offsetType: 
   projectileSpawn: {fileID: 132269813675474515}
   bullet: {fileID: 8783793137523742586, guid: 30447685d43ef4d40a86035a3e2fb3a4, type: 3}
   bulletForce: 50
   maxRange: 150
+  ADSPosOffset: {x: 0, y: -0.18, z: 0.13}
 --- !u!1 &1649158069711076072
 GameObject:
   m_ObjectHideFlags: 0

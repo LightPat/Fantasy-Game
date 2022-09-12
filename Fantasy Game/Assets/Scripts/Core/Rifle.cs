@@ -11,6 +11,7 @@ namespace LightPat.Core
         public GameObject bullet;
         public float bulletForce;
         public float maxRange;
+        public Vector3 ADSPosOffset;
 
         public override void Attack1()
         {

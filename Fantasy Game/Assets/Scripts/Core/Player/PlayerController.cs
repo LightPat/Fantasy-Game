@@ -135,15 +135,19 @@ namespace LightPat.Core.Player
         {
             if (Time.timeScale == 1)
             {
-                Time.timeScale = 0.5f;
+                StartCoroutine(TimeScaleAbility());
             }
-            else
-            {
-                Time.timeScale = 1;
-            }
+        }
 
-            //rb.AddForce(transform.forward * 50f, ForceMode.VelocityChange);
-            //disableLookInput = !disableLookInput;
+        private IEnumerator TimeScaleAbility()
+        {
+            Time.timeScale = 0.5f;
+
+            for (float i = 0.6f; i <= 1.1; i+=0.1f)
+            {
+                yield return new WaitForSeconds(0.3f);
+                Time.timeScale = Mathf.Round(i * 100) / 100;
+            }
         }
 
         [Header("Misc Settings")]

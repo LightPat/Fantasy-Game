@@ -903,8 +903,8 @@ MonoBehaviour:
     m_MaintainOffset: 0
     m_ConstrainedAxes:
       x: 1
-      y: 0
-      z: 0
+      y: 1
+      z: 1
   m_SourceObjectsGUIToggle: 1
   m_SettingsGUIToggle: 1
 --- !u!1 &2860282880175213526
@@ -3517,6 +3517,8 @@ MonoBehaviour:
   - m_Rig: {fileID: 5863527714193081494}
     m_Active: 1
   - m_Rig: {fileID: 2513949398972815566}
+    m_Active: 1
+  - m_Rig: {fileID: 0}
     m_Active: 1
   - m_Rig: {fileID: 1655502015}
     m_Active: 1

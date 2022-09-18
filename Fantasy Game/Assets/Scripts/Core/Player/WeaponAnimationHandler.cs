@@ -144,31 +144,9 @@ namespace LightPat.Core.Player
             {
                 animator.SetBool("attack2", value.isPressed);
 
-                if (weaponManager.equippedWeapon.weaponClass == "Great Sword") // Procedural Block
+                if (weaponManager.equippedWeapon.weaponClass == "Great Sword")
                 {
-                    if (!value.isPressed) { return; }
-
-                    blocking = !blocking;
-                    playerController.disableLookInput = blocking;
-                    weaponManager.equippedWeapon.disableUpdate = blocking;
-
-                    if (blocking) // Activate right hand IK, reparent sword to root, set the initial position of the sword for blocking
-                    {
-                        Transform weapon = weaponManager.equippedWeapon.transform;
-                        weapon.SetParent(transform, true);
-                        rightHandTarget.GetComponent<FollowTarget>().target = weaponManager.equippedWeapon.rightHandGrip;
-                        rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                        weapon.localPosition = weapon.GetComponent<GreatSword>().blockingPosition;
-                        blockingStartLocPos = weapon.localPosition;
-                        verticalOffset = 0;
-                        horizontalOffset = 0;
-                    }
-                    else
-                    {
-                        weaponManager.equippedWeapon.transform.SetParent(greatSwordGrip, true);
-                        rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-                        rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                    }
+                    GetComponent<Attributes>().blockProjectile = value.isPressed;
                 }
                 else if (weaponManager.equippedWeapon.weaponClass == "Rifle")
                 {
@@ -191,60 +169,20 @@ namespace LightPat.Core.Player
             }
         }
 
-        bool aimDownSights;
-
-        [Header("Great Sword Blocking Settings")]
-        public float blockingSensitivity;
-        public float blockingVerticalLimit;
-        public float blockingHorizontalLimit;
-        public float blockingPivotForwardMultiplier;
-        Vector3 blockingStartLocPos;
         Vector2 lookInput;
-        float verticalOffset;
-        float horizontalOffset;
-        bool blocking;
         void OnLook(InputValue value)
         {
-            if (!blocking) { return; }
-
             lookInput = value.Get<Vector2>();
 
-            // Rotate camera only up and down
-            //playerController.rotationX -= lookInput.y * playerController.sensitivity * Time.timeScale;
-            //playerController.rotationX = Mathf.Clamp(playerController.rotationX, playerController.mouseUpXRotLimit, playerController.mouseDownXRotLimit);
-            //Camera.main.transform.eulerAngles = new Vector3(playerController.rotationX, playerController.rotationY, Camera.main.transform.eulerAngles.z);
-
-            float attempt = verticalOffset + lookInput.y * blockingSensitivity * Time.timeScale * playerController.sensitivity;
-            if (attempt <= blockingVerticalLimit & attempt > 0)
-            {
-                verticalOffset += lookInput.y * blockingSensitivity * Time.timeScale * playerController.sensitivity;
-            }
-
-            attempt = horizontalOffset + lookInput.x * blockingSensitivity * Time.timeScale * playerController.sensitivity;
-            if (Mathf.Abs(attempt) <= blockingHorizontalLimit)
-            {
-                horizontalOffset += lookInput.x * blockingSensitivity * Time.timeScale * playerController.sensitivity;
-            }
-            Vector3 horizontal = Vector3.right * horizontalOffset;
-
-            weaponManager.equippedWeapon.transform.localPosition = new Vector3(blockingStartLocPos.x + horizontal.x, blockingStartLocPos.y + verticalOffset, blockingStartLocPos.z + horizontal.z);
+            if (lookInput.x != 0 & !animator.GetBool("attack2"))
+                animator.SetFloat("lookInputX", lookInput.x);
         }
 
         [Header("Rifle Aim Down Sights Settings")]
         public Transform ADSParent;
+        bool aimDownSights;
         private void Update()
-        {
-            if (blocking)
-            {
-                Vector3 pivot = Camera.main.transform.position + Camera.main.transform.forward * blockingPivotForwardMultiplier;
-                // Make Y axis look at pivot point
-                Transform weapon = weaponManager.equippedWeapon.transform;
-                Vector3 point = pivot - weapon.position;
-                Quaternion rot = Quaternion.LookRotation(point, Vector3.up);
-                weapon.rotation = rot;
-                weapon.eulerAngles += new Vector3(90, 0, 0);
-            }
-            
+        {            
             if (aimDownSights)
             {
                 Transform weapon = weaponManager.equippedWeapon.transform;

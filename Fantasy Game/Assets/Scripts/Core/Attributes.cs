@@ -11,6 +11,7 @@ namespace LightPat.Core
         [HideInInspector] public sbyte[] personalityValues;
         [HideInInspector] public sbyte[] physicalValues;
         [HideInInspector] public sbyte[] magicalValues;
+        public bool blockProjectile;
         [Header("Health")]
         public float maxHealth = 100f;
         private float HP;
@@ -49,7 +50,7 @@ namespace LightPat.Core
         public void InflictDamage(float damage, GameObject inflicter)
         {
             HP -= damage;
-            //SendMessage("OnAttacked", inflicter);
+            SendMessage("OnAttacked", inflicter);
 
             if (animator != null)
             {

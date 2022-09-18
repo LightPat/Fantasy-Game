@@ -18,14 +18,23 @@ namespace LightPat.Core
 
             if (other.attachedRigidbody)
             {
-                if (!other.GetComponentInParent<Weapon>())
+                Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
+                if (hit)
                 {
-                    Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
-                    if (hit)
+                    if (hit.blockProjectile)
+                    {
+
+                    }
+                    else
                     {
                         hit.InflictDamage(damage, inflicter);
                     }
-                }                
+                }
+
+                //if (!other.GetComponentInParent<Weapon>())
+                //{
+                    
+                //}                
             }
 
             Destroy(gameObject);

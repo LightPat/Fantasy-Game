@@ -144,6 +144,35 @@ namespace LightPat.EnemyAI
             }
         }
 
+        [Header("Attack Settings")]
+        public float attackDamage = 10f;
+        public float attackReach = 4f;
+        public float attackCooldown = 1.5f;
+        bool allowAttack = true;
+        private void Attack()
+        {
+            if (!allowAttack) { return; }
+
+            // If we don't have a target check a raycast
+            RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.forward, attackReach);
+            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+
+            foreach (RaycastHit hit in allHits)
+            {
+                if (hit.transform.gameObject == gameObject)
+                {
+                    continue;
+                }
+
+                if (hit.transform.GetComponent<Attributes>())
+                {
+                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
+                    StartCoroutine(AttackCooldown());
+                }
+                break;
+            }
+        }
+
         private IEnumerator RefreshRoamingPosition()
         {
             roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
@@ -153,6 +182,13 @@ namespace LightPat.EnemyAI
             }
 
             yield return new WaitForEndOfFrame();
+        }
+
+        private IEnumerator AttackCooldown()
+        {
+            allowAttack = false;
+            yield return new WaitForSeconds(attackCooldown);
+            allowAttack = true;
         }
 
         private void OnDrawGizmos()

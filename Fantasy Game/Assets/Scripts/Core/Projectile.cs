@@ -11,6 +11,12 @@ namespace LightPat.Core
 
         bool damageRunning;
 
+        public Vector3 startPos;
+        private void Start()
+        {
+            startPos = transform.position;
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if (damageRunning) { return; }
@@ -21,20 +27,8 @@ namespace LightPat.Core
                 Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
                 if (hit)
                 {
-                    if (hit.blockProjectile)
-                    {
-
-                    }
-                    else
-                    {
-                        hit.InflictDamage(damage, inflicter);
-                    }
+                    hit.InflictDamage(damage, inflicter, gameObject);
                 }
-
-                //if (!other.GetComponentInParent<Weapon>())
-                //{
-                    
-                //}                
             }
 
             Destroy(gameObject);

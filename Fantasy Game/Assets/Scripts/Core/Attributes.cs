@@ -11,7 +11,7 @@ namespace LightPat.Core
         [HideInInspector] public sbyte[] personalityValues;
         [HideInInspector] public sbyte[] physicalValues;
         [HideInInspector] public sbyte[] magicalValues;
-        public bool blockProjectile;
+        public bool blocking;
         [Header("Health")]
         public float maxHealth = 100f;
         private float HP;
@@ -31,44 +31,56 @@ namespace LightPat.Core
             UpdateHPDisplay();
         }
 
-        float damageAnimSpeed;
-        private void Update()
-        {
-            Vector2 interp = Vector2.MoveTowards(new Vector2(animator.GetFloat("damageX"), animator.GetFloat("damageY")), new Vector2(xTarget, yTarget), Time.deltaTime * damageAnimSpeed);
-            animator.SetFloat("damageX", interp.x);
-            animator.SetFloat("damageY", interp.y);
-            animator.SetBool("reactDamage", reactDamage);
-
-            if (animator.GetFloat("damageX") == xTarget) { xTarget = 0; }
-            if (animator.GetFloat("damageY") == yTarget) { yTarget = 0; }
-            if (reactDamage) { reactDamage = false; }
-        }
-
-        bool reactDamage;
-        float xTarget;
-        float yTarget;
         public void InflictDamage(float damage, GameObject inflicter)
         {
-            HP -= damage;
+            if (!blocking)
+                HP -= damage;
+
             SendMessage("OnAttacked", inflicter);
 
             if (animator != null)
             {
                 Vector3 dir = (inflicter.transform.position - transform.position).normalized;
-
-                xTarget = dir.x;
-                yTarget = dir.z;
-                reactDamage = true;
-
-                damageAnimSpeed = damage / 10;
+                animator.SetFloat("damageAngle", Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z)));
+                animator.SetBool("reactDamage", true);
+                StartCoroutine(ResetReactDamageBool());
             }
 
             if (HP <= 0)
             {
-                if (animator != null) { animator.Play("Death"); }
+                if (animator != null) { Debug.Log("Play Death"); }
             }
 
             UpdateHPDisplay();
+        }
+
+        public void InflictDamage(float damage, GameObject inflicter, GameObject projectile)
+        {
+            if (!blocking)
+                HP -= damage;
+
+            SendMessage("OnAttacked", inflicter);
+
+            if (animator != null)
+            {
+                Vector3 dir = (projectile.transform.position - transform.position).normalized;
+                animator.SetFloat("damageAngle", Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z)));
+                animator.SetBool("reactDamage", true);
+                StartCoroutine(ResetReactDamageBool());
+            }
+
+            if (HP <= 0)
+            {
+                if (animator != null) { Debug.Log("Play Death"); }
+            }
+
+            UpdateHPDisplay();
+        }
+
+        private IEnumerator ResetReactDamageBool()
+        {
+            yield return null;
+            animator.SetBool("reactDamage", false);
         }
 
         private void UpdateHPDisplay()
@@ -88,7 +100,7 @@ namespace LightPat.Core
 
         void OnAttacked(GameObject attacker)
         {
-            Debug.Log(name + " is being attacked by: " + attacker);
+            //Debug.Log(name + " is being attacked by: " + attacker);
         }
     }
 }

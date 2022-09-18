@@ -146,7 +146,7 @@ namespace LightPat.Core.Player
 
                 if (weaponManager.equippedWeapon.weaponClass == "Great Sword")
                 {
-                    GetComponent<Attributes>().blockProjectile = value.isPressed;
+                    GetComponent<Attributes>().blocking = value.isPressed;
                 }
                 else if (weaponManager.equippedWeapon.weaponClass == "Rifle")
                 {

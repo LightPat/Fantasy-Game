@@ -6,6 +6,6 @@ namespace LightPat.Core
 {
     public abstract class Interactable : MonoBehaviour
     {
-        public abstract void Invoke();
+        public abstract void Invoke(GameObject invoker);
     }
 }

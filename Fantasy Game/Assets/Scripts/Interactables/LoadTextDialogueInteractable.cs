@@ -9,7 +9,7 @@ namespace LightPat.Interactables
     [RequireComponent(typeof(TextDialogue))]
     public class LoadTextDialogueInteractable : Interactable
     {
-        public override void Invoke()
+        public override void Invoke(GameObject invoker)
         {
             GetComponent<TextDialogue>().SendDialogue();
         }

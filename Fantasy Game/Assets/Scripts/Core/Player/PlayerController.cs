@@ -22,6 +22,7 @@ namespace LightPat.Core.Player
         {
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody>();
+            prevRotationState = !rotateBodyWithCamera;
         }
 
         // Teleportation stair walking
@@ -60,30 +61,63 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool disableCameraLookInput;
         public bool rotateBodyWithCamera;
-        [HideInInspector] public float rotationX;
-        [HideInInspector] public float rotationY;
         Vector2 lookInput;
         Vector3 bodyRotation;
-
         void OnLook(InputValue value)
         {
             if (disableLookInput) { return; }
-            lookInput = value.Get<Vector2>();
+            lookInput = value.Get<Vector2>() * sensitivity * Time.timeScale;
 
-            rotationY += lookInput.x * sensitivity * Time.timeScale;
-            if (!disableCameraLookInput)
-            {
-                rotationX -= lookInput.y * sensitivity * Time.timeScale;
-                rotationX = Mathf.Clamp(rotationX, mouseUpXRotLimit, mouseDownXRotLimit);
-                Camera.main.transform.eulerAngles = new Vector3(rotationX, rotationY, Camera.main.transform.eulerAngles.z);
-            }
-
-            bodyRotation = new Vector3(transform.eulerAngles.x, rotationY + lookInput.x * sensitivity, transform.eulerAngles.z);
-
+            // Body Rotation Logic (Rotation Around Y Axis)
+            bodyRotation = new Vector3(transform.eulerAngles.x, bodyRotation.y + lookInput.x, transform.eulerAngles.z);
             if (rotateBodyWithCamera)
-                transform.rotation = Quaternion.Euler(bodyRotation);
+                rb.MoveRotation(Quaternion.Euler(bodyRotation));
+
+            // Camera Rotation Logic (Rotation Around X Axis)
+            if (disableCameraLookInput) { return; }
+            Transform camTransform = Camera.main.transform;
+            camTransform.Rotate(new Vector3(-lookInput.y, 0, 0), Space.Self);
+            float attemptedXAngle;
+            if (!rotateBodyWithCamera)
+            {
+                camTransform.localEulerAngles = new Vector3(camTransform.localEulerAngles.x, camTransform.localEulerAngles.y + lookInput.x, camTransform.localEulerAngles.z);
+                attemptedXAngle = Vector3.Angle(Quaternion.Euler(bodyRotation) * Vector3.forward, camTransform.forward);
+
+                if (camTransform.forward.y > 0)
+                {
+                    attemptedXAngle *= -1;
+                }
+
+                if (attemptedXAngle > mouseDownXRotLimit)
+                {
+                    camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, bodyRotation.y, 0);
+                }
+                else if (attemptedXAngle < mouseUpXRotLimit)
+                {
+                    camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, bodyRotation.y, 0);
+                }
+            }
+            else
+            {
+                attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
+
+                if (camTransform.forward.y > 0)
+                {
+                    attemptedXAngle *= -1;
+                }
+
+                if (attemptedXAngle > mouseDownXRotLimit)
+                {
+                    camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, 0, 0);
+                }
+                else if (attemptedXAngle < mouseUpXRotLimit)
+                {
+                    camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, 0, 0);
+                }
+            }
         }
 
+        bool prevRotationState;
         private void Update()
         {
             float xTarget = moveInput.x;
@@ -123,12 +157,21 @@ namespace LightPat.Core.Player
             if (animator.GetBool("jumping")) { animator.SetFloat("idleTime", 0); }
 
             animator.speed = animatorSpeed;
-        }
 
-        private void LateUpdate()
-        {
+            if (!rotateBodyWithCamera & prevRotationState)
+            {
+                Camera.main.transform.SetParent(null);
+            }
+            else if (rotateBodyWithCamera & !prevRotationState)
+            {
+                transform.rotation = Quaternion.Euler(bodyRotation);
+                Camera.main.transform.SetParent(transform);
+            }
+
             if (!rotateBodyWithCamera)
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed);
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed));
+
+            prevRotationState = rotateBodyWithCamera;
         }
 
         void OnAbility()
@@ -141,9 +184,9 @@ namespace LightPat.Core.Player
 
         private IEnumerator TimeScaleAbility()
         {
-            Time.timeScale = 0.5f;
+            Time.timeScale = 0.1f;
 
-            for (float i = 0.6f; i <= 1.1; i+=0.1f)
+            for (float i = 0.2f; i <= 1.1; i+=0.1f)
             {
                 yield return new WaitForSeconds(0.3f);
                 Time.timeScale = Mathf.Round(i * 100) / 100;
@@ -279,7 +322,7 @@ namespace LightPat.Core.Player
 
                 if (hit.transform.GetComponent<Interactable>())
                 {
-                    hit.transform.GetComponent<Interactable>().Invoke();
+                    hit.transform.GetComponent<Interactable>().Invoke(gameObject);
                 }
                 break;
             }

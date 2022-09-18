@@ -37,15 +37,6 @@ namespace LightPat.Core.Player
             }
             else if (!updateRotationWithTarget & previousRotationState)
             {
-                if (transform.eulerAngles.x > playerController.mouseDownXRotLimit) // If our vertical rotation is greater than the positive look bound, make it a negative angle
-                {
-                    playerController.rotationX = 360 - transform.eulerAngles.x;
-                }
-                else
-                {
-                    playerController.rotationX = transform.eulerAngles.x;
-                }
-                playerController.rotationY = transform.eulerAngles.y;
                 playerController.neckAimRig.weightTarget = 1;
                 playerController.disableLookInput = false;
                 if (playerWeaponManager.equippedWeapon != null)

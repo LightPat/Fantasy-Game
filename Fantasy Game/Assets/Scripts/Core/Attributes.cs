@@ -48,7 +48,7 @@ namespace LightPat.Core
 
             if (HP <= 0)
             {
-                if (animator != null) { Debug.Log("Play Death"); }
+                if (animator != null) { animator.SetBool("dead", true); }
             }
 
             UpdateHPDisplay();
@@ -71,7 +71,7 @@ namespace LightPat.Core
 
             if (HP <= 0)
             {
-                if (animator != null) { Debug.Log("Play Death"); }
+                if (animator != null) { animator.SetBool("dead", true); }
             }
 
             UpdateHPDisplay();

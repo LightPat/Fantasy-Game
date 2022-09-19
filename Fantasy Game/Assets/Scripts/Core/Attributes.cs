@@ -44,11 +44,8 @@ namespace LightPat.Core
                 animator.SetFloat("damageAngle", Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z)));
                 animator.SetBool("reactDamage", true);
                 StartCoroutine(ResetReactDamageBool());
-            }
 
-            if (HP <= 0)
-            {
-                if (animator != null) { animator.SetBool("dead", true); }
+                if (HP <= 0) { animator.SetBool("dead", true); }
             }
 
             UpdateHPDisplay();
@@ -64,14 +61,12 @@ namespace LightPat.Core
             if (animator != null)
             {
                 Vector3 dir = (projectile.transform.position - transform.position).normalized;
-                animator.SetFloat("damageAngle", Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z)));
+                float damageAngle = Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z));
+                animator.SetFloat("damageAngle", damageAngle);
                 animator.SetBool("reactDamage", true);
                 StartCoroutine(ResetReactDamageBool());
-            }
 
-            if (HP <= 0)
-            {
-                if (animator != null) { animator.SetBool("dead", true); }
+                if (HP <= 0) { animator.SetBool("dead", true); }
             }
 
             UpdateHPDisplay();

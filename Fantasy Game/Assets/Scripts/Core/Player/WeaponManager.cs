@@ -17,11 +17,19 @@ namespace LightPat.Core.Player
             playerHUD.ChangeSlotStyle(slot, TMPro.FontStyles.Bold);
             equippedWeapon = weapons[slot];
             playerController.rotateBodyWithCamera = true;
+            if (equippedWeapon.weaponClass == "Great Sword")
+            {
+                playerController.lookAngleUI.gameObject.SetActive(true);
+            }
         }
 
         public void StowWeapon()
         {
             playerHUD.ChangeSlotStyle(GetEquippedWeaponIndex(), TMPro.FontStyles.Normal);
+            if (equippedWeapon.weaponClass == "Great Sword")
+            {
+                playerController.lookAngleUI.gameObject.SetActive(false);
+            }
             equippedWeapon = null;
             playerController.rotateBodyWithCamera = false;
         }

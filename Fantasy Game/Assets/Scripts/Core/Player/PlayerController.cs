@@ -63,36 +63,40 @@ namespace LightPat.Core.Player
         public bool rotateBodyWithCamera;
         Vector2 lookInput;
         Vector3 bodyRotation;
-        public Transform arrow;
-        public float arrowSpeed;
-        public float arrowAngle;
-        float prevArrowAngle;
+        public Transform lookAngleUI;
+        public float lookAngleRotSpeed;
+        float lookAngle;
+        float prevLookAngle;
         void OnLook(InputValue value)
         {
             lookInput = value.Get<Vector2>();
-
-            //if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
-            //{
-            //    if (lookInput.x != 0)
-            //        animator.SetFloat("lookInputX", lookInput.x);
-            //    if (lookInput.y != 0)
-            //        animator.SetFloat("lookInputY", lookInput.y);
-            //}
 
             if (lookInput != Vector2.zero)
             {
                 if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
                 {
-                    arrowAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
+                    lookAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
                 }
 
-                if (prevArrowAngle < 0 & arrowAngle == 180)
+                if (lookAngle == 0)
                 {
-                    arrowAngle *= -1;
+                    if (prevLookAngle > 0)
+                    {
+                        lookAngle = 1;
+                    }
+                    else if (prevLookAngle < 0)
+                    {
+                        lookAngle = -1;
+                    }
                 }
 
-                animator.SetFloat("arrowAngle", arrowAngle);
-                prevArrowAngle = arrowAngle;
+                if (prevLookAngle < 0 & lookAngle == 180)
+                {
+                    lookAngle *= -1;
+                }
+
+                animator.SetFloat("lookAngle", lookAngle);
+                prevLookAngle = lookAngle;
             }
 
             if (disableLookInput) { return; }
@@ -150,7 +154,7 @@ namespace LightPat.Core.Player
         bool prevRotationState;
         private void Update()
         {
-            arrow.rotation = Quaternion.Slerp(arrow.rotation, Quaternion.Euler(new Vector3(0,0,-arrowAngle)), arrowSpeed * Time.deltaTime);
+            lookAngleUI.rotation = Quaternion.Slerp(lookAngleUI.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), lookAngleRotSpeed * Time.deltaTime);
 
             float xTarget = moveInput.x;
             if (running) { xTarget *= runTarget; }

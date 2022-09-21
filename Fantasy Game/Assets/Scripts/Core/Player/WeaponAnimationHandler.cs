@@ -169,15 +169,6 @@ namespace LightPat.Core.Player
             }
         }
 
-        Vector2 lookInput;
-        void OnLook(InputValue value)
-        {
-            lookInput = value.Get<Vector2>();
-
-            if (lookInput.x != 0 & !animator.GetBool("attack2"))
-                animator.SetFloat("lookInputX", lookInput.x);
-        }
-
         [Header("Rifle Aim Down Sights Settings")]
         public Transform ADSParent;
         bool aimDownSights;
@@ -266,6 +257,7 @@ namespace LightPat.Core.Player
                 //    sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
                 //    sheath.hasPlayer = true;
                 //}
+                playerController.neckAimRig.weightTarget = 0;
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                 yield return new WaitUntil(() => rightArmRig.weight == 0);
                 rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;

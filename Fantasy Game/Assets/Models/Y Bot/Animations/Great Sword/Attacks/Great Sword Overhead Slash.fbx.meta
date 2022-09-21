@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d238919cbe5c3e24c813e9d8570e2d75
+guid: 055a42854b33eee4e8d1042f90d0d6d1
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
@@ -7,8 +7,8 @@ ModelImporter:
       74: -203655887218126122
     second: mixamo.com
   - first:
-      74: -9012975650063311509
-    second: Great Sword Slash 3
+      74: -4621807632254752658
+    second: Great Sword Overhead Slash
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -38,11 +38,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Great Sword Slash 3
+      name: Great Sword Overhead Slash
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 107
+      lastFrame: 76
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

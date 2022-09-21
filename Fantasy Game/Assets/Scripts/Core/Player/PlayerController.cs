@@ -63,10 +63,29 @@ namespace LightPat.Core.Player
         public bool rotateBodyWithCamera;
         Vector2 lookInput;
         Vector3 bodyRotation;
+        public Transform arrow;
+        public float arrowSpeed;
+        float arrowAngle;
         void OnLook(InputValue value)
         {
+            lookInput = value.Get<Vector2>();
+
+            //if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
+            //{
+            //    if (lookInput.x != 0)
+            //        animator.SetFloat("lookInputX", lookInput.x);
+            //    if (lookInput.y != 0)
+            //        animator.SetFloat("lookInputY", lookInput.y);
+            //}
+
+            if (lookInput != Vector2.zero)
+            {
+                arrowAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
+                animator.SetFloat("arrowAngle", arrowAngle);
+            }
+
             if (disableLookInput) { return; }
-            lookInput = value.Get<Vector2>() * sensitivity * Time.timeScale;
+            lookInput *= sensitivity * Time.timeScale;
 
             // Body Rotation Logic (Rotation Around Y Axis)
             bodyRotation = new Vector3(transform.eulerAngles.x, bodyRotation.y + lookInput.x, transform.eulerAngles.z);
@@ -120,15 +139,17 @@ namespace LightPat.Core.Player
         bool prevRotationState;
         private void Update()
         {
+            arrow.rotation = Quaternion.Slerp(arrow.rotation, Quaternion.Euler(new Vector3(0,0,-arrowAngle)), arrowSpeed * Time.deltaTime);
+
             float xTarget = moveInput.x;
             if (running) { xTarget *= runTarget; }
-            float x = Mathf.Lerp(animator.GetFloat("x"), xTarget, Time.deltaTime * moveTransitionSpeed);
-            animator.SetFloat("x", x);
+            float x = Mathf.Lerp(animator.GetFloat("moveInputX"), xTarget, Time.deltaTime * moveTransitionSpeed);
+            animator.SetFloat("moveInputX", x);
 
             float yTarget = moveInput.y;
             if (running) { yTarget *= runTarget; }
-            float y = Mathf.Lerp(animator.GetFloat("y"), yTarget, Time.deltaTime * moveTransitionSpeed);
-            animator.SetFloat("y", y);
+            float y = Mathf.Lerp(animator.GetFloat("moveInputY"), yTarget, Time.deltaTime * moveTransitionSpeed);
+            animator.SetFloat("moveInputY", y);
 
             if (moveInput == Vector2.zero)
             {

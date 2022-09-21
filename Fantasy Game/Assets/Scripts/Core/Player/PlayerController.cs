@@ -65,7 +65,8 @@ namespace LightPat.Core.Player
         Vector3 bodyRotation;
         public Transform arrow;
         public float arrowSpeed;
-        float arrowAngle;
+        public float arrowAngle;
+        float prevArrowAngle;
         void OnLook(InputValue value)
         {
             lookInput = value.Get<Vector2>();
@@ -80,8 +81,18 @@ namespace LightPat.Core.Player
 
             if (lookInput != Vector2.zero)
             {
-                arrowAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
+                if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
+                {
+                    arrowAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
+                }
+
+                if (prevArrowAngle < 0 & arrowAngle == 180)
+                {
+                    arrowAngle *= -1;
+                }
+
                 animator.SetFloat("arrowAngle", arrowAngle);
+                prevArrowAngle = arrowAngle;
             }
 
             if (disableLookInput) { return; }

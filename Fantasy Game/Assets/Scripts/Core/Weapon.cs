@@ -67,7 +67,7 @@ namespace LightPat.Core
             targetLocalRotation = playerRotationOffset;
         }
 
-        private void Update()
+        protected void Update()
         {
             if (disableUpdate) { return; }
 

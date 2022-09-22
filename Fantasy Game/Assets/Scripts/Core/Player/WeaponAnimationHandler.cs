@@ -22,10 +22,12 @@ namespace LightPat.Core.Player
         public Transform leftHandTarget;
         public Rig spineAimRig;
         [Header("Weapon Grip Points")]
-        public Transform greatSwordGrip;
         public Transform rifleGrip;
+        public Transform pistolGrip;
+        public Transform greatSwordGrip;
         [Header("Transition Points")]
         public Transform rifleStowTransition;
+        public Transform pistolStowTransition;
         public Transform greatSwordStowTransition;
         [Header("Stow Points")]
         public Transform spineStow;
@@ -257,14 +259,21 @@ namespace LightPat.Core.Player
                 //    sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
                 //    sheath.hasPlayer = true;
                 //}
-                playerController.neckAimRig.weightTarget = 0;
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                 yield return new WaitUntil(() => rightArmRig.weight == 0);
                 rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
             }
+            else if (weapon.weaponClass == "Pistol")
+            {
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                yield return new WaitUntil(() => rightArmRig.weight == 0);
+                //rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
+                rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
+            }
             else
             {
-                Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.weaponClass);
+                Debug.LogError("Invalid weapon class on weaponEquip()" + weapon + " " + weapon.weaponClass);
             }
 
             int slot = weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
@@ -302,7 +311,7 @@ namespace LightPat.Core.Player
             }
             else
             {
-                Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + equippedWeapon + " " + equippedWeapon.weaponClass);
+                Debug.LogError("This weapon doesn't have a valid class when trying to stow it " + equippedWeapon + " " + equippedWeapon.weaponClass);
             }
 
             // Wait until stow animation has finished playing
@@ -497,6 +506,10 @@ namespace LightPat.Core.Player
             {
                 return rifleGrip;
             }
+            else if (weaponClass == "Pistol")
+            {
+                return pistolGrip;
+            }
             else
             {
                 Debug.LogWarning("Invalid weapon grip class " + weaponClass);
@@ -513,6 +526,10 @@ namespace LightPat.Core.Player
             else if (weaponClass == "Rifle")
             {
                 return rifleStowTransition;
+            }
+            else if (weaponClass == "Pistol")
+            {
+                return pistolStowTransition;
             }
             else
             {

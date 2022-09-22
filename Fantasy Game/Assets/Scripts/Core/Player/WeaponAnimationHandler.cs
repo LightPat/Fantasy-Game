@@ -266,10 +266,13 @@ namespace LightPat.Core.Player
             else if (weapon.weaponClass == "Pistol")
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                yield return new WaitUntil(() => rightArmRig.weight == 0);
-                //rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
-                rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
+                rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
+
+                Pistol pistolComponent = weapon.GetComponent<Pistol>();
+                PistolPositionSolver positionSolver = gripPoint.parent.parent.GetComponentInChildren<PistolPositionSolver>();
+                positionSolver.forwardMult = pistolComponent.forwardMult;
+                positionSolver.rightMult = pistolComponent.rightMult;
+                positionSolver.upMult = pistolComponent.upMult;
             }
             else
             {

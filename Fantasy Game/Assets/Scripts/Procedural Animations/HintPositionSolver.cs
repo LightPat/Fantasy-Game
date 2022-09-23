@@ -6,16 +6,53 @@ namespace LightPat.ProceduralAnimations
 {
     public class HintPositionSolver : MonoBehaviour
     {
-        public Transform shoulder;
-        public Transform wrist;
+        public Transform root;
+        public Axis rootAxis;
+        public float rootMultiplier = 1;
+        public Transform tip;
+        public Axis tipAxis;
+        public float tipMultiplier = 1;
         public Vector3 offset;
+        public enum Axis
+        {
+            X,
+            Y,
+            Z
+        }
 
+        Vector3 rootPosition;
+        Vector3 tipPosition;
         private void Update()
         {
-            Vector3 wristPosition = wrist.position + wrist.up * -1;
-            Vector3 shoulderPosition = shoulder.position + shoulder.up;
+            rootPosition = root.position;
+            switch (rootAxis)
+            {
+                case Axis.X:
+                    rootPosition += root.right * rootMultiplier;
+                    break;
+                case Axis.Y:
+                    rootPosition += root.up * rootMultiplier;
+                    break;
+                case Axis.Z:
+                    rootPosition += root.forward * rootMultiplier;
+                    break;
+            }
 
-            transform.position = (shoulderPosition + wristPosition) / 2;
+            tipPosition = tip.position;
+            switch (tipAxis)
+            {
+                case Axis.X:
+                    tipPosition += tip.right * tipMultiplier;
+                    break;
+                case Axis.Y:
+                    tipPosition += tip.up * tipMultiplier;
+                    break;
+                case Axis.Z:
+                    tipPosition += tip.forward * tipMultiplier;
+                    break;
+            }
+
+            transform.position = (rootPosition + tipPosition) / 2;
             transform.localPosition += offset;
         }
     }

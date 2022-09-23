@@ -269,10 +269,13 @@ namespace LightPat.Core.Player
                 rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
 
                 Pistol pistolComponent = weapon.GetComponent<Pistol>();
-                PistolPositionSolver positionSolver = gripPoint.parent.parent.GetComponentInChildren<PistolPositionSolver>();
-                positionSolver.forwardMult = pistolComponent.forwardMult;
-                positionSolver.rightMult = pistolComponent.rightMult;
-                positionSolver.upMult = pistolComponent.upMult;
+                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.forwardMult, pistolComponent.rightMult, pistolComponent.upMult);
+                
+                // New
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = weapon.transform.Find("rightFingers").GetChild(i);
+                }
             }
             else
             {
@@ -283,6 +286,9 @@ namespace LightPat.Core.Player
             weaponManager.DrawWeapon(slot); // Draw most recently added weapon
             equipWeaponRunning = false;
         }
+
+        [Header("NEW")]
+        public FollowTarget[] rightFingerIKs;
 
         private IEnumerator StowWeapon()
         {

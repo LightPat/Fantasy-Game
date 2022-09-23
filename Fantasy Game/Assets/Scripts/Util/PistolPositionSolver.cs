@@ -13,6 +13,13 @@ namespace LightPat.Util
         public Transform firstShoulder;
         public Transform secondShoulder;
 
+        public void UpdateMultipliers(float forward, float right, float up)
+        {
+            forwardMult = forward;
+            rightMult = right;
+            upMult = up;
+        }
+
         private void Update()
         {
             transform.position = parentBone.position;

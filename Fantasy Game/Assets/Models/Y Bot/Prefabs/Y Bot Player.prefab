@@ -481,6 +481,8 @@ MonoBehaviour:
   forwardMult: 0
   rightMult: 0
   upMult: 0
+  firstShoulder: {fileID: 516619163063119531}
+  secondShoulder: {fileID: 4936371722118223810}
 --- !u!1 &149739439606901593
 GameObject:
   m_ObjectHideFlags: 0

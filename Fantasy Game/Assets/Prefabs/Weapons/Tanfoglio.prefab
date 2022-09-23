@@ -140,7 +140,7 @@ MonoBehaviour:
   disableUpdate: 0
   settingOffsets: 0
   offsetType: 
-  forwardMult: 0.67
+  forwardMult: 0.5
   rightMult: 0.03
   upMult: 0.16
 --- !u!114 &3216810048022886994

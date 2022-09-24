@@ -276,6 +276,7 @@ namespace LightPat.Core.Player
                 {
                     rightFingerIKs[i].target = weapon.transform.Find("rightFingers").GetChild(i);
                 }
+                rightFingerRig.weightTarget = 1;
             }
             else
             {
@@ -288,6 +289,7 @@ namespace LightPat.Core.Player
         }
 
         [Header("NEW")]
+        public RigWeightTarget rightFingerRig;
         public FollowTarget[] rightFingerIKs;
 
         private IEnumerator StowWeapon()

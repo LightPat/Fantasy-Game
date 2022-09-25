@@ -21,6 +21,8 @@ namespace LightPat.Core.Player
         public Transform rightHandTarget;
         public Transform leftHandTarget;
         public Rig spineAimRig;
+        public RigWeightTarget rightFingerRig;
+        public RigWeightTarget leftFingerRig;
         [Header("Weapon Grip Points")]
         public Transform rifleGrip;
         public Transform pistolGrip;
@@ -36,14 +38,16 @@ namespace LightPat.Core.Player
         AnimatorLayerWeightManager weightManager;
         Animator animator;
         WeaponManager weaponManager;
-        PlayerController playerController;
+        FollowTarget[] rightFingerIKs;
+        FollowTarget[] leftFingerIKs;
 
         private void Start()
         {
             weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
             weaponManager = GetComponent<WeaponManager>();
-            playerController = GetComponent<PlayerController>();
+            rightFingerIKs = rightFingerRig.GetComponentsInChildren<FollowTarget>();
+            leftFingerIKs = leftFingerRig.GetComponentsInChildren<FollowTarget>();
         }
 
         void OnInteract()
@@ -270,13 +274,16 @@ namespace LightPat.Core.Player
 
                 Pistol pistolComponent = weapon.GetComponent<Pistol>();
                 gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.forwardMult, pistolComponent.rightMult, pistolComponent.upMult);
-                
-                // New
+
+                Transform rightFingers = pistolComponent.rightFingersGrips;
+                Transform leftFingers = pistolComponent.leftFingersGrips;
                 for (int i = 0; i < rightFingerIKs.Length; i++)
                 {
-                    rightFingerIKs[i].target = weapon.transform.Find("rightFingers").GetChild(i);
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
                 }
                 rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
             }
             else
             {
@@ -287,10 +294,6 @@ namespace LightPat.Core.Player
             weaponManager.DrawWeapon(slot); // Draw most recently added weapon
             equipWeaponRunning = false;
         }
-
-        [Header("NEW")]
-        public RigWeightTarget rightFingerRig;
-        public FollowTarget[] rightFingerIKs;
 
         private IEnumerator StowWeapon()
         {

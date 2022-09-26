@@ -19,6 +19,7 @@ namespace LightPat.Core
 
         private void OnTriggerEnter(Collider other)
         {
+            if (other.GetComponent<Projectile>()) { return; }
             if (damageRunning) { return; }
             damageRunning = true;
 

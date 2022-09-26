@@ -263,7 +263,7 @@ MonoBehaviour:
   playerController: {fileID: 7284513826171149809}
   target: {fileID: 2137149433794078384}
   neckAimRig: {fileID: 7284513825018453871}
-  zRotDecay: 10
+  zRotDecay: 5
   targetZRot: 0
   updateRotationWithTarget: 0
 --- !u!1 &1618465677
@@ -4949,9 +4949,13 @@ MonoBehaviour:
   reach: 5
   spineRig: {fileID: 6763357609041427354}
   spineAim: {fileID: 5503431950255359835}
-  rightTilt: -90
-  leftTilt: 90
-  tiltSpeed: 5
+  aimConstraints:
+  - {fileID: 6626339549638910671}
+  - {fileID: 4818806006020641887}
+  - {fileID: 1285342458883815987}
+  rightLean: -90
+  leftLean: 90
+  leanSpeed: 5
 --- !u!114 &7284513826171149810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5282,7 +5286,7 @@ MonoBehaviour:
       y: 1
       z: 1
   m_SourceObjectsGUIToggle: 1
-  m_SettingsGUIToggle: 0
+  m_SettingsGUIToggle: 1
 --- !u!1 &7805105140799910853
 GameObject:
   m_ObjectHideFlags: 0

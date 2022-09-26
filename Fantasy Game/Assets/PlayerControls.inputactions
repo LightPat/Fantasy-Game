@@ -69,7 +69,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "TiltLeft",
+                    "name": "LeanLeft",
                     "type": "Button",
                     "id": "a4e6a33f-d5b9-4356-8f9c-11107ef6193d",
                     "expectedControlType": "Button",
@@ -78,7 +78,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "TiltRight",
+                    "name": "LeanRight",
                     "type": "Button",
                     "id": "2a1d60cb-a8d5-4456-b52e-90eedd7de5c2",
                     "expectedControlType": "Button",
@@ -264,7 +264,7 @@
                 {
                     "name": "",
                     "id": "eee5dc7c-37f6-4740-ac94-4b88d99a68d5",
-                    "path": "<Keyboard>/z",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
@@ -378,7 +378,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
-                    "action": "TiltRight",
+                    "action": "LeanRight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -389,7 +389,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
-                    "action": "TiltLeft",
+                    "action": "LeanLeft",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

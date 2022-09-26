@@ -210,7 +210,11 @@ namespace LightPat.Core.Player
 
             prevRotationState = rotateBodyWithCamera;
 
-            spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetTilt), tiltSpeed * Time.deltaTime);
+            spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean), leanSpeed * Time.deltaTime);
+            foreach (MultiAimConstraint aimConstraint in aimConstraints)
+            {
+                aimConstraint.data.offset = Vector3.Lerp(aimConstraint.data.offset, new Vector3(0, 0, targetLean * spineAim.weight), leanSpeed * Time.deltaTime);
+            }
         }
 
         void OnAbility()
@@ -367,41 +371,49 @@ namespace LightPat.Core.Player
             }
         }
 
-        [Header("Spine Tilt Settings")]
+        [Header("Spine Lean Settings")]
         public RigWeightTarget spineRig;
         public MultiAimConstraint spineAim;
-        public float rightTilt;
-        public float leftTilt;
-        public float tiltSpeed;
-        float targetTilt;
-        void OnTiltRight()
+        public MultiAimConstraint[] aimConstraints;
+        public float rightLean;
+        public float leftLean;
+        public float leanSpeed;
+        float targetLean;
+
+        public void SetLean(float newTilt)
+        {
+            targetLean = newTilt;
+            playerCamera.targetZRot = targetLean * spineAim.weight;
+        }
+
+        void OnLeanRight()
         {
             if (spineRig.weightTarget != 1) { return; }
 
-            if (targetTilt != rightTilt)
+            if (targetLean != rightLean)
             {
-                playerCamera.targetZRot = rightTilt * spineAim.weight;
-                targetTilt = rightTilt;
+                playerCamera.targetZRot = rightLean * spineAim.weight;
+                targetLean = rightLean;
             }
             else
             {
-                targetTilt = 0;
+                targetLean = 0;
                 playerCamera.targetZRot = 0;
             }
         }
 
-        void OnTiltLeft()
+        void OnLeanLeft()
         {
             if (spineRig.weightTarget != 1) { return; }
 
-            if (targetTilt != leftTilt)
+            if (targetLean != leftLean)
             {
-                targetTilt = leftTilt;
-                playerCamera.targetZRot = leftTilt * spineAim.weight;
+                targetLean = leftLean;
+                playerCamera.targetZRot = leftLean * spineAim.weight;
             }
             else
             {
-                targetTilt = 0;
+                targetLean = 0;
                 playerCamera.targetZRot = 0;
             }
         }

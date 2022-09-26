@@ -35,6 +35,7 @@ namespace LightPat.Core.Player
         public Transform spineStow;
         public Transform leftHipStow;
 
+        PlayerController playerController;
         AnimatorLayerWeightManager weightManager;
         Animator animator;
         WeaponManager weaponManager;
@@ -43,6 +44,7 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
+            playerController = GetComponent<PlayerController>();
             weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
             weaponManager = GetComponent<WeaponManager>();
@@ -328,6 +330,7 @@ namespace LightPat.Core.Player
             if (equippedWeapon.GetComponent<Rifle>())
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                playerController.SetLean(0);
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
@@ -336,6 +339,7 @@ namespace LightPat.Core.Player
             else if (equippedWeapon.GetComponent<Pistol>())
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                playerController.SetLean(0);
             }
             else
             {
@@ -437,9 +441,16 @@ namespace LightPat.Core.Player
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
 
+            // Start drawing next weapon once stow animation has finished playing
+            Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
+
             if (equippedWeapon.GetComponent<Rifle>())
             {
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                if (!(chosenWeapon.GetComponent<Pistol>() | chosenWeapon.GetComponent<Rifle>()))
+                {
+                    spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                    playerController.SetLean(0);
+                }
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
@@ -447,15 +458,17 @@ namespace LightPat.Core.Player
             }
             else if (equippedWeapon.GetComponent<Pistol>())
             {
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                if (!(chosenWeapon.GetComponent<Pistol>() | chosenWeapon.GetComponent<Rifle>()))
+                {
+                    spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                    playerController.SetLean(0);
+                }
             }
             else
             {
                 Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + equippedWeapon + " " + equippedWeapon.animationClass);
             }
 
-            // Start drawing next weapon once stow animation has finished playing
-            Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
             animator.SetBool("draw" + chosenWeapon.animationClass, true);
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);

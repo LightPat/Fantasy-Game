@@ -17,7 +17,7 @@ namespace LightPat.Core.Player
             playerHUD.ChangeSlotStyle(slot, TMPro.FontStyles.Bold);
             equippedWeapon = weapons[slot];
             playerController.rotateBodyWithCamera = true;
-            if (equippedWeapon.animationClass == "Great Sword")
+            if (equippedWeapon.GetComponent<GreatSword>())
             {
                 playerController.lookAngleUI.gameObject.SetActive(true);
             }
@@ -26,7 +26,7 @@ namespace LightPat.Core.Player
         public void StowWeapon()
         {
             playerHUD.ChangeSlotStyle(GetEquippedWeaponIndex(), TMPro.FontStyles.Normal);
-            if (equippedWeapon.animationClass == "Great Sword")
+            if (equippedWeapon.GetComponent<GreatSword>())
             {
                 playerController.lookAngleUI.gameObject.SetActive(false);
             }
@@ -54,7 +54,7 @@ namespace LightPat.Core.Player
             playerController = GetComponent<PlayerController>();
             playerHUD = GetComponentInChildren<PlayerHUD>();
         }
-        int GetEquippedWeaponIndex()
+        private int GetEquippedWeaponIndex()
         {
             int counter = 0;
             foreach (Weapon weapon in weapons)

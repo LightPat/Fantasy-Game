@@ -146,57 +146,65 @@ namespace LightPat.Core.Player
                 {
                     GetComponent<Attributes>().blocking = value.isPressed;
                 }
-                else if (weaponManager.equippedWeapon.GetComponent<Rifle>())
-                {
-                    if (!value.isPressed) { return; }
+                //else if (weaponManager.equippedWeapon.GetComponent<Rifle>())
+                //{
+                //    if (!value.isPressed) { return; }
 
-                    // Aim down sights
-                    aimDownSights = !aimDownSights;
-                    weaponManager.equippedWeapon.disableUpdate = aimDownSights;
+                //    // Aim down sights
+                //    aimDownSightsRifle = !aimDownSightsRifle;
+                //    weaponManager.equippedWeapon.disableUpdate = aimDownSightsRifle;
 
-                    if (aimDownSights)
-                    {
-                        weaponManager.equippedWeapon.transform.SetParent(ADSParent, true);
-                        //ADSParent.GetComponent<MultiPositionConstraint>().data.offset = weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset;
-                    }
-                    else
-                    {
-                        weaponManager.equippedWeapon.transform.SetParent(rifleGrip, true);
-                    }
-                }
-                else if (weaponManager.equippedWeapon.GetComponent<Pistol>())
-                {
-                    if (!value.isPressed) { return; }
+                //    if (aimDownSightsRifle)
+                //    {
+                //        weaponManager.equippedWeapon.transform.SetParent(rifleADSParent, true);
+                //        //ADSParent.GetComponent<MultiPositionConstraint>().data.offset = weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset;
+                //    }
+                //    else
+                //    {
+                //        weaponManager.equippedWeapon.transform.SetParent(rifleGrip, true);
+                //    }
+                //}
+                //else if (weaponManager.equippedWeapon.GetComponent<Pistol>())
+                //{
+                //    if (!value.isPressed) { return; }
 
-                    // Aim down sights
-                    aimDownSights = !aimDownSights;
-                    weaponManager.equippedWeapon.disableUpdate = aimDownSights;
+                //    // Aim down sights
+                //    aimDownSightsRifle = !aimDownSightsRifle;
+                //    weaponManager.equippedWeapon.disableUpdate = aimDownSightsRifle;
 
-                    if (aimDownSights)
-                    {
-                        weaponManager.equippedWeapon.transform.SetParent(ADSParent, true);
-                        //ADSParent.GetComponent<MultiPositionConstraint>().data.offset = weaponManager.equippedWeapon.GetComponent<Pistol>().ADSPosOffset;
-                    }
-                    else
-                    {
-                        weaponManager.equippedWeapon.transform.SetParent(rifleGrip, true);
-                    }
-                }
+                //    if (aimDownSightsRifle)
+                //    {
+                //        weaponManager.equippedWeapon.transform.SetParent(rifleADSParent, true);
+                //        //ADSParent.GetComponent<MultiPositionConstraint>().data.offset = weaponManager.equippedWeapon.GetComponent<Pistol>().ADSPosOffset;
+                //    }
+                //    else
+                //    {
+                //        weaponManager.equippedWeapon.transform.SetParent(pistolGrip, true);
+                //    }
+                //}
             }
         }
 
-        [Header("Rifle Aim Down Sights Settings")]
-        public Transform ADSParent;
-        bool aimDownSights;
-        private void Update()
-        {
-            if (aimDownSights)
-            {
-                Transform weapon = weaponManager.equippedWeapon.transform;
-                weapon.localPosition = Vector3.Lerp(weapon.localPosition, weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset, Time.deltaTime * 8);
-                weapon.localEulerAngles = Vector3.zero;
-            }
-        }
+        //[Header("Rifle Aim Down Sights Settings")]
+        //public Transform rifleADSParent;
+        //public Transform pistolADSParent;
+        //bool aimDownSightsRifle;
+        //bool aimDownSightsPistol;
+        //private void Update()
+        //{
+        //    if (aimDownSightsRifle)
+        //    {
+        //        Transform weapon = weaponManager.equippedWeapon.transform;
+        //        weapon.localPosition = Vector3.Lerp(weapon.localPosition, weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset, Time.deltaTime * 8);
+        //        weapon.localEulerAngles = Vector3.zero;
+        //    }
+        //    else if (aimDownSightsPistol)
+        //    {
+        //        Transform weapon = weaponManager.equippedWeapon.transform;
+        //        weapon.localPosition = Vector3.Lerp(weapon.localPosition, weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset, Time.deltaTime * 8);
+        //        weapon.localEulerAngles = Vector3.zero;
+        //    }
+        //}
 
         void OnMelee()
         {

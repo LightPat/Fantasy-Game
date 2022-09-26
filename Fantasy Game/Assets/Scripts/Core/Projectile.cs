@@ -10,8 +10,8 @@ namespace LightPat.Core
         public float damage;
 
         bool damageRunning;
-
-        public Vector3 startPos;
+        Vector3 startPos; // Despawn bullet after a certain distance traveled
+        
         private void Start()
         {
             startPos = transform.position;

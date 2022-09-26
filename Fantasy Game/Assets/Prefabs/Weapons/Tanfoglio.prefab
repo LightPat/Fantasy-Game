@@ -751,7 +751,6 @@ GameObject:
   - component: {fileID: 8438206821855291503}
   - component: {fileID: 3832733615841625933}
   - component: {fileID: 721428875}
-  - component: {fileID: 3216810048022886994}
   m_Layer: 0
   m_Name: Tanfoglio
   m_TagString: Untagged
@@ -827,18 +826,6 @@ MonoBehaviour:
   forwardMult: 0.7
   rightMult: 0.03
   upMult: 0.16
---- !u!114 &3216810048022886994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8438206821855291502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 094364a2ffd0baa41a715aa50c74e025, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &8438206821855959173
 PrefabInstance:
   m_ObjectHideFlags: 0

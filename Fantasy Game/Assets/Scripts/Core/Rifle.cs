@@ -7,6 +7,8 @@ namespace LightPat.Core
     public class Rifle : Weapon
     {
         [Header("Rifle Specific")]
+        public Transform rightFingersGrips;
+        public Transform leftFingersGrips;
         public Transform projectileSpawn;
         public GameObject bullet;
         public float bulletForce;

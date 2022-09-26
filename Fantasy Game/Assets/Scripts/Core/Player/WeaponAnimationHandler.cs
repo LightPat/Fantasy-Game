@@ -261,8 +261,19 @@ namespace LightPat.Core.Player
 
             if (weapon.GetComponent<Rifle>())
             {
-                rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
+
+                Rifle rifleComponent = weapon.GetComponent<Rifle>();
+                Transform rightFingers = rifleComponent.rightFingersGrips;
+                Transform leftFingers = rifleComponent.leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
             }
             else if (weapon.GetComponent<GreatSword>())
             {
@@ -392,6 +403,17 @@ namespace LightPat.Core.Player
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+
+                Rifle rifleComponent = chosenWeapon.GetComponent<Rifle>();
+                Transform rightFingers = rifleComponent.rightFingersGrips;
+                Transform leftFingers = rifleComponent.leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
             }
             else if (chosenWeapon.GetComponent<GreatSword>())
             {
@@ -504,6 +526,17 @@ namespace LightPat.Core.Player
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+
+                Rifle rifleComponent = chosenWeapon.GetComponent<Rifle>();
+                Transform rightFingers = rifleComponent.rightFingersGrips;
+                Transform leftFingers = rifleComponent.leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
             }
             else if (chosenWeapon.GetComponent<GreatSword>())
             {

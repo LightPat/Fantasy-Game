@@ -82,11 +82,11 @@ namespace LightPat.Core.Player
                         weapon.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
                         weapon.ChangeOffset("stowed");
 
-                        if (weapon.weaponClass == "Rifle")
+                        if (weapon.GetComponent<Rifle>())
                         {
                             // Do nothing
                         }
-                        else if (weapon.weaponClass == "Great Sword")
+                        else if (weapon.GetComponent<GreatSword>())
                         {
                             Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
                             if (sheath)
@@ -96,9 +96,13 @@ namespace LightPat.Core.Player
                                 sheath.hasPlayer = true;
                             }
                         }
+                        else if (weapon.GetComponent<Pistol>())
+                        {
+                            // Do nothing
+                        }
                         else
                         {
-                            Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.weaponClass);
+                            Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.animationClass);
                         }
 
                         weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
@@ -114,22 +118,8 @@ namespace LightPat.Core.Player
             if (!value.isPressed) { return; }
 
             if (weaponManager.equippedWeapon == null) { return; }
-            string weaponClass = weaponManager.equippedWeapon.weaponClass;
 
-            weaponManager.equippedWeapon.GetComponent<Weapon>().Attack1();
-
-            //if (weaponClass == "Great Sword")
-            //{
-                
-            //}
-            //else if (weaponClass == "Rifle")
-            //{
-                
-            //}
-            //else
-            //{
-            //    Debug.LogWarning("Invalid weapon class attacking " + weaponClass);
-            //}
+            weaponManager.equippedWeapon.Attack1();
         }
 
         void OnAttack2(InputValue value)
@@ -150,11 +140,11 @@ namespace LightPat.Core.Player
             {
                 animator.SetBool("attack2", value.isPressed);
 
-                if (weaponManager.equippedWeapon.weaponClass == "Great Sword")
+                if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
                 {
                     GetComponent<Attributes>().blocking = value.isPressed;
                 }
-                else if (weaponManager.equippedWeapon.weaponClass == "Rifle")
+                else if (weaponManager.equippedWeapon.GetComponent<Rifle>())
                 {
                     if (!value.isPressed) { return; }
 
@@ -172,6 +162,24 @@ namespace LightPat.Core.Player
                         weaponManager.equippedWeapon.transform.SetParent(rifleGrip, true);
                     }
                 }
+                else if (weaponManager.equippedWeapon.GetComponent<Pistol>())
+                {
+                    if (!value.isPressed) { return; }
+
+                    // Aim down sights
+                    aimDownSights = !aimDownSights;
+                    weaponManager.equippedWeapon.disableUpdate = aimDownSights;
+
+                    if (aimDownSights)
+                    {
+                        weaponManager.equippedWeapon.transform.SetParent(ADSParent, true);
+                        //ADSParent.GetComponent<MultiPositionConstraint>().data.offset = weaponManager.equippedWeapon.GetComponent<Pistol>().ADSPosOffset;
+                    }
+                    else
+                    {
+                        weaponManager.equippedWeapon.transform.SetParent(rifleGrip, true);
+                    }
+                }
             }
         }
 
@@ -179,7 +187,7 @@ namespace LightPat.Core.Player
         public Transform ADSParent;
         bool aimDownSights;
         private void Update()
-        {            
+        {
             if (aimDownSights)
             {
                 Transform weapon = weaponManager.equippedWeapon.transform;
@@ -226,7 +234,7 @@ namespace LightPat.Core.Player
             Destroy(weapon.GetComponent<Rigidbody>());
 
             // Change grip class weight
-            Transform gripPoint = GetGripPoint(weapon.GetComponent<Weapon>().weaponClass);
+            Transform gripPoint = GetGripPoint(weapon.GetComponent<Weapon>());
             gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
 
             // Reach out right hand to grab weapon handle
@@ -235,7 +243,7 @@ namespace LightPat.Core.Player
             rightHandTarget.GetComponent<FollowTarget>().target = weapon.GetComponent<Weapon>().rightHandGrip;
 
             // Transition into the weapon's animations
-            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().weaponClass, 1);
+            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().animationClass, 1);
 
             // Wait until hands have reached the weapon handle
             yield return new WaitUntil(() => rightArmRig.weight == 1);
@@ -249,12 +257,12 @@ namespace LightPat.Core.Player
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             leftHandTarget.GetComponent<FollowTarget>().target = weapon.GetComponent<Weapon>().leftHandGrip;
 
-            if (weapon.weaponClass == "Rifle")
+            if (weapon.GetComponent<Rifle>())
             {
                 rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             }
-            else if (weapon.weaponClass == "Great Sword")
+            else if (weapon.GetComponent<GreatSword>())
             {
                 //Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
                 //if (sheath)
@@ -267,7 +275,7 @@ namespace LightPat.Core.Player
                 yield return new WaitUntil(() => rightArmRig.weight == 0);
                 rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
             }
-            else if (weapon.weaponClass == "Pistol")
+            else if (weapon.GetComponent<Pistol>())
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
@@ -287,7 +295,7 @@ namespace LightPat.Core.Player
             }
             else
             {
-                Debug.LogError("Invalid weapon class on weaponEquip()" + weapon + " " + weapon.weaponClass);
+                Debug.LogError("Invalid weapon class on weaponEquip()" + weapon + " " + weapon.animationClass);
             }
 
             int slot = weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
@@ -305,27 +313,33 @@ namespace LightPat.Core.Player
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            rightFingerRig.weightTarget = 0;
+            leftFingerRig.weightTarget = 0;
 
-            animator.SetBool("stow" + equippedWeapon.weaponClass, true);
+            animator.SetBool("stow" + equippedWeapon.animationClass, true);
             yield return null;
-            animator.SetBool("stow" + equippedWeapon.weaponClass, false);
+            animator.SetBool("stow" + equippedWeapon.animationClass, false);
 
             // Parent weapon to move with right hand
-            equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon.weaponClass), true);
+            equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon), true);
             equippedWeapon.ChangeOffset("transition");
-            GetGripPoint(equippedWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
+            GetGripPoint(equippedWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
 
-            if (equippedWeapon.weaponClass == "Rifle")
+            if (equippedWeapon.GetComponent<Rifle>())
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
             }
-            else if (equippedWeapon.weaponClass == "Great Sword")
+            else if (equippedWeapon.GetComponent<GreatSword>())
             {
                 // Do nothing
             }
+            else if (equippedWeapon.GetComponent<Pistol>())
+            {
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            }
             else
             {
-                Debug.LogError("This weapon doesn't have a valid class when trying to stow it " + equippedWeapon + " " + equippedWeapon.weaponClass);
+                Debug.LogError("This weapon doesn't have a valid class when trying to stow it " + equippedWeapon + " " + equippedWeapon.animationClass);
             }
 
             // Wait until stow animation has finished playing
@@ -334,7 +348,7 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Change to stowed mode
-            weightManager.SetLayerWeight(equippedWeapon.weaponClass, 0);
+            weightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
             equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
             equippedWeapon.ChangeOffset("stowed");
             weaponManager.StowWeapon();
@@ -344,30 +358,30 @@ namespace LightPat.Core.Player
         {
             Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
-            animator.SetBool("draw" + chosenWeapon.weaponClass, true);
+            animator.SetBool("draw" + chosenWeapon.animationClass, true);
             yield return null;
-            animator.SetBool("draw" + chosenWeapon.weaponClass, false);
+            animator.SetBool("draw" + chosenWeapon.animationClass, false);
 
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("DrawWeapon"));
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Parent weapon to move with right hand
-            GetGripPoint(chosenWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
-            chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon.weaponClass), true);
+            GetGripPoint(chosenWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+            chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon), true);
             chosenWeapon.ChangeOffset("transition");
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Change to player mode
-            weightManager.SetLayerWeight(chosenWeapon.weaponClass, 1);
-            chosenWeapon.transform.SetParent(GetGripPoint(chosenWeapon.weaponClass), true);
+            weightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
+            chosenWeapon.transform.SetParent(GetGripPoint(chosenWeapon), true);
             chosenWeapon.ChangeOffset("player");
             weaponManager.DrawWeapon(slotIndex);
 
             // Turn on hand IKs
-            if (chosenWeapon.weaponClass == "Rifle")
+            if (chosenWeapon.GetComponent<Rifle>())
             {
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
                 rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
@@ -375,14 +389,24 @@ namespace LightPat.Core.Player
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             }
-            else if (chosenWeapon.weaponClass == "Great Sword")
+            else if (chosenWeapon.GetComponent<GreatSword>())
             {
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
             }
+            else if (chosenWeapon.GetComponent<Pistol>())
+            {
+                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
+                rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
+                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
+            }
             else
             {
-                Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.weaponClass);
+                Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.animationClass);
             }
         }
 
@@ -397,42 +421,48 @@ namespace LightPat.Core.Player
             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            rightFingerRig.weightTarget = 0;
+            leftFingerRig.weightTarget = 0;
 
-            animator.SetBool("stow" + equippedWeapon.weaponClass, true);
+            animator.SetBool("stow" + equippedWeapon.animationClass, true);
             yield return null;
-            animator.SetBool("stow" + equippedWeapon.weaponClass, false);
+            animator.SetBool("stow" + equippedWeapon.animationClass, false);
 
             // Parent weapon to move with right hand
-            equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon.weaponClass), true);
+            equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon), true);
             equippedWeapon.ChangeOffset("transition");
-            GetGripPoint(equippedWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
+            GetGripPoint(equippedWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
 
             // Wait until stow animation has started playing
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
 
-            if (equippedWeapon.weaponClass == "Rifle")
+            if (equippedWeapon.GetComponent<Rifle>())
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
             }
-            else if (equippedWeapon.weaponClass == "Great Sword")
+            else if (equippedWeapon.GetComponent<GreatSword>())
             {
                 // Do nothing
             }
+            else if (equippedWeapon.GetComponent<Pistol>())
+            {
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+            }
             else
             {
-                Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + equippedWeapon + " " + equippedWeapon.weaponClass);
+                Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + equippedWeapon + " " + equippedWeapon.animationClass);
             }
 
             // Start drawing next weapon once stow animation has finished playing
             Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
-            animator.SetBool("draw" + chosenWeapon.weaponClass, true);
+            animator.SetBool("draw" + chosenWeapon.animationClass, true);
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
-            animator.SetBool("draw" + chosenWeapon.weaponClass, false);
+            animator.SetBool("draw" + chosenWeapon.animationClass, false);
 
             // Change to stowed mode
-            weightManager.SetLayerWeight(equippedWeapon.weaponClass, 0);
+            weightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
             equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
             equippedWeapon.ChangeOffset("stowed");
             weaponManager.StowWeapon();
@@ -440,20 +470,21 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
 
             // Parent weapon to move with right hand
-            GetGripPoint(chosenWeapon.weaponClass).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
-            chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon.weaponClass), true);
+            GetGripPoint(chosenWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+            chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon), true);
             chosenWeapon.ChangeOffset("transition");
 
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Change to player mode
-            weightManager.SetLayerWeight(chosenWeapon.weaponClass, 1);
-            chosenWeapon.transform.SetParent(GetGripPoint(chosenWeapon.weaponClass), true);
+            weightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
+            Transform gripPoint = GetGripPoint(chosenWeapon);
+            chosenWeapon.transform.SetParent(gripPoint, true);
             chosenWeapon.ChangeOffset("player");
             weaponManager.DrawWeapon(slotIndex);
 
             // Turn on hand IKs
-            if (chosenWeapon.weaponClass == "Rifle")
+            if (chosenWeapon.GetComponent<Rifle>())
             {
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
                 rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
@@ -461,21 +492,42 @@ namespace LightPat.Core.Player
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
             }
-            else if (chosenWeapon.weaponClass == "Great Sword")
+            else if (chosenWeapon.GetComponent<GreatSword>())
             {
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
             }
+            else if (chosenWeapon.GetComponent<Pistol>())
+            {
+                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
+                rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
+                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+
+                Pistol pistolComponent = chosenWeapon.GetComponent<Pistol>();
+                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.forwardMult, pistolComponent.rightMult, pistolComponent.upMult);
+
+                Transform rightFingers = pistolComponent.rightFingersGrips;
+                Transform leftFingers = pistolComponent.leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
+            }
             else
             {
-                Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.weaponClass);
+                Debug.LogError("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.animationClass);
             }
         }
 
         private void OnCollisionEnter(Collision collision)
         {
             if (weaponManager.equippedWeapon == null) { return; }
-            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.weaponClass)).IsTag("CollisionAttack"))
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.animationClass)).IsTag("CollisionAttack"))
             {
                 return;
             }
@@ -510,44 +562,44 @@ namespace LightPat.Core.Player
             }
         }
 
-        private Transform GetGripPoint(string weaponClass)
+        private Transform GetGripPoint(Weapon weapon)
         {
-            if (weaponClass == "Great Sword")
+            if (weapon.GetComponent<GreatSword>())
             {
                 return greatSwordGrip;
             }
-            else if (weaponClass == "Rifle")
+            else if (weapon.GetComponent<Rifle>())
             {
                 return rifleGrip;
             }
-            else if (weaponClass == "Pistol")
+            else if (weapon.GetComponent<Pistol>())
             {
                 return pistolGrip;
             }
             else
             {
-                Debug.LogWarning("Invalid weapon grip class " + weaponClass);
+                Debug.LogError("Invalid weapon grip class " + weapon);
                 return null;
             }
         }
 
-        private Transform GetTransitionPoint(string weaponClass)
+        private Transform GetTransitionPoint(Weapon weapon)
         {
-            if (weaponClass == "Great Sword")
+            if (weapon.GetComponent<GreatSword>())
             {
                 return greatSwordStowTransition;
             }
-            else if (weaponClass == "Rifle")
+            else if (weapon.GetComponent<Rifle>())
             {
                 return rifleStowTransition;
             }
-            else if (weaponClass == "Pistol")
+            else if (weapon.GetComponent<Pistol>())
             {
                 return pistolStowTransition;
             }
             else
             {
-                Debug.LogWarning("The weapon you are trying to reparent has an invalid weapon class" + weaponClass);
+                Debug.LogWarning("The weapon you are trying to reparent has an invalid weapon class" + weapon);
                 return null;
             }
         }

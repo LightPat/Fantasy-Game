@@ -138,7 +138,7 @@ namespace LightPat.Core.Player
             }
             else
             {
-                return animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.weaponClass)).IsTag("Jumping");
+                return animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.animationClass)).IsTag("Jumping");
             }
         }
 

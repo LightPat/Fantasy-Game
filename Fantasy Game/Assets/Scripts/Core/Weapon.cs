@@ -12,9 +12,9 @@ namespace LightPat.Core
         [Header("Weapon Settings")]
         public sbyte[] idealPersonality;
         public int baseDamage;
-        public string weaponClass;
         public string stowPoint;
         public float drawSpeed = 1;
+        [HideInInspector] public string animationClass;
 
         [Header("Equipped Animation Offsets")]
         public Vector3 playerPositionOffset;

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 31dfdc0c749e5dc4286c5044c8c498ef
+guid: cb64c5510126b584b8597ef4e5a507f6
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
@@ -41,8 +41,8 @@ ModelImporter:
       name: Stow Pistol
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 0
-      lastFrame: 426
+      firstFrame: 100
+      lastFrame: 270
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

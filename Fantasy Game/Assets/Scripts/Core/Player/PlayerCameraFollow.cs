@@ -33,14 +33,14 @@ namespace LightPat.Core.Player
                 playerController.neckAimRig.weightTarget = 0;
                 playerController.disableLookInput = true;
                 if (playerWeaponManager.equippedWeapon != null)
-                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.weaponClass), 0);
+                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.animationClass), 0);
             }
             else if (!updateRotationWithTarget & previousRotationState)
             {
                 playerController.neckAimRig.weightTarget = 1;
                 playerController.disableLookInput = false;
                 if (playerWeaponManager.equippedWeapon != null)
-                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.weaponClass), 1);
+                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.animationClass), 1);
             }
 
             if (updateRotationWithTarget)

@@ -33,7 +33,7 @@ namespace LightPat.Core
         private new void Start()
         {
             base.Start();
-            weaponClass = "Rifle";
+            animationClass = "Rifle";
         }
     }
 }

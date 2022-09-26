@@ -810,15 +810,15 @@ MonoBehaviour:
   leftHandGrip: {fileID: 4098911474822559220}
   idealPersonality: 
   baseDamage: 1
-  weaponClass: Pistol
   stowPoint: Left Hip
   drawSpeed: 1
+  animationClass: 
   playerPositionOffset: {x: 0, y: 0, z: 0}
   playerRotationOffset: {x: 0, y: 0, z: 0}
-  transitionPositionOffset: {x: 0, y: 0, z: 0}
+  transitionPositionOffset: {x: -0.044, y: 0.138, z: 0.083}
   transitionRotationOffset: {x: 0, y: 0, z: 0}
-  stowedPositionOffset: {x: 0, y: 0, z: 0}
-  stowedRotationOffset: {x: 0, y: 0, z: 0}
+  stowedPositionOffset: {x: 0.363, y: 0.141, z: 0.014}
+  stowedRotationOffset: {x: 90, y: 0, z: -11.17}
   disableUpdate: 0
   settingOffsets: 0
   offsetType: 

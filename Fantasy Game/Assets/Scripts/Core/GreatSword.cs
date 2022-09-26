@@ -12,7 +12,7 @@ namespace LightPat.Core
         private new void Start()
         {
             base.Start();
-            weaponClass = "Great Sword";
+            animationClass = "Great Sword";
         }
     }
 }

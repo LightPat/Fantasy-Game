@@ -16,7 +16,7 @@ namespace LightPat.Core
         private new void Start()
         {
             base.Start();
-            weaponClass = "Pistol";
+            animationClass = "Pistol";
         }
     }
 }

@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: c7f271b36765772449f734a30a127dc5
+guid: ad3b13d2a0a87474baf6485731092b98
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
@@ -7,8 +7,8 @@ ModelImporter:
       74: -203655887218126122
     second: mixamo.com
   - first:
-      74: -7975575140641942817
-    second: Draw Rifle To Combat
+      74: -6995290107077403423
+    second: Draw Pistol To Combat
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -38,11 +38,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Draw Rifle To Combat
+      name: Draw Pistol To Combat
       takeName: mixamo.com
       internalID: 0
-      firstFrame: 70
-      lastFrame: 130
+      firstFrame: 35
+      lastFrame: 70
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

@@ -188,7 +188,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.1
-  far clip plane: 1000
+  far clip plane: 5000
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -262,7 +262,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerController: {fileID: 7284513826171149809}
   target: {fileID: 2137149433794078384}
+  neckAimRig: {fileID: 7284513825018453871}
   zRotDecay: 10
+  targetZRot: 0
   updateRotationWithTarget: 0
 --- !u!1 &1618465677
 GameObject:
@@ -4931,7 +4933,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cb34a01506f60c4d97b1107c76509bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  neckAimRig: {fileID: 7284513825018453871}
   moveTransitionSpeed: 5
   animatorSpeed: 1
   sensitivity: 0.15
@@ -4946,6 +4947,11 @@ MonoBehaviour:
   toggleSprint: 0
   toggleCrouch: 0
   reach: 5
+  spineRig: {fileID: 6763357609041427354}
+  spineAim: {fileID: 5503431950255359835}
+  rightTilt: -90
+  leftTilt: 90
+  tiltSpeed: 5
 --- !u!114 &7284513826171149810
 MonoBehaviour:
   m_ObjectHideFlags: 0

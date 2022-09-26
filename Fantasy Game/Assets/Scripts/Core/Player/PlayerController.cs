@@ -3,25 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
+using UnityEngine.Animations.Rigging;
 using LightPat.Util;
 
 namespace LightPat.Core.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        [Header("Used in player camera follow")]
-        public RigWeightTarget neckAimRig;
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float animatorSpeed = 1;
 
         Animator animator;
         Rigidbody rb;
+        PlayerCameraFollow playerCamera;
 
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody>();
+            playerCamera = GetComponentInChildren<PlayerCameraFollow>();
             prevRotationState = !rotateBodyWithCamera;
         }
 
@@ -208,6 +209,8 @@ namespace LightPat.Core.Player
                 rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed));
 
             prevRotationState = rotateBodyWithCamera;
+
+            spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetTilt), tiltSpeed * Time.deltaTime);
         }
 
         void OnAbility()
@@ -361,6 +364,45 @@ namespace LightPat.Core.Player
                     hit.transform.GetComponent<Interactable>().Invoke(gameObject);
                 }
                 break;
+            }
+        }
+
+        [Header("Spine Tilt Settings")]
+        public RigWeightTarget spineRig;
+        public MultiAimConstraint spineAim;
+        public float rightTilt;
+        public float leftTilt;
+        public float tiltSpeed;
+        float targetTilt;
+        void OnTiltRight()
+        {
+            if (spineRig.weightTarget != 1) { return; }
+
+            if (targetTilt != rightTilt)
+            {
+                playerCamera.targetZRot = rightTilt * spineAim.weight;
+                targetTilt = rightTilt;
+            }
+            else
+            {
+                targetTilt = 0;
+                playerCamera.targetZRot = 0;
+            }
+        }
+
+        void OnTiltLeft()
+        {
+            if (spineRig.weightTarget != 1) { return; }
+
+            if (targetTilt != leftTilt)
+            {
+                targetTilt = leftTilt;
+                playerCamera.targetZRot = leftTilt * spineAim.weight;
+            }
+            else
+            {
+                targetTilt = 0;
+                playerCamera.targetZRot = 0;
             }
         }
     }

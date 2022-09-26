@@ -69,6 +69,24 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "TiltLeft",
+                    "type": "Button",
+                    "id": "a4e6a33f-d5b9-4356-8f9c-11107ef6193d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "TiltRight",
+                    "type": "Button",
+                    "id": "2a1d60cb-a8d5-4456-b52e-90eedd7de5c2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Attack1",
                     "type": "Value",
                     "id": "75393902-0e4f-4405-a78d-72313fa1d7a1",
@@ -213,7 +231,7 @@
                 {
                     "name": "",
                     "id": "61d43675-ed77-4102-87b0-1dda12d43703",
-                    "path": "<Keyboard>/e",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
@@ -246,7 +264,7 @@
                 {
                     "name": "",
                     "id": "eee5dc7c-37f6-4740-ac94-4b88d99a68d5",
-                    "path": "<Keyboard>/q",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
@@ -350,6 +368,28 @@
                     "processors": "",
                     "groups": "Keyboard and Mouse",
                     "action": "Ability",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b996e4f8-4349-4d59-a3b3-a11db37a9b5b",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "TiltRight",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7b2a22d3-bc1d-48cc-b1cb-7abef93802d5",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "TiltLeft",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

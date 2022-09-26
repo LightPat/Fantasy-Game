@@ -9,7 +9,9 @@ namespace LightPat.Core.Player
     {
         public PlayerController playerController;
         public Transform target;
+        public RigWeightTarget neckAimRig;
         public float zRotDecay;
+        public float targetZRot;
         public bool updateRotationWithTarget;
 
         bool previousRotationState;
@@ -30,14 +32,14 @@ namespace LightPat.Core.Player
 
             if (updateRotationWithTarget & !previousRotationState)
             {
-                playerController.neckAimRig.weightTarget = 0;
+                neckAimRig.weightTarget = 0;
                 playerController.disableLookInput = true;
                 if (playerWeaponManager.equippedWeapon != null)
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.animationClass), 0);
             }
             else if (!updateRotationWithTarget & previousRotationState)
             {
-                playerController.neckAimRig.weightTarget = 1;
+                neckAimRig.weightTarget = 1;
                 playerController.disableLookInput = false;
                 if (playerWeaponManager.equippedWeapon != null)
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.animationClass), 1);
@@ -49,7 +51,7 @@ namespace LightPat.Core.Player
             }
             else // Interpolate z rotation to 0
             {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0), Time.deltaTime * zRotDecay);
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, targetZRot), Time.deltaTime * zRotDecay);
             }
 
             previousRotationState = updateRotationWithTarget;

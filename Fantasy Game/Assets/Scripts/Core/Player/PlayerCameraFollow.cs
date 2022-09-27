@@ -33,6 +33,9 @@ namespace LightPat.Core.Player
 
         private void Update()
         {
+            if (!playerController.rotateBodyWithCamera)
+                transform.position = followTarget.position;
+
             if (updateRotationWithTarget & !previousRotationState) // if we just activated updateRotationWithTarget
             {
                 neckAimRig.weightTarget = 0;
@@ -46,7 +49,10 @@ namespace LightPat.Core.Player
             {
                 neckAimRig.weightTarget = 1;
                 playerController.disableLookInput = false;
-                transform.SetParent(CamParent);
+                if (playerController.rotateBodyWithCamera)
+                    transform.SetParent(CamParent, true);
+                else
+                    transform.SetParent(null, true);
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
                 if (playerWeaponManager.equippedWeapon != null)
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.animationClass), 1);
@@ -61,10 +67,10 @@ namespace LightPat.Core.Player
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, zLocalRotDecay * Time.deltaTime);
             }
 
-            if (!playerController.rotateBodyWithCamera)
-                transform.localPosition = followTarget.position;
-            else
+            if (playerController.rotateBodyWithCamera)
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(playerController.attemptedXAngle, 0, 0), zLocalRotDecay * Time.deltaTime);
+            else
+                transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(transform.localEulerAngles.x, transform.localEulerAngles.y, 0), zLocalRotDecay * Time.deltaTime);
 
             previousRotationState = updateRotationWithTarget;
         }

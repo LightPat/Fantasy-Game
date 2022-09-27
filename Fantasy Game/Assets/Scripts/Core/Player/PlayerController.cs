@@ -147,12 +147,10 @@ namespace LightPat.Core.Player
                 if (attemptedXAngle > mouseDownXRotLimit)
                 {
                     camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, bodyRotation.y, 0);
-                    attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 }
                 else if (attemptedXAngle < mouseUpXRotLimit)
                 {
                     camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, bodyRotation.y, 0);
-                    attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 }
             }
             else
@@ -167,12 +165,10 @@ namespace LightPat.Core.Player
                 if (attemptedXAngle > mouseDownXRotLimit)
                 {
                     camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, 0, 0);
-                    attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 }
                 else if (attemptedXAngle < mouseUpXRotLimit)
                 {
                     camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, 0, 0);
-                    attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 }
             }
         }
@@ -224,12 +220,12 @@ namespace LightPat.Core.Player
 
             if (!rotateBodyWithCamera & prevRotationState)
             {
-                playerCamera.transform.SetParent(null);
+                playerCamera.transform.SetParent(null, true);
             }
             else if (rotateBodyWithCamera & !prevRotationState)
             {
                 transform.rotation = Quaternion.Euler(bodyRotation);
-                playerCamera.transform.SetParent(cameraParent);
+                playerCamera.transform.SetParent(cameraParent, true);
             }
 
             if (!rotateBodyWithCamera)

@@ -62,10 +62,11 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool disableCameraLookInput;
         public bool rotateBodyWithCamera;
-        Vector2 lookInput;
-        Vector3 bodyRotation;
         public Transform lookAngleUI;
         public float lookAngleRotSpeed;
+        [HideInInspector] public float attemptedXAngle;
+        Vector2 lookInput;
+        Vector3 bodyRotation;
         float lookAngle;
         float prevLookAngle;
         void OnLook(InputValue value)
@@ -110,9 +111,29 @@ namespace LightPat.Core.Player
 
             // Camera Rotation Logic (Rotation Around X Axis)
             if (disableCameraLookInput) { return; }
-            Transform camTransform = Camera.main.transform;
+            Transform camTransform = playerCamera.transform;
+
+            // When leaning
+            if (playerCamera.targetZRot != 0)
+            {
+                float xAngle = Vector3.Angle(transform.forward, camTransform.forward);
+                if (camTransform.forward.y > 0)
+                {
+                    xAngle *= -1;
+                }
+                float zRot = Mathf.Abs(playerCamera.targetZRot);
+                if (xAngle > mouseDownXRotLimit - zRot & lookInput.y < 0)
+                {
+                    return;
+                }
+                else if (xAngle < mouseUpXRotLimit + zRot & lookInput.y > 0)
+                {
+                    return;
+                }
+            }
+
+            // When not leaning
             camTransform.Rotate(new Vector3(-lookInput.y, 0, 0), Space.Self);
-            float attemptedXAngle;
             if (!rotateBodyWithCamera)
             {
                 camTransform.localEulerAngles = new Vector3(camTransform.localEulerAngles.x, camTransform.localEulerAngles.y + lookInput.x, camTransform.localEulerAngles.z);
@@ -126,10 +147,12 @@ namespace LightPat.Core.Player
                 if (attemptedXAngle > mouseDownXRotLimit)
                 {
                     camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, bodyRotation.y, 0);
+                    attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 }
                 else if (attemptedXAngle < mouseUpXRotLimit)
                 {
                     camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, bodyRotation.y, 0);
+                    attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 }
             }
             else
@@ -144,14 +167,18 @@ namespace LightPat.Core.Player
                 if (attemptedXAngle > mouseDownXRotLimit)
                 {
                     camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, 0, 0);
+                    attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 }
                 else if (attemptedXAngle < mouseUpXRotLimit)
                 {
                     camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, 0, 0);
+                    attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 }
             }
         }
 
+        [Header("New")]
+        public Transform cameraParent;
         bool prevRotationState;
         private void Update()
         {
@@ -197,12 +224,12 @@ namespace LightPat.Core.Player
 
             if (!rotateBodyWithCamera & prevRotationState)
             {
-                Camera.main.transform.SetParent(null);
+                playerCamera.transform.SetParent(null);
             }
             else if (rotateBodyWithCamera & !prevRotationState)
             {
                 transform.rotation = Quaternion.Euler(bodyRotation);
-                Camera.main.transform.SetParent(transform);
+                playerCamera.transform.SetParent(cameraParent);
             }
 
             if (!rotateBodyWithCamera)
@@ -210,10 +237,10 @@ namespace LightPat.Core.Player
 
             prevRotationState = rotateBodyWithCamera;
 
-            spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean), leanSpeed * Time.deltaTime);
+            spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
             {
-                aimConstraint.data.offset = Vector3.Lerp(aimConstraint.data.offset, new Vector3(0, 0, targetLean * spineAim.weight), leanSpeed * Time.deltaTime);
+                aimConstraint.data.offset = Vector3.Lerp(aimConstraint.data.offset, new Vector3(0, 0, targetLean), leanSpeed * Time.deltaTime);
             }
         }
 
@@ -392,7 +419,22 @@ namespace LightPat.Core.Player
 
             if (targetLean != rightLean)
             {
-                playerCamera.targetZRot = rightLean * spineAim.weight;
+                // Check if we are aiming too low or too high to lean
+                float xAngle = Vector3.Angle(transform.forward, playerCamera.transform.forward) + Mathf.Abs(rightLean);
+                if (playerCamera.transform.forward.y > 0)
+                {
+                    xAngle *= -1;
+                }
+                if (xAngle > mouseDownXRotLimit)
+                {
+                    return;
+                }
+                else if (xAngle < mouseUpXRotLimit)
+                {
+                    return;
+                }
+
+                playerCamera.targetZRot = rightLean;
                 targetLean = rightLean;
             }
             else
@@ -408,8 +450,23 @@ namespace LightPat.Core.Player
 
             if (targetLean != leftLean)
             {
+                // Check if we are aiming too low or too high to lean
+                float xAngle = Vector3.Angle(transform.forward, playerCamera.transform.forward) + Mathf.Abs(leftLean);
+                if (playerCamera.transform.forward.y > 0)
+                {
+                    xAngle *= -1;
+                }
+                if (xAngle > mouseDownXRotLimit)
+                {
+                    return;
+                }
+                else if (xAngle < mouseUpXRotLimit)
+                {
+                    return;
+                }
+
                 targetLean = leftLean;
-                playerCamera.targetZRot = leftLean * spineAim.weight;
+                playerCamera.targetZRot = leftLean;
             }
             else
             {

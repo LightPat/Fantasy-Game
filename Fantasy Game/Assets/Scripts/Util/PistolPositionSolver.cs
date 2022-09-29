@@ -6,6 +6,7 @@ namespace LightPat.Util
 {
     public class PistolPositionSolver : MonoBehaviour
     {
+        public float lerpSpeed;
         public Transform parentBone;
         public float forwardMult;
         public float rightMult;
@@ -22,10 +23,12 @@ namespace LightPat.Util
 
         private void Update()
         {
-            transform.position = parentBone.position;
             transform.rotation = parentBone.rotation;
-            transform.position += transform.forward * forwardMult + transform.right * rightMult + transform.up * upMult;
-            transform.position += firstShoulder.position - secondShoulder.position;
+            Vector3 endPosition = parentBone.position;
+            endPosition += transform.forward * forwardMult + transform.right * rightMult + transform.up * upMult;
+            endPosition += firstShoulder.position - secondShoulder.position;
+            //transform.position = Vector3.Lerp(transform.position, endPosition, Time.deltaTime * lerpSpeed);
+            transform.position = endPosition;
         }
     }
 }

@@ -4672,6 +4672,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ebcbe4163dcf30419bdc3592fdc1f55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableUpdate: 0
 --- !u!1 &7284513825018453866
 GameObject:
   m_ObjectHideFlags: 0
@@ -5155,7 +5156,6 @@ MonoBehaviour:
   rightLean: -45
   leftLean: 45
   leanSpeed: 5
-  leanActivationWindow: 45
 --- !u!114 &7284513826171149810
 MonoBehaviour:
   m_ObjectHideFlags: 0

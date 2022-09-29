@@ -40,6 +40,7 @@ namespace LightPat.Core.Player
             {
                 neckAimRig.weightTarget = 0;
                 playerController.disableLookInput = true;
+                playerController.SetLean(0);
                 transform.SetParent(BoneRotParent, true);
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
                 if (playerWeaponManager.equippedWeapon != null)

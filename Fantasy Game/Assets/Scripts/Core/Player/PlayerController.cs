@@ -226,6 +226,7 @@ namespace LightPat.Core.Player
             {
                 transform.rotation = Quaternion.Euler(bodyRotation);
                 playerCamera.transform.SetParent(cameraParent, true);
+                playerCamera.transform.localRotation = Quaternion.Euler(attemptedXAngle, 0, 0);
             }
 
             if (!rotateBodyWithCamera)
@@ -412,6 +413,7 @@ namespace LightPat.Core.Player
         void OnLeanRight()
         {
             if (spineRig.weightTarget != 1) { return; }
+            else if (playerCamera.updateRotationWithTarget) { return; }
 
             if (targetLean != rightLean)
             {
@@ -443,6 +445,7 @@ namespace LightPat.Core.Player
         void OnLeanLeft()
         {
             if (spineRig.weightTarget != 1) { return; }
+            else if (playerCamera.updateRotationWithTarget) { return; }
 
             if (targetLean != leftLean)
             {

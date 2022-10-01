@@ -226,7 +226,7 @@ namespace LightPat.Core.Player
             {
                 transform.rotation = Quaternion.Euler(bodyRotation);
                 playerCamera.transform.SetParent(cameraParent, true);
-                playerCamera.transform.localRotation = Quaternion.Euler(attemptedXAngle, 0, 0);
+                playerCamera.transform.localPosition = Vector3.zero;
             }
 
             if (!rotateBodyWithCamera)

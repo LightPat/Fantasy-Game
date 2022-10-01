@@ -353,7 +353,7 @@ namespace LightPat.Core.Player
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
-                // Do nothing
+                playerController.lookAngleUI.gameObject.SetActive(false);
             }
             else if (equippedWeapon.GetComponent<Pistol>())
             {
@@ -375,6 +375,7 @@ namespace LightPat.Core.Player
             equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
             equippedWeapon.ChangeOffset("stowed");
             weaponManager.StowWeapon();
+            playerController.rotateBodyWithCamera = false;
         }
 
         private IEnumerator DrawWeapon(int slotIndex)
@@ -402,6 +403,7 @@ namespace LightPat.Core.Player
             chosenWeapon.transform.SetParent(GetGripPoint(chosenWeapon), true);
             chosenWeapon.ChangeOffset("player");
             weaponManager.DrawWeapon(slotIndex);
+            playerController.rotateBodyWithCamera = true;
 
             // Turn on hand IKs
             if (chosenWeapon.GetComponent<Rifle>())
@@ -427,6 +429,7 @@ namespace LightPat.Core.Player
             {
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
+                playerController.lookAngleUI.gameObject.SetActive(true);
             }
             else if (chosenWeapon.GetComponent<Pistol>())
             {
@@ -484,7 +487,7 @@ namespace LightPat.Core.Player
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
-                // Do nothing
+                playerController.lookAngleUI.gameObject.SetActive(false);
             }
             else if (equippedWeapon.GetComponent<Pistol>())
             {
@@ -550,6 +553,7 @@ namespace LightPat.Core.Player
             {
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
+                playerController.lookAngleUI.gameObject.SetActive(true);
             }
             else if (chosenWeapon.GetComponent<Pistol>())
             {

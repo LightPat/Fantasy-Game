@@ -59,15 +59,16 @@ namespace LightPat.Core.Player
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.animationClass), 1);
             }
 
-            if (!updateRotationWithTarget)
+            if (!updateRotationWithTarget) // "Tilt" the parent constraint by a Z offset so that you don't have to mess with the camera's actual rotation
             {
                 leanConstraint.data.offset = Vector3.Lerp(leanConstraint.data.offset, new Vector3(0, 0, targetZRot), zRotOffsetSpeed * Time.deltaTime);
             }
-            else
+            else // Remove localRotation from camera during an animation because the rotation is stored on the parent
             {
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, zLocalRotDecay * Time.deltaTime);
             }
 
+            // Remove local Z rot over time
             if (playerController.rotateBodyWithCamera)
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(playerController.attemptedXAngle, 0, 0), zLocalRotDecay * Time.deltaTime);
             else

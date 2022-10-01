@@ -8,6 +8,7 @@ namespace LightPat.Core
     {
         public GameObject inflicter;
         public float damage;
+        public float maxDestroyDistance = 300;
 
         bool damageRunning;
         Vector3 startPos; // Despawn bullet after a certain distance traveled
@@ -15,6 +16,12 @@ namespace LightPat.Core
         private void Start()
         {
             startPos = transform.position;
+        }
+
+        private void FixedUpdate()
+        {
+            if (Vector3.Distance(startPos, transform.position) > maxDestroyDistance)
+                Destroy(gameObject);
         }
 
         private void OnTriggerEnter(Collider other)

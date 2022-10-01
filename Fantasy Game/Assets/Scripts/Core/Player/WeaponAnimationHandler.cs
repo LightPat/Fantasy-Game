@@ -140,7 +140,11 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                animator.SetBool("attack2", value.isPressed);
+                if (value.isPressed)
+                {
+                    animator.SetBool("attack2", !animator.GetBool("attack2"));
+                }
+                //animator.SetBool("attack2", value.isPressed);
 
                 if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
                 {
@@ -293,8 +297,15 @@ namespace LightPat.Core.Player
                 //    sheath.hasPlayer = true;
                 //}
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                Transform leftFingers = weapon.GetComponent<GreatSword>().leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                leftFingerRig.weightTarget = 1;
                 yield return new WaitUntil(() => rightArmRig.weight == 0);
                 rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
+                playerController.lookAngleUI.gameObject.SetActive(true);
             }
             else if (weapon.GetComponent<Pistol>())
             {

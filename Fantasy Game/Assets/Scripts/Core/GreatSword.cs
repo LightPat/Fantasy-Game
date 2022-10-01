@@ -6,6 +6,9 @@ namespace LightPat.Core
 {
     public class GreatSword : Weapon
     {
+        [Header("Great Sword Specific")]
+        public Transform leftFingersGrips;
+
         private new void Start()
         {
             base.Start();

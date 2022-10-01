@@ -321,6 +321,7 @@ namespace LightPat.Core.Player
 
             int slot = weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
             weaponManager.DrawWeapon(slot); // Draw most recently added weapon
+            playerController.rotateBodyWithCamera = true;
             equipWeaponRunning = false;
         }
 

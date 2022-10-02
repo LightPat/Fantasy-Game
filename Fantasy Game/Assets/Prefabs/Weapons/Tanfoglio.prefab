@@ -862,6 +862,73 @@ MonoBehaviour:
   bulletForce: 50
   maxRange: 150
   ADSPosOffset: {x: 0, y: 0, z: 0}
+  fireRate: 300
+  xRecoilCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: -0.3
+      inSlope: -3.09777
+      outSlope: -3.09777
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.05701337
+    - serializedVersion: 3
+      time: 0.41004705
+      value: -0.4003424
+      inSlope: -0.60486895
+      outSlope: -0.60486895
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.092293076
+    - serializedVersion: 3
+      time: 0.90274656
+      value: -0.30291137
+      inSlope: 0.0007464578
+      outSlope: 0.0007464578
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.09128925
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  yRecoilCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &8438206821855959173
 PrefabInstance:
   m_ObjectHideFlags: 0

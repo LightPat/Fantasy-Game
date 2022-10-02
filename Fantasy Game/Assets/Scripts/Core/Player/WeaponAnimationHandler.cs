@@ -442,6 +442,12 @@ namespace LightPat.Core.Player
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
                 playerController.lookAngleUI.gameObject.SetActive(true);
+                Transform leftFingers = chosenWeapon.GetComponent<GreatSword>().leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                leftFingerRig.weightTarget = 1;
             }
             else if (chosenWeapon.GetComponent<Pistol>())
             {

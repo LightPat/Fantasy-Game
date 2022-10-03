@@ -130,15 +130,15 @@ MonoBehaviour:
   leftHandGrip: {fileID: 4661039144550789344}
   idealPersonality: 
   baseDamage: 1
-  stowPoint: Left Hip
+  stowPoint: Right Hip
   drawSpeed: 1
-  animationClass: 
+  animationClass: Pistol
   playerPositionOffset: {x: 0, y: 0, z: 0}
   playerRotationOffset: {x: 0, y: 0, z: 0}
   transitionPositionOffset: {x: -0.044, y: 0.138, z: 0.083}
   transitionRotationOffset: {x: 0, y: 0, z: 0}
-  stowedPositionOffset: {x: 0.363, y: 0.141, z: 0.014}
-  stowedRotationOffset: {x: 90, y: 0, z: -11.17}
+  stowedPositionOffset: {x: 0.2322, y: 0.1259, z: 0.0402}
+  stowedRotationOffset: {x: 91.04999, y: -65.08398, z: -76.26898}
   disableUpdate: 0
   settingOffsets: 0
   offsetType: 
@@ -220,7 +220,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   magazineSize: 13
-  currentBullets: 0
+  currentBullets: 12
   magazineObject: {fileID: 7881804589167922131}
 --- !u!1 &4661039144472507981
 GameObject:
@@ -985,10 +985,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 642ca0f60d4bcd74081a6f9764cf841c, type: 3}
       propertyPath: m_Name
-      value: Tanfoglio NEW
+      value: Tanfoglio
       objectReference: {fileID: 0}
+    - target: {fileID: 5232627393660835655, guid: 642ca0f60d4bcd74081a6f9764cf841c, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 700a13d44f93c0f43b8f0d18ba4cfbd9, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 642ca0f60d4bcd74081a6f9764cf841c, type: 3}
+--- !u!4 &5126766625173810496 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 642ca0f60d4bcd74081a6f9764cf841c, type: 3}
+  m_PrefabInstance: {fileID: 4661039145327348395}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5507409460963866618 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 642ca0f60d4bcd74081a6f9764cf841c, type: 3}
@@ -997,11 +1006,6 @@ GameObject:
 --- !u!1 &7881804589167922131 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5922622823359544968, guid: 642ca0f60d4bcd74081a6f9764cf841c, type: 3}
-  m_PrefabInstance: {fileID: 4661039145327348395}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &5126766625173810496 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 642ca0f60d4bcd74081a6f9764cf841c, type: 3}
   m_PrefabInstance: {fileID: 4661039145327348395}
   m_PrefabAsset: {fileID: 0}
 --- !u!65 &4661039145327348399
@@ -1017,3 +1021,29 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.41773978, y: 0.31577206, z: 0.109031595}
   m_Center: {x: 0.14005938, y: 0.14357424, z: -0.006180173}
+--- !u!65 &90279859
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7881804589167922131}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 11.652715, y: 3.7714477, z: 13.269614}
+  m_Center: {x: -1.1972412, y: 0.0000008002784, z: 13.103031}
+--- !u!65 &90279860
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7881804589167922131}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 8.1746855, y: 4.176627, z: 7.151507}
+  m_Center: {x: 0.90479857, y: -0.053785358, z: 3.3827527}

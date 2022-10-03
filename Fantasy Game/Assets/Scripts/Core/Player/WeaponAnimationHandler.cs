@@ -34,6 +34,7 @@ namespace LightPat.Core.Player
         [Header("Stow Points")]
         public Transform spineStow;
         public Transform leftHipStow;
+        public Transform rightHipStow;
 
         PlayerController playerController;
         AnimatorLayerWeightManager weightManager;
@@ -179,8 +180,16 @@ namespace LightPat.Core.Player
 
         private IEnumerator Reload(Pistol pistol)
         {
+            leftHandTarget.GetComponent<FollowTarget>().lerpMove = true;
+            leftHandTarget.GetComponent<FollowTarget>().target = leftHipStow;
+            //leftHandTarget.GetComponent<FollowTarget>().lerpMove = false;
+
+
             pistol.magazineObject.AddComponent<Rigidbody>();
-            pistol.magazineObject.GetComponent<Collider>().enabled = true;
+            //foreach (Collider c in pistol.magazineObject.GetComponents<Collider>())
+            //{
+            //    c.enabled = true;
+            //}
             pistol.magazineObject.transform.SetParent(null, true);
             yield return null;
             pistol.Reload();
@@ -587,6 +596,10 @@ namespace LightPat.Core.Player
             else if (stowType == "Left Hip")
             {
                 return leftHipStow;
+            }
+            else if (stowType == "Right Hip")
+            {
+                return rightHipStow;
             }
             else
             {

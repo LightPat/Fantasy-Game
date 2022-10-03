@@ -769,7 +769,7 @@ MonoBehaviour:
   bulletForce: 50
   maxRange: 150
   ADSPosOffset: {x: 0, y: -0.18, z: 0.13}
-  fireRate: 300
+  fireRate: 650
   xRecoilCurve:
     serializedVersion: 2
     m_Curve:
@@ -842,6 +842,7 @@ MonoBehaviour:
   magazineLocalPos: {x: -0.0946, y: 0.0474, z: 0.0584}
   magazineLocalRot: {x: -49.119, y: -37.24, z: 142.191}
   reloadSpeed: 10
+  fullAuto: 1
 --- !u!1 &1649158069711076072
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,7 +9,8 @@ namespace LightPat.Core.Player
     {
         [Header("Rifle Specific")]
         public bool fullAuto;
-        public bool firing;
+        
+        bool firing;
 
         private new void Start()
         {

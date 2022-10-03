@@ -10,6 +10,7 @@ namespace LightPat.Core.Player
 {
     public class PlayerController : MonoBehaviour
     {
+        public Transform cameraParent;
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float animatorSpeed = 1;
@@ -17,6 +18,7 @@ namespace LightPat.Core.Player
         Animator animator;
         Rigidbody rb;
         PlayerCameraFollow playerCamera;
+        PlayerHUD playerHUD;
 
         private void Start()
         {
@@ -24,6 +26,7 @@ namespace LightPat.Core.Player
             rb = GetComponent<Rigidbody>();
             playerCamera = GetComponentInChildren<PlayerCameraFollow>();
             prevRotationState = !rotateBodyWithCamera;
+            playerHUD = GetComponentInChildren<PlayerHUD>();
         }
 
         // Teleportation stair walking
@@ -62,8 +65,6 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool disableCameraLookInput;
         public bool rotateBodyWithCamera;
-        public Transform lookAngleUI;
-        public float lookAngleRotSpeed;
         [HideInInspector] public float attemptedXAngle;
         Vector2 lookInput;
         Vector3 bodyRotation;
@@ -179,12 +180,10 @@ namespace LightPat.Core.Player
             }
         }
 
-        [Header("New")]
-        public Transform cameraParent;
         bool prevRotationState;
         private void Update()
         {
-            lookAngleUI.rotation = Quaternion.Slerp(lookAngleUI.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), lookAngleRotSpeed * Time.deltaTime);
+            playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
             float xTarget = moveInput.x;
             if (running) { xTarget *= runTarget; }

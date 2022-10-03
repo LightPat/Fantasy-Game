@@ -8,6 +8,9 @@ namespace LightPat.Core.Player
     public class PlayerHUD : MonoBehaviour
     {
         public Transform weaponSlots;
+        public Transform lookAngleDisplay;
+        public float lookAngleRotSpeed;
+        public Transform ammoDisplay;
 
         WeaponManager weaponManager;
 

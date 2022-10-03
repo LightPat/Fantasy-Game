@@ -42,6 +42,7 @@ namespace LightPat.Core.Player
         WeaponManager weaponManager;
         FollowTarget[] rightFingerIKs;
         FollowTarget[] leftFingerIKs;
+        PlayerHUD playerHUD;
 
         private void Start()
         {
@@ -51,6 +52,7 @@ namespace LightPat.Core.Player
             weaponManager = GetComponent<WeaponManager>();
             rightFingerIKs = rightFingerRig.GetComponentsInChildren<FollowTarget>();
             leftFingerIKs = leftFingerRig.GetComponentsInChildren<FollowTarget>();
+            playerHUD = GetComponentInChildren<PlayerHUD>();
         }
 
         void OnInteract()
@@ -248,7 +250,7 @@ namespace LightPat.Core.Player
                 leftFingerRig.weightTarget = 1;
                 yield return new WaitUntil(() => rightArmRig.weight == 0);
                 rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-                playerController.lookAngleUI.gameObject.SetActive(true);
+                playerHUD.lookAngleDisplay.gameObject.SetActive(true);
             }
             else if (weapon.GetComponent<Pistol>())
             {
@@ -308,7 +310,7 @@ namespace LightPat.Core.Player
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
-                playerController.lookAngleUI.gameObject.SetActive(false);
+                playerHUD.lookAngleDisplay.gameObject.SetActive(false);
             }
             else if (equippedWeapon.GetComponent<Pistol>())
             {
@@ -384,7 +386,7 @@ namespace LightPat.Core.Player
             {
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                playerController.lookAngleUI.gameObject.SetActive(true);
+                playerHUD.lookAngleDisplay.gameObject.SetActive(true);
                 Transform leftFingers = chosenWeapon.GetComponent<GreatSword>().leftFingersGrips;
                 for (int i = 0; i < rightFingerIKs.Length; i++)
                 {
@@ -448,7 +450,7 @@ namespace LightPat.Core.Player
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
-                playerController.lookAngleUI.gameObject.SetActive(false);
+                playerHUD.lookAngleDisplay.gameObject.SetActive(false);
             }
             else if (equippedWeapon.GetComponent<Pistol>())
             {
@@ -514,7 +516,7 @@ namespace LightPat.Core.Player
             {
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                playerController.lookAngleUI.gameObject.SetActive(true);
+                playerHUD.lookAngleDisplay.gameObject.SetActive(true);
             }
             else if (chosenWeapon.GetComponent<Pistol>())
             {

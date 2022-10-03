@@ -71,112 +71,14 @@ namespace LightPat.Core.Player
         float prevLookAngle;
         void OnLook(InputValue value)
         {
-            lookInput = value.Get<Vector2>();
-
-            if (lookInput != Vector2.zero)
-            {
-                if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
-                {
-                    lookAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
-                }
-
-                if (lookAngle == 0)
-                {
-                    if (prevLookAngle > 0)
-                    {
-                        lookAngle = 1;
-                    }
-                    else if (prevLookAngle < 0)
-                    {
-                        lookAngle = -1;
-                    }
-                }
-
-                if (prevLookAngle < 0 & lookAngle == 180)
-                {
-                    lookAngle *= -1;
-                }
-
-                animator.SetFloat("lookAngle", lookAngle);
-                prevLookAngle = lookAngle;
-            }
-
-            if (disableLookInput) { return; }
-            lookInput *= sensitivity * Time.timeScale;
-
-            // Body Rotation Logic (Rotation Around Y Axis)
-            bodyRotation = new Vector3(transform.eulerAngles.x, bodyRotation.y + lookInput.x, transform.eulerAngles.z);
-            if (rotateBodyWithCamera)
-                rb.MoveRotation(Quaternion.Euler(bodyRotation));
-
-            // Camera Rotation Logic (Rotation Around X Axis)
-            if (disableCameraLookInput) { return; }
-            Transform camTransform = playerCamera.transform;
-
-            // When leaning
-            if (playerCamera.targetZRot != 0)
-            {
-                float xAngle = Vector3.Angle(transform.forward, camTransform.forward);
-                if (camTransform.forward.y > 0)
-                {
-                    xAngle *= -1;
-                }
-                float zRot = Mathf.Abs(playerCamera.targetZRot);
-                if (xAngle > mouseDownXRotLimit - zRot & lookInput.y < 0)
-                {
-                    return;
-                }
-                else if (xAngle < mouseUpXRotLimit + zRot & lookInput.y > 0)
-                {
-                    return;
-                }
-            }
-
-            // When not leaning
-            camTransform.Rotate(new Vector3(-lookInput.y, 0, 0), Space.Self);
-            if (!rotateBodyWithCamera)
-            {
-                camTransform.localEulerAngles = new Vector3(camTransform.localEulerAngles.x, camTransform.localEulerAngles.y + lookInput.x, camTransform.localEulerAngles.z);
-                attemptedXAngle = Vector3.Angle(Quaternion.Euler(bodyRotation) * Vector3.forward, camTransform.forward);
-
-                if (camTransform.forward.y > 0)
-                {
-                    attemptedXAngle *= -1;
-                }
-
-                if (attemptedXAngle > mouseDownXRotLimit)
-                {
-                    camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, bodyRotation.y, 0);
-                }
-                else if (attemptedXAngle < mouseUpXRotLimit)
-                {
-                    camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, bodyRotation.y, 0);
-                }
-            }
-            else
-            {
-                attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
-
-                if (camTransform.forward.y > 0)
-                {
-                    attemptedXAngle *= -1;
-                }
-
-                if (attemptedXAngle > mouseDownXRotLimit)
-                {
-                    camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, 0, 0);
-                }
-                else if (attemptedXAngle < mouseUpXRotLimit)
-                {
-                    camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, 0, 0);
-                }
-            }
+            Look(value.Get<Vector2>(), sensitivity, Time.timeScale);
         }
 
-        public void Look(Vector2 lookValue)
+        public void Look(Vector2 lookValue, float sensitivity = 1, float timeScale = 1)
         {
             lookInput = lookValue;
 
+            // Look angle animator logic for sword swings
             if (lookInput != Vector2.zero)
             {
                 if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
@@ -206,6 +108,7 @@ namespace LightPat.Core.Player
             }
 
             if (disableLookInput) { return; }
+            lookInput *= sensitivity * timeScale;
 
             // Body Rotation Logic (Rotation Around Y Axis)
             bodyRotation = new Vector3(transform.eulerAngles.x, bodyRotation.y + lookInput.x, transform.eulerAngles.z);

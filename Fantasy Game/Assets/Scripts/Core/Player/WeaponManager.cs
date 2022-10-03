@@ -42,6 +42,7 @@ namespace LightPat.Core.Player
         {
             playerHUD = GetComponentInChildren<PlayerHUD>();
         }
+
         private int GetEquippedWeaponIndex()
         {
             int counter = 0;

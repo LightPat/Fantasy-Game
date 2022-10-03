@@ -220,7 +220,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   magazineSize: 13
-  currentBullets: 12
+  currentBullets: 0
   magazineObject: {fileID: 7881804589167922131}
   magazineLocalPos: {x: -0.107, y: 0.1528, z: 0.0369}
   magazineLocalRot: {x: -0.351, y: 85.318, z: -76.249}

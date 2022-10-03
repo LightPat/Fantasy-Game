@@ -58,7 +58,7 @@ namespace LightPat.Core
             StartCoroutine(Recoil());
 
             currentBullets -= 1;
-            if (currentBullets == 0) { Reload(); }
+            //if (currentBullets == 0) { Reload(); }
         }
 
         public void Reload()

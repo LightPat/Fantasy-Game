@@ -29,9 +29,9 @@ namespace LightPat.Core.Player
         float timeSinceLastShot;
         float lastShotTime;
         
-
-        public override void Attack1()
+        public override void Attack1(bool pressed)
         {
+            if (!pressed) { return; }
             float time = Time.time;
             timeSinceLastShot = time - lastShotTime;
             if (timeSinceLastShot < 1 / (fireRate / 60)) { return; }

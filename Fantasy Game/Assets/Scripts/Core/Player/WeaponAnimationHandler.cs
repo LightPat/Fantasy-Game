@@ -118,20 +118,8 @@ namespace LightPat.Core.Player
         void OnAttack1(InputValue value)
         {
             animator.SetBool("attack1", value.isPressed);
-            if (!value.isPressed) { return; }
-
             if (weaponManager.equippedWeapon == null) { return; }
-
-            weaponManager.equippedWeapon.Attack1();
-        }
-
-        private void Update()
-        {
-            if (weaponManager.equippedWeapon == null) { return; }
-            if (animator.GetBool("attack1"))
-            {
-                weaponManager.equippedWeapon.Attack1();
-            }
+            weaponManager.equippedWeapon.Attack1(value.isPressed);
         }
 
         void OnAttack2(InputValue value)

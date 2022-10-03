@@ -5,11 +5,14 @@ using LightPat.Util;
 
 namespace LightPat.Core.Player
 {
-    public class Rifle : Weapon
+    public class Gun : Weapon
     {
-        [Header("Rifle Specific")]
+        [Header("Pistol Specific")]
         public Transform rightFingersGrips;
         public Transform leftFingersGrips;
+        public float forwardMult;
+        public float rightMult;
+        public float upMult;
         public Transform projectileSpawn;
         public GameObject bullet;
         public float bulletForce;
@@ -25,8 +28,10 @@ namespace LightPat.Core.Player
         public Vector3 magazineLocalRot;
         public float reloadSpeed = 1;
 
+        bool reloading;
         float timeSinceLastShot;
         float lastShotTime;
+        
 
         public override void Attack1()
         {
@@ -60,7 +65,6 @@ namespace LightPat.Core.Player
             if (currentBullets == 0) { StartCoroutine(Reload()); }
         }
 
-        bool reloading;
         public override IEnumerator Reload()
         {
             if (currentBullets >= magazineSize) { yield break; }
@@ -89,7 +93,7 @@ namespace LightPat.Core.Player
             FollowTarget leftHand = weaponAnimationHandler.leftHandTarget.GetComponent<FollowTarget>();
             leftHand.lerpSpeed = reloadSpeed;
             leftHand.lerp = true;
-            leftHand.target = GetComponentInParent<WeaponAnimationHandler>().leftHipStow.Find("MagazinePoint");
+            leftHand.target = weaponAnimationHandler.leftHipStow.Find("MagazinePoint");
             yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, weaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.1f);
 
             foreach (Collider c in oldMagazine.GetComponents<Collider>())
@@ -141,9 +145,9 @@ namespace LightPat.Core.Player
         private new void Start()
         {
             base.Start();
-            animationClass = "Rifle";
             lastShotTime = Time.time;
             currentBullets = magazineSize;
         }
     }
 }
+

@@ -93,7 +93,7 @@ namespace LightPat.Core.Player
             leftHand.lerpSpeed = reloadSpeed;
             leftHand.lerp = true;
             leftHand.target = weaponAnimationHandler.leftHipStow.Find("MagazinePoint");
-            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, weaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.01f);
+            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, weaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.1f);
 
             foreach (Collider c in oldMagazine.GetComponents<Collider>())
             {
@@ -105,7 +105,7 @@ namespace LightPat.Core.Player
             newMagazine.transform.localPosition = magazineLocalPos;
             newMagazine.transform.localEulerAngles = magazineLocalRot;
             leftHand.target = leftHandGrip;
-            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, leftHandGrip.position) < 0.01f);
+            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, leftHandGrip.position) < 0.1f);
 
             // Load new magazine into gun
             Vector3 scale = newMagazine.transform.localScale;
@@ -135,7 +135,7 @@ namespace LightPat.Core.Player
             float curveTime = 0;
             while (curveTime < curveLength)
             {
-                Camera.main.transform.Rotate(xRecoilCurve.Evaluate(curveTime), yRecoilCurve.Evaluate(curveTime), 0, Space.Self);
+                GetComponentInParent<PlayerController>().Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)));
                 curveTime += 0.1f;
                 yield return null;
             }

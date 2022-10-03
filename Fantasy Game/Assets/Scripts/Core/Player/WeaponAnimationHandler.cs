@@ -125,6 +125,15 @@ namespace LightPat.Core.Player
             weaponManager.equippedWeapon.Attack1();
         }
 
+        private void Update()
+        {
+            if (weaponManager.equippedWeapon == null) { return; }
+            if (animator.GetBool("attack1"))
+            {
+                weaponManager.equippedWeapon.Attack1();
+            }
+        }
+
         void OnAttack2(InputValue value)
         {
             if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat

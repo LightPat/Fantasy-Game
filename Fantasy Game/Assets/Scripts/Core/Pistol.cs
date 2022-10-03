@@ -25,6 +25,7 @@ namespace LightPat.Core
         public GameObject magazineObject;
         public Vector3 magazineLocalPos;
         public Vector3 magazineLocalRot;
+        public float reloadSpeed = 1;
 
         float timeSinceLastShot;
         float lastShotTime;
@@ -35,7 +36,6 @@ namespace LightPat.Core
             timeSinceLastShot = time - lastShotTime;
             if (timeSinceLastShot < 1 / (fireRate / 60)) { return; }
             if (currentBullets < 1) { return; }
-            if (reloading) { return; }
             lastShotTime = time;
 
             // Spawn the bullet
@@ -61,15 +61,9 @@ namespace LightPat.Core
             if (currentBullets == 0) { Reload(); }
         }
 
-        bool reloading;
         public void Reload()
         {
-            reloading = true;
-            if (currentBullets < magazineSize)
-            {
-                currentBullets = magazineSize;
-            }
-            reloading = false;
+            currentBullets = magazineSize;
         }
 
         private IEnumerator Recoil()

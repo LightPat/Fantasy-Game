@@ -10,6 +10,7 @@ namespace LightPat.Util
         public bool move = true;
         public bool rotate = true;
         public bool lerp;
+        public float lerpSpeed = 5;
 
         private void Update()
         {
@@ -17,8 +18,8 @@ namespace LightPat.Util
             {
                 if (lerp)
                 {
-                    if (move) { transform.position = Vector3.Lerp(transform.position, target.position, 5 * Time.deltaTime); }
-                    if (rotate) { transform.rotation = Quaternion.Slerp(transform.rotation, target.rotation, 5 * Time.deltaTime); }
+                    if (move) { transform.position = Vector3.Lerp(transform.position, target.position, lerpSpeed * Time.deltaTime); }
+                    if (rotate) { transform.rotation = Quaternion.Slerp(transform.rotation, target.rotation, lerpSpeed * Time.deltaTime); }
                 }
                 else
                 {

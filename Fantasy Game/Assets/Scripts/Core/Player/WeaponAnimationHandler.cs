@@ -117,6 +117,8 @@ namespace LightPat.Core.Player
 
         void OnAttack1(InputValue value)
         {
+            if (reloading) { return; }
+
             animator.SetBool("attack1", value.isPressed);
             if (!value.isPressed) { return; }
 
@@ -127,6 +129,8 @@ namespace LightPat.Core.Player
 
         void OnAttack2(InputValue value)
         {
+            if (reloading) { return; }
+
             if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
             {
                 if (!value.isPressed) { return; }
@@ -166,8 +170,11 @@ namespace LightPat.Core.Player
             animator.SetBool("melee", false);
         }
 
+        bool reloading;
         void OnReload()
         {
+            if (reloading) { return; }
+
             if (weaponManager.equippedWeapon.GetComponent<Rifle>())
             {
 
@@ -180,6 +187,9 @@ namespace LightPat.Core.Player
 
         private IEnumerator Reload(Pistol pistol)
         {
+            if (pistol.currentBullets >= pistol.magazineSize) { yield break; }
+            reloading = true;
+
             // Store magazine's localPosition and localRotation for later
             Vector3 localPos = pistol.magazineObject.transform.localPosition;
             Quaternion localRot = pistol.magazineObject.transform.localRotation;
@@ -187,24 +197,27 @@ namespace LightPat.Core.Player
             newMagazine.SetActive(false);
 
             // Unload current magazine
-            pistol.magazineObject.transform.SetParent(null, true);
+            GameObject oldMagazine = pistol.magazineObject;
+            oldMagazine.transform.SetParent(null, true);
             foreach (Collider c in pistol.magazineObject.GetComponents<Collider>())
             {
                 c.enabled = false;
             }
-            pistol.magazineObject.AddComponent<Rigidbody>();
+            oldMagazine.AddComponent<Rigidbody>();
 
             // Move left hand to the new magazine's position
             leftFingerRig.weightTarget = 0;
-            leftHandTarget.GetComponent<FollowTarget>().lerp = true;
-            leftHandTarget.GetComponent<FollowTarget>().target = leftHipStow.Find("MagazinePoint");
+            FollowTarget leftHand = leftHandTarget.GetComponent<FollowTarget>();
+            leftHand.lerpSpeed = pistol.reloadSpeed;
+            leftHand.lerp = true;
+            leftHand.target = leftHipStow.Find("MagazinePoint");
             yield return new WaitUntil(() => Vector3.Distance(leftHandTarget.position, leftHipStow.Find("MagazinePoint").position) < 0.01f);
 
             // Spawn new magazine and move hand back to gun
             newMagazine.SetActive(true);
             newMagazine.transform.localPosition = pistol.magazineLocalPos;
             newMagazine.transform.localEulerAngles = pistol.magazineLocalRot;
-            leftHandTarget.GetComponent<FollowTarget>().target = pistol.leftHandGrip;
+            leftHand.target = pistol.leftHandGrip;
             yield return new WaitUntil(() => Vector3.Distance(leftHandTarget.position, pistol.leftHandGrip.position) < 0.01f);
 
             // Load new magazine into gun
@@ -213,8 +226,12 @@ namespace LightPat.Core.Player
             newMagazine.transform.localRotation = localRot;
             pistol.magazineObject = newMagazine;
             pistol.Reload();
-            leftHandTarget.GetComponent<FollowTarget>().lerp = false;
+            leftHand.lerp = false;
             leftFingerRig.weightTarget = 1;
+            reloading = false;
+
+            yield return new WaitForSeconds(0.1f);
+            Destroy(oldMagazine);
         }
 
         void OnQueryWeaponSlot(InputValue value)

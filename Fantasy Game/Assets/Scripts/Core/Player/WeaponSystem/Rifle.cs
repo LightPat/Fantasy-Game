@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LightPat.Util;
 
-namespace LightPat.Core
+namespace LightPat.Core.Player
 {
     public class Rifle : Weapon
     {
@@ -33,6 +34,7 @@ namespace LightPat.Core
             timeSinceLastShot = time - lastShotTime;
             if (timeSinceLastShot < 1 / (fireRate / 60)) { return; }
             if (currentBullets < 1) { return; }
+            if (reloading) { return; }
             lastShotTime = time;
 
             // Spawn the bullet
@@ -55,12 +57,66 @@ namespace LightPat.Core
             StartCoroutine(Recoil());
 
             currentBullets -= 1;
-            //if (currentBullets == 0) { Reload(); }
+            if (currentBullets == 0) { StartCoroutine(Reload()); }
         }
 
-        public void Reload()
+        bool reloading;
+        public override IEnumerator Reload()
         {
+            if (currentBullets >= magazineSize) { yield break; }
+            reloading = true;
+
+            WeaponAnimationHandler weaponAnimationHandler = GetComponentInParent<WeaponAnimationHandler>();
+
+            // Store magazine's localPosition and localRotation for later
+            Vector3 localPos = magazineObject.transform.localPosition;
+            Quaternion localRot = magazineObject.transform.localRotation;
+            GameObject newMagazine = Instantiate(magazineObject, weaponAnimationHandler.leftHandTarget);
+            newMagazine.SetActive(false);
+
+            // Unload current magazine
+            GameObject oldMagazine = magazineObject;
+            oldMagazine.transform.SetParent(null, true);
+            foreach (Collider c in oldMagazine.GetComponents<Collider>())
+            {
+                c.enabled = false;
+            }
+            oldMagazine.AddComponent<Rigidbody>();
+
+            // Move left hand to the new magazine's position
+            weaponAnimationHandler.leftFingerRig.weightTarget = 0;
+            FollowTarget leftHand = weaponAnimationHandler.leftHandTarget.GetComponent<FollowTarget>();
+            leftHand.lerpSpeed = reloadSpeed;
+            leftHand.lerp = true;
+            leftHand.target = GetComponentInParent<WeaponAnimationHandler>().leftHipStow.Find("MagazinePoint");
+            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, weaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.01f);
+
+            foreach (Collider c in oldMagazine.GetComponents<Collider>())
+            {
+                c.enabled = true;
+            }
+
+            // Spawn new magazine and move hand back to gun
+            newMagazine.SetActive(true);
+            newMagazine.transform.localPosition = magazineLocalPos;
+            newMagazine.transform.localEulerAngles = magazineLocalRot;
+            leftHand.target = leftHandGrip;
+            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, leftHandGrip.position) < 0.01f);
+
+            // Load new magazine into gun
+            Vector3 scale = newMagazine.transform.localScale;
+            newMagazine.transform.SetParent(transform.GetChild(0), true);
+            newMagazine.transform.localScale = scale;
+            newMagazine.transform.localPosition = localPos;
+            newMagazine.transform.localRotation = localRot;
+            magazineObject = newMagazine;
             currentBullets = magazineSize;
+            leftHand.lerp = false;
+            weaponAnimationHandler.leftFingerRig.weightTarget = 1;
+            reloading = false;
+
+            yield return new WaitForSeconds(3f);
+            Destroy(oldMagazine);
         }
 
         private IEnumerator Recoil()

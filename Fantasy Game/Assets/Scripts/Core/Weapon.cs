@@ -42,6 +42,12 @@ namespace LightPat.Core
             Debug.LogWarning("Attack2() hasn't been implemented yet on this weapon");
         }
 
+        public virtual IEnumerator Reload()
+        {
+            Debug.LogWarning("Reload hasn't been implemented yet on this weapon");
+            yield return null;
+        }
+
         public void ChangeOffset(string offsetType)
         {
             if (offsetType == "player")

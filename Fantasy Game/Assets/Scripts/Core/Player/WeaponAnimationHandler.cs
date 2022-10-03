@@ -117,8 +117,6 @@ namespace LightPat.Core.Player
 
         void OnAttack1(InputValue value)
         {
-            if (reloading) { return; }
-
             animator.SetBool("attack1", value.isPressed);
             if (!value.isPressed) { return; }
 
@@ -129,8 +127,6 @@ namespace LightPat.Core.Player
 
         void OnAttack2(InputValue value)
         {
-            if (reloading) { return; }
-
             if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
             {
                 if (!value.isPressed) { return; }
@@ -170,131 +166,11 @@ namespace LightPat.Core.Player
             animator.SetBool("melee", false);
         }
 
-        bool reloading;
         void OnReload()
         {
-            if (reloading) { return; }
+            if (weaponManager.equippedWeapon == null) { return; }
 
-            if (weaponManager.equippedWeapon.GetComponent<Rifle>())
-            {
-                StartCoroutine(Reload(weaponManager.equippedWeapon.GetComponent<Rifle>()));
-            }
-            else if (weaponManager.equippedWeapon.GetComponent<Pistol>())
-            {
-                StartCoroutine(Reload(weaponManager.equippedWeapon.GetComponent<Pistol>()));
-            }
-        }
-
-        private IEnumerator Reload(Rifle rifle)
-        {
-            if (rifle.currentBullets >= rifle.magazineSize) { yield break; }
-            reloading = true;
-
-            // Store magazine's localPosition and localRotation for later
-            Vector3 localPos = rifle.magazineObject.transform.localPosition;
-            Quaternion localRot = rifle.magazineObject.transform.localRotation;
-            GameObject newMagazine = Instantiate(rifle.magazineObject, leftHandTarget);
-            newMagazine.SetActive(false);
-
-            // Unload current magazine
-            GameObject oldMagazine = rifle.magazineObject;
-            oldMagazine.transform.SetParent(null, true);
-            foreach (Collider c in oldMagazine.GetComponents<Collider>())
-            {
-                c.enabled = false;
-            }
-            oldMagazine.AddComponent<Rigidbody>();
-
-            // Move left hand to the new magazine's position
-            leftFingerRig.weightTarget = 0;
-            FollowTarget leftHand = leftHandTarget.GetComponent<FollowTarget>();
-            leftHand.lerpSpeed = rifle.reloadSpeed;
-            leftHand.lerp = true;
-            leftHand.target = leftHipStow.Find("MagazinePoint");
-            yield return new WaitUntil(() => Vector3.Distance(leftHandTarget.position, leftHipStow.Find("MagazinePoint").position) < 0.01f);
-
-            foreach (Collider c in oldMagazine.GetComponents<Collider>())
-            {
-                c.enabled = true;
-            }
-
-            // Spawn new magazine and move hand back to gun
-            newMagazine.SetActive(true);
-            newMagazine.transform.localPosition = rifle.magazineLocalPos;
-            newMagazine.transform.localEulerAngles = rifle.magazineLocalRot;
-            leftHand.target = rifle.leftHandGrip;
-            yield return new WaitUntil(() => Vector3.Distance(leftHandTarget.position, rifle.leftHandGrip.position) < 0.01f);
-
-            // Load new magazine into gun
-            Vector3 scale = newMagazine.transform.localScale;
-            newMagazine.transform.SetParent(weaponManager.equippedWeapon.transform.GetChild(0), true);
-            newMagazine.transform.localScale = scale;
-            newMagazine.transform.localPosition = localPos;
-            newMagazine.transform.localRotation = localRot;
-            rifle.magazineObject = newMagazine;
-            rifle.Reload();
-            leftHand.lerp = false;
-            leftFingerRig.weightTarget = 1;
-            reloading = false;
-
-            yield return new WaitForSeconds(3f);
-            Destroy(oldMagazine);
-        }
-
-        private IEnumerator Reload(Pistol pistol)
-        {
-            if (pistol.currentBullets >= pistol.magazineSize) { yield break; }
-            reloading = true;
-
-            // Store magazine's localPosition and localRotation for later
-            Vector3 localPos = pistol.magazineObject.transform.localPosition;
-            Quaternion localRot = pistol.magazineObject.transform.localRotation;
-            GameObject newMagazine = Instantiate(pistol.magazineObject, leftHandTarget);
-            newMagazine.SetActive(false);
-
-            // Unload current magazine
-            GameObject oldMagazine = pistol.magazineObject;
-            oldMagazine.transform.SetParent(null, true);
-            foreach (Collider c in oldMagazine.GetComponents<Collider>())
-            {
-                c.enabled = false;
-            }
-            oldMagazine.AddComponent<Rigidbody>();
-
-            // Move left hand to the new magazine's position
-            leftFingerRig.weightTarget = 0;
-            FollowTarget leftHand = leftHandTarget.GetComponent<FollowTarget>();
-            leftHand.lerpSpeed = pistol.reloadSpeed;
-            leftHand.lerp = true;
-            leftHand.target = leftHipStow.Find("MagazinePoint");
-            yield return new WaitUntil(() => Vector3.Distance(leftHandTarget.position, leftHipStow.Find("MagazinePoint").position) < 0.01f);
-
-            foreach (Collider c in oldMagazine.GetComponents<Collider>())
-            {
-                c.enabled = true;
-            }
-
-            // Spawn new magazine and move hand back to gun
-            newMagazine.SetActive(true);
-            newMagazine.transform.localPosition = pistol.magazineLocalPos;
-            newMagazine.transform.localEulerAngles = pistol.magazineLocalRot;
-            leftHand.target = pistol.leftHandGrip;
-            yield return new WaitUntil(() => Vector3.Distance(leftHandTarget.position, pistol.leftHandGrip.position) < 0.01f);
-
-            // Load new magazine into gun
-            Vector3 scale = newMagazine.transform.localScale;
-            newMagazine.transform.SetParent(weaponManager.equippedWeapon.transform.GetChild(0), true);
-            newMagazine.transform.localScale = scale;
-            newMagazine.transform.localPosition = localPos;
-            newMagazine.transform.localRotation = localRot;
-            pistol.magazineObject = newMagazine;
-            pistol.Reload();
-            leftHand.lerp = false;
-            leftFingerRig.weightTarget = 1;
-            reloading = false;
-
-            yield return new WaitForSeconds(3f);
-            Destroy(oldMagazine);
+            StartCoroutine(weaponManager.equippedWeapon.Reload());
         }
 
         void OnQueryWeaponSlot(InputValue value)

@@ -23,6 +23,8 @@ namespace LightPat.Core
         public int magazineSize;
         public int currentBullets;
         public GameObject magazineObject;
+        public Vector3 magazineLocalPos;
+        public Vector3 magazineLocalRot;
 
         float timeSinceLastShot;
         float lastShotTime;

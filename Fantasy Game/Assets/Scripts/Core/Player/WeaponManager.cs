@@ -9,7 +9,6 @@ namespace LightPat.Core.Player
         public Weapon equippedWeapon;
         
         List<Weapon> weapons = new List<Weapon>();
-        PlayerController playerController;
         PlayerHUD playerHUD;
 
         public void DrawWeapon(int slot)
@@ -41,7 +40,6 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            playerController = GetComponent<PlayerController>();
             playerHUD = GetComponentInChildren<PlayerHUD>();
         }
         private int GetEquippedWeaponIndex()

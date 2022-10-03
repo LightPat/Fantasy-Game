@@ -150,65 +150,8 @@ namespace LightPat.Core.Player
                 {
                     GetComponent<Attributes>().blocking = value.isPressed;
                 }
-                //else if (weaponManager.equippedWeapon.GetComponent<Rifle>())
-                //{
-                //    if (!value.isPressed) { return; }
-
-                //    // Aim down sights
-                //    aimDownSightsRifle = !aimDownSightsRifle;
-                //    weaponManager.equippedWeapon.disableUpdate = aimDownSightsRifle;
-
-                //    if (aimDownSightsRifle)
-                //    {
-                //        weaponManager.equippedWeapon.transform.SetParent(rifleADSParent, true);
-                //        //ADSParent.GetComponent<MultiPositionConstraint>().data.offset = weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset;
-                //    }
-                //    else
-                //    {
-                //        weaponManager.equippedWeapon.transform.SetParent(rifleGrip, true);
-                //    }
-                //}
-                //else if (weaponManager.equippedWeapon.GetComponent<Pistol>())
-                //{
-                //    if (!value.isPressed) { return; }
-
-                //    // Aim down sights
-                //    aimDownSightsRifle = !aimDownSightsRifle;
-                //    weaponManager.equippedWeapon.disableUpdate = aimDownSightsRifle;
-
-                //    if (aimDownSightsRifle)
-                //    {
-                //        weaponManager.equippedWeapon.transform.SetParent(rifleADSParent, true);
-                //        //ADSParent.GetComponent<MultiPositionConstraint>().data.offset = weaponManager.equippedWeapon.GetComponent<Pistol>().ADSPosOffset;
-                //    }
-                //    else
-                //    {
-                //        weaponManager.equippedWeapon.transform.SetParent(pistolGrip, true);
-                //    }
-                //}
             }
         }
-
-        //[Header("Rifle Aim Down Sights Settings")]
-        //public Transform rifleADSParent;
-        //public Transform pistolADSParent;
-        //bool aimDownSightsRifle;
-        //bool aimDownSightsPistol;
-        //private void Update()
-        //{
-        //    if (aimDownSightsRifle)
-        //    {
-        //        Transform weapon = weaponManager.equippedWeapon.transform;
-        //        weapon.localPosition = Vector3.Lerp(weapon.localPosition, weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset, Time.deltaTime * 8);
-        //        weapon.localEulerAngles = Vector3.zero;
-        //    }
-        //    else if (aimDownSightsPistol)
-        //    {
-        //        Transform weapon = weaponManager.equippedWeapon.transform;
-        //        weapon.localPosition = Vector3.Lerp(weapon.localPosition, weaponManager.equippedWeapon.GetComponent<Rifle>().ADSPosOffset, Time.deltaTime * 8);
-        //        weapon.localEulerAngles = Vector3.zero;
-        //    }
-        //}
 
         void OnMelee()
         {
@@ -220,6 +163,27 @@ namespace LightPat.Core.Player
         {
             yield return null;
             animator.SetBool("melee", false);
+        }
+
+        void OnReload()
+        {
+            if (weaponManager.equippedWeapon.GetComponent<Rifle>())
+            {
+
+            }
+            else if (weaponManager.equippedWeapon.GetComponent<Pistol>())
+            {
+                StartCoroutine(Reload(weaponManager.equippedWeapon.GetComponent<Pistol>()));
+            }
+        }
+
+        private IEnumerator Reload(Pistol pistol)
+        {
+            pistol.magazineObject.AddComponent<Rigidbody>();
+            pistol.magazineObject.GetComponent<Collider>().enabled = true;
+            pistol.magazineObject.transform.SetParent(null, true);
+            yield return null;
+            pistol.Reload();
         }
 
         void OnQueryWeaponSlot(InputValue value)
@@ -289,13 +253,6 @@ namespace LightPat.Core.Player
             }
             else if (weapon.GetComponent<GreatSword>())
             {
-                //Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
-                //if (sheath)
-                //{
-                //    sheath.gameObject.SetActive(true);
-                //    sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
-                //    sheath.hasPlayer = true;
-                //}
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                 Transform leftFingers = weapon.GetComponent<GreatSword>().leftFingersGrips;
                 for (int i = 0; i < rightFingerIKs.Length; i++)

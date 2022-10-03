@@ -20,15 +20,21 @@ namespace LightPat.Core
         public float fireRate;
         public AnimationCurve xRecoilCurve;
         public AnimationCurve yRecoilCurve;
+        public int magazineSize;
+        public int currentBullets;
+        public GameObject magazineObject;
 
         float timeSinceLastShot;
         float lastShotTime;
 
         public override void Attack1()
         {
-            timeSinceLastShot = Time.time - lastShotTime;
+            float time = Time.time;
+            timeSinceLastShot = time - lastShotTime;
             if (timeSinceLastShot < 1 / (fireRate / 60)) { return; }
-            lastShotTime = Time.time;
+            if (currentBullets < 1) { return; }
+            if (reloading) { return; }
+            lastShotTime = time;
 
             // Spawn the bullet
             GameObject g = Instantiate(bullet, projectileSpawn.position, projectileSpawn.rotation);
@@ -48,6 +54,20 @@ namespace LightPat.Core
 
             // Apply recoil
             StartCoroutine(Recoil());
+
+            currentBullets -= 1;
+            if (currentBullets == 0) { Reload(); }
+        }
+
+        bool reloading;
+        public void Reload()
+        {
+            reloading = true;
+            if (currentBullets < magazineSize)
+            {
+                currentBullets = magazineSize;
+            }
+            reloading = false;
         }
 
         private IEnumerator Recoil()
@@ -73,6 +93,7 @@ namespace LightPat.Core
             base.Start();
             animationClass = "Pistol";
             lastShotTime = Time.time;
+            currentBullets = magazineSize;
         }
     }
 }

@@ -7,12 +7,9 @@ namespace LightPat.Core.Player
 {
     public class Gun : Weapon
     {
-        [Header("Pistol Specific")]
+        [Header("Gun Specific")]
         public Transform rightFingersGrips;
         public Transform leftFingersGrips;
-        public float forwardMult;
-        public float rightMult;
-        public float upMult;
         public Transform projectileSpawn;
         public GameObject bullet;
         public float bulletForce;
@@ -142,7 +139,7 @@ namespace LightPat.Core.Player
             }
         }
 
-        private new void Start()
+        protected new void Start()
         {
             base.Start();
             lastShotTime = Time.time;

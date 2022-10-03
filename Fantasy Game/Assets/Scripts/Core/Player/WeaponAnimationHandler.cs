@@ -238,6 +238,8 @@ namespace LightPat.Core.Player
                 }
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
+                playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerHUD.SetAmmoText(weapon.GetComponent<Gun>().currentBullets + " / " + weapon.GetComponent<Gun>().magazineSize);
             }
             else if (weapon.GetComponent<GreatSword>())
             {
@@ -269,6 +271,8 @@ namespace LightPat.Core.Player
                 }
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
+                playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerHUD.SetAmmoText(weapon.GetComponent<Gun>().currentBullets + " / " + weapon.GetComponent<Gun>().magazineSize);
             }
             else
             {
@@ -283,7 +287,11 @@ namespace LightPat.Core.Player
 
         private IEnumerator StowWeapon()
         {
+            playerHUD.crosshair.gameObject.SetActive(false);
+            playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+
             Weapon equippedWeapon = weaponManager.equippedWeapon;
+            equippedWeapon.disableAttack = true;
             animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
 
             // Turn off hand IKs
@@ -307,15 +315,17 @@ namespace LightPat.Core.Player
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                 playerController.SetLean(0);
+                playerHUD.ammoDisplay.gameObject.SetActive(false);
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
-                playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+                // Do nothing
             }
             else if (equippedWeapon.GetComponent<Pistol>())
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                 playerController.SetLean(0);
+                playerHUD.ammoDisplay.gameObject.SetActive(false);
             }
             else
             {
@@ -333,10 +343,16 @@ namespace LightPat.Core.Player
             equippedWeapon.ChangeOffset("stowed");
             weaponManager.StowWeapon();
             playerController.rotateBodyWithCamera = false;
+            equippedWeapon.disableAttack = false;
+
+            playerHUD.crosshair.gameObject.SetActive(true);
         }
 
         private IEnumerator DrawWeapon(int slotIndex)
         {
+            playerHUD.crosshair.gameObject.SetActive(false);
+            playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+
             Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
             animator.SetBool("draw" + chosenWeapon.animationClass, true);
@@ -381,6 +397,9 @@ namespace LightPat.Core.Player
                 }
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
+
+                playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
             }
             else if (chosenWeapon.GetComponent<GreatSword>())
             {
@@ -403,17 +422,26 @@ namespace LightPat.Core.Player
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
+
+                playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
             }
             else
             {
                 Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.animationClass);
             }
+
+            playerHUD.crosshair.gameObject.SetActive(true);
         }
 
         private IEnumerator SwitchWeapon(int slotIndex)
         {
+            playerHUD.crosshair.gameObject.SetActive(false);
+            playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+
             // Stow equipped weapon
             Weapon equippedWeapon = weaponManager.equippedWeapon;
+            equippedWeapon.disableAttack = true;
             animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
 
             // Turn off hand IKs
@@ -450,7 +478,7 @@ namespace LightPat.Core.Player
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
-                playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+                // Do nothing
             }
             else if (equippedWeapon.GetComponent<Pistol>())
             {
@@ -475,6 +503,7 @@ namespace LightPat.Core.Player
             equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
             equippedWeapon.ChangeOffset("stowed");
             weaponManager.StowWeapon();
+            equippedWeapon.disableAttack = false;
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
 
@@ -511,6 +540,9 @@ namespace LightPat.Core.Player
                 }
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
+
+                playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
             }
             else if (chosenWeapon.GetComponent<GreatSword>())
             {
@@ -538,11 +570,16 @@ namespace LightPat.Core.Player
                 }
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
+
+                playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
             }
             else
             {
                 Debug.LogError("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.animationClass);
             }
+
+            playerHUD.crosshair.gameObject.SetActive(true);
         }
 
         private void OnCollisionEnter(Collision collision)

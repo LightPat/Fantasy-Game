@@ -32,9 +32,10 @@ namespace LightPat.Core
         public bool settingOffsets;
         public string offsetType;
 
+        [HideInInspector] public bool disableAttack;
+
         public virtual void Attack1(bool pressed)
         {
-            if (!pressed) { return; }
             Debug.LogWarning("Attack1() hasn't been implemented yet on this weapon");
         }
 

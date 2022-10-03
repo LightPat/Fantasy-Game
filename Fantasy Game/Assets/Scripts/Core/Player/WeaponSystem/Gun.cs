@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LightPat.Util;
+using TMPro;
 
 namespace LightPat.Core.Player
 {
@@ -37,6 +38,7 @@ namespace LightPat.Core.Player
             if (timeSinceLastShot < 1 / (fireRate / 60)) { return; }
             if (currentBullets < 1) { return; }
             if (reloading) { return; }
+            if (disableAttack) { return; }
             lastShotTime = time;
 
             // Spawn the bullet
@@ -59,6 +61,7 @@ namespace LightPat.Core.Player
             StartCoroutine(Recoil());
 
             currentBullets -= 1;
+            GetComponentInParent<PlayerController>().playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             if (currentBullets == 0) { StartCoroutine(Reload()); }
         }
 
@@ -113,6 +116,7 @@ namespace LightPat.Core.Player
             newMagazine.transform.localRotation = localRot;
             magazineObject = newMagazine;
             currentBullets = magazineSize;
+            GetComponentInParent<PlayerController>().playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             leftHand.lerp = false;
             weaponAnimationHandler.leftFingerRig.weightTarget = 1;
             reloading = false;

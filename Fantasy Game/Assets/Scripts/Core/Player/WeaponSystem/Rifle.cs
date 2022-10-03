@@ -20,6 +20,8 @@ namespace LightPat.Core.Player
 
         public override void Attack1(bool pressed)
         {
+            if (disableAttack) { firing = false; return; }
+
             if (fullAuto)
             {
                 firing = pressed;

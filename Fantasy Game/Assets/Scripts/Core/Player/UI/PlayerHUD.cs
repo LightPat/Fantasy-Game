@@ -11,6 +11,7 @@ namespace LightPat.Core.Player
         public Transform lookAngleDisplay;
         public float lookAngleRotSpeed;
         public Transform ammoDisplay;
+        public Transform crosshair;
 
         WeaponManager weaponManager;
 
@@ -22,6 +23,11 @@ namespace LightPat.Core.Player
         public void ChangeSlotStyle(int slotIndex, TMPro.FontStyles fontStyle)
         {
             weaponSlots.GetChild(slotIndex).GetComponent<TextMeshProUGUI>().fontStyle = fontStyle;
+        }
+
+        public void SetAmmoText(string newText)
+        {
+            ammoDisplay.GetComponent<TextMeshProUGUI>().SetText(newText);
         }
 
         private void Start()

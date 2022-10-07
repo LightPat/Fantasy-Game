@@ -42,7 +42,6 @@ namespace LightPat.Core.Player
         WeaponManager weaponManager;
         FollowTarget[] rightFingerIKs;
         FollowTarget[] leftFingerIKs;
-        PlayerHUD playerHUD;
 
         private void Start()
         {
@@ -52,7 +51,6 @@ namespace LightPat.Core.Player
             weaponManager = GetComponent<WeaponManager>();
             rightFingerIKs = rightFingerRig.GetComponentsInChildren<FollowTarget>();
             leftFingerIKs = leftFingerRig.GetComponentsInChildren<FollowTarget>();
-            playerHUD = GetComponentInChildren<PlayerHUD>();
         }
 
         void OnInteract()
@@ -124,6 +122,8 @@ namespace LightPat.Core.Player
             weaponManager.equippedWeapon.Attack1(value.isPressed);
         }
 
+        [Header("Sword blocking")]
+        public Transform blockConstraints;
         void OnAttack2(InputValue value)
         {
             if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
@@ -143,12 +143,27 @@ namespace LightPat.Core.Player
                 if (value.isPressed)
                 {
                     animator.SetBool("attack2", !animator.GetBool("attack2"));
-                }
-                //animator.SetBool("attack2", value.isPressed);
 
-                if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
-                {
-                    GetComponent<Attributes>().blocking = value.isPressed;
+                    if (animator.GetBool("attack2"))
+                    {
+                        if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
+                        {
+                            GetComponent<Attributes>().blocking = !GetComponent<Attributes>().blocking;
+
+                            rightHandTarget.GetComponent<FollowTarget>().target = blockConstraints;
+                            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+                        }
+                    }
+                    else
+                    {
+                        if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
+                        {
+                            GetComponent<Attributes>().blocking = !GetComponent<Attributes>().blocking;
+
+                            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
+                        }
+                    }
                 }
             }
         }
@@ -204,6 +219,7 @@ namespace LightPat.Core.Player
             // Reach out right hand to grab weapon handle
             rightArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+            rightHandTarget.GetComponent<FollowTarget>().lerpSpeed = reachSpeed;
             rightHandTarget.GetComponent<FollowTarget>().target = weapon.GetComponent<Weapon>().rightHandGrip;
             rightFingerRig.weightSpeed = reachSpeed;
 
@@ -220,6 +236,7 @@ namespace LightPat.Core.Player
             // Activate left hand
             leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
             leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+            leftHandTarget.GetComponent<FollowTarget>().lerpSpeed = reachSpeed;
             leftHandTarget.GetComponent<FollowTarget>().target = weapon.GetComponent<Weapon>().leftHandGrip;
             leftFingerRig.weightSpeed = reachSpeed;
 
@@ -238,8 +255,8 @@ namespace LightPat.Core.Player
                 }
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
-                playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerHUD.SetAmmoText(weapon.GetComponent<Gun>().currentBullets + " / " + weapon.GetComponent<Gun>().magazineSize);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.SetAmmoText(weapon.GetComponent<Gun>().currentBullets + " / " + weapon.GetComponent<Gun>().magazineSize);
             }
             else if (weapon.GetComponent<GreatSword>())
             {
@@ -252,7 +269,7 @@ namespace LightPat.Core.Player
                 leftFingerRig.weightTarget = 1;
                 yield return new WaitUntil(() => rightArmRig.weight == 0);
                 rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-                playerHUD.lookAngleDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
             }
             else if (weapon.GetComponent<Pistol>())
             {
@@ -271,8 +288,8 @@ namespace LightPat.Core.Player
                 }
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
-                playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerHUD.SetAmmoText(weapon.GetComponent<Gun>().currentBullets + " / " + weapon.GetComponent<Gun>().magazineSize);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.SetAmmoText(weapon.GetComponent<Gun>().currentBullets + " / " + weapon.GetComponent<Gun>().magazineSize);
             }
             else
             {
@@ -287,8 +304,8 @@ namespace LightPat.Core.Player
 
         private IEnumerator StowWeapon()
         {
-            playerHUD.crosshair.gameObject.SetActive(false);
-            playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+            playerController.playerHUD.crosshair.gameObject.SetActive(false);
+            playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
 
             Weapon equippedWeapon = weaponManager.equippedWeapon;
             equippedWeapon.disableAttack = true;
@@ -315,7 +332,7 @@ namespace LightPat.Core.Player
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                 playerController.SetLean(0);
-                playerHUD.ammoDisplay.gameObject.SetActive(false);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(false);
             }
             else if (equippedWeapon.GetComponent<GreatSword>())
             {
@@ -325,7 +342,7 @@ namespace LightPat.Core.Player
             {
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                 playerController.SetLean(0);
-                playerHUD.ammoDisplay.gameObject.SetActive(false);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(false);
             }
             else
             {
@@ -345,13 +362,13 @@ namespace LightPat.Core.Player
             playerController.rotateBodyWithCamera = false;
             equippedWeapon.disableAttack = false;
 
-            playerHUD.crosshair.gameObject.SetActive(true);
+            playerController.playerHUD.crosshair.gameObject.SetActive(true);
         }
 
         private IEnumerator DrawWeapon(int slotIndex)
         {
-            playerHUD.crosshair.gameObject.SetActive(false);
-            playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+            playerController.playerHUD.crosshair.gameObject.SetActive(false);
+            playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
 
             Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
@@ -398,14 +415,14 @@ namespace LightPat.Core.Player
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
 
-                playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
             }
             else if (chosenWeapon.GetComponent<GreatSword>())
             {
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                playerHUD.lookAngleDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
                 Transform leftFingers = chosenWeapon.GetComponent<GreatSword>().leftFingersGrips;
                 for (int i = 0; i < rightFingerIKs.Length; i++)
                 {
@@ -423,21 +440,21 @@ namespace LightPat.Core.Player
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
 
-                playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
             }
             else
             {
                 Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.animationClass);
             }
 
-            playerHUD.crosshair.gameObject.SetActive(true);
+            playerController.playerHUD.crosshair.gameObject.SetActive(true);
         }
 
         private IEnumerator SwitchWeapon(int slotIndex)
         {
-            playerHUD.crosshair.gameObject.SetActive(false);
-            playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+            playerController.playerHUD.crosshair.gameObject.SetActive(false);
+            playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
 
             // Stow equipped weapon
             Weapon equippedWeapon = weaponManager.equippedWeapon;
@@ -541,14 +558,14 @@ namespace LightPat.Core.Player
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
 
-                playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
             }
             else if (chosenWeapon.GetComponent<GreatSword>())
             {
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                playerHUD.lookAngleDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
             }
             else if (chosenWeapon.GetComponent<Pistol>())
             {
@@ -571,15 +588,15 @@ namespace LightPat.Core.Player
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
 
-                playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
+                playerController.playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
             }
             else
             {
                 Debug.LogError("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.animationClass);
             }
 
-            playerHUD.crosshair.gameObject.SetActive(true);
+            playerController.playerHUD.crosshair.gameObject.SetActive(true);
         }
 
         private void OnCollisionEnter(Collision collision)

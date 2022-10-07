@@ -7,21 +7,31 @@ namespace LightPat.ProceduralAnimations
     public class SwordBlockingIKSolver : MonoBehaviour
     {
         public Transform parentBone;
-        public Vector3 localPosition;
-        public Vector3 localRotation;
-        public bool inverse;
+        public Vector3 leftBlockRotation;
+        public Vector3 leftMults;
+        public Vector3 rightBlockRotation;
+        public Vector3 rightMults;
+
+        Animator animator;
+
+        private void Start()
+        {
+            animator = GetComponentInParent<Animator>();
+        }
 
         private void Update()
         {
-            if (!inverse)
+            if (animator.GetFloat("lookAngle") < 0) // Left block
             {
-                transform.rotation = parentBone.rotation * Quaternion.Euler(localRotation);
-                transform.position = parentBone.position + transform.rotation * localPosition;
+                transform.rotation = parentBone.rotation * Quaternion.Euler(leftBlockRotation);
+                transform.position = parentBone.position + parentBone.right * leftMults.x + parentBone.up * leftMults.y + parentBone.forward * leftMults.z;
             }
-            else
+            else // Right block
             {
-                transform.rotation = parentBone.rotation * Quaternion.Euler(localRotation);
-                transform.position = parentBone.position + transform.rotation * new Vector3(localPosition.x * -1, localPosition.y, localPosition.z);
+                transform.rotation = parentBone.rotation * Quaternion.Euler(rightBlockRotation);
+                //transform.rotation = parentBone.rotation * Quaternion.Euler(new Vector3(rightBlocklocalRotation.x + 135, localRotation.y + 180, localRotation.z));
+                //transform.rotation *= Quaternion.AngleAxis(180, Vector3.forward);
+                transform.position = parentBone.position + parentBone.right * rightMults.x + parentBone.up * rightMults.y + parentBone.forward * rightMults.z;
             }
         }
     }

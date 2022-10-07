@@ -124,6 +124,7 @@ namespace LightPat.Core.Player
 
         [Header("Sword blocking")]
         public Transform blockConstraints;
+        bool blocking;
         void OnAttack2(InputValue value)
         {
             if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
@@ -143,8 +144,9 @@ namespace LightPat.Core.Player
                 if (value.isPressed)
                 {
                     animator.SetBool("attack2", !animator.GetBool("attack2"));
+                    blocking = !blocking;
 
-                    if (animator.GetBool("attack2"))
+                    if (blocking)
                     {
                         if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
                         {

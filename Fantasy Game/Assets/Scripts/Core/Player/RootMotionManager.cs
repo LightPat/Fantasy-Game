@@ -14,9 +14,12 @@ namespace LightPat.Core.Player
             animator = GetComponent<Animator>();
         }
 
+        public bool disable;
         public float drag;
         private void OnAnimatorMove()
         {
+            if (disable) { return; }
+
             Vector3 newVelocity = Vector3.MoveTowards(rb.velocity * Time.timeScale, animator.velocity, drag);
             newVelocity.y = rb.velocity.y * Time.timeScale;
             rb.velocity = newVelocity / Time.timeScale;

@@ -693,7 +693,7 @@ MonoBehaviour:
   tip: {fileID: 7708844698936418226}
   tipAxis: 1
   tipMultiplier: -1
-  offset: {x: 0, y: -0.5, z: 0}
+  offset: {x: 0.5, y: -0.5, z: 0}
 --- !u!1 &445843197934824745
 GameObject:
   m_ObjectHideFlags: 0
@@ -3215,7 +3215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bcf7cb4eab6a1341a81381c202f2d3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disconnectDistance: 0.13
+  disconnectDistance: 0.15
   lerpWeight: 1
   weightSpeed: 5
   debugDistance: 0
@@ -4380,7 +4380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bcf7cb4eab6a1341a81381c202f2d3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disconnectDistance: 0.13
+  disconnectDistance: 0.15
   lerpWeight: 1
   weightSpeed: 5
   debugDistance: 0
@@ -5060,7 +5060,7 @@ MonoBehaviour:
   tip: {fileID: 7284513826573182685}
   tipAxis: 1
   tipMultiplier: -1
-  offset: {x: 0, y: -0.5, z: 0}
+  offset: {x: -0.5, y: -0.5, z: 0}
 --- !u!1 &7284513825998588542
 GameObject:
   m_ObjectHideFlags: 0
@@ -5291,15 +5291,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85a3165032590e4180a6bc8d2133305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 4
-  reachSpeed: 10
-  rightArmRig: {fileID: 2513949398972815566}
-  leftArmRig: {fileID: 7284513825998588540}
+  rightArmRig: {fileID: 1346904523005087575}
+  leftArmRig: {fileID: 975685839}
   rightHandIK: {fileID: 3097663621319562256}
   leftHandIK: {fileID: 7284513825337906067}
-  rightHandTarget: {fileID: 7708844698936418226}
-  leftHandTarget: {fileID: 7284513826573182685}
-  spineAimRig: {fileID: 3882590641801985052}
+  rightHandTarget: {fileID: 1616088852410723405}
+  leftHandTarget: {fileID: 7284513826573182684}
+  spineAimRig: {fileID: 6763357609041427354}
   rightFingerRig: {fileID: 1040125804926793722}
   leftFingerRig: {fileID: 2556111997334914949}
   rifleGrip: {fileID: 2715807598892599422}
@@ -5311,6 +5309,8 @@ MonoBehaviour:
   spineStow: {fileID: 685456554}
   leftHipStow: {fileID: 8313513781927897783}
   rightHipStow: {fileID: 3618166832557303963}
+  weaponReachDistance: 5
+  dropForce: {x: 0, y: 0, z: 5}
   blockConstraints: {fileID: 2499275057994608015}
 --- !u!114 &2064362975
 MonoBehaviour:

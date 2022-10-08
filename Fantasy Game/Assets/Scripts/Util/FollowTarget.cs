@@ -18,7 +18,20 @@ namespace LightPat.Util
             {
                 if (lerp)
                 {
-                    if (move) { transform.position = Vector3.Lerp(transform.position, target.position, lerpSpeed * Time.deltaTime); }
+                    if (move)
+                    {
+                        transform.position = Vector3.MoveTowards(transform.position, target.position, lerpSpeed * Time.deltaTime);
+
+                        //if (Vector3.Distance(transform.position, target.position) > 0.2f)
+                        //{
+                        //    transform.position = Vector3.Lerp(transform.position, target.position, lerpSpeed * Time.deltaTime);
+                        //}
+                        //else
+                        //{
+                        //    transform.position = Vector3.MoveTowards(transform.position, target.position, lerpSpeed * Time.deltaTime);
+                        //}
+                    }
+
                     if (rotate) { transform.rotation = Quaternion.Slerp(transform.rotation, target.rotation, lerpSpeed * Time.deltaTime); }
                 }
                 else

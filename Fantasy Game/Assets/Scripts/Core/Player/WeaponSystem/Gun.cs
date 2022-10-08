@@ -76,7 +76,7 @@ namespace LightPat.Core.Player
             // Store magazine's localPosition and localRotation for later
             Vector3 localPos = magazineObject.transform.localPosition;
             Quaternion localRot = magazineObject.transform.localRotation;
-            GameObject newMagazine = Instantiate(magazineObject, weaponAnimationHandler.leftHandTarget);
+            GameObject newMagazine = Instantiate(magazineObject, weaponAnimationHandler.leftHandTarget.transform);
             newMagazine.SetActive(false);
 
             // Unload current magazine
@@ -94,7 +94,7 @@ namespace LightPat.Core.Player
             leftHand.lerpSpeed = reloadSpeed;
             leftHand.lerp = true;
             leftHand.target = weaponAnimationHandler.leftHipStow.Find("MagazinePoint");
-            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, weaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.1f);
+            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.transform.position, weaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.1f);
 
             foreach (Collider c in oldMagazine.GetComponents<Collider>())
             {
@@ -106,7 +106,7 @@ namespace LightPat.Core.Player
             newMagazine.transform.localPosition = magazineLocalPos;
             newMagazine.transform.localEulerAngles = magazineLocalRot;
             leftHand.target = leftHandGrip;
-            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.position, leftHandGrip.position) < 0.1f);
+            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.transform.position, leftHandGrip.position) < 0.1f);
 
             // Load new magazine into gun
             Vector3 scale = newMagazine.transform.localScale;

@@ -11,17 +11,14 @@ namespace LightPat.Core.Player
     [RequireComponent(typeof(WeaponLoadout))]
     public class HumanoidWeaponAnimationHandler : MonoBehaviour
     {
-        [Header("Reach Procedural Anim Settings")]
-        public float reach;
-        public float reachSpeed;
         [Header("Rigging Assignments")]
-        public Rig rightArmRig;
-        public Rig leftArmRig;
+        public RigWeightTarget rightArmRig;
+        public RigWeightTarget leftArmRig;
         public TwoBoneIKConstraint rightHandIK;
         public TwoBoneIKConstraint leftHandIK;
-        public Transform rightHandTarget;
-        public Transform leftHandTarget;
-        public Rig spineAimRig;
+        public FollowTarget rightHandTarget;
+        public FollowTarget leftHandTarget;
+        public RigWeightTarget spineAimRig;
         public RigWeightTarget rightFingerRig;
         public RigWeightTarget leftFingerRig;
         [Header("Weapon Grip Points")]
@@ -38,7 +35,7 @@ namespace LightPat.Core.Player
         public Transform rightHipStow;
 
         PlayerController playerController;
-        AnimatorLayerWeightManager weightManager;
+        AnimatorLayerWeightManager animatorLayerWeightManager;
         Animator animator;
         WeaponLoadout weaponLoadout;
         FollowTarget[] rightFingerIKs;
@@ -47,7 +44,7 @@ namespace LightPat.Core.Player
         private void Start()
         {
             playerController = GetComponent<PlayerController>();
-            weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
+            animatorLayerWeightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
             weaponLoadout = GetComponent<WeaponLoadout>();
             rightFingerIKs = rightFingerRig.GetComponentsInChildren<FollowTarget>();
@@ -59,22 +56,20 @@ namespace LightPat.Core.Player
         private IEnumerator EquipInitialWeapons()
         {
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
-            // Do this to prevent warning from invalid animation layers
+            // Do this to prevent warning from invalid animation layers in other scripts' Update() methods
             weaponLoadout.equippedWeapon = null;
-
-            equipWeaponRunning = true;
-
             // Wait 1 frame to prevent burst job errors from occuring from the rigbuilder
             yield return null;
 
             foreach (Weapon startingWeapon in weaponLoadout.startingWeapons)
             {
                 Weapon weapon = startingWeapon;
-                // If this is a prefab that hasn't been spawned in yet
+                // If this is a prefab that hasn't been instantiated
                 if (startingWeapon.gameObject.scene.name == null)
                 {
-                    GameObject g = Instantiate(startingWeapon.gameObject, GetStowPoint(weapon.stowPoint));
+                    GameObject g = Instantiate(startingWeapon.gameObject);
                     weapon = g.GetComponent<Weapon>();
+                    ReparentWeapon(weapon, "stowed");
                     g.transform.localPosition = weapon.stowedPositionOffset;
                     g.transform.localRotation = Quaternion.Euler(weapon.stowedRotationOffset);
                     g.name = startingWeapon.name;
@@ -82,34 +77,15 @@ namespace LightPat.Core.Player
                     yield return null;
                 }
 
-                // Remove the rigidbody
                 Destroy(weapon.GetComponent<Rigidbody>());
+                ReparentWeapon(weapon, "stowed");
 
-                // Parent weapon to stowPoint
-                weapon.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
-                weapon.ChangeOffset("stowed");
-
-                if (weapon.GetComponent<Rifle>())
+                Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                if (sheath)
                 {
-                    // Do nothing
-                }
-                else if (weapon.GetComponent<GreatSword>())
-                {
-                    Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
-                    if (sheath)
-                    {
-                        sheath.gameObject.SetActive(true);
-                        sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
-                        sheath.hasPlayer = true;
-                    }
-                }
-                else if (weapon.GetComponent<Pistol>())
-                {
-                    // Do nothing
-                }
-                else
-                {
-                    Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.animationClass);
+                    sheath.gameObject.SetActive(true);
+                    sheath.transform.SetParent(GetStowPoint(weapon), true);
+                    sheath.hasPlayer = true;
                 }
 
                 weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
@@ -122,8 +98,9 @@ namespace LightPat.Core.Player
                 // If this is a prefab that hasn't been spawned in yet
                 if (startingWeapon.gameObject.scene.name == null)
                 {
-                    GameObject g = Instantiate(startingWeapon.gameObject, GetStowPoint(weapon.stowPoint));
+                    GameObject g = Instantiate(startingWeapon.gameObject);
                     weapon = g.GetComponent<Weapon>();
+                    ReparentWeapon(weapon, "player");
                     g.transform.localPosition = weapon.stowedPositionOffset;
                     g.transform.localRotation = Quaternion.Euler(weapon.stowedRotationOffset);
                     g.name = startingWeapon.name;
@@ -132,99 +109,61 @@ namespace LightPat.Core.Player
                     yield return null;
                 }
 
-                // Remove the rigidbody
                 Destroy(weapon.GetComponent<Rigidbody>());
+                ReparentWeapon(weapon, "stowed");
 
-                // Parent weapon to stowPoint
-                weapon.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
-                weapon.ChangeOffset("stowed");
-
-                if (weapon.GetComponent<Rifle>())
+                Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                if (sheath)
                 {
-                    // Do nothing
-                }
-                else if (weapon.GetComponent<GreatSword>())
-                {
-                    Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
-                    if (sheath)
-                    {
-                        sheath.gameObject.SetActive(true);
-                        sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
-                        sheath.hasPlayer = true;
-                    }
-                }
-                else if (weapon.GetComponent<Pistol>())
-                {
-                    // Do nothing
-                }
-                else
-                {
-                    Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.animationClass);
+                    sheath.gameObject.SetActive(true);
+                    sheath.transform.SetParent(GetStowPoint(weapon), true);
+                    sheath.hasPlayer = true;
                 }
 
-                // Draw Weapon
                 yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()));
                 weaponLoadout.ChangeLoadoutPositions(0, weaponLoadout.GetEquippedWeaponIndex());
             }
-
-            equipWeaponRunning = false;
         }
 
+        [Header("Interact Setings")]
+        public float weaponReachDistance;
         void OnInteract()
         {
-            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, reach);
+            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, weaponReachDistance);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
-
             foreach (RaycastHit hit in allHits)
             {
-                if (hit.transform == transform)
-                {
-                    continue;
-                }
-
+                if (hit.transform == transform) { continue; }
                 if (hit.transform.GetComponent<Weapon>())
                 {
-                    if (equipWeaponRunning) { return; }
-
                     // If we already have a weapon equipped just put the weapon we click in our reserves
                     if (weaponLoadout.equippedWeapon == null)
                     {
-                        StartCoroutine(EquipWeapon(hit));
+                        Weapon weapon = hit.transform.GetComponent<Weapon>();
+
+                        Transform gripPoint = GetGripPoint(weapon.GetComponent<Weapon>());
+                        gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+                        animatorLayerWeightManager.SetLayerWeight(weapon.GetComponent<Weapon>().animationClass, 1);
+
+                        Destroy(weapon.GetComponent<Rigidbody>());
+                        ReparentWeapon(weapon, "player");
+                        weaponLoadout.DrawWeapon(weaponLoadout.AddWeapon(weapon));
+
+                        EnableCombatIKs();
                     }
                     else
                     {
                         Weapon weapon = hit.transform.GetComponent<Weapon>();
-
-                        // Remove the physics and collider components
                         Destroy(weapon.GetComponent<Rigidbody>());
+                        ReparentWeapon(weapon, "stowed");
 
-                        // Parent weapon to stowPoint
-                        weapon.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
-                        weapon.ChangeOffset("stowed");
-
-                        if (weapon.GetComponent<Rifle>())
+                        Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                        if (sheath)
                         {
-                            // Do nothing
+                            sheath.gameObject.SetActive(true);
+                            sheath.transform.SetParent(GetStowPoint(weapon), true);
+                            sheath.hasPlayer = true;
                         }
-                        else if (weapon.GetComponent<GreatSword>())
-                        {
-                            Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
-                            if (sheath)
-                            {
-                                sheath.gameObject.SetActive(true);
-                                sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
-                                sheath.hasPlayer = true;
-                            }
-                        }
-                        else if (weapon.GetComponent<Pistol>())
-                        {
-                            // Do nothing
-                        }
-                        else
-                        {
-                            Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.animationClass);
-                        }
-
                         weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
                     }
                 }
@@ -238,26 +177,13 @@ namespace LightPat.Core.Player
         {
             if (weaponLoadout.equippedWeapon)
             {
-                weightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
+                animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
+                weaponLoadout.equippedWeapon.transform.position += transform.forward;
                 weaponLoadout.equippedWeapon.transform.SetParent(null, true);
                 Rigidbody rb = weaponLoadout.equippedWeapon.gameObject.AddComponent<Rigidbody>();
-                rb.transform.position += transform.forward;
-                rb.AddForce(dropForce, ForceMode.VelocityChange);
+                rb.AddForce(rb.transform.rotation * dropForce, ForceMode.VelocityChange);
                 weaponLoadout.RemoveEquippedWeapon();
-
-                // Turn off hand IKs
-                leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
-                rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                rightFingerRig.weightTarget = 0;
-                leftFingerRig.weightTarget = 0;
-
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                playerController.SetLean(0);
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(false);
-                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
-                playerController.rotateBodyWithCamera = false;
+                DisableCombatIKs();
             }
         }
 
@@ -270,7 +196,6 @@ namespace LightPat.Core.Player
 
         [Header("Sword blocking")]
         public Transform blockConstraints;
-        bool blocking;
         void OnAttack2(InputValue value)
         {
             if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
@@ -287,26 +212,21 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                if (value.isPressed)
+                if (!value.isPressed) { return; }
+                bool attack2 = !animator.GetBool("attack2");
+                animator.SetBool("attack2", attack2);
+                if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 {
-                    animator.SetBool("attack2", !animator.GetBool("attack2"));
-
-                    if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
+                    GetComponent<Attributes>().blocking = attack2;
+                    if (attack2)
                     {
-                        blocking = !blocking;
-
-                        if (blocking)
-                        {
-                            GetComponent<Attributes>().blocking = blocking;
-                            rightHandTarget.GetComponent<FollowTarget>().target = blockConstraints;
-                            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                        }
-                        else
-                        {
-                            GetComponent<Attributes>().blocking = blocking;
-                            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-                        }
+                        rightHandTarget.target = blockConstraints;
+                        rightArmRig.weightTarget = 1;
+                    }
+                    else
+                    {
+                        rightArmRig.weightTarget = 0;
+                        rightHandTarget.target = rightHandIK.data.tip;
                     }
                 }
             }
@@ -314,31 +234,21 @@ namespace LightPat.Core.Player
 
         void OnMelee()
         {
-            animator.SetBool("melee", true);
-            StartCoroutine(ResetMeleeBool());
-        }
-
-        private IEnumerator ResetMeleeBool()
-        {
-            yield return null;
-            animator.SetBool("melee", false);
+            StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "melee"));
         }
 
         void OnReload()
         {
             if (weaponLoadout.equippedWeapon == null) { return; }
-
             StartCoroutine(weaponLoadout.equippedWeapon.Reload());
         }
 
         void OnQueryWeaponSlot(InputValue value)
         {
             int slot = Convert.ToInt32(value.Get()) - 1;
-
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
             if (chosenWeapon == null) { return; }
-
             if (weaponLoadout.equippedWeapon == chosenWeapon)
                 StartCoroutine(StowWeapon());
             else if (weaponLoadout.equippedWeapon != null)
@@ -347,151 +257,22 @@ namespace LightPat.Core.Player
                 StartCoroutine(DrawWeapon(slot));
         }
 
-        bool equipWeaponRunning;
-        private IEnumerator EquipWeapon(RaycastHit hit)
-        {
-            equipWeaponRunning = true;
-            Weapon weapon = hit.transform.GetComponent<Weapon>();
-
-            // Remove the physics and collider components
-            Destroy(weapon.GetComponent<Rigidbody>());
-
-            // Change grip class weight
-            Transform gripPoint = GetGripPoint(weapon.GetComponent<Weapon>());
-            gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
-
-            // Reach out right hand to grab weapon handle
-            rightArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
-            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-            rightHandTarget.GetComponent<FollowTarget>().lerpSpeed = reachSpeed;
-            rightHandTarget.GetComponent<FollowTarget>().target = weapon.GetComponent<Weapon>().rightHandGrip;
-            rightFingerRig.weightSpeed = reachSpeed;
-
-            // Transition into the weapon's animations
-            weightManager.SetLayerWeight(weapon.GetComponent<Weapon>().animationClass, 1);
-
-            // Wait until hands have reached the weapon handle
-            yield return new WaitUntil(() => rightArmRig.weight == 1);
-            // Don't move right hand while reparenting
-            rightHandTarget.GetComponent<FollowTarget>().target = null;
-            // Parent weapon to the constraint object, typically this is the right hand
-            weapon.transform.SetParent(gripPoint, true);
-
-            // Activate left hand
-            leftArmRig.GetComponent<RigWeightTarget>().weightSpeed = reachSpeed;
-            leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-            leftHandTarget.GetComponent<FollowTarget>().lerpSpeed = reachSpeed;
-            leftHandTarget.GetComponent<FollowTarget>().target = weapon.GetComponent<Weapon>().leftHandGrip;
-            leftFingerRig.weightSpeed = reachSpeed;
-
-            if (weapon.GetComponent<Rifle>())
-            {
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
-
-                Rifle rifleComponent = weapon.GetComponent<Rifle>();
-                Transform rightFingers = rifleComponent.rightFingersGrips;
-                Transform leftFingers = rifleComponent.leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    rightFingerIKs[i].target = rightFingers.GetChild(i);
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                rightFingerRig.weightTarget = 1;
-                leftFingerRig.weightTarget = 1;
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerController.playerHUD.SetAmmoText(weapon.GetComponent<Gun>().currentBullets + " / " + weapon.GetComponent<Gun>().magazineSize);
-            }
-            else if (weapon.GetComponent<GreatSword>())
-            {
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                Transform leftFingers = weapon.GetComponent<GreatSword>().leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                leftFingerRig.weightTarget = 1;
-                yield return new WaitUntil(() => rightArmRig.weight == 0);
-                rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
-            }
-            else if (weapon.GetComponent<Pistol>())
-            {
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
-
-                Pistol pistolComponent = weapon.GetComponent<Pistol>();
-                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.constraintPositionMultipliers);
-
-                Transform rightFingers = pistolComponent.rightFingersGrips;
-                Transform leftFingers = pistolComponent.leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    rightFingerIKs[i].target = rightFingers.GetChild(i);
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                rightFingerRig.weightTarget = 1;
-                leftFingerRig.weightTarget = 1;
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerController.playerHUD.SetAmmoText(weapon.GetComponent<Gun>().currentBullets + " / " + weapon.GetComponent<Gun>().magazineSize);
-            }
-            else
-            {
-                Debug.LogError("Invalid weapon class on weaponEquip()" + weapon + " " + weapon.animationClass);
-            }
-
-            int slot = weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
-            weaponLoadout.DrawWeapon(slot); // Draw most recently added weapon
-            playerController.rotateBodyWithCamera = true;
-            equipWeaponRunning = false;
-        }
-
         private IEnumerator StowWeapon()
         {
-            playerController.playerHUD.crosshair.gameObject.SetActive(false);
-            playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
-
+            leftHandTarget.lerp = true;
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
             equippedWeapon.disableAttack = true;
             animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
 
-            // Turn off hand IKs
-            leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
-            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-            leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-            rightFingerRig.weightTarget = 0;
-            leftFingerRig.weightTarget = 0;
+            DisableCombatIKs();
 
             animator.SetBool("stow" + equippedWeapon.animationClass, true);
             yield return null;
             animator.SetBool("stow" + equippedWeapon.animationClass, false);
 
             // Parent weapon to move with right hand
-            equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon), true);
-            equippedWeapon.ChangeOffset("transition");
+            ReparentWeapon(equippedWeapon, "transition");
             GetGripPoint(equippedWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
-
-            if (equippedWeapon.GetComponent<Rifle>())
-            {
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                playerController.SetLean(0);
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(false);
-            }
-            else if (equippedWeapon.GetComponent<GreatSword>())
-            {
-                // Do nothing
-            }
-            else if (equippedWeapon.GetComponent<Pistol>())
-            {
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                playerController.SetLean(0);
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(false);
-            }
-            else
-            {
-                Debug.LogError("This weapon doesn't have a valid class when trying to stow it " + equippedWeapon + " " + equippedWeapon.animationClass);
-            }
 
             // Wait until stow animation has finished playing
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
@@ -499,25 +280,18 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Change to stowed mode
-            weightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
-            equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
-            equippedWeapon.ChangeOffset("stowed");
-            foreach (Collider c in equippedWeapon.GetComponentsInChildren<Collider>())
-            {
-                c.enabled = false;
-            }
+            animatorLayerWeightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
+            ReparentWeapon(equippedWeapon, "stowed");
             weaponLoadout.StowWeapon();
-            playerController.rotateBodyWithCamera = false;
             equippedWeapon.disableAttack = false;
 
-            playerController.playerHUD.crosshair.gameObject.SetActive(true);
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            leftHandTarget.lerp = false;
         }
 
         private IEnumerator DrawWeapon(int slotIndex)
         {
-            playerController.playerHUD.crosshair.gameObject.SetActive(false);
-            playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
-
+            leftHandTarget.lerp = true;
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
             animator.SetBool("draw" + chosenWeapon.animationClass, true);
@@ -531,115 +305,37 @@ namespace LightPat.Core.Player
             // Parent weapon to move with right hand
             Transform gripPoint = GetGripPoint(chosenWeapon);
             gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
-            chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon), true);
-            chosenWeapon.ChangeOffset("transition");
-            foreach (Collider c in chosenWeapon.GetComponentsInChildren<Collider>())
-            {
-                c.enabled = true;
-            }
+            ReparentWeapon(chosenWeapon, "transition");
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Change to player mode
-            weightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
-            chosenWeapon.transform.SetParent(GetGripPoint(chosenWeapon), true);
-            chosenWeapon.ChangeOffset("player");
+            animatorLayerWeightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
+            ReparentWeapon(chosenWeapon, "player");
             weaponLoadout.DrawWeapon(slotIndex);
-            playerController.rotateBodyWithCamera = true;
+            EnableCombatIKs();
 
-            // Turn on hand IKs
-            if (chosenWeapon.GetComponent<Rifle>())
-            {
-                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-
-                Rifle rifleComponent = chosenWeapon.GetComponent<Rifle>();
-                Transform rightFingers = rifleComponent.rightFingersGrips;
-                Transform leftFingers = rifleComponent.leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    rightFingerIKs[i].target = rightFingers.GetChild(i);
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                rightFingerRig.weightTarget = 1;
-                leftFingerRig.weightTarget = 1;
-
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerController.playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
-            }
-            else if (chosenWeapon.GetComponent<GreatSword>())
-            {
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
-                Transform leftFingers = chosenWeapon.GetComponent<GreatSword>().leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                leftFingerRig.weightTarget = 1;
-            }
-            else if (chosenWeapon.GetComponent<Pistol>())
-            {
-                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-
-                Pistol pistolComponent = chosenWeapon.GetComponent<Pistol>();
-                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.constraintPositionMultipliers);
-
-                Transform rightFingers = pistolComponent.rightFingersGrips;
-                Transform leftFingers = pistolComponent.leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    rightFingerIKs[i].target = rightFingers.GetChild(i);
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                rightFingerRig.weightTarget = 1;
-                leftFingerRig.weightTarget = 1;
-
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerController.playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
-            }
-            else
-            {
-                Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.animationClass);
-            }
-
-            playerController.playerHUD.crosshair.gameObject.SetActive(true);
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            leftHandTarget.lerp = false;
         }
 
         private IEnumerator SwitchWeapon(int slotIndex)
         {
-            playerController.playerHUD.crosshair.gameObject.SetActive(false);
-            playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
-
+            leftHandTarget.lerp = true;
             // Stow equipped weapon
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
             equippedWeapon.disableAttack = true;
             animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
 
-            // Turn off hand IKs
-            leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
-            rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
-            leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-            rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-            rightFingerRig.weightTarget = 0;
-            leftFingerRig.weightTarget = 0;
+            DisableCombatIKs();
 
             animator.SetBool("stow" + equippedWeapon.animationClass, true);
             yield return null;
             animator.SetBool("stow" + equippedWeapon.animationClass, false);
 
             // Parent weapon to move with right hand
-            equippedWeapon.transform.SetParent(GetTransitionPoint(equippedWeapon), true);
-            equippedWeapon.ChangeOffset("transition");
+            ReparentWeapon(equippedWeapon, "transition");
             GetGripPoint(equippedWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
 
             // Wait until stow animation has started playing
@@ -649,132 +345,34 @@ namespace LightPat.Core.Player
             // Start drawing next weapon once stow animation has finished playing
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
 
-            if (equippedWeapon.GetComponent<Rifle>())
-            {
-                if (!(chosenWeapon.GetComponent<Pistol>() | chosenWeapon.GetComponent<Rifle>()))
-                {
-                    spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                    playerController.SetLean(0);
-                }
-            }
-            else if (equippedWeapon.GetComponent<GreatSword>())
-            {
-                // Do nothing
-            }
-            else if (equippedWeapon.GetComponent<Pistol>())
-            {
-                if (!(chosenWeapon.GetComponent<Pistol>() | chosenWeapon.GetComponent<Rifle>()))
-                {
-                    spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
-                    playerController.SetLean(0);
-                }
-            }
-            else
-            {
-                Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + equippedWeapon + " " + equippedWeapon.animationClass);
-            }
-
             animator.SetBool("draw" + chosenWeapon.animationClass, true);
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
             animator.SetBool("draw" + chosenWeapon.animationClass, false);
 
             // Change to stowed mode
-            weightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
-            equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
-            equippedWeapon.ChangeOffset("stowed");
+            animatorLayerWeightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
+            ReparentWeapon(equippedWeapon, "stowed");
             weaponLoadout.StowWeapon();
             equippedWeapon.disableAttack = false;
-            foreach (Collider c in equippedWeapon.GetComponentsInChildren<Collider>())
-            {
-                c.enabled = false;
-            }
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
 
             // Parent weapon to move with right hand
             GetGripPoint(chosenWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
-            chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon), true);
-            chosenWeapon.ChangeOffset("transition");
-            foreach (Collider c in chosenWeapon.GetComponentsInChildren<Collider>())
-            {
-                c.enabled = true;
-            }
+            ReparentWeapon(chosenWeapon, "transition");
 
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Change to player mode
-            weightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
+            animatorLayerWeightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
             Transform gripPoint = GetGripPoint(chosenWeapon);
-            chosenWeapon.transform.SetParent(gripPoint, true);
-            chosenWeapon.ChangeOffset("player");
+            ReparentWeapon(chosenWeapon, "player");
             weaponLoadout.DrawWeapon(slotIndex);
+            EnableCombatIKs();
 
-            // Turn on hand IKs
-            if (chosenWeapon.GetComponent<Rifle>())
-            {
-                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-
-                Rifle rifleComponent = chosenWeapon.GetComponent<Rifle>();
-                Transform rightFingers = rifleComponent.rightFingersGrips;
-                Transform leftFingers = rifleComponent.leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    rightFingerIKs[i].target = rightFingers.GetChild(i);
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                rightFingerRig.weightTarget = 1;
-                leftFingerRig.weightTarget = 1;
-
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerController.playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
-            }
-            else if (chosenWeapon.GetComponent<GreatSword>())
-            {
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
-                Transform leftFingers = chosenWeapon.GetComponent<GreatSword>().leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                leftFingerRig.weightTarget = 1;
-            }
-            else if (chosenWeapon.GetComponent<Pistol>())
-            {
-                leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
-                rightHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.rightHandGrip;
-                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
-
-                Pistol pistolComponent = chosenWeapon.GetComponent<Pistol>();
-                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.constraintPositionMultipliers);
-
-                Transform rightFingers = pistolComponent.rightFingersGrips;
-                Transform leftFingers = pistolComponent.leftFingersGrips;
-                for (int i = 0; i < rightFingerIKs.Length; i++)
-                {
-                    rightFingerIKs[i].target = rightFingers.GetChild(i);
-                    leftFingerIKs[i].target = leftFingers.GetChild(i);
-                }
-                rightFingerRig.weightTarget = 1;
-                leftFingerRig.weightTarget = 1;
-
-                playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
-                playerController.playerHUD.SetAmmoText(chosenWeapon.GetComponent<Gun>().currentBullets + " / " + chosenWeapon.GetComponent<Gun>().magazineSize);
-            }
-            else
-            {
-                Debug.LogError("This weapon doesn't have a valid class when trying to draw it " + chosenWeapon + " " + chosenWeapon.animationClass);
-            }
-
-            playerController.playerHUD.crosshair.gameObject.SetActive(true);
+            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            leftHandTarget.lerp = false;
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -798,23 +396,53 @@ namespace LightPat.Core.Player
             }
         }
 
-        private Transform GetStowPoint(string stowType)
+        private void ReparentWeapon(Weapon weapon, string action)
         {
-            if (stowType == "Spine")
+            if (action == "player")
+            {
+                weapon.transform.SetParent(GetGripPoint(weapon), true);
+            }
+            else if (action == "transition")
+            {
+                weapon.transform.SetParent(GetTransitionPoint(weapon), true);
+                foreach (Collider c in weapon.GetComponentsInChildren<Collider>())
+                {
+                    c.enabled = true;
+                }
+            }
+            else if (action == "stowed")
+            {
+                weapon.transform.SetParent(GetStowPoint(weapon), true);
+                foreach (Collider c in weapon.GetComponentsInChildren<Collider>())
+                {
+                    c.enabled = false;
+                }
+            }
+            else
+            {
+                Debug.LogError("The weapon action you are trying to reparent is invalid" + weapon + " " + action);
+            }
+
+            weapon.ChangeOffset(action);
+        }
+
+        private Transform GetStowPoint(Weapon weapon)
+        {
+            if (weapon.stowPoint == "Spine")
             {
                 return spineStow;
             }
-            else if (stowType == "Left Hip")
+            else if (weapon.stowPoint == "Left Hip")
             {
                 return leftHipStow;
             }
-            else if (stowType == "Right Hip")
+            else if (weapon.stowPoint == "Right Hip")
             {
                 return rightHipStow;
             }
             else
             {
-                Debug.LogWarning("The weapon you are trying to stow has an invalid stow type" + stowType);
+                Debug.LogWarning("The weapon you are trying to stow has an invalid stow type" + weapon.stowPoint);
                 return null;
             }
         }
@@ -859,6 +487,103 @@ namespace LightPat.Core.Player
                 Debug.LogWarning("The weapon you are trying to reparent has an invalid weapon class" + weapon);
                 return null;
             }
+        }
+
+        private void EnableCombatIKs()
+        {
+            if (playerController)
+                playerController.rotateBodyWithCamera = true;
+
+            if (weaponLoadout.equippedWeapon.GetComponent<Rifle>())
+            {
+                leftHandTarget.target = weaponLoadout.equippedWeapon.leftHandGrip;
+                rightHandTarget.target = weaponLoadout.equippedWeapon.rightHandGrip;
+                leftArmRig.weightTarget = 1;
+                rightArmRig.weightTarget = 1;
+                spineAimRig.weightTarget = 1;
+
+                Rifle rifleComponent = weaponLoadout.equippedWeapon.GetComponent<Rifle>();
+                Transform rightFingers = rifleComponent.rightFingersGrips;
+                Transform leftFingers = rifleComponent.leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
+
+                if (playerController)
+                {
+                    playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
+                    playerController.playerHUD.SetAmmoText(rifleComponent.currentBullets + " / " + rifleComponent.magazineSize);
+                }
+            }
+            else if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
+            {
+                leftArmRig.weightTarget = 1;
+                leftHandTarget.target = weaponLoadout.equippedWeapon.leftHandGrip;
+                Transform leftFingers = weaponLoadout.equippedWeapon.GetComponent<GreatSword>().leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                leftFingerRig.weightTarget = 1;
+
+                if (playerController)
+                    playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
+            }
+            else if (weaponLoadout.equippedWeapon.GetComponent<Pistol>())
+            {
+                leftHandTarget.target = weaponLoadout.equippedWeapon.leftHandGrip;
+                rightHandTarget.target = weaponLoadout.equippedWeapon.rightHandGrip;
+                leftArmRig.weightTarget = 1;
+                rightArmRig.weightTarget = 1;
+                spineAimRig.weightTarget = 1;
+
+                Pistol pistolComponent = weaponLoadout.equippedWeapon.GetComponent<Pistol>();
+                pistolGrip.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.constraintPositionMultipliers);
+
+                Transform rightFingers = pistolComponent.rightFingersGrips;
+                Transform leftFingers = pistolComponent.leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
+
+                if (playerController)
+                {
+                    playerController.playerHUD.ammoDisplay.gameObject.SetActive(true);
+                    playerController.playerHUD.SetAmmoText(pistolComponent.currentBullets + " / " + pistolComponent.magazineSize);
+                }
+            }
+            else
+            {
+                Debug.LogWarning("This weapon doesn't have a valid class when trying to draw it " + weaponLoadout.equippedWeapon + " " + weaponLoadout.equippedWeapon.animationClass);
+            }
+        }
+
+        private void DisableCombatIKs()
+        {
+            // Turn off all IKs
+            leftHandTarget.target = leftHandIK.data.tip;
+            rightHandTarget.target = rightHandIK.data.tip;
+            leftArmRig.weightTarget = 0;
+            rightArmRig.weightTarget = 0;
+            rightFingerRig.weightTarget = 0;
+            leftFingerRig.weightTarget = 0;
+            spineAimRig.weightTarget = 0;
+
+            if (playerController)
+            {
+                playerController.SetLean(0);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(false);
+                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+                playerController.rotateBodyWithCamera = false;
+            }            
         }
     }
 }

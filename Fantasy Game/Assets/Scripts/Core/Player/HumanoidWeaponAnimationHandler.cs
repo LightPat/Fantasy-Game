@@ -58,7 +58,13 @@ namespace LightPat.Core.Player
 
         private IEnumerator EquipInitialWeapons()
         {
-            // Wait 1 frame to prevent burst job errors from occuring
+            Weapon equippedWeapon = weaponLoadout.equippedWeapon;
+            // Do this to prevent warning from invalid animation layers
+            weaponLoadout.equippedWeapon = null;
+
+            equipWeaponRunning = true;
+
+            // Wait 1 frame to prevent burst job errors from occuring from the rigbuilder
             yield return null;
 
             foreach (Weapon startingWeapon in weaponLoadout.startingWeapons)
@@ -109,10 +115,10 @@ namespace LightPat.Core.Player
                 weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
             }
 
-            if (weaponLoadout.equippedWeapon)
+            if (equippedWeapon)
             {
-                Weapon weapon = weaponLoadout.equippedWeapon;
-                Weapon startingWeapon = weaponLoadout.equippedWeapon;
+                Weapon weapon = equippedWeapon;
+                Weapon startingWeapon = equippedWeapon;
                 // If this is a prefab that hasn't been spawned in yet
                 if (startingWeapon.gameObject.scene.name == null)
                 {
@@ -159,6 +165,8 @@ namespace LightPat.Core.Player
                 // Draw Weapon
                 yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()));
                 weaponLoadout.ChangeLoadoutPositions(0, weaponLoadout.GetEquippedWeaponIndex());
+
+                equipWeaponRunning = false;
             }
         }
 
@@ -488,7 +496,8 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Parent weapon to move with right hand
-            GetGripPoint(chosenWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+            Transform gripPoint = GetGripPoint(chosenWeapon);
+            gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
             chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon), true);
             chosenWeapon.ChangeOffset("transition");
 
@@ -544,6 +553,17 @@ namespace LightPat.Core.Player
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
+
+                Pistol pistolComponent = chosenWeapon.GetComponent<Pistol>();
+                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.constraintPositionMultipliers);
+
+                Transform rightFingers = pistolComponent.rightFingersGrips;
+                Transform leftFingers = pistolComponent.leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
                 rightFingerRig.weightTarget = 1;
                 leftFingerRig.weightTarget = 1;
 

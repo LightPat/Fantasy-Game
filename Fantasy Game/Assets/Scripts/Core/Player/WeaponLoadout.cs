@@ -78,6 +78,11 @@ namespace LightPat.Core.Player
             return -1;
         }
 
+        public int GetWeaponListLength()
+        {
+            return weapons.Count;
+        }
+
         private void Start()
         {
             playerHUD = GetComponentInChildren<PlayerHUD>();

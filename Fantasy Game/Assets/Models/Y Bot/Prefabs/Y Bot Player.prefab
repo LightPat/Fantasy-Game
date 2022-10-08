@@ -5153,8 +5153,8 @@ GameObject:
   - component: {fileID: 7284513826171149809}
   - component: {fileID: 7284513826171149810}
   - component: {fileID: 7284513826171149811}
-  - component: {fileID: 1163105829}
   - component: {fileID: 2064362975}
+  - component: {fileID: 1163105829}
   - component: {fileID: 3945321872001441854}
   m_Layer: 0
   m_Name: Y Bot Player
@@ -5312,6 +5312,20 @@ MonoBehaviour:
   leftHipStow: {fileID: 8313513781927897783}
   rightHipStow: {fileID: 3618166832557303963}
   blockConstraints: {fileID: 2499275057994608015}
+--- !u!114 &2064362975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7284513826171149821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ca85ff0777225244866ef2ae714725b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equippedWeapon: {fileID: 0}
+  startingWeapons: []
 --- !u!114 &1163105829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5333,22 +5347,6 @@ MonoBehaviour:
   healthPointsWorldText: {fileID: 0}
   imageMaterial: {fileID: 2100000, guid: 5a1994db17ab058418ca8780878488e8, type: 2}
   healthPointsUIText: {fileID: 3141844424034199059}
---- !u!114 &2064362975
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7284513826171149821}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ca85ff0777225244866ef2ae714725b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  equippedWeapon: {fileID: 1689723259, guid: e7f88e83aa05fe4418efbc470fe96757, type: 3}
-  startingWeapons:
-  - {fileID: 1689723259, guid: e7f88e83aa05fe4418efbc470fe96757, type: 3}
-  - {fileID: 0}
 --- !u!114 &3945321872001441854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5361,7 +5359,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87269e2a3adad5b45b3e519667abbfd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventoryPrefab: {fileID: 3796279741549607518, guid: 36e75a8d8c990124b85798f499c524d9, type: 3}
+  inventoryPrefab: {fileID: 3796279741549607518, guid: a5a4a2fc52e13994aab30c1f516240a5, type: 3}
   pausePrefab: {fileID: 7261538855375635446, guid: 28e6f708d26a6eb4e8bdc88b90ceb96d, type: 3}
 --- !u!1 &7284513826573182686
 GameObject:

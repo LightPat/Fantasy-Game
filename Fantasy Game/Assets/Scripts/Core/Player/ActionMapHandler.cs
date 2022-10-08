@@ -56,16 +56,14 @@ namespace LightPat.Core.Player
             {
                 Cursor.lockState = CursorLockMode.None;
                 HUD.SetActive(false);
-                pauseObject = Instantiate(pausePrefab);
+                pauseObject = Instantiate(pausePrefab, transform);
                 playerInput.SwitchCurrentActionMap("Menu");
             }
             else
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 HUD.SetActive(true);
-                GameObject childMenu = pauseObject.GetComponent<Menu>().childMenu;
-                if (childMenu)
-                    Destroy(childMenu);
+                pauseObject.GetComponent<Menu>().DestroyAllMenus();
                 Destroy(pauseObject);
                 playerInput.SwitchCurrentActionMap("First Person");
             }

@@ -6,7 +6,7 @@ namespace LightPat.Core
 {
     public abstract class Menu : MonoBehaviour
     {
-        [HideInInspector] public GameObject childMenu;
+        protected GameObject childMenu;
         protected GameObject lastMenu;
 
         public void QuitGame()
@@ -24,6 +24,15 @@ namespace LightPat.Core
             Destroy(gameObject);
             if (lastMenu == null) { return; }
             lastMenu.SetActive(true);
+        }
+
+        public void DestroyAllMenus()
+        {
+            if (childMenu)
+            {
+                childMenu.GetComponent<Menu>().DestroyAllMenus();
+            }
+            Destroy(gameObject);
         }
     }
 }

@@ -25,6 +25,7 @@ namespace LightPat.Core.Player
         public Vector3 magazineLocalPos;
         public Vector3 magazineLocalRot;
         public float reloadSpeed = 1;
+        public ParticleSystem muzzleFlash;
 
         bool reloading;
         float timeSinceLastShot;
@@ -40,6 +41,8 @@ namespace LightPat.Core.Player
             if (reloading) { return; }
             if (disableAttack) { return; }
             lastShotTime = time;
+
+            muzzleFlash.Play();
 
             // Spawn the bullet
             GameObject g = Instantiate(bullet, projectileSpawn.position, projectileSpawn.rotation);

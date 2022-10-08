@@ -144,24 +144,20 @@ namespace LightPat.Core.Player
                 if (value.isPressed)
                 {
                     animator.SetBool("attack2", !animator.GetBool("attack2"));
-                    blocking = !blocking;
 
-                    if (blocking)
+                    if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
                     {
-                        if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
-                        {
-                            GetComponent<Attributes>().blocking = !GetComponent<Attributes>().blocking;
+                        blocking = !blocking;
 
+                        if (blocking)
+                        {
+                            GetComponent<Attributes>().blocking = blocking;
                             rightHandTarget.GetComponent<FollowTarget>().target = blockConstraints;
                             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                         }
-                    }
-                    else
-                    {
-                        if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
+                        else
                         {
-                            GetComponent<Attributes>().blocking = !GetComponent<Attributes>().blocking;
-
+                            GetComponent<Attributes>().blocking = blocking;
                             rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
                             rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
                         }

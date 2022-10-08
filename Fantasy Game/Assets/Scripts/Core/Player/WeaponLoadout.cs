@@ -41,6 +41,18 @@ namespace LightPat.Core.Player
             return slot;
         }
 
+        public void RemoveEquippedWeapon()
+        {
+            int slot = GetEquippedWeaponIndex();
+            weapons.Remove(equippedWeapon);
+            equippedWeapon = null;
+            if (playerHUD)
+            {
+                playerHUD.UpdateSlotText(slot);
+                playerHUD.ChangeSlotStyle(slot, TMPro.FontStyles.Normal);
+            }
+        }
+
         public void ChangeLoadoutPositions(int fromIndex, int toIndex)
         {
             Weapon temp = weapons[fromIndex];

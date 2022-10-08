@@ -17,10 +17,13 @@ namespace LightPat.Core.Player
 
         public void UpdateSlotText(int slotIndex)
         {
-            weaponSlots.GetChild(slotIndex).GetComponent<TextMeshProUGUI>().SetText(weaponLoadout.GetWeapon(slotIndex).name);
+            if (weaponLoadout.GetWeapon(slotIndex))
+                weaponSlots.GetChild(slotIndex).GetComponent<TextMeshProUGUI>().SetText(weaponLoadout.GetWeapon(slotIndex).name);
+            else
+                weaponSlots.GetChild(slotIndex).GetComponent<TextMeshProUGUI>().SetText("Slot " + (slotIndex+1).ToString());
         }
 
-        public void ChangeSlotStyle(int slotIndex, TMPro.FontStyles fontStyle)
+        public void ChangeSlotStyle(int slotIndex, FontStyles fontStyle)
         {
             weaponSlots.GetChild(slotIndex).GetComponent<TextMeshProUGUI>().fontStyle = fontStyle;
         }

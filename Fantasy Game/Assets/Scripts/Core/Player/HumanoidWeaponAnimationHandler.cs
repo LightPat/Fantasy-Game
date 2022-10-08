@@ -232,6 +232,35 @@ namespace LightPat.Core.Player
             }
         }
 
+        [Header("Weapon Drop Settings")]
+        public Vector3 dropForce;
+        void OnDrop()
+        {
+            if (weaponLoadout.equippedWeapon)
+            {
+                weightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
+                weaponLoadout.equippedWeapon.transform.SetParent(null, true);
+                Rigidbody rb = weaponLoadout.equippedWeapon.gameObject.AddComponent<Rigidbody>();
+                rb.transform.position += transform.forward;
+                rb.AddForce(dropForce, ForceMode.VelocityChange);
+                weaponLoadout.RemoveEquippedWeapon();
+
+                // Turn off hand IKs
+                leftHandTarget.GetComponent<FollowTarget>().target = leftHandIK.data.tip;
+                rightHandTarget.GetComponent<FollowTarget>().target = rightHandIK.data.tip;
+                leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                rightArmRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                rightFingerRig.weightTarget = 0;
+                leftFingerRig.weightTarget = 0;
+
+                spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 0;
+                playerController.SetLean(0);
+                playerController.playerHUD.ammoDisplay.gameObject.SetActive(false);
+                playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
+                playerController.rotateBodyWithCamera = false;
+            }
+        }
+
         void OnAttack1(InputValue value)
         {
             animator.SetBool("attack1", value.isPressed);

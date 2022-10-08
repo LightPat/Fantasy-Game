@@ -65,6 +65,7 @@ MonoBehaviour:
   personalityValues: 
   physicalValues: 
   magicalValues: 
+  blocking: 0
   maxHealth: 100
   healthRenderer: {fileID: 5899139564344805879}
   healthPointsWorldText: {fileID: 4815026068765665027}
@@ -128,7 +129,7 @@ PrefabInstance:
     - target: {fileID: 5866666021909216657, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: d80833a43179bae45a386ec332eb830c, type: 2}
+      objectReference: {fileID: 9100000, guid: d0eb3163633c3da44b9e7875d823c0e8, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
 --- !u!1 &110726157213133347 stripped
@@ -408,6 +409,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479381a31ae265e468308da33f5a25d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disable: 0
   drag: 1
 --- !u!136 &3825474321557958451
 CapsuleCollider:

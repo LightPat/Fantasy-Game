@@ -28,6 +28,8 @@ namespace LightPat.Core.Player
             playerCamera = GetComponentInChildren<PlayerCameraFollow>();
             prevRotationState = !rotateBodyWithCamera;
             playerHUD = GetComponentInChildren<PlayerHUD>();
+            // Change bodyRotation to be the spawn rotation
+            bodyRotation = transform.localEulerAngles;
         }
 
         // Teleportation stair walking

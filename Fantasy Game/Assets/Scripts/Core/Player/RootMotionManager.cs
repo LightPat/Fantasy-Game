@@ -24,11 +24,5 @@ namespace LightPat.Core.Player
             newVelocity.y = rb.velocity.y * Time.timeScale;
             rb.velocity = newVelocity / Time.timeScale;
         }
-
-        //private void OnAnimatorMove()
-        //{
-        //    transform.parent.position += animator.deltaPosition;
-        //    transform.parent.rotation *= animator.deltaRotation;
-        //}
     }
 }

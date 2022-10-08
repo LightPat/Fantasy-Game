@@ -636,7 +636,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1873134415}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.229}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 132269813675474515}
@@ -5628,7 +5628,7 @@ MonoBehaviour:
   rightFingersGrips: {fileID: 2088608640}
   leftFingersGrips: {fileID: 1730021273}
   projectileSpawn: {fileID: 132269813675474515}
-  bullet: {fileID: 8783793137523742586, guid: 30447685d43ef4d40a86035a3e2fb3a4, type: 3}
+  bullet: {fileID: 8783793137523742586, guid: 6481d17f91b805f49b9d413e07fbdaa7, type: 3}
   bulletForce: 50
   maxRange: 150
   ADSPosOffset: {x: 0, y: -0.18, z: 0.13}

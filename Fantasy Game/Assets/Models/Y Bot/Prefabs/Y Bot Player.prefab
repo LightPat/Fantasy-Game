@@ -543,7 +543,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 134661303928610975}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -3572,6 +3572,7 @@ Transform:
   m_Children:
   - {fileID: 662794819149635413}
   - {fileID: 8020714699523662597}
+  - {fileID: 7284513825001385109}
   m_Father: {fileID: 7105963089436553437}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4760,8 +4761,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 7284513825018453865}
-  m_RootOrder: 0
+  m_Father: {fileID: 7700596766857380285}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7284513825001385108
 MonoBehaviour:
@@ -4775,6 +4776,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ebcbe4163dcf30419bdc3592fdc1f55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCamera: {fileID: 1097985365}
   disableUpdate: 0
 --- !u!1 &7284513825018453866
 GameObject:
@@ -4805,7 +4807,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 7284513825001385109}
   - {fileID: 7284513825124210135}
   m_Father: {fileID: 7105963089436553437}
   m_RootOrder: 4
@@ -4876,7 +4877,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 7284513825018453865}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7284513825124210134
 MonoBehaviour:
@@ -5344,7 +5345,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca85ff0777225244866ef2ae714725b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equippedWeapon: {fileID: 0}
+  equippedWeapon: {fileID: 1689723259, guid: e7f88e83aa05fe4418efbc470fe96757, type: 3}
+  startingWeapons:
+  - {fileID: 1689723259, guid: e7f88e83aa05fe4418efbc470fe96757, type: 3}
+  - {fileID: 0}
 --- !u!114 &3945321872001441854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6826,10 +6830,6 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: d80833a43179bae45a386ec332eb830c, type: 2}
-    - target: {fileID: 5866666021909216657, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
-      propertyPath: m_UpdateMode
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6240733294840144465, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
       propertyPath: m_Layer
       value: 0

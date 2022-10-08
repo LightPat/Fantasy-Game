@@ -7,19 +7,21 @@ namespace LightPat.Core.Player
     public class WeaponLoadout : MonoBehaviour
     {
         public Weapon equippedWeapon;
-        
+        public List<Weapon> startingWeapons;
         List<Weapon> weapons = new List<Weapon>();
         PlayerHUD playerHUD;
 
         public void DrawWeapon(int slot)
         {
-            playerHUD.ChangeSlotStyle(slot, TMPro.FontStyles.Bold);
+            if (playerHUD)
+                playerHUD.ChangeSlotStyle(slot, TMPro.FontStyles.Bold);
             equippedWeapon = weapons[slot];
         }
 
         public void StowWeapon()
         {
-            playerHUD.ChangeSlotStyle(GetEquippedWeaponIndex(), TMPro.FontStyles.Normal);
+            if (playerHUD)
+                playerHUD.ChangeSlotStyle(GetEquippedWeaponIndex(), TMPro.FontStyles.Normal);
             equippedWeapon = null;
         }
 
@@ -34,7 +36,8 @@ namespace LightPat.Core.Player
         {
             weapons.Add(weapon);
             int slot = weapons.Count - 1;
-            playerHUD.UpdateSlotText(slot);
+            if (playerHUD)
+                playerHUD.UpdateSlotText(slot);
             return slot;
         }
 

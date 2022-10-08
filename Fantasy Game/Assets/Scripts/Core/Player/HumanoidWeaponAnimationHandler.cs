@@ -40,7 +40,7 @@ namespace LightPat.Core.Player
         PlayerController playerController;
         AnimatorLayerWeightManager weightManager;
         Animator animator;
-        WeaponLoadout weaponManager;
+        WeaponLoadout weaponLoadout;
         FollowTarget[] rightFingerIKs;
         FollowTarget[] leftFingerIKs;
 
@@ -49,9 +49,116 @@ namespace LightPat.Core.Player
             playerController = GetComponent<PlayerController>();
             weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
-            weaponManager = GetComponent<WeaponLoadout>();
+            weaponLoadout = GetComponent<WeaponLoadout>();
             rightFingerIKs = rightFingerRig.GetComponentsInChildren<FollowTarget>();
             leftFingerIKs = leftFingerRig.GetComponentsInChildren<FollowTarget>();
+
+            StartCoroutine(EquipInitialWeapons());
+        }
+
+        private IEnumerator EquipInitialWeapons()
+        {
+            // Wait 1 frame to prevent burst job errors from occuring
+            yield return null;
+
+            foreach (Weapon startingWeapon in weaponLoadout.startingWeapons)
+            {
+                Weapon weapon = startingWeapon;
+                // If this is a prefab that hasn't been spawned in yet
+                if (startingWeapon.gameObject.scene.name == null)
+                {
+                    GameObject g = Instantiate(startingWeapon.gameObject, GetStowPoint(weapon.stowPoint));
+                    weapon = g.GetComponent<Weapon>();
+                    g.transform.localPosition = weapon.stowedPositionOffset;
+                    g.transform.localRotation = Quaternion.Euler(weapon.stowedRotationOffset);
+                    g.name = startingWeapon.name;
+                    // Wait 1 frame so that the change offset call will not interfere with the weapon's Start() method
+                    yield return null;
+                }
+
+                // Remove the rigidbody
+                Destroy(weapon.GetComponent<Rigidbody>());
+
+                // Parent weapon to stowPoint
+                weapon.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
+                weapon.ChangeOffset("stowed");
+
+                if (weapon.GetComponent<Rifle>())
+                {
+                    // Do nothing
+                }
+                else if (weapon.GetComponent<GreatSword>())
+                {
+                    Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                    if (sheath)
+                    {
+                        sheath.gameObject.SetActive(true);
+                        sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
+                        sheath.hasPlayer = true;
+                    }
+                }
+                else if (weapon.GetComponent<Pistol>())
+                {
+                    // Do nothing
+                }
+                else
+                {
+                    Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.animationClass);
+                }
+
+                weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
+            }
+
+            if (weaponLoadout.equippedWeapon)
+            {
+                Weapon weapon = weaponLoadout.equippedWeapon;
+                Weapon startingWeapon = weaponLoadout.equippedWeapon;
+                // If this is a prefab that hasn't been spawned in yet
+                if (startingWeapon.gameObject.scene.name == null)
+                {
+                    GameObject g = Instantiate(startingWeapon.gameObject, GetStowPoint(weapon.stowPoint));
+                    weapon = g.GetComponent<Weapon>();
+                    g.transform.localPosition = weapon.stowedPositionOffset;
+                    g.transform.localRotation = Quaternion.Euler(weapon.stowedRotationOffset);
+                    g.name = startingWeapon.name;
+                    weaponLoadout.equippedWeapon = weapon;
+                    // Wait 1 frame so that the change offset call will not interfere with the weapon's Start() method
+                    yield return null;
+                }
+
+                // Remove the rigidbody
+                Destroy(weapon.GetComponent<Rigidbody>());
+
+                // Parent weapon to stowPoint
+                weapon.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
+                weapon.ChangeOffset("stowed");
+
+                if (weapon.GetComponent<Rifle>())
+                {
+                    // Do nothing
+                }
+                else if (weapon.GetComponent<GreatSword>())
+                {
+                    Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                    if (sheath)
+                    {
+                        sheath.gameObject.SetActive(true);
+                        sheath.transform.SetParent(GetStowPoint(weapon.stowPoint), true);
+                        sheath.hasPlayer = true;
+                    }
+                }
+                else if (weapon.GetComponent<Pistol>())
+                {
+                    // Do nothing
+                }
+                else
+                {
+                    Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.animationClass);
+                }
+
+                // Draw Weapon
+                yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()));
+            }
         }
 
         void OnInteract()
@@ -71,7 +178,7 @@ namespace LightPat.Core.Player
                     if (equipWeaponRunning) { return; }
 
                     // If we already have a weapon equipped just put the weapon we click in our reserves
-                    if (weaponManager.equippedWeapon == null)
+                    if (weaponLoadout.equippedWeapon == null)
                     {
                         StartCoroutine(EquipWeapon(hit));
                     }
@@ -109,7 +216,7 @@ namespace LightPat.Core.Player
                             Debug.LogError("You are trying to equip a weapon class that hasn't been implemented yet" + weapon + " " + weapon.animationClass);
                         }
 
-                        weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
+                        weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
                     }
                 }
                 break;
@@ -119,8 +226,8 @@ namespace LightPat.Core.Player
         void OnAttack1(InputValue value)
         {
             animator.SetBool("attack1", value.isPressed);
-            if (weaponManager.equippedWeapon == null) { return; }
-            weaponManager.equippedWeapon.Attack1(value.isPressed);
+            if (weaponLoadout.equippedWeapon == null) { return; }
+            weaponLoadout.equippedWeapon.Attack1(value.isPressed);
         }
 
         [Header("Sword blocking")]
@@ -128,7 +235,7 @@ namespace LightPat.Core.Player
         bool blocking;
         void OnAttack2(InputValue value)
         {
-            if (weaponManager.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
+            if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
             {
                 if (!value.isPressed) { return; }
                 if (!animator.GetBool("fistCombat"))
@@ -146,7 +253,7 @@ namespace LightPat.Core.Player
                 {
                     animator.SetBool("attack2", !animator.GetBool("attack2"));
 
-                    if (weaponManager.equippedWeapon.GetComponent<GreatSword>())
+                    if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                     {
                         blocking = !blocking;
 
@@ -181,9 +288,9 @@ namespace LightPat.Core.Player
 
         void OnReload()
         {
-            if (weaponManager.equippedWeapon == null) { return; }
+            if (weaponLoadout.equippedWeapon == null) { return; }
 
-            StartCoroutine(weaponManager.equippedWeapon.Reload());
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload());
         }
 
         void OnQueryWeaponSlot(InputValue value)
@@ -191,12 +298,12 @@ namespace LightPat.Core.Player
             int slot = Convert.ToInt32(value.Get()) - 1;
 
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
-            Weapon chosenWeapon = weaponManager.GetWeapon(slot);
+            Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
             if (chosenWeapon == null) { return; }
 
-            if (weaponManager.equippedWeapon == chosenWeapon)
+            if (weaponLoadout.equippedWeapon == chosenWeapon)
                 StartCoroutine(StowWeapon());
-            else if (weaponManager.equippedWeapon != null)
+            else if (weaponLoadout.equippedWeapon != null)
                 StartCoroutine(SwitchWeapon(slot));
             else
                 StartCoroutine(DrawWeapon(slot));
@@ -295,8 +402,8 @@ namespace LightPat.Core.Player
                 Debug.LogError("Invalid weapon class on weaponEquip()" + weapon + " " + weapon.animationClass);
             }
 
-            int slot = weaponManager.AddWeapon(weapon.GetComponent<Weapon>());
-            weaponManager.DrawWeapon(slot); // Draw most recently added weapon
+            int slot = weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
+            weaponLoadout.DrawWeapon(slot); // Draw most recently added weapon
             playerController.rotateBodyWithCamera = true;
             equipWeaponRunning = false;
         }
@@ -306,7 +413,7 @@ namespace LightPat.Core.Player
             playerController.playerHUD.crosshair.gameObject.SetActive(false);
             playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
 
-            Weapon equippedWeapon = weaponManager.equippedWeapon;
+            Weapon equippedWeapon = weaponLoadout.equippedWeapon;
             equippedWeapon.disableAttack = true;
             animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
 
@@ -357,7 +464,7 @@ namespace LightPat.Core.Player
             weightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
             equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
             equippedWeapon.ChangeOffset("stowed");
-            weaponManager.StowWeapon();
+            weaponLoadout.StowWeapon();
             playerController.rotateBodyWithCamera = false;
             equippedWeapon.disableAttack = false;
 
@@ -369,7 +476,7 @@ namespace LightPat.Core.Player
             playerController.playerHUD.crosshair.gameObject.SetActive(false);
             playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
 
-            Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
+            Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
             animator.SetBool("draw" + chosenWeapon.animationClass, true);
             yield return null;
@@ -391,7 +498,7 @@ namespace LightPat.Core.Player
             weightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
             chosenWeapon.transform.SetParent(GetGripPoint(chosenWeapon), true);
             chosenWeapon.ChangeOffset("player");
-            weaponManager.DrawWeapon(slotIndex);
+            weaponLoadout.DrawWeapon(slotIndex);
             playerController.rotateBodyWithCamera = true;
 
             // Turn on hand IKs
@@ -456,7 +563,7 @@ namespace LightPat.Core.Player
             playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
 
             // Stow equipped weapon
-            Weapon equippedWeapon = weaponManager.equippedWeapon;
+            Weapon equippedWeapon = weaponLoadout.equippedWeapon;
             equippedWeapon.disableAttack = true;
             animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
 
@@ -482,7 +589,7 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
 
             // Start drawing next weapon once stow animation has finished playing
-            Weapon chosenWeapon = weaponManager.GetWeapon(slotIndex);
+            Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
 
             if (equippedWeapon.GetComponent<Rifle>())
             {
@@ -518,7 +625,7 @@ namespace LightPat.Core.Player
             weightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
             equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
             equippedWeapon.ChangeOffset("stowed");
-            weaponManager.StowWeapon();
+            weaponLoadout.StowWeapon();
             equippedWeapon.disableAttack = false;
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
@@ -535,7 +642,7 @@ namespace LightPat.Core.Player
             Transform gripPoint = GetGripPoint(chosenWeapon);
             chosenWeapon.transform.SetParent(gripPoint, true);
             chosenWeapon.ChangeOffset("player");
-            weaponManager.DrawWeapon(slotIndex);
+            weaponLoadout.DrawWeapon(slotIndex);
 
             // Turn on hand IKs
             if (chosenWeapon.GetComponent<Rifle>())
@@ -606,8 +713,8 @@ namespace LightPat.Core.Player
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (weaponManager.equippedWeapon == null) { return; }
-            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.animationClass)).IsTag("CollisionAttack"))
+            if (weaponLoadout.equippedWeapon == null) { return; }
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponLoadout.equippedWeapon.animationClass)).IsTag("CollisionAttack"))
             {
                 return;
             }
@@ -615,11 +722,11 @@ namespace LightPat.Core.Player
             for (int i = 0; i < collision.contactCount; i++)
             {
                 // If the collision is detected on one of our equippedWeapon's colliders
-                if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponManager.equippedWeapon)
+                if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponLoadout.equippedWeapon)
                 {
                     if (collision.transform.GetComponent<Attributes>())
                     {
-                        collision.transform.GetComponent<Attributes>().InflictDamage(weaponManager.equippedWeapon.baseDamage, gameObject);
+                        collision.transform.GetComponent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
                     }
                 }
             }

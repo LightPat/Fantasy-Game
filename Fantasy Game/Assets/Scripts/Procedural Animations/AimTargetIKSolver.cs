@@ -6,12 +6,14 @@ namespace LightPat.ProceduralAnimations
 {
     public class AimTargetIKSolver : MonoBehaviour
     {
+        public Transform mainCamera;
         public bool disableUpdate;
 
         private void Update()
         {
             if (disableUpdate) { return; }
-            transform.position = Camera.main.transform.position + Camera.main.transform.forward * 3;
+            if (!mainCamera) { return; }
+            transform.position = mainCamera.position + mainCamera.forward * 3;
         }
     }
 }

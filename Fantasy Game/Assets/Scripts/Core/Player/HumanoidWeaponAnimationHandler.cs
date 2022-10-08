@@ -473,6 +473,10 @@ namespace LightPat.Core.Player
             weightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
             equippedWeapon.transform.SetParent(GetStowPoint(equippedWeapon.stowPoint), true);
             equippedWeapon.ChangeOffset("stowed");
+            foreach (Collider c in equippedWeapon.GetComponentsInChildren<Collider>())
+            {
+                c.enabled = false;
+            }
             weaponLoadout.StowWeapon();
             playerController.rotateBodyWithCamera = false;
             equippedWeapon.disableAttack = false;
@@ -500,6 +504,10 @@ namespace LightPat.Core.Player
             gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
             chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon), true);
             chosenWeapon.ChangeOffset("transition");
+            foreach (Collider c in chosenWeapon.GetComponentsInChildren<Collider>())
+            {
+                c.enabled = true;
+            }
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
@@ -648,6 +656,10 @@ namespace LightPat.Core.Player
             equippedWeapon.ChangeOffset("stowed");
             weaponLoadout.StowWeapon();
             equippedWeapon.disableAttack = false;
+            foreach (Collider c in equippedWeapon.GetComponentsInChildren<Collider>())
+            {
+                c.enabled = false;
+            }
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
 
@@ -655,6 +667,10 @@ namespace LightPat.Core.Player
             GetGripPoint(chosenWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
             chosenWeapon.transform.SetParent(GetTransitionPoint(chosenWeapon), true);
             chosenWeapon.ChangeOffset("transition");
+            foreach (Collider c in chosenWeapon.GetComponentsInChildren<Collider>())
+            {
+                c.enabled = true;
+            }
 
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 

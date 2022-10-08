@@ -41,12 +41,31 @@ namespace LightPat.Core.Player
             return slot;
         }
 
-        private void Start()
+        public void ChangeLoadoutPositions(int fromIndex, int toIndex)
         {
-            playerHUD = GetComponentInChildren<PlayerHUD>();
+            Weapon temp = weapons[fromIndex];
+            weapons[fromIndex] = weapons[toIndex];
+            weapons[toIndex] = temp;
+
+            if (playerHUD)
+            {
+                playerHUD.UpdateSlotText(fromIndex);
+                playerHUD.UpdateSlotText(toIndex);
+
+                if (weapons[toIndex] == equippedWeapon)
+                {
+                    playerHUD.ChangeSlotStyle(fromIndex, TMPro.FontStyles.Normal);
+                    playerHUD.ChangeSlotStyle(toIndex, TMPro.FontStyles.Bold);
+                }
+                else if (weapons[fromIndex] == equippedWeapon)
+                {
+                    playerHUD.ChangeSlotStyle(toIndex, TMPro.FontStyles.Normal);
+                    playerHUD.ChangeSlotStyle(fromIndex, TMPro.FontStyles.Bold);
+                }
+            }
         }
 
-        private int GetEquippedWeaponIndex()
+        public int GetEquippedWeaponIndex()
         {
             int counter = 0;
             foreach (Weapon weapon in weapons)
@@ -57,6 +76,11 @@ namespace LightPat.Core.Player
             }
 
             return -1;
+        }
+
+        private void Start()
+        {
+            playerHUD = GetComponentInChildren<PlayerHUD>();
         }
     }
 }

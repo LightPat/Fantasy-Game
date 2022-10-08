@@ -158,6 +158,7 @@ namespace LightPat.Core.Player
 
                 // Draw Weapon
                 yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()));
+                weaponLoadout.ChangeLoadoutPositions(0, weaponLoadout.GetEquippedWeaponIndex());
             }
         }
 

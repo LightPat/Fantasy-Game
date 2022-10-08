@@ -71,7 +71,7 @@ namespace LightPat.Core.Player
             if (reloading) { yield break; }
             reloading = true;
 
-            WeaponAnimationHandler weaponAnimationHandler = GetComponentInParent<WeaponAnimationHandler>();
+            HumanoidWeaponAnimationHandler weaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
 
             // Store magazine's localPosition and localRotation for later
             Vector3 localPos = magazineObject.transform.localPosition;

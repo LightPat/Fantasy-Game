@@ -17,14 +17,14 @@ namespace LightPat.Core.Player
         Animator animator;
         Rigidbody rb;
         RootMotionManager rootMotionManager;
-        WeaponManager weaponManager;
+        WeaponLoadout weaponLoadout;
 
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody>();
             rootMotionManager = GetComponentInChildren<RootMotionManager>();
-            weaponManager = GetComponent<WeaponManager>();
+            weaponLoadout = GetComponent<WeaponLoadout>();
         }
 
         bool prevGrounded;
@@ -132,13 +132,13 @@ namespace LightPat.Core.Player
 
         bool IsJumping()
         {
-            if (weaponManager.equippedWeapon == null)
+            if (weaponLoadout.equippedWeapon == null)
             {
                 return animator.GetCurrentAnimatorStateInfo(0).IsTag("Jumping");
             }
             else
             {
-                return animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponManager.equippedWeapon.animationClass)).IsTag("Jumping");
+                return animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponLoadout.equippedWeapon.animationClass)).IsTag("Jumping");
             }
         }
 

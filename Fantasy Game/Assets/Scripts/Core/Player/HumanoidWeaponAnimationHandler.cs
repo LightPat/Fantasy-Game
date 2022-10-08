@@ -8,7 +8,8 @@ using System;
 
 namespace LightPat.Core.Player
 {
-    public class WeaponAnimationHandler : MonoBehaviour
+    [RequireComponent(typeof(WeaponLoadout))]
+    public class HumanoidWeaponAnimationHandler : MonoBehaviour
     {
         [Header("Reach Procedural Anim Settings")]
         public float reach;
@@ -39,7 +40,7 @@ namespace LightPat.Core.Player
         PlayerController playerController;
         AnimatorLayerWeightManager weightManager;
         Animator animator;
-        WeaponManager weaponManager;
+        WeaponLoadout weaponManager;
         FollowTarget[] rightFingerIKs;
         FollowTarget[] leftFingerIKs;
 
@@ -48,7 +49,7 @@ namespace LightPat.Core.Player
             playerController = GetComponent<PlayerController>();
             weightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
             animator = GetComponentInChildren<Animator>();
-            weaponManager = GetComponent<WeaponManager>();
+            weaponManager = GetComponent<WeaponLoadout>();
             rightFingerIKs = rightFingerRig.GetComponentsInChildren<FollowTarget>();
             leftFingerIKs = leftFingerRig.GetComponentsInChildren<FollowTarget>();
         }

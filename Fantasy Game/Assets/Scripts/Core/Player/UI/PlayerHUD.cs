@@ -13,11 +13,11 @@ namespace LightPat.Core.Player
         public Transform ammoDisplay;
         public Transform crosshair;
 
-        WeaponManager weaponManager;
+        WeaponLoadout weaponLoadout;
 
         public void UpdateSlotText(int slotIndex)
         {
-            weaponSlots.GetChild(slotIndex).GetComponent<TextMeshProUGUI>().SetText(weaponManager.GetWeapon(slotIndex).name);
+            weaponSlots.GetChild(slotIndex).GetComponent<TextMeshProUGUI>().SetText(weaponLoadout.GetWeapon(slotIndex).name);
         }
 
         public void ChangeSlotStyle(int slotIndex, TMPro.FontStyles fontStyle)
@@ -32,7 +32,7 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
-            weaponManager = GetComponentInParent<WeaponManager>();
+            weaponLoadout = GetComponentInParent<WeaponLoadout>();
 
             //for (int i = 0; i < weaponSlots.childCount; i++)
             //{

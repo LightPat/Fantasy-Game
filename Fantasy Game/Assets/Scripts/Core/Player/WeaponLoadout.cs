@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace LightPat.Core.Player
 {
-    public class WeaponManager : MonoBehaviour
+    public class WeaponLoadout : MonoBehaviour
     {
         public Weapon equippedWeapon;
         

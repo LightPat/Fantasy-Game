@@ -21,13 +21,13 @@ namespace LightPat.Core.Player
 
         bool previousRotationState;
         Animator playerAnimator;
-        WeaponManager playerWeaponManager;
+        WeaponLoadout playerWeaponLoadout;
         AnimatorLayerWeightManager layerWeightManager;
 
         private void Start()
         {
             playerAnimator = playerController.GetComponentInChildren<Animator>();
-            playerWeaponManager = playerController.GetComponent<WeaponManager>();
+            playerWeaponLoadout = playerController.GetComponent<WeaponLoadout>();
             layerWeightManager = playerController.GetComponentInChildren<AnimatorLayerWeightManager>();
         }
 
@@ -43,8 +43,8 @@ namespace LightPat.Core.Player
                 playerController.SetLean(0);
                 transform.SetParent(BoneRotParent, true);
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
-                if (playerWeaponManager.equippedWeapon != null)
-                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.animationClass), 0);
+                if (playerWeaponLoadout.equippedWeapon != null)
+                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponLoadout.equippedWeapon.animationClass), 0);
             }
             else if (!updateRotationWithTarget & previousRotationState) // if we just deactivated updateRotationWithTarget
             {
@@ -55,8 +55,8 @@ namespace LightPat.Core.Player
                 else
                     transform.SetParent(null, true);
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
-                if (playerWeaponManager.equippedWeapon != null)
-                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponManager.equippedWeapon.animationClass), 1);
+                if (playerWeaponLoadout.equippedWeapon != null)
+                    layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponLoadout.equippedWeapon.animationClass), 1);
             }
 
             if (!updateRotationWithTarget) // "Tilt" the parent constraint by a Z offset so that you don't have to mess with the camera's actual rotation

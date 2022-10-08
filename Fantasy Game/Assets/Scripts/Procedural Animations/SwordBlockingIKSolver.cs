@@ -29,8 +29,6 @@ namespace LightPat.ProceduralAnimations
             else // Right block
             {
                 transform.rotation = parentBone.rotation * Quaternion.Euler(rightBlockRotation);
-                //transform.rotation = parentBone.rotation * Quaternion.Euler(new Vector3(rightBlocklocalRotation.x + 135, localRotation.y + 180, localRotation.z));
-                //transform.rotation *= Quaternion.AngleAxis(180, Vector3.forward);
                 transform.position = parentBone.position + parentBone.right * rightMults.x + parentBone.up * rightMults.y + parentBone.forward * rightMults.z;
             }
         }

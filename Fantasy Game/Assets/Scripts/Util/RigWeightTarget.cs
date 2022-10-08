@@ -30,7 +30,7 @@ namespace LightPat.Util
             }
             else
             {
-                rig.weight = Mathf.MoveTowards(rig.weight, weightTarget, Time.deltaTime);
+                rig.weight = Mathf.MoveTowards(rig.weight, weightTarget, Time.deltaTime * animator.speed);
             }
         }
     }

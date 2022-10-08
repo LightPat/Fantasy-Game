@@ -8,9 +8,7 @@ namespace LightPat.Core.Player
     public class Pistol : Gun
     {
         [Header("Pistol Specific")]
-        public float forwardMult;
-        public float rightMult;
-        public float upMult;
+        public Vector3 constraintPositionMultipliers;
 
         private new void Start()
         {

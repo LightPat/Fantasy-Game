@@ -7,24 +7,20 @@ namespace LightPat.Util
     public class PistolPositionSolver : MonoBehaviour
     {
         public Transform parentBone;
-        public float forwardMult;
-        public float rightMult;
-        public float upMult;
+        public Vector3 positionMults;
         public Transform firstShoulder;
         public Transform secondShoulder;
 
-        public void UpdateMultipliers(float forward, float right, float up)
+        public void UpdateMultipliers(Vector3 newMultipliers)
         {
-            forwardMult = forward;
-            rightMult = right;
-            upMult = up;
+            positionMults = newMultipliers;
         }
 
         private void Update()
         {
             transform.rotation = parentBone.rotation;
             Vector3 endPosition = parentBone.position;
-            endPosition += transform.forward * forwardMult + transform.right * rightMult + transform.up * upMult;
+            endPosition += transform.right * positionMults.x + transform.up * positionMults.y + transform.forward * positionMults.z;
             endPosition += firstShoulder.position - secondShoulder.position;
             transform.position = endPosition;
         }

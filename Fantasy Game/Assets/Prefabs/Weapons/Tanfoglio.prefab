@@ -142,11 +142,9 @@ MonoBehaviour:
   disableUpdate: 0
   settingOffsets: 0
   offsetType: 
+  disableAttack: 0
   rightFingersGrips: {fileID: 4661039145721580135}
   leftFingersGrips: {fileID: 4661039144747286147}
-  forwardMult: 0.7
-  rightMult: 0.03
-  upMult: 0.16
   projectileSpawn: {fileID: 4661039146017996844}
   bullet: {fileID: 8783793137523742586, guid: 30447685d43ef4d40a86035a3e2fb3a4, type: 3}
   bulletForce: 50
@@ -225,6 +223,7 @@ MonoBehaviour:
   magazineLocalPos: {x: -0.107, y: 0.1528, z: 0.0369}
   magazineLocalRot: {x: -0.351, y: 85.318, z: -76.249}
   reloadSpeed: 10
+  constraintPositionMultipliers: {x: 0.03, y: 0.16, z: 0.7}
 --- !u!1 &4661039144472507981
 GameObject:
   m_ObjectHideFlags: 0

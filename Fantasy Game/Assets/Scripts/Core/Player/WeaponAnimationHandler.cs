@@ -279,7 +279,7 @@ namespace LightPat.Core.Player
                 rightHandTarget.GetComponent<FollowTarget>().target = weapon.rightHandGrip;
 
                 Pistol pistolComponent = weapon.GetComponent<Pistol>();
-                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.forwardMult, pistolComponent.rightMult, pistolComponent.upMult);
+                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.constraintPositionMultipliers);
 
                 Transform rightFingers = pistolComponent.rightFingersGrips;
                 Transform leftFingers = pistolComponent.leftFingersGrips;
@@ -568,6 +568,12 @@ namespace LightPat.Core.Player
                 leftArmRig.GetComponent<RigWeightTarget>().weightTarget = 1;
                 leftHandTarget.GetComponent<FollowTarget>().target = chosenWeapon.leftHandGrip;
                 playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
+                Transform leftFingers = chosenWeapon.GetComponent<GreatSword>().leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                leftFingerRig.weightTarget = 1;
             }
             else if (chosenWeapon.GetComponent<Pistol>())
             {
@@ -578,7 +584,7 @@ namespace LightPat.Core.Player
                 spineAimRig.GetComponent<RigWeightTarget>().weightTarget = 1;
 
                 Pistol pistolComponent = chosenWeapon.GetComponent<Pistol>();
-                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.forwardMult, pistolComponent.rightMult, pistolComponent.upMult);
+                gripPoint.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.constraintPositionMultipliers);
 
                 Transform rightFingers = pistolComponent.rightFingersGrips;
                 Transform leftFingers = pistolComponent.leftFingersGrips;

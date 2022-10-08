@@ -86,7 +86,7 @@ namespace LightPat.ProceduralAnimations
                 {
                     c.weight = weightTarget;
                 }
-            }            
+            }
         }
     }
 }

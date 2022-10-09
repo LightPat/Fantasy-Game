@@ -7,11 +7,13 @@ namespace LightPat.Lighting
     [ExecuteAlways]
     public class LightingManager : MonoBehaviour
     {
-        //Scene References
+        [Header("Scene References")]
         [SerializeField] private Light DirectionalLight;
         [SerializeField] private LightingPreset Preset;
-        //Variables
+        [Header("Variables")]
         [SerializeField, Range(0, 24)] private float TimeOfDay;
+        public float timeScale = 1;
+        public bool enableFog = true;
 
         private void Update()
         {
@@ -21,7 +23,7 @@ namespace LightPat.Lighting
             if (Application.isPlaying)
             {
                 //(Replace with a reference to the game time)
-                TimeOfDay += Time.deltaTime;
+                TimeOfDay += Time.deltaTime * timeScale;
                 TimeOfDay %= 24; //Modulus to ensure always between 0-24
                 UpdateLighting(TimeOfDay / 24f);
             }
@@ -36,6 +38,7 @@ namespace LightPat.Lighting
             //Set ambient and fog
             RenderSettings.ambientLight = Preset.AmbientColor.Evaluate(timePercent);
             RenderSettings.fogColor = Preset.FogColor.Evaluate(timePercent);
+            RenderSettings.fog = enableFog;
 
             //If the directional light is set then rotate and set it's color, I actually rarely use the rotation because it casts tall shadows unless you clamp the value
             if (DirectionalLight != null)
@@ -44,7 +47,6 @@ namespace LightPat.Lighting
 
                 DirectionalLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));
             }
-
         }
 
         //Try to find a directional light to use if we haven't set one

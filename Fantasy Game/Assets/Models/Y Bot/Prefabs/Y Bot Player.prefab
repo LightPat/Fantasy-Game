@@ -2288,7 +2288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weightTarget: 0
-  weightSpeed: 5
+  weightSpeed: 50
   instantWeight: 0
 --- !u!1 &2860282880175213526
 GameObject:
@@ -3217,7 +3217,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disconnectDistance: 0.15
   lerpWeight: 1
-  weightSpeed: 5
+  weightSpeed: 50
   debugDistance: 0
 --- !u!1 &4110574033763108923
 GameObject:
@@ -3491,7 +3491,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weightTarget: 0
-  weightSpeed: 5
+  weightSpeed: 50
   instantWeight: 0
 --- !u!1 &4678427029261709336
 GameObject:
@@ -4382,7 +4382,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   disconnectDistance: 0.15
   lerpWeight: 1
-  weightSpeed: 5
+  weightSpeed: 50
   debugDistance: 0
 --- !u!1 &6689121692991661944
 GameObject:

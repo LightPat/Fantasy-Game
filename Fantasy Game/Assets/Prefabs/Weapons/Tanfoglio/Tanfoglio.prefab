@@ -5087,7 +5087,7 @@ MonoBehaviour:
   magazineLocalRot: {x: -0.351, y: 85.318, z: -76.249}
   reloadSpeed: 10
   muzzleFlash: {fileID: 1570342654}
-  sumTimeOfFireAnimationClips: 0
+  sumTimeOfFireAnimationClips: 1
   constraintPositionMultipliers: {x: 0.03, y: 0.16, z: 0.7}
 --- !u!95 &4018101685643672838
 Animator:

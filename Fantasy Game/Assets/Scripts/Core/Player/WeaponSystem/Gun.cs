@@ -26,7 +26,7 @@ namespace LightPat.Core.Player
         public Vector3 magazineLocalRot;
         public float reloadSpeed = 1;
         public ParticleSystem muzzleFlash;
-        public float sumTimeOfFireAnimationClips;
+        public float sumTimeOfFireAnimationClips = 1;
 
         bool reloading;
         float timeSinceLastShot;

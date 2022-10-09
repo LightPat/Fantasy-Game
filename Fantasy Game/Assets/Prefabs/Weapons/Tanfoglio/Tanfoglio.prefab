@@ -4933,6 +4933,7 @@ GameObject:
   - component: {fileID: 4661039144465074814}
   - component: {fileID: 4661039144465074812}
   - component: {fileID: 4661039144465074813}
+  - component: {fileID: 4018101685643672838}
   m_Layer: 0
   m_Name: Tanfoglio
   m_TagString: Untagged
@@ -4948,7 +4949,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4661039144465074815}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 82.752, y: 10.756, z: -74.1442}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5126766625173810496}
@@ -5086,7 +5087,27 @@ MonoBehaviour:
   magazineLocalRot: {x: -0.351, y: 85.318, z: -76.249}
   reloadSpeed: 10
   muzzleFlash: {fileID: 1570342654}
+  sumTimeOfFireAnimationClips: 0
   constraintPositionMultipliers: {x: 0.03, y: 0.16, z: 0.7}
+--- !u!95 &4018101685643672838
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4661039144465074815}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 29250384cf1cf3544be03fa2a8aca916, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4661039144472507981
 GameObject:
   m_ObjectHideFlags: 0

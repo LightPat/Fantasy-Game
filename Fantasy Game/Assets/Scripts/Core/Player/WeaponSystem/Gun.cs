@@ -26,6 +26,7 @@ namespace LightPat.Core.Player
         public Vector3 magazineLocalRot;
         public float reloadSpeed = 1;
         public ParticleSystem muzzleFlash;
+        public float sumTimeOfFireAnimationClips;
 
         bool reloading;
         float timeSinceLastShot;
@@ -36,11 +37,19 @@ namespace LightPat.Core.Player
             if (!pressed) { return; }
             float time = Time.time;
             timeSinceLastShot = time - lastShotTime;
-            if (timeSinceLastShot < 1 / (fireRate / 60)) { return; }
+            float minTimeBetweenShots = 1 / (fireRate / 60);
+            if (timeSinceLastShot < minTimeBetweenShots) { return; }
             if (currentBullets < 1) { return; }
             if (reloading) { return; }
             if (disableAttack) { return; }
             lastShotTime = time;
+
+            if (GetComponent<Animator>())
+            {
+                // Play 2 clips that are x seconds long combined, within the time that a next shot can be fired
+                GetComponent<Animator>().SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
+                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(GetComponent<Animator>(), "fire"));
+            }
 
             muzzleFlash.Play();
 

@@ -253,8 +253,17 @@ namespace LightPat.Core.Player
         {
             if (Time.timeScale == 1)
             {
-                StartCoroutine(TimeScaleAbility());
+                Time.timeScale = 0.1f;
             }
+            else
+            {
+                Time.timeScale = 1;
+            }
+
+            //if (Time.timeScale == 1)
+            //{
+            //    StartCoroutine(TimeScaleAbility());
+            //}
         }
 
         private IEnumerator TimeScaleAbility()

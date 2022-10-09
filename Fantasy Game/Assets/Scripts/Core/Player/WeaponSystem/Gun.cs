@@ -17,7 +17,7 @@ namespace LightPat.Core.Player
         public GameObject bullet;
         public float bulletForce;
         public Transform shellSpawnPoint;
-        public Transform shell;
+        public GameObject shell;
         public Vector3 shellForce;
         public Vector3 shellTorque;
         public float maxRange;
@@ -68,20 +68,27 @@ namespace LightPat.Core.Player
             muzzleFlash.Play();
 
             // Spawn the bullet
-            GameObject g = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
-            g.GetComponent<Projectile>().inflicter = gameObject;
-            g.GetComponent<Projectile>().damage = baseDamage;
+            GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
+            b.GetComponent<Projectile>().inflicter = gameObject;
+            b.GetComponent<Projectile>().damage = baseDamage;
 
             // Add force so that the bullet flies through the air
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxRange))
             {
-                g.GetComponent<Rigidbody>().AddForce((hit.point - g.transform.position).normalized * bulletForce, ForceMode.VelocityChange);
+                b.GetComponent<Rigidbody>().AddForce((hit.point - b.transform.position).normalized * bulletForce, ForceMode.VelocityChange);
             }
             else
             {
-                g.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * bulletForce, ForceMode.VelocityChange);
+                b.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * bulletForce, ForceMode.VelocityChange);
             }
+
+            // Eject shell from side of gun
+            GameObject s = Instantiate(shell, shellSpawnPoint.position, shellSpawnPoint.rotation);
+            Rigidbody rb = s.GetComponent<Rigidbody>();
+            rb.AddRelativeTorque(shellTorque * Random.Range(1, 2), ForceMode.VelocityChange);
+            rb.AddRelativeForce(shellForce * Random.Range(0.7f, 1.3f), ForceMode.VelocityChange);
+            StartCoroutine(Utilities.DestroyAfterSeconds(s, 5));
 
             // Apply recoil
             StartCoroutine(Recoil());
@@ -113,11 +120,12 @@ namespace LightPat.Core.Player
             {
                 c.enabled = false;
             }
-            oldMagazine.AddComponent<Rigidbody>();
+            Rigidbody rb = oldMagazine.AddComponent<Rigidbody>();
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
 
             // Move left hand to the new magazine's position
             weaponAnimationHandler.leftFingerRig.weightTarget = 0;
-            FollowTarget leftHand = weaponAnimationHandler.leftHandTarget.GetComponent<FollowTarget>();
+            FollowTarget leftHand = weaponAnimationHandler.leftHandTarget;
             leftHand.lerpSpeed = reloadSpeed;
             leftHand.lerp = true;
             leftHand.target = weaponAnimationHandler.leftHipStow.Find("MagazinePoint");
@@ -151,8 +159,7 @@ namespace LightPat.Core.Player
             if (fullAuto)
                 animator.SetBool("fire", firing);
 
-            yield return new WaitForSeconds(3f);
-            Destroy(oldMagazine);
+            StartCoroutine(Utilities.DestroyAfterSeconds(oldMagazine, 3));
         }
 
         private IEnumerator Recoil()

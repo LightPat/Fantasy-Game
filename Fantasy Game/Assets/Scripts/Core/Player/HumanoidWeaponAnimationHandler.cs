@@ -176,6 +176,7 @@ namespace LightPat.Core.Player
                 weaponLoadout.equippedWeapon.transform.position += transform.forward;
                 weaponLoadout.equippedWeapon.transform.SetParent(null, true);
                 Rigidbody rb = weaponLoadout.equippedWeapon.gameObject.AddComponent<Rigidbody>();
+                rb.interpolation = RigidbodyInterpolation.Interpolate;
                 rb.AddForce(rb.transform.rotation * dropForce, ForceMode.VelocityChange);
                 weaponLoadout.RemoveEquippedWeapon();
                 DisableCombatIKs();

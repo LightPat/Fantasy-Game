@@ -636,7 +636,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1873134415}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.229}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 132269813675474515}
@@ -4488,7 +4488,7 @@ ParticleSystem:
     rangeCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 10
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -4541,7 +4541,7 @@ ParticleSystem:
     intensityCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -5633,10 +5633,10 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 132269813675474515}
   bullet: {fileID: 8783793137523742586, guid: 6481d17f91b805f49b9d413e07fbdaa7, type: 3}
   bulletForce: 50
-  shellSpawnPoint: {fileID: 0}
-  shell: {fileID: 0}
-  shellForce: {x: 0, y: 0, z: 0}
-  shellTorque: {x: 0, y: 0, z: 0}
+  shellSpawnPoint: {fileID: 2449424704238038551}
+  shell: {fileID: 8783793137523742586, guid: dd1509e2cbe4d7642b0eb552463e6a8e, type: 3}
+  shellForce: {x: 3, y: 1, z: 0}
+  shellTorque: {x: 0, y: 50, z: 0}
   maxRange: 150
   fireRate: 650
   sumTimeOfFireAnimationClips: 1
@@ -5846,7 +5846,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6951786542478953496}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.0006, z: 1.941}
+  m_LocalPosition: {x: 0, y: 0, z: 1.7273}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1873134416}

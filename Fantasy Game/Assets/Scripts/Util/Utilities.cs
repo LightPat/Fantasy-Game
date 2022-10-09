@@ -12,5 +12,11 @@ namespace LightPat.Util
             yield return null;
             animator.SetBool(parameterName, false);
         }
+
+        public static IEnumerator DestroyAfterSeconds(GameObject gameObject, float seconds)
+        {
+            yield return new WaitForSeconds(seconds);
+            Object.Destroy(gameObject);
+        }
     }
 }

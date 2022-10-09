@@ -175,8 +175,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentBone: {fileID: 516619163063119531}
   positionMults: {x: -0.1, y: 0.18, z: -0.12}
-  firstShoulder: {fileID: 0}
-  secondShoulder: {fileID: 0}
 --- !u!1 &1097985360
 GameObject:
   m_ObjectHideFlags: 0
@@ -6689,6 +6687,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: d80833a43179bae45a386ec332eb830c, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6240733294840144465, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
       propertyPath: m_Layer
       value: 0

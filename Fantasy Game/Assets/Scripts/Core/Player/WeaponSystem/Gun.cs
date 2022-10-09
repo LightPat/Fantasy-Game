@@ -11,23 +11,29 @@ namespace LightPat.Core.Player
         [Header("Gun Specific")]
         public Transform rightFingersGrips;
         public Transform leftFingersGrips;
-        public Transform projectileSpawn;
+        [Header("Firing Settings")]
+        public bool fullAuto;
+        public Transform projectileSpawnPoint;
         public GameObject bullet;
         public float bulletForce;
+        public Transform shellSpawnPoint;
+        public Transform shell;
+        public Vector3 shellForce;
+        public Vector3 shellTorque;
         public float maxRange;
-        public Vector3 ADSPosOffset;
         public float fireRate;
+        public float sumTimeOfFireAnimationClips = 1;
+        public ParticleSystem muzzleFlash;
+        [Header("Recoil Settings")]
         public AnimationCurve xRecoilCurve;
         public AnimationCurve yRecoilCurve;
+        [Header("Reload/Ammo Settings")]
         public int magazineSize;
         public int currentBullets;
         public GameObject magazineObject;
-        public Vector3 magazineLocalPos;
-        public Vector3 magazineLocalRot;
+        public Vector3 magazineInHandOffsetPos;
+        public Vector3 magazineInHandOffsetRot;
         public float reloadSpeed = 1;
-        public ParticleSystem muzzleFlash;
-        public float sumTimeOfFireAnimationClips = 1;
-        public bool fullAuto;
 
         bool reloading;
         float timeSinceLastShot;
@@ -40,9 +46,7 @@ namespace LightPat.Core.Player
             firing = pressed;
 
             if (firing)
-            {
                 Shoot();
-            }
         }
 
         private void Shoot()
@@ -64,7 +68,7 @@ namespace LightPat.Core.Player
             muzzleFlash.Play();
 
             // Spawn the bullet
-            GameObject g = Instantiate(bullet, projectileSpawn.position, projectileSpawn.rotation);
+            GameObject g = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
             g.GetComponent<Projectile>().inflicter = gameObject;
             g.GetComponent<Projectile>().damage = baseDamage;
 
@@ -126,8 +130,8 @@ namespace LightPat.Core.Player
 
             // Spawn new magazine and move hand back to gun
             newMagazine.SetActive(true);
-            newMagazine.transform.localPosition = magazineLocalPos;
-            newMagazine.transform.localEulerAngles = magazineLocalRot;
+            newMagazine.transform.localPosition = magazineInHandOffsetPos;
+            newMagazine.transform.localEulerAngles = magazineInHandOffsetRot;
             leftHand.target = leftHandGrip;
             yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.transform.position, leftHandGrip.position) < 0.1f);
 
@@ -182,7 +186,8 @@ namespace LightPat.Core.Player
             base.Update();
             if (fullAuto)
             {
-                Attack1(firing);
+                if (firing)
+                    Shoot();
                 if (!reloading)
                     animator.SetBool("fire", firing);
             }

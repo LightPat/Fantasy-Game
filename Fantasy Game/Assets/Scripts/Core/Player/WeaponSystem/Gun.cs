@@ -27,29 +27,39 @@ namespace LightPat.Core.Player
         public float reloadSpeed = 1;
         public ParticleSystem muzzleFlash;
         public float sumTimeOfFireAnimationClips = 1;
+        public bool fullAuto;
 
         bool reloading;
         float timeSinceLastShot;
         float lastShotTime;
-        
+        bool firing;
+        Animator animator;
+
         public override void Attack1(bool pressed)
         {
-            if (!pressed) { return; }
+            firing = pressed;
+
+            if (firing)
+            {
+                Shoot();
+            }
+        }
+
+        private void Shoot()
+        {
+            if (reloading) { return; }
             float time = Time.time;
             timeSinceLastShot = time - lastShotTime;
             float minTimeBetweenShots = 1 / (fireRate / 60);
             if (timeSinceLastShot < minTimeBetweenShots) { return; }
             if (currentBullets < 1) { return; }
-            if (reloading) { return; }
             if (disableAttack) { return; }
             lastShotTime = time;
 
-            if (GetComponent<Animator>())
-            {
-                // Play 2 clips that are x seconds long combined, within the time that a next shot can be fired
-                GetComponent<Animator>().SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
-                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(GetComponent<Animator>(), "fire"));
-            }
+            // Play 2 clips that are x seconds long combined, within the time that a next shot can be fired
+            animator.SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
+            if (!fullAuto)
+                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "fire"));
 
             muzzleFlash.Play();
 
@@ -82,6 +92,7 @@ namespace LightPat.Core.Player
             if (currentBullets >= magazineSize) { yield break; }
             if (reloading) { yield break; }
             reloading = true;
+            animator.SetBool("fire", false);
 
             HumanoidWeaponAnimationHandler weaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
 
@@ -133,6 +144,9 @@ namespace LightPat.Core.Player
             weaponAnimationHandler.leftFingerRig.weightTarget = 1;
             reloading = false;
 
+            if (fullAuto)
+                animator.SetBool("fire", firing);
+
             yield return new WaitForSeconds(3f);
             Destroy(oldMagazine);
         }
@@ -160,6 +174,18 @@ namespace LightPat.Core.Player
             base.Start();
             lastShotTime = Time.time;
             currentBullets = magazineSize;
+            animator = GetComponent<Animator>();
+        }
+
+        private new void Update()
+        {
+            base.Update();
+            if (fullAuto)
+            {
+                Attack1(firing);
+                if (!reloading)
+                    animator.SetBool("fire", firing);
+            }
         }
     }
 }

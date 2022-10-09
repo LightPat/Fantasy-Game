@@ -7,36 +7,10 @@ namespace LightPat.Core.Player
 {
     public class Rifle : Gun
     {
-        [Header("Rifle Specific")]
-        public bool fullAuto;
-        
-        bool firing;
-
         private new void Start()
         {
             base.Start();
             animationClass = "Rifle";
-        }
-
-        public override void Attack1(bool pressed)
-        {
-            if (disableAttack) { firing = false; return; }
-
-            if (fullAuto)
-            {
-                firing = pressed;
-            }
-            else
-            {
-                base.Attack1(pressed);
-            }
-        }
-
-        private new void Update()
-        {
-            base.Update();
-            if (fullAuto)
-                base.Attack1(firing);
         }
     }
 }

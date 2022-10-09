@@ -140,15 +140,10 @@ namespace LightPat.Core.Player
                     if (weaponLoadout.equippedWeapon == null)
                     {
                         Weapon weapon = hit.transform.GetComponent<Weapon>();
-
-                        Transform gripPoint = GetGripPoint(weapon.GetComponent<Weapon>());
-                        gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
                         animatorLayerWeightManager.SetLayerWeight(weapon.GetComponent<Weapon>().animationClass, 1);
-
                         Destroy(weapon.GetComponent<Rigidbody>());
                         ReparentWeapon(weapon, "player");
                         weaponLoadout.DrawWeapon(weaponLoadout.AddWeapon(weapon));
-
                         EnableCombatIKs();
                     }
                     else
@@ -272,7 +267,6 @@ namespace LightPat.Core.Player
 
             // Parent weapon to move with right hand
             ReparentWeapon(equippedWeapon, "transition");
-            GetGripPoint(equippedWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
 
             // Wait until stow animation has finished playing
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
@@ -303,8 +297,6 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
             // Parent weapon to move with right hand
-            Transform gripPoint = GetGripPoint(chosenWeapon);
-            gripPoint.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
             ReparentWeapon(chosenWeapon, "transition");
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
@@ -336,7 +328,6 @@ namespace LightPat.Core.Player
 
             // Parent weapon to move with right hand
             ReparentWeapon(equippedWeapon, "transition");
-            GetGripPoint(equippedWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 0;
 
             // Wait until stow animation has started playing
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
@@ -359,7 +350,6 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
 
             // Parent weapon to move with right hand
-            GetGripPoint(chosenWeapon).GetComponentInParent<RigWeightTarget>().weightTarget = 1;
             ReparentWeapon(chosenWeapon, "transition");
 
             yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));

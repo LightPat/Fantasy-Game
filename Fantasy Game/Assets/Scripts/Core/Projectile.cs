@@ -27,15 +27,18 @@ namespace LightPat.Core
         private void OnTriggerEnter(Collider other)
         {
             if (other.GetComponent<Projectile>()) { return; }
-            if (damageRunning) { return; }
-            damageRunning = true;
 
             if (other.attachedRigidbody)
             {
+                if (other.attachedRigidbody.gameObject == inflicter) { return; }
+                if (damageRunning) { return; }
+                damageRunning = true;
+
                 Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
                 if (hit)
                 {
-                    hit.InflictDamage(damage, inflicter, gameObject);
+                    Debug.Log(damage + " " + inflicter + " " + this);
+                    hit.InflictDamage(damage, inflicter, this);
                 }
             }
 

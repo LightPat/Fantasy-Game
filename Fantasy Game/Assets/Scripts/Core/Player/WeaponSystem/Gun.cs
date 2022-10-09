@@ -41,12 +41,24 @@ namespace LightPat.Core.Player
         bool firing;
         Animator animator;
 
+        PlayerController playerController;
+        HumanoidWeaponAnimationHandler playerWeaponAnimationHandler;
+
         public override void Attack1(bool pressed)
         {
             firing = pressed;
 
             if (firing)
                 Shoot();
+        }
+
+        private void OnTransformParentChanged()
+        {
+            if (GetComponentInParent<HumanoidWeaponAnimationHandler>())
+            {
+                playerWeaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
+                playerController = playerWeaponAnimationHandler.GetComponent<PlayerController>();
+            }
         }
 
         private void Shoot()
@@ -69,7 +81,7 @@ namespace LightPat.Core.Player
 
             // Spawn the bullet
             GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
-            b.GetComponent<Projectile>().inflicter = gameObject;
+            b.GetComponent<Projectile>().inflicter = playerWeaponAnimationHandler.gameObject;
             b.GetComponent<Projectile>().damage = baseDamage;
 
             // Add force so that the bullet flies through the air
@@ -94,7 +106,7 @@ namespace LightPat.Core.Player
             StartCoroutine(Recoil());
 
             currentBullets -= 1;
-            GetComponentInParent<PlayerController>().playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+            playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             if (currentBullets == 0) { StartCoroutine(Reload()); }
         }
 
@@ -105,12 +117,10 @@ namespace LightPat.Core.Player
             reloading = true;
             animator.SetBool("fire", false);
 
-            HumanoidWeaponAnimationHandler weaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
-
             // Store magazine's localPosition and localRotation for later
             Vector3 localPos = magazineObject.transform.localPosition;
             Quaternion localRot = magazineObject.transform.localRotation;
-            GameObject newMagazine = Instantiate(magazineObject, weaponAnimationHandler.leftHandTarget.transform);
+            GameObject newMagazine = Instantiate(magazineObject, playerWeaponAnimationHandler.leftHandTarget.transform);
             newMagazine.SetActive(false);
 
             // Unload current magazine
@@ -124,12 +134,12 @@ namespace LightPat.Core.Player
             rb.interpolation = RigidbodyInterpolation.Interpolate;
 
             // Move left hand to the new magazine's position
-            weaponAnimationHandler.leftFingerRig.weightTarget = 0;
-            FollowTarget leftHand = weaponAnimationHandler.leftHandTarget;
+            playerWeaponAnimationHandler.leftFingerRig.weightTarget = 0;
+            FollowTarget leftHand = playerWeaponAnimationHandler.leftHandTarget;
             leftHand.lerpSpeed = reloadSpeed;
             leftHand.lerp = true;
-            leftHand.target = weaponAnimationHandler.leftHipStow.Find("MagazinePoint");
-            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.transform.position, weaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.1f);
+            leftHand.target = playerWeaponAnimationHandler.leftHipStow.Find("MagazinePoint");
+            yield return new WaitUntil(() => Vector3.Distance(playerWeaponAnimationHandler.leftHandTarget.transform.position, playerWeaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.1f);
 
             foreach (Collider c in oldMagazine.GetComponents<Collider>())
             {
@@ -141,7 +151,7 @@ namespace LightPat.Core.Player
             newMagazine.transform.localPosition = magazineInHandOffsetPos;
             newMagazine.transform.localEulerAngles = magazineInHandOffsetRot;
             leftHand.target = leftHandGrip;
-            yield return new WaitUntil(() => Vector3.Distance(weaponAnimationHandler.leftHandTarget.transform.position, leftHandGrip.position) < 0.1f);
+            yield return new WaitUntil(() => Vector3.Distance(playerWeaponAnimationHandler.leftHandTarget.transform.position, leftHandGrip.position) < 0.1f);
 
             // Load new magazine into gun
             Vector3 scale = newMagazine.transform.localScale;
@@ -151,9 +161,9 @@ namespace LightPat.Core.Player
             newMagazine.transform.localRotation = localRot;
             magazineObject = newMagazine;
             currentBullets = magazineSize;
-            GetComponentInParent<PlayerController>().playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+            playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             leftHand.lerp = false;
-            weaponAnimationHandler.leftFingerRig.weightTarget = 1;
+            playerWeaponAnimationHandler.leftFingerRig.weightTarget = 1;
             reloading = false;
 
             if (fullAuto)
@@ -174,7 +184,7 @@ namespace LightPat.Core.Player
             float curveTime = 0;
             while (curveTime < curveLength)
             {
-                GetComponentInParent<PlayerController>().Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)));
+                playerController.Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)));
                 curveTime += 0.1f;
                 yield return null;
             }

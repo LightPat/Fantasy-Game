@@ -51,7 +51,7 @@ namespace LightPat.Core
             UpdateHPDisplay();
         }
 
-        public void InflictDamage(float damage, GameObject inflicter, GameObject projectile)
+        public void InflictDamage(float damage, GameObject inflicter, Projectile projectile)
         {
             if (!blocking)
                 HP -= damage;

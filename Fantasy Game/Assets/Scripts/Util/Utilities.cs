@@ -18,5 +18,14 @@ namespace LightPat.Util
             yield return new WaitForSeconds(seconds);
             Object.Destroy(gameObject);
         }
+
+        public static IEnumerator TestRoutine(GameObject gameObject)
+        {
+            yield return new WaitForFixedUpdate();
+
+            //yield return new WaitUntil(() => gameObject.activeInHierarchy);
+
+            gameObject.SetActive(true);
+        }
     }
 }

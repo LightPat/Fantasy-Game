@@ -608,7 +608,7 @@ Transform:
   - {fileID: 247971373}
   - {fileID: 1225809125}
   m_Father: {fileID: 1649158069515847001}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1873134415
 GameObject:
@@ -635,12 +635,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1873134415}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1.7272949}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 132269813675474515}
-  m_RootOrder: 0
+  m_Father: {fileID: 1649158069515847001}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &1873134418
 ParticleSystem:
@@ -5540,7 +5540,7 @@ Transform:
   - {fileID: 1207880667}
   - {fileID: 1130291405}
   m_Father: {fileID: 1649158069515847001}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1649158069515847000
 GameObject:
@@ -5575,6 +5575,7 @@ Transform:
   - {fileID: 1254329442983921783}
   - {fileID: 1649158069711076073}
   - {fileID: 1649158070069413448}
+  - {fileID: 1873134416}
   - {fileID: 132269813675474515}
   - {fileID: 2449424704238038551}
   - {fileID: 2088608640}
@@ -5820,7 +5821,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1649158069515847001}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6951786542478953496
 GameObject:
@@ -5846,12 +5847,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6951786542478953496}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.7273}
+  m_LocalPosition: {x: 0, y: 0, z: 1.7272949}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1873134416}
+  m_Children: []
   m_Father: {fileID: 1649158069515847001}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1649158070034739100
 PrefabInstance:

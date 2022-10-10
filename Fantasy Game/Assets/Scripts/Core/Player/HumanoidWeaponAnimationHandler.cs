@@ -225,8 +225,17 @@ namespace LightPat.Core.Player
                         spineAimRig.weightTarget = 0;
                         rightArmRig.weightTarget = 0;
                         rightHandTarget.target = rightHandIK.data.tip;
+                        blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
                     }
                 }
+            }
+        }
+
+        void OnScroll(InputValue value)
+        {
+            if (GetComponent<Attributes>().blocking)
+            {
+                blockConstraints.GetComponent<SwordBlockingIKSolver>().ScrollInput(value.Get<Vector2>());
             }
         }
 
@@ -238,6 +247,8 @@ namespace LightPat.Core.Player
         void OnReload()
         {
             if (weaponLoadout.equippedWeapon == null) { return; }
+            if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
+                blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
             StartCoroutine(weaponLoadout.equippedWeapon.Reload());
         }
 

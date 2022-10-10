@@ -5889,6 +5889,9 @@ MonoBehaviour:
   leftMults: {x: -0.51, y: 0.1, z: 0.45}
   rightBlockRotation: {x: 25.9, y: 0, z: -13.84}
   rightMults: {x: 0.27, y: -0.02, z: 0.36}
+  positiveZChangeLimit: 20
+  negativeZChangeLimit: -180
+  scrollSensitivity: 0.5
 --- !u!1 &8255947769684297494
 GameObject:
   m_ObjectHideFlags: 0

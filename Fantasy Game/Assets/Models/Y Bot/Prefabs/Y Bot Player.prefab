@@ -5887,8 +5887,8 @@ MonoBehaviour:
   parentBone: {fileID: 4574459911224855332}
   leftBlockRotation: {x: 0, y: 160, z: 25}
   leftMults: {x: -0.51, y: 0.1, z: 0.45}
-  rightBlockRotation: {x: 15.6, y: 0, z: -13.84}
-  rightMults: {x: 0.27, y: -0.2, z: 0.45}
+  rightBlockRotation: {x: 25.9, y: 0, z: -13.84}
+  rightMults: {x: 0.27, y: -0.02, z: 0.36}
 --- !u!1 &8255947769684297494
 GameObject:
   m_ObjectHideFlags: 0

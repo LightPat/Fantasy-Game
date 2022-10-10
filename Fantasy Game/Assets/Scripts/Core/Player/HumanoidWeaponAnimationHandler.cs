@@ -218,9 +218,11 @@ namespace LightPat.Core.Player
                     {
                         rightHandTarget.target = blockConstraints;
                         rightArmRig.weightTarget = 1;
+                        spineAimRig.weightTarget = 1;
                     }
                     else
                     {
+                        spineAimRig.weightTarget = 0;
                         rightArmRig.weightTarget = 0;
                         rightHandTarget.target = rightHandIK.data.tip;
                     }

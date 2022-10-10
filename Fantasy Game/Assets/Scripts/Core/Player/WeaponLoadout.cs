@@ -44,7 +44,7 @@ namespace LightPat.Core.Player
         public void RemoveEquippedWeapon()
         {
             int slot = GetEquippedWeaponIndex();
-            weapons.Remove(equippedWeapon);
+            weapons[slot] = null;
             equippedWeapon = null;
             if (playerHUD)
             {

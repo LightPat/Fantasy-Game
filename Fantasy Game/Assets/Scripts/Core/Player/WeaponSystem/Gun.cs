@@ -25,6 +25,7 @@ namespace LightPat.Core.Player
         public float sumTimeOfFireAnimationClips = 1;
         public ParticleSystem muzzleFlash;
         [Header("Recoil Settings")]
+        public bool disableRecoil;
         public AnimationCurve xRecoilCurve;
         public AnimationCurve yRecoilCurve;
         [Header("Reload/Ammo Settings")]
@@ -103,7 +104,8 @@ namespace LightPat.Core.Player
             StartCoroutine(Utilities.DestroyAfterSeconds(s, 5));
 
             // Apply recoil
-            StartCoroutine(Recoil());
+            if (!disableRecoil)
+                StartCoroutine(Recoil());
 
             currentBullets -= 1;
             playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);

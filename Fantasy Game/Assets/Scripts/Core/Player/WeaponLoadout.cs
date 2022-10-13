@@ -34,6 +34,17 @@ namespace LightPat.Core.Player
 
         public int AddWeapon(Weapon weapon)
         {
+            for (int i = 0; i < weapons.Count; i++)
+            {
+                if (weapons[i] == null)
+                {
+                    weapons[i] = weapon;
+                    if (playerHUD)
+                        playerHUD.UpdateSlotText(i);
+                    return i;
+                }
+            }
+
             weapons.Add(weapon);
             int slot = weapons.Count - 1;
             if (playerHUD)

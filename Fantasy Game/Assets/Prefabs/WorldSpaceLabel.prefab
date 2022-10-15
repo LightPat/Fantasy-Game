@@ -219,9 +219,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nameDisplay: {fileID: 4604779478868071989}
-  rotationSpeed: 0.4
-  animationSpeed: 0.02
-  viewDistance: 30
+  rotationSpeed: 0.5
+  animationSpeed: 0.05
+  viewDistance: 60
 --- !u!1 &4604779478112717333
 GameObject:
   m_ObjectHideFlags: 0

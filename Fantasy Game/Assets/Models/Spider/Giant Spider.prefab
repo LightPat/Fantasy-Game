@@ -170,7 +170,7 @@ GameObject:
   - component: {fileID: 2540662555291290564}
   - component: {fileID: 2540662555291290567}
   m_Layer: 0
-  m_Name: Spider
+  m_Name: Giant Spider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -270,7 +270,6 @@ MonoBehaviour:
   magicalValues: 
   blocking: 0
   maxHealth: 1000
-  HP: 0
   healthRenderer: {fileID: 2064137005999852643}
   healthPointsWorldText: {fileID: 1128949079051625111}
   imageMaterial: {fileID: 0}
@@ -1714,7 +1713,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 087c227105e70b94fbf1656d16d0bc2d, type: 3}
       propertyPath: m_Name
-      value: Spider
+      value: Giant Spider
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 087c227105e70b94fbf1656d16d0bc2d, type: 3}
       propertyPath: m_Layer
@@ -2535,8 +2534,8 @@ MonoBehaviour:
   xAxisBodyRotationMultiplier: 5
   yAxisBodyRotationMultiplier: 5
   zAxisBodyRotationMultiplier: 5
-  lerpSpeedMultiplier: 2
-  angularLerpSpeedMultiplier: 0.1
+  lerpSpeedMultiplier: 5
+  angularLerpSpeedMultiplier: 1
   minimumLerpSpeed: 3
 --- !u!136 &2540662555333023527
 CapsuleCollider:
@@ -3003,7 +3002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4604779477673013640, guid: e018d1a779ce1bc40b3750b8f44545c1, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 2.48
       objectReference: {fileID: 0}
     - target: {fileID: 4604779477673013640, guid: e018d1a779ce1bc40b3750b8f44545c1, type: 3}
       propertyPath: m_LocalPosition.z

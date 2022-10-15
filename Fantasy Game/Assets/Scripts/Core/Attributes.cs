@@ -45,7 +45,11 @@ namespace LightPat.Core
                 animator.SetBool("reactDamage", true);
                 StartCoroutine(ResetReactDamageBool());
 
-                if (HP <= 0) { animator.SetBool("dead", true); }
+                if (HP <= 0)
+                {
+                    animator.SetBool("dead", true);
+                    SendMessage("OnDeath");
+                }
             }
             else
             {
@@ -73,6 +77,7 @@ namespace LightPat.Core
                 if (HP <= 0)
                 {
                     animator.SetBool("dead", true);
+                    SendMessage("OnDeath");
                 }
             }
             else

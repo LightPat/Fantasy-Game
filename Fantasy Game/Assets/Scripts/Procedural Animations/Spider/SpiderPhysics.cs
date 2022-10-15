@@ -127,5 +127,10 @@ namespace LightPat.ProceduralAnimations.Spider
 
             return false;
         }
+
+        void OnDeath()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }

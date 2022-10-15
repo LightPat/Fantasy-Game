@@ -128,7 +128,7 @@ namespace LightPat.ProceduralAnimations.Spider
             if (!physics.airborne & !physics.landing)
             {
                 float average = heightDifferences.Average();
-                transform.Rotate(average * xAxisBodyRotationMultiplier, average * yAxisBodyRotationMultiplier, average * zAxisBodyRotationMultiplier);
+                transform.rotation = transform.parent.rotation * Quaternion.Euler(average * xAxisBodyRotationMultiplier, average * yAxisBodyRotationMultiplier, average * zAxisBodyRotationMultiplier);
             }
         }
     }

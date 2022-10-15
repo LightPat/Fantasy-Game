@@ -499,5 +499,10 @@ namespace LightPat.Core.Player
         {
             StartCoroutine(playerHUD.ToggleHitMarker(hitMarkerTime));
         }
+
+        void OnDeath()
+        {
+            SendMessage("OnDrop");
+        }
     }
 }

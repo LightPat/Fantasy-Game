@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8783793137523742589}
   - component: {fileID: 8783793137523742588}
+  - component: {fileID: 3569029244672199550}
   m_Layer: 0
   m_Name: 50bmg Shell
   m_TagString: Untagged
@@ -48,6 +49,22 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &3569029244672199550
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8783793137523742586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dbb64b603f22534eb1990259fe569e2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClip:
+  - {fileID: 8300000, guid: 84e63e7b609846248a6396f406be4931, type: 3}
+  - {fileID: 8300000, guid: d09209051b1e40d4d9576ed1eceb6487, type: 3}
+  volume: 0.1
 --- !u!1001 &2929658525103912130
 PrefabInstance:
   m_ObjectHideFlags: 0

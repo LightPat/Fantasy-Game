@@ -9,6 +9,8 @@ namespace LightPat.Core
         public GameObject inflicter;
         public float damage;
         public float maxDestroyDistance = 300;
+        public AudioClip hitmarkerSound;
+        public float hitmarkerVolume = 1;
 
         bool damageRunning;
         Vector3 startPos; // Despawn bullet after a certain distance traveled
@@ -37,8 +39,9 @@ namespace LightPat.Core
                 Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
                 if (hit)
                 {
-                    Debug.Log(damage + " " + inflicter + " " + this);
+                    //Debug.Log(damage + " " + inflicter + " " + this);
                     hit.InflictDamage(damage, inflicter, this);
+                    AudioManager.Instance.PlayClipAtPoint(hitmarkerSound, inflicter.transform.position, hitmarkerVolume);
                 }
             }
 

@@ -192,6 +192,7 @@ namespace LightPat.Core.Player
 
         [Header("Sword blocking")]
         public Transform blockConstraints;
+        bool blocking;
         void OnAttack2(InputValue value)
         {
             if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
@@ -209,12 +210,12 @@ namespace LightPat.Core.Player
             else // If we have an equipped weapon do the secondary attack
             {
                 if (!value.isPressed) { return; }
-                bool attack2 = !animator.GetBool("attack2");
-                animator.SetBool("attack2", attack2);
+                blocking = !blocking;
+                //animator.SetBool("attack2", blocking);
                 if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 {
-                    GetComponent<Attributes>().blocking = attack2;
-                    if (attack2)
+                    GetComponent<Attributes>().blocking = blocking;
+                    if (blocking)
                     {
                         rightHandTarget.target = blockConstraints;
                         rightArmRig.weightTarget = 1;
@@ -233,7 +234,7 @@ namespace LightPat.Core.Player
 
         void OnScroll(InputValue value)
         {
-            if (GetComponent<Attributes>().blocking)
+            if (blocking)
             {
                 blockConstraints.GetComponent<SwordBlockingIKSolver>().ScrollInput(value.Get<Vector2>());
             }

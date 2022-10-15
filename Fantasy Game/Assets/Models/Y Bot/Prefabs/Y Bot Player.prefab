@@ -5886,7 +5886,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentBone: {fileID: 4574459911224855332}
   leftBlockRotation: {x: 0, y: 160, z: 25}
-  leftMults: {x: -0.51, y: 0.1, z: 0.45}
+  leftMults: {x: -0.37, y: 0.1, z: 0.45}
   rightBlockRotation: {x: 25.9, y: 0, z: -13.84}
   rightMults: {x: 0.27, y: -0.02, z: 0.36}
   positiveZChangeLimit: 20

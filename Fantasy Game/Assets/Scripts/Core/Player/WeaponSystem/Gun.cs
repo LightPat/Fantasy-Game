@@ -35,15 +35,20 @@ namespace LightPat.Core.Player
         public Vector3 magazineInHandOffsetPos;
         public Vector3 magazineInHandOffsetRot;
         public float reloadSpeed = 1;
+        [Header("Audio Clips")]
+        public AudioClip gunshotClip;
+        public float gunshotVolume = 1;
+        public AudioClip reloadClip;
+        public float reloadVolume = 1;
 
         bool reloading;
         float timeSinceLastShot;
         float lastShotTime;
         bool firing;
-        Animator animator;
-
+        Animator gunAnimator;
         PlayerController playerController;
         HumanoidWeaponAnimationHandler playerWeaponAnimationHandler;
+        AudioSource gunshotSource;
 
         public override void Attack1(bool pressed)
         {
@@ -74,9 +79,9 @@ namespace LightPat.Core.Player
             lastShotTime = time;
 
             // Play 2 clips that are x seconds long combined, within the time that a next shot can be fired
-            animator.SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
+            gunAnimator.SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
             if (!fullAuto)
-                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "fire"));
+                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(gunAnimator, "fire"));
 
             muzzleFlash.Play();
 
@@ -101,7 +106,7 @@ namespace LightPat.Core.Player
             Rigidbody rb = s.GetComponent<Rigidbody>();
             rb.AddRelativeTorque(shellTorque * Random.Range(1, 2), ForceMode.VelocityChange);
             rb.AddRelativeForce(shellForce * Random.Range(0.7f, 1.3f), ForceMode.VelocityChange);
-            StartCoroutine(Utilities.DestroyAfterSeconds(s, 5));
+            Destroy(s, 5);
 
             // Apply recoil
             if (!disableRecoil)
@@ -110,6 +115,8 @@ namespace LightPat.Core.Player
             currentBullets -= 1;
             playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             if (currentBullets == 0) { StartCoroutine(Reload()); }
+
+            gunshotSource.PlayOneShot(gunshotClip, gunshotVolume);
         }
 
         public override IEnumerator Reload()
@@ -117,7 +124,7 @@ namespace LightPat.Core.Player
             if (currentBullets >= magazineSize) { yield break; }
             if (reloading) { yield break; }
             reloading = true;
-            animator.SetBool("fire", false);
+            gunAnimator.SetBool("fire", false);
 
             // Store magazine's localPosition and localRotation for later
             Vector3 localPos = magazineObject.transform.localPosition;
@@ -169,9 +176,9 @@ namespace LightPat.Core.Player
             reloading = false;
 
             if (fullAuto)
-                animator.SetBool("fire", firing);
+                gunAnimator.SetBool("fire", firing);
 
-            StartCoroutine(Utilities.DestroyAfterSeconds(oldMagazine, 3));
+            Destroy(oldMagazine, 3);
         }
 
         private IEnumerator Recoil()
@@ -197,7 +204,8 @@ namespace LightPat.Core.Player
             base.Start();
             lastShotTime = Time.time;
             currentBullets = magazineSize;
-            animator = GetComponent<Animator>();
+            gunAnimator = GetComponent<Animator>();
+            gunshotSource = projectileSpawnPoint.GetComponent<AudioSource>();
         }
 
         private new void Update()
@@ -208,7 +216,7 @@ namespace LightPat.Core.Player
                 if (firing)
                     Shoot();
                 if (!reloading)
-                    animator.SetBool("fire", firing);
+                    gunAnimator.SetBool("fire", firing);
             }
         }
     }

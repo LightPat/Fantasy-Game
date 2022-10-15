@@ -12,6 +12,7 @@ namespace LightPat.Core.Player
         public float lookAngleRotSpeed;
         public Transform ammoDisplay;
         public Transform crosshair;
+        public TextMeshProUGUI fpsCounter;
 
         WeaponLoadout weaponLoadout;
 
@@ -42,6 +43,11 @@ namespace LightPat.Core.Player
             //    if (weaponManager.GetWeapon(i) != null)
             //        weaponSlots.GetChild(i).GetComponent<TextMeshProUGUI>().SetText(weaponManager.GetWeapon(i).name);
             //}
+        }
+
+        private void Update()
+        {
+            fpsCounter.SetText(Mathf.RoundToInt((float)1.0 / Time.deltaTime).ToString());
         }
     }
 }

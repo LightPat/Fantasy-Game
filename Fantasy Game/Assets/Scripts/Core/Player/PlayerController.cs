@@ -251,28 +251,32 @@ namespace LightPat.Core.Player
 
         void OnAbility()
         {
-            if (Time.timeScale == 1)
-            {
-                Time.timeScale = 0.1f;
-            }
-            else
-            {
-                Time.timeScale = 1;
-            }
-
             //if (Time.timeScale == 1)
             //{
-            //    StartCoroutine(TimeScaleAbility());
+            //    Time.timeScale = 0.1f;
             //}
+            //else
+            //{
+            //    Time.timeScale = 1;
+            //}
+
+            if (Time.timeScale == 1)
+            {
+                StartCoroutine(TimeScaleAbility());
+            }
         }
 
         private IEnumerator TimeScaleAbility()
         {
-            Time.timeScale = 0.1f;
-
-            for (float i = 0.2f; i <= 1.1; i+=0.1f)
+            for (float i = 0.9f; i >= 0.1; i -= 0.05f)
             {
-                yield return new WaitForSeconds(0.3f);
+                yield return new WaitForSeconds(0.2f * Time.timeScale);
+                Time.timeScale = Mathf.Round(i * 100) / 100;
+            }
+
+            for (float i = 0.2f; i <= 1.05; i+=0.05f)
+            {
+                yield return new WaitForSeconds(0.3f * Time.timeScale);
                 Time.timeScale = Mathf.Round(i * 100) / 100;
             }
         }

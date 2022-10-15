@@ -7,14 +7,16 @@ namespace LightPat.Core
     public class Projectile : MonoBehaviour
     {
         public GameObject inflicter;
+        public Weapon originWeapon;
         public float damage;
         public float maxDestroyDistance = 300;
         public AudioClip hitmarkerSound;
         public float hitmarkerVolume = 1;
+        public float hitmarkerTime;
 
         bool damageRunning;
         Vector3 startPos; // Despawn bullet after a certain distance traveled
-        
+
         private void Start()
         {
             startPos = transform.position;
@@ -42,6 +44,7 @@ namespace LightPat.Core
                     //Debug.Log(damage + " " + inflicter + " " + this);
                     hit.InflictDamage(damage, inflicter, this);
                     AudioManager.Instance.PlayClipAtPoint(hitmarkerSound, inflicter.transform.position, hitmarkerVolume);
+                    inflicter.SendMessage("OnProjectileHit", hitmarkerTime);
                 }
             }
 

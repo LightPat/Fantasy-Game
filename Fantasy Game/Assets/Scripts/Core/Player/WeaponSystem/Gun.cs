@@ -51,6 +51,7 @@ namespace LightPat.Core.Player
         PlayerController playerController;
         HumanoidWeaponAnimationHandler playerWeaponAnimationHandler;
         AudioSource gunshotSource;
+        float minTimeBetweenShots;
 
         public override void Attack1(bool pressed)
         {
@@ -74,7 +75,6 @@ namespace LightPat.Core.Player
             if (reloading) { return; }
             float time = Time.time;
             timeSinceLastShot = time - lastShotTime;
-            float minTimeBetweenShots = 1 / (fireRate / 60);
             if (timeSinceLastShot < minTimeBetweenShots) { return; }
             if (currentBullets < 1) { return; }
             if (disableAttack) { return; }
@@ -91,8 +91,11 @@ namespace LightPat.Core.Player
 
             // Spawn the bullet
             GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
-            b.GetComponent<Projectile>().inflicter = playerWeaponAnimationHandler.gameObject;
-            b.GetComponent<Projectile>().damage = baseDamage;
+            Projectile projectile = b.GetComponent<Projectile>();
+            projectile.inflicter = playerWeaponAnimationHandler.gameObject;
+            projectile.originWeapon = this;
+            projectile.damage = baseDamage;
+            projectile.hitmarkerTime = minTimeBetweenShots;
 
             // Add force so that the bullet flies through the air
             RaycastHit hit;
@@ -210,6 +213,7 @@ namespace LightPat.Core.Player
             currentBullets = magazineSize;
             gunAnimator = GetComponent<Animator>();
             gunshotSource = projectileSpawnPoint.GetComponent<AudioSource>();
+            minTimeBetweenShots = 1 / (fireRate / 60);
         }
 
         private new void Update()

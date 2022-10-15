@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8783793137523742589}
   - component: {fileID: 8783793137523742588}
-  - component: {fileID: 3663925724585995209}
+  - component: {fileID: 8083592299719464484}
   m_Layer: 0
   m_Name: 9mm Bullet
   m_TagString: Untagged
@@ -49,7 +49,7 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 1
---- !u!114 &3663925724585995209
+--- !u!114 &8083592299719464484
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -58,14 +58,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 8783793137523742586}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b63487b9becf4c8468f823f9c1342b7b, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b9a3f6fae3770a4782f476ae97e73fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   inflicter: {fileID: 0}
   damage: 0
   maxDestroyDistance: 300
   hitmarkerSound: {fileID: 8300000, guid: 3cf53b7d782708b409bcd1a45eb1ec9f, type: 3}
-  hitmarkerVolume: 0.1
+  hitmarkerVolume: 1
 --- !u!1001 &173089248244857447
 PrefabInstance:
   m_ObjectHideFlags: 0

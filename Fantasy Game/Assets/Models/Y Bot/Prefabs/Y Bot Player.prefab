@@ -5285,10 +5285,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac14cd1754ed0d4478df12ffeab52931, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpHeight: 3
+  jumpHeight: 4
   airborneMoveSpeed: 3
   jumpForceDelay: 0
-  runningJumpHeight: 2
+  runningJumpHeight: 3
   breakfallRollThreshold: 10
   isGroundedDistance: 2
 --- !u!114 &7284513826171149811
@@ -5337,7 +5337,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equippedWeapon: {fileID: 0}
-  startingWeapons: []
+  startingWeapons:
+  - {fileID: 0}
 --- !u!114 &1163105829
 MonoBehaviour:
   m_ObjectHideFlags: 0

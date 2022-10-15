@@ -494,5 +494,10 @@ namespace LightPat.Core.Player
                 playerCamera.targetZRot = 0;
             }
         }
+
+        void OnProjectileHit(float hitMarkerTime)
+        {
+            StartCoroutine(playerHUD.ToggleHitMarker(hitMarkerTime));
+        }
     }
 }

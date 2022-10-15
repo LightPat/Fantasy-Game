@@ -12,6 +12,7 @@ namespace LightPat.Core.Player
         public float lookAngleRotSpeed;
         public Transform ammoDisplay;
         public Transform crosshair;
+        public GameObject hitMarker;
         public TextMeshProUGUI fpsCounter;
 
         WeaponLoadout weaponLoadout;
@@ -34,10 +35,28 @@ namespace LightPat.Core.Player
             ammoDisplay.GetComponent<TextMeshProUGUI>().SetText(newText);
         }
 
+        public IEnumerator ToggleHitMarker(float markerTime)
+        {
+            if (hitMarker.activeInHierarchy)
+            {
+                hitMarker.SetActive(false);
+                yield return new WaitForSeconds(markerTime/2);
+                hitMarker.SetActive(true);
+                yield return new WaitForSeconds(markerTime / 2);
+                hitMarker.SetActive(false);
+            }
+            else
+            {
+                hitMarker.SetActive(true);
+                yield return new WaitForSeconds(markerTime);
+                hitMarker.SetActive(false);
+            }
+        }
+
         private void Start()
         {
             weaponLoadout = GetComponentInParent<WeaponLoadout>();
-
+            hitMarker.SetActive(false);
             //for (int i = 0; i < weaponSlots.childCount; i++)
             //{
             //    if (weaponManager.GetWeapon(i) != null)

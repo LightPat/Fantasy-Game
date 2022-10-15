@@ -14,7 +14,6 @@ namespace LightPat.Core
         public bool blocking;
         [Header("Health")]
         public float maxHealth = 100f;
-        private float HP;
         [Header("World Space Label : Only assign for enemies/NPCs/mobs")]
         public Renderer healthRenderer;
         public TextMeshPro healthPointsWorldText;
@@ -22,6 +21,7 @@ namespace LightPat.Core
         public Material imageMaterial;
         public TextMeshProUGUI healthPointsUIText;
 
+        float HP;
         Animator animator = null;
 
         private void Start()
@@ -47,6 +47,10 @@ namespace LightPat.Core
 
                 if (HP <= 0) { animator.SetBool("dead", true); }
             }
+            else
+            {
+                if (HP <= 0) { gameObject.SetActive(false); }
+            }
 
             UpdateHPDisplay();
         }
@@ -66,7 +70,14 @@ namespace LightPat.Core
                 animator.SetBool("reactDamage", true);
                 StartCoroutine(ResetReactDamageBool());
 
-                if (HP <= 0) { animator.SetBool("dead", true); }
+                if (HP <= 0)
+                {
+                    animator.SetBool("dead", true);
+                }
+            }
+            else
+            {
+                if (HP <= 0) { gameObject.SetActive(false); }
             }
 
             UpdateHPDisplay();

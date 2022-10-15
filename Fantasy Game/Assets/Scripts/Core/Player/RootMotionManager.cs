@@ -1,17 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
 namespace LightPat.Core.Player
 {
     public class RootMotionManager : MonoBehaviour
     {
+        public Rig rightArmRig;
+        public Rig leftArmRig;
+
         Rigidbody rb;
         Animator animator;
+        WeaponLoadout weaponLoadout;
         private void Start()
         {
             rb = GetComponentInParent<Rigidbody>();
             animator = GetComponent<Animator>();
+            weaponLoadout = GetComponentInParent<WeaponLoadout>();
         }
 
         public bool disable;
@@ -25,21 +31,19 @@ namespace LightPat.Core.Player
             rb.velocity = newVelocity / Time.timeScale;
         }
 
-        //private void OnAnimatorIK(int layerIndex)
-        //{
-        //    if (animator.GetLayerWeight(layerIndex) != 1) { return; }
+        private void OnAnimatorIK(int layerIndex)
+        {
+            if (!weaponLoadout.equippedWeapon) { return; }
 
-        //    WeaponLoadout weapons = GetComponentInParent<WeaponLoadout>();
+            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightArmRig.weight);
+            animator.SetIKRotationWeight(AvatarIKGoal.RightHand, rightArmRig.weight);
+            animator.SetIKPosition(AvatarIKGoal.RightHand, weaponLoadout.equippedWeapon.rightHandGrip.position);
+            animator.SetIKRotation(AvatarIKGoal.RightHand, weaponLoadout.equippedWeapon.rightHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
 
-        //    animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 1);
-        //    animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 1);
-        //    animator.SetIKPosition(AvatarIKGoal.RightHand, weapons.equippedWeapon.rightHandGrip.position);
-        //    animator.SetIKRotation(AvatarIKGoal.RightHand, weapons.equippedWeapon.rightHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
-
-        //    //animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
-        //    //animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
-        //    //animator.SetIKPosition(AvatarIKGoal.LeftHand, weapons.equippedWeapon.leftHandGrip.position);
-        //    //animator.SetIKRotation(AvatarIKGoal.LeftHand, weapons.equippedWeapon.leftHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
-        //}
+            animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftArmRig.weight);
+            animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, leftArmRig.weight);
+            animator.SetIKPosition(AvatarIKGoal.LeftHand, weaponLoadout.equippedWeapon.leftHandGrip.position);
+            animator.SetIKRotation(AvatarIKGoal.LeftHand, weaponLoadout.equippedWeapon.leftHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
+        }
     }
 }

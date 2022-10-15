@@ -159,6 +159,9 @@ MonoBehaviour:
   leftMults: {x: -0.51, y: 0.1, z: 0.45}
   rightBlockRotation: {x: 15.6, y: 0, z: -13.84}
   rightMults: {x: 0.27, y: -0.2, z: 0.45}
+  positiveZChangeLimit: 0
+  negativeZChangeLimit: 0
+  scrollSensitivity: 0
 --- !u!1 &255237386241095528
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,7 +892,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   equippedWeapon: {fileID: 0}
-  weapons: []
+  startingWeapons: []
 --- !u!114 &4070554537009012101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -902,15 +905,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85a3165032590e4180a6bc8d2133305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 4
-  reachSpeed: 10
-  rightArmRig: {fileID: 5400992722620408948}
-  leftArmRig: {fileID: 7857810926383770697}
+  rightArmRig: {fileID: 0}
+  leftArmRig: {fileID: 0}
   rightHandIK: {fileID: 4594446944662806792}
   leftHandIK: {fileID: 1633258705451846973}
   rightHandTarget: {fileID: 1952288762259786057}
   leftHandTarget: {fileID: 8998068591170641602}
-  spineAimRig: {fileID: 6406066042781452965}
+  spineAimRig: {fileID: 0}
   rightFingerRig: {fileID: 2377627640044615426}
   leftFingerRig: {fileID: 6904388818911250120}
   rifleGrip: {fileID: 1347264551363531344}
@@ -922,6 +923,8 @@ MonoBehaviour:
   spineStow: {fileID: 2593168470414862773}
   leftHipStow: {fileID: 7905675229476746600}
   rightHipStow: {fileID: 32026022195887717}
+  weaponReachDistance: 0
+  dropForce: {x: 0, y: 0, z: 0}
   blockConstraints: {fileID: 6451466097908193988}
 --- !u!1 &1006578081412312990
 GameObject:
@@ -7623,7 +7626,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479381a31ae265e468308da33f5a25d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disable: 0
+  rightArmRig: {fileID: 5400992722620408948}
+  leftArmRig: {fileID: 7857810926383770697}
+  rightHandTarget: {fileID: 1952288762259786057}
+  leftHandTarget: {fileID: 8998068591170641602}
+  disableRootMotion: 0
   drag: 1
 --- !u!114 &7444795241550248098
 MonoBehaviour:

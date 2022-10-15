@@ -590,5 +590,10 @@ namespace LightPat.Core.Player
                 playerController.rotateBodyWithCamera = false;
             }            
         }
+
+        void OnDeath()
+        {
+            OnDrop();
+        }
     }
 }

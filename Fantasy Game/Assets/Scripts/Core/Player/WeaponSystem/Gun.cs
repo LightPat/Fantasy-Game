@@ -50,6 +50,7 @@ namespace LightPat.Core.Player
         Animator gunAnimator;
         PlayerController playerController;
         HumanoidWeaponAnimationHandler playerWeaponAnimationHandler;
+        RootMotionManager playerRootMotionManager;
         AudioSource gunshotSource;
         float minTimeBetweenShots;
 
@@ -67,6 +68,7 @@ namespace LightPat.Core.Player
             {
                 playerWeaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
                 playerController = playerWeaponAnimationHandler.GetComponent<PlayerController>();
+                playerRootMotionManager = playerWeaponAnimationHandler.GetComponentInChildren<RootMotionManager>();
             }
         }
 
@@ -155,6 +157,7 @@ namespace LightPat.Core.Player
             leftHand.lerpSpeed = reloadSpeed;
             leftHand.lerp = true;
             leftHand.target = playerWeaponAnimationHandler.leftHipStow.Find("MagazinePoint");
+            playerRootMotionManager.disableLeftHand = true;
             yield return new WaitUntil(() => Vector3.Distance(playerWeaponAnimationHandler.leftHandTarget.transform.position, playerWeaponAnimationHandler.leftHipStow.Find("MagazinePoint").position) < 0.1f);
 
             foreach (Collider c in oldMagazine.GetComponents<Collider>())
@@ -179,6 +182,7 @@ namespace LightPat.Core.Player
             currentBullets = magazineSize;
             playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             leftHand.lerp = false;
+            playerRootMotionManager.disableLeftHand = false;
             playerWeaponAnimationHandler.leftFingerRig.weightTarget = 1;
             reloading = false;
 

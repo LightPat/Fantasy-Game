@@ -12,5 +12,11 @@ namespace LightPat.Util
             yield return null;
             animator.SetBool(parameterName, false);
         }
+
+        public static IEnumerator DestroyAfterParticleSystemStops(ParticleSystem particleSystem)
+        {
+            yield return new WaitUntil(() => !particleSystem.isPlaying);
+            Object.Destroy(particleSystem.gameObject);
+        }
     }
 }

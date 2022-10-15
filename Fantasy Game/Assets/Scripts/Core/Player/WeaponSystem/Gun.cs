@@ -24,6 +24,8 @@ namespace LightPat.Core.Player
         public float fireRate;
         public float sumTimeOfFireAnimationClips = 1;
         public ParticleSystem muzzleFlash;
+        public Transform smokeSpawnPoint;
+        public GameObject smokePrefab;
         [Header("Recoil Settings")]
         public bool disableRecoil;
         public AnimationCurve xRecoilCurve;
@@ -84,6 +86,8 @@ namespace LightPat.Core.Player
                 StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(gunAnimator, "fire"));
 
             muzzleFlash.Play();
+            GameObject smoke = Instantiate(smokePrefab, smokeSpawnPoint);
+            StartCoroutine(Utilities.DestroyAfterParticleSystemStops(smoke.GetComponent<ParticleSystem>()));
 
             // Spawn the bullet
             GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);

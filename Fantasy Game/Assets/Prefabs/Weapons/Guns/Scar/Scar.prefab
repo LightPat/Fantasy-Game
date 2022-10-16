@@ -5554,6 +5554,7 @@ GameObject:
   - component: {fileID: 5560613447729845069}
   - component: {fileID: 1649158069515847002}
   - component: {fileID: 1689723259}
+  - component: {fileID: 8340945284047069963}
   m_Layer: 0
   m_Name: Scar
   m_TagString: Untagged
@@ -5731,8 +5732,30 @@ MonoBehaviour:
   reloadSpeed: 2
   gunshotClip: {fileID: 8300000, guid: 3b33a323014c91348be693380a6338e5, type: 3}
   gunshotVolume: 0.6
-  reloadClip: {fileID: 0}
-  reloadVolume: 1
+--- !u!114 &8340945284047069963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649158069515847000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ad8d555f293a4241a3f33ad71eded8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioClips:
+  - {fileID: 8300000, guid: 38be445863be71246a1b339439cdff32, type: 3}
+  - {fileID: 8300000, guid: 373b5eb2315ce654b9dd68f60625369d, type: 3}
+  - {fileID: 8300000, guid: 6e407fc79f7dea441b4eab90bb1fd914, type: 3}
+  clipNames:
+  - Charging Handle
+  - Mag Slap 1
+  - Mag Slap 2
+  volumes:
+  - 0.6
+  - 0.7
+  - 0.7
 --- !u!1 &1649158069711076072
 GameObject:
   m_ObjectHideFlags: 0

@@ -2528,14 +2528,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rootBone: {fileID: 2540662555291290619}
-  physics: {fileID: 0}
+  physics: {fileID: 2540662555291290565}
   stepDistance: 1
   stepHeight: 0.5
   xAxisBodyRotationMultiplier: 5
   yAxisBodyRotationMultiplier: 5
   zAxisBodyRotationMultiplier: 5
-  lerpSpeedMultiplier: 5
-  angularLerpSpeedMultiplier: 1
+  lerpSpeedMultiplier: 2
+  angularLerpSpeedMultiplier: 0.1
   minimumLerpSpeed: 3
 --- !u!136 &2540662555333023527
 CapsuleCollider:

@@ -40,8 +40,6 @@ namespace LightPat.Core.Player
         [Header("Audio Clips")]
         public AudioClip gunshotClip;
         public float gunshotVolume = 1;
-        public AudioClip reloadClip;
-        public float reloadVolume = 1;
 
         bool reloading;
         float timeSinceLastShot;
@@ -133,6 +131,7 @@ namespace LightPat.Core.Player
             if (currentBullets >= magazineSize) { yield break; }
             if (reloading) { yield break; }
             reloading = true;
+            gunAnimator.SetFloat("reloadSpeed", reloadSpeed);
             gunAnimator.SetBool("fire", false);
 
             // Store magazine's localPosition and localRotation for later
@@ -160,7 +159,7 @@ namespace LightPat.Core.Player
             // Move left hand to the new magazine's position
             playerWeaponAnimationHandler.leftFingerRig.weightTarget = 0;
             FollowTarget leftHand = playerWeaponAnimationHandler.leftHandTarget;
-            leftHand.lerpSpeed = reloadSpeed;
+            leftHand.lerpSpeed = reloadSpeed * 2;
             leftHand.lerp = true;
             leftHand.target = playerWeaponAnimationHandler.leftHipStow.Find("MagazinePoint");
             playerRootMotionManager.disableLeftHand = true;
@@ -180,6 +179,7 @@ namespace LightPat.Core.Player
 
             // Load new magazine into gun
             Vector3 scale = newMagazine.transform.localScale;
+            playerWeaponAnimationHandler.leftFingerRig.weightTarget = 1;
             newMagazine.transform.SetParent(oldMagParent, true);
             newMagazine.transform.localScale = scale;
             newMagazine.transform.localPosition = localPos;
@@ -191,15 +191,12 @@ namespace LightPat.Core.Player
             leftHand.lerp = false;
             playerRootMotionManager.disableLeftHand = false;
             gunAnimator.SetBool("reload", false);
-            yield return new WaitUntil(() => gunAnimator.IsInTransition(1));
+
+            yield return new WaitUntil(() => gunAnimator.GetCurrentAnimatorStateInfo(1).IsName("Empty"));
 
             magazineObject = newMagazine;
             currentBullets = magazineSize;
             playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
-            playerWeaponAnimationHandler.leftFingerRig.weightTarget = 1;
-
-            yield return new WaitUntil(() => gunAnimator.GetCurrentAnimatorStateInfo(1).IsName("Empty"));
-
             reloading = false;
 
             if (fullAuto)

@@ -17,7 +17,7 @@ namespace LightPat.Core
             audioSources.Add(audioSource);
         }
 
-        public void PlayClipAtPoint(AudioClip audioClip, Vector3 position, float volume)
+        public void PlayClipAtPoint(AudioClip audioClip, Vector3 position, float volume = 1)
         {
             if (!audioClip) { return; }
 
@@ -25,7 +25,7 @@ namespace LightPat.Core
             StartCoroutine(PlayPrefab(g.GetComponent<AudioSource>(), audioClip, volume));
         }
 
-        private IEnumerator PlayPrefab(AudioSource audioSouce, AudioClip audioClip, float volume)
+        private IEnumerator PlayPrefab(AudioSource audioSouce, AudioClip audioClip, float volume = 1)
         {
             RegisterAudioSource(audioSouce);
             audioSouce.PlayOneShot(audioClip, volume);

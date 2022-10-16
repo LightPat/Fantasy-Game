@@ -11,7 +11,6 @@ namespace LightPat.Core.Player
         public Rig rightArmRig;
         public Rig leftArmRig;
         public bool disableLeftHand;
-        public Transform leftHandTarget;
 
         Rigidbody rb;
         Animator animator;
@@ -45,22 +44,15 @@ namespace LightPat.Core.Player
 
             if (disableLeftHand)
             {
-                //animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
-                //animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
-
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftArmRig.weight);
-                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, leftArmRig.weight);
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, leftHandTarget.position);
-                animator.SetIKRotation(AvatarIKGoal.LeftHand, leftHandTarget.rotation * Quaternion.Euler(-90, 0, 0));
+                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
+                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
             }
             else
             {
                 animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftArmRig.weight);
                 animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, leftArmRig.weight);
-                //animator.SetIKPosition(AvatarIKGoal.LeftHand, weaponLoadout.equippedWeapon.leftHandGrip.position);
-                //animator.SetIKRotation(AvatarIKGoal.LeftHand, weaponLoadout.equippedWeapon.leftHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
-                animator.SetIKPosition(AvatarIKGoal.LeftHand, leftHandTarget.position);
-                animator.SetIKRotation(AvatarIKGoal.LeftHand, leftHandTarget.rotation * Quaternion.Euler(-90, 0, 0));
+                animator.SetIKPosition(AvatarIKGoal.LeftHand, weaponLoadout.equippedWeapon.leftHandGrip.position);
+                animator.SetIKRotation(AvatarIKGoal.LeftHand, weaponLoadout.equippedWeapon.leftHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
             }
         }
     }

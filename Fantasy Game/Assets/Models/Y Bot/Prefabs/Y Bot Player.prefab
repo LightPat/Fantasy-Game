@@ -5456,7 +5456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca85ff0777225244866ef2ae714725b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equippedWeapon: {fileID: 1689723259, guid: e7f88e83aa05fe4418efbc470fe96757, type: 3}
+  equippedWeapon: {fileID: 4661039144465074813, guid: 2bb06372e8ca47246982908bb8bc2dec, type: 3}
   startingWeapons: []
 --- !u!114 &1163105829
 MonoBehaviour:
@@ -8128,6 +8128,7 @@ MonoBehaviour:
   rightArmRig: {fileID: 2513949398972815566}
   leftArmRig: {fileID: 7284513825998588540}
   disableLeftHand: 0
+  leftHandTarget: {fileID: 7284513826573182685}
   disable: 0
   drag: 1
 --- !u!136 &6721924885171941239

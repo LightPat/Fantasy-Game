@@ -33,11 +33,6 @@ namespace LightPat.Core
             Destroy(audioSouce.gameObject);
         }
 
-        public void ChangeMasterVolume(float newVolume)
-        {
-            AudioListener.volume = newVolume;
-        }
-
         private void Awake()
         {
             if (_instance != null && _instance != this)

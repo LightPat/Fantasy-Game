@@ -22,7 +22,7 @@ namespace LightPat.Core
         public TextMeshProUGUI healthPointsUIText;
 
         float HP;
-        Animator animator = null;
+        Animator animator;
 
         private void Start()
         {
@@ -36,6 +36,9 @@ namespace LightPat.Core
             if (!blocking)
                 HP -= damage;
 
+            if (HP < 0)
+                HP = 0;
+
             SendMessage("OnAttacked", inflicter);
 
             if (animator != null)
@@ -43,7 +46,7 @@ namespace LightPat.Core
                 Vector3 dir = (inflicter.transform.position - transform.position).normalized;
                 animator.SetFloat("damageAngle", Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z)));
                 animator.SetBool("reactDamage", true);
-                StartCoroutine(ResetReactDamageBool());
+                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
 
                 if (HP <= 0)
                 {
@@ -64,6 +67,9 @@ namespace LightPat.Core
             if (!blocking)
                 HP -= damage;
 
+            if (HP < 0)
+                HP = 0;
+
             SendMessage("OnAttacked", inflicter);
 
             if (animator != null)
@@ -72,7 +78,7 @@ namespace LightPat.Core
                 float damageAngle = Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z));
                 animator.SetFloat("damageAngle", damageAngle);
                 animator.SetBool("reactDamage", true);
-                StartCoroutine(ResetReactDamageBool());
+                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
 
                 if (HP <= 0)
                 {
@@ -86,12 +92,6 @@ namespace LightPat.Core
             }
 
             UpdateHPDisplay();
-        }
-
-        private IEnumerator ResetReactDamageBool()
-        {
-            yield return null;
-            animator.SetBool("reactDamage", false);
         }
 
         private void UpdateHPDisplay()

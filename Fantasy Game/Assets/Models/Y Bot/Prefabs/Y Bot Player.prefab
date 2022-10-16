@@ -5444,6 +5444,7 @@ MonoBehaviour:
   weaponReachDistance: 5
   dropForce: {x: 0, y: 0, z: 5}
   blockConstraints: {fileID: 2499275057994608015}
+  blockSpeed: 10
 --- !u!114 &2064362975
 MonoBehaviour:
   m_ObjectHideFlags: 0

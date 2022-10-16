@@ -1,18 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Animations.Rigging;
 using LightPat.Core.Player;
 
 namespace LightPat.StateMachine
 {
     public class RotateCameraWithBone : StateMachineBehaviour
     {
+        public bool deactivateWeaponLayers;
+
+        PlayerController playerController;
+
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (animator.GetComponentInParent<PlayerController>())
-                Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget = true;
+            playerController = animator.GetComponentInParent<PlayerController>();
+
+            if (playerController)
+            {
+                playerController.playerCamera.deactivateWeaponLayers = deactivateWeaponLayers;
+                playerController.playerCamera.updateRotationWithTarget = true;
+            }
         }
 
         // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -24,8 +32,11 @@ namespace LightPat.StateMachine
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (animator.GetComponentInParent<PlayerController>())
-                Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget = false;
+            if (playerController)
+            {
+                playerController.playerCamera.deactivateWeaponLayers = false;
+                playerController.playerCamera.updateRotationWithTarget = false;
+            }
         }
 
         // OnStateMove is called right after Animator.OnAnimatorMove()

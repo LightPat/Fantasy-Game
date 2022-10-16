@@ -16,11 +16,11 @@ namespace LightPat.Core.Player
         public float animatorSpeed = 1;
 
         [HideInInspector] public PlayerHUD playerHUD;
+        public PlayerCameraFollow playerCamera { get; private set; }
 
         Attributes attributes;
         Animator animator;
         Rigidbody rb;
-        PlayerCameraFollow playerCamera;
 
         private void Start()
         {

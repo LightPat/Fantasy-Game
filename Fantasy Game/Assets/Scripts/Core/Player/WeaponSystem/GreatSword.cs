@@ -8,11 +8,23 @@ namespace LightPat.Core.Player
     {
         [Header("Great Sword Specific")]
         public Transform leftFingersGrips;
+        public float swingSpeed = 1;
+        public bool swinging { get; private set; }
+
+        public override void Attack1(bool pressed)
+        {
+            swinging = pressed;
+        }
 
         private new void Start()
         {
             base.Start();
             animationClass = "Great Sword";
+        }
+
+        private void OnTransformParentChanged()
+        {
+            GetComponentInParent<Animator>().SetFloat("swingSpeed", swingSpeed);
         }
     }
 }

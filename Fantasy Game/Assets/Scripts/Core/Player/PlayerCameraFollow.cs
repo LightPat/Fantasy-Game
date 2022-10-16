@@ -18,6 +18,7 @@ namespace LightPat.Core.Player
         public float zRotOffsetSpeed;
         public float targetZRot;
         public bool updateRotationWithTarget;
+        [HideInInspector] public bool deactivateWeaponLayers;
 
         bool previousRotationState;
         Animator playerAnimator;
@@ -43,7 +44,7 @@ namespace LightPat.Core.Player
                 playerController.SetLean(0);
                 transform.SetParent(BoneRotParent, true);
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
-                if (playerWeaponLoadout.equippedWeapon != null)
+                if (playerWeaponLoadout.equippedWeapon != null & deactivateWeaponLayers)
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponLoadout.equippedWeapon.animationClass), 0);
             }
             else if (!updateRotationWithTarget & previousRotationState) // if we just deactivated updateRotationWithTarget
@@ -55,7 +56,7 @@ namespace LightPat.Core.Player
                 else
                     transform.SetParent(null, true);
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
-                if (playerWeaponLoadout.equippedWeapon != null)
+                if (playerWeaponLoadout.equippedWeapon != null & deactivateWeaponLayers)
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponLoadout.equippedWeapon.animationClass), 1);
             }
 

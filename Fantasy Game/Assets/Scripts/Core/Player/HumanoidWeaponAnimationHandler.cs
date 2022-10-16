@@ -192,7 +192,9 @@ namespace LightPat.Core.Player
 
         [Header("Sword blocking")]
         public Transform blockConstraints;
+        public float blockSpeed = 1;
         bool blocking;
+        float oldRigSpeed;
         void OnAttack2(InputValue value)
         {
             if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
@@ -220,23 +222,28 @@ namespace LightPat.Core.Player
                         rightHandTarget.target = blockConstraints;
                         rightArmRig.weightTarget = 1;
                         spineAimRig.weightTarget = 1;
+                        oldRigSpeed = rightArmRig.weightSpeed;
+                        rightArmRig.weightSpeed = blockSpeed;
+                        spineAimRig.weightSpeed = blockSpeed;
                         blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
                     }
                     else
                     {
                         spineAimRig.weightTarget = 0;
                         rightArmRig.weightTarget = 0;
-                        StartCoroutine(ChangeFollowTargetAfterWeightTargetReached(rightHandTarget, rightHandIK.data.tip, rightArmRig.GetRig()));
+                        spineAimRig.weightSpeed = oldRigSpeed;
+                        StartCoroutine(ChangeFollowTargetAfterWeightTargetReached(rightHandTarget, rightHandIK.data.tip, rightArmRig, oldRigSpeed));
                         blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
                     }
                 }
             }
         }
 
-        private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, Rig rig)
+        private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, RigWeightTarget rig, float originalSpeed)
         {
-            yield return new WaitUntil(() => rig.weight == 0);
+            yield return new WaitUntil(() => rig.GetRig().weight == 0);
             followTarget.target = newTarget;
+            rig.weightSpeed = originalSpeed;
         }
 
         void OnScroll(InputValue value)
@@ -389,11 +396,11 @@ namespace LightPat.Core.Player
 
         private void OnCollisionEnter(Collision collision)
         {
+            // For inflicting damage using collision weapons (swords)
             if (weaponLoadout.equippedWeapon == null) { return; }
-            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex(weaponLoadout.equippedWeapon.animationClass)).IsTag("CollisionAttack"))
-            {
-                return;
-            }
+            GreatSword sword = weaponLoadout.equippedWeapon.GetComponent<GreatSword>();
+            if (!sword) { return; }
+            if (!sword.swinging) { return; }
 
             for (int i = 0; i < collision.contactCount; i++)
             {

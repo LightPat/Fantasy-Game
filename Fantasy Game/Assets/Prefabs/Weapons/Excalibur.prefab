@@ -382,6 +382,8 @@ GameObject:
   - component: {fileID: 6708337462204741871}
   - component: {fileID: 8862022113556974629}
   - component: {fileID: 1321937135}
+  - component: {fileID: 6586675074761062757}
+  - component: {fileID: 6024349163695211869}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -466,6 +468,34 @@ CapsuleCollider:
   m_Height: 2.5365133
   m_Direction: 0
   m_Center: {x: 0.10171783, y: -3.3085912e-16, z: -4.3241534e-27}
+--- !u!136 &6586675074761062757
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7060736401106005488}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.10406673
+  m_Height: 0.24493304
+  m_Direction: 1
+  m_Center: {x: -0.5733869, y: 0.1648918, z: 0}
+--- !u!136 &6024349163695211869
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7060736401106005488}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.10406673
+  m_Height: 0.24493304
+  m_Direction: 1
+  m_Center: {x: -0.5733869, y: -0.1648918, z: 0}
 --- !u!1 &7871640728394659331
 GameObject:
   m_ObjectHideFlags: 0
@@ -533,7 +563,7 @@ MonoBehaviour:
   rightHandGrip: {fileID: 4476186}
   leftHandGrip: {fileID: 1072240811}
   idealPersonality: 
-  baseDamage: 1
+  baseDamage: 10
   stowPoint: Spine
   drawSpeed: 1
   animationClass: 
@@ -548,6 +578,7 @@ MonoBehaviour:
   offsetType: 
   disableAttack: 0
   leftFingersGrips: {fileID: 1894001789773210230}
+  swingSpeed: 1
 --- !u!1 &8245050262849270391
 GameObject:
   m_ObjectHideFlags: 0

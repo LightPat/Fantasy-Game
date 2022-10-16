@@ -38,7 +38,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -64,7 +64,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -89,7 +89,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: rightFingers/indexKnuckle
+    path: AnimationRotationParent/rightFingers/indexKnuckle
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -114,7 +114,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: rightFingers/indexTarget
+    path: AnimationRotationParent/rightFingers/indexTarget
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves: []
@@ -200,7 +200,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -228,7 +228,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -256,7 +256,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -284,7 +284,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -312,7 +312,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -340,7 +340,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -368,7 +368,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: rightFingers/indexKnuckle
+    path: AnimationRotationParent/rightFingers/indexKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -396,7 +396,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: rightFingers/indexKnuckle
+    path: AnimationRotationParent/rightFingers/indexKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -424,7 +424,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: rightFingers/indexKnuckle
+    path: AnimationRotationParent/rightFingers/indexKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -452,7 +452,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: rightFingers/indexTarget
+    path: AnimationRotationParent/rightFingers/indexTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -480,7 +480,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: rightFingers/indexTarget
+    path: AnimationRotationParent/rightFingers/indexTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -508,7 +508,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: rightFingers/indexTarget
+    path: AnimationRotationParent/rightFingers/indexTarget
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -519,7 +519,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -529,7 +529,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -539,7 +539,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Scar L/Untitled_66
+    path: AnimationRotationParent/Scar L/Untitled_66
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0

@@ -147,6 +147,7 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => gunAnimator.IsInTransition(1));
 
             // Unload current magazine
+            Transform oldMagParent = magazineObject.transform.parent;
             GameObject oldMagazine = magazineObject;
             oldMagazine.transform.SetParent(null, true);
             foreach (Collider c in oldMagazine.GetComponents<Collider>())
@@ -179,7 +180,7 @@ namespace LightPat.Core.Player
 
             // Load new magazine into gun
             Vector3 scale = newMagazine.transform.localScale;
-            newMagazine.transform.SetParent(transform.GetChild(0), true);
+            newMagazine.transform.SetParent(oldMagParent, true);
             newMagazine.transform.localScale = scale;
             newMagazine.transform.localPosition = localPos;
             newMagazine.transform.localRotation = localRot;

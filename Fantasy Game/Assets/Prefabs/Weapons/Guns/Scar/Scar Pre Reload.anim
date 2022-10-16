@@ -63,9 +63,34 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
   m_CompressedRotationCurves: []
-  m_EulerCurves: []
+  m_EulerCurves:
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: {x: 0, y: 0, z: 0}
+        inSlope: {x: 0, y: 0, z: 0}
+        outSlope: {x: 0, y: 0, z: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      - serializedVersion: 3
+        time: 0.5833333
+        value: {x: -25, y: 0, z: 60}
+        inSlope: {x: 0, y: 0, z: 0}
+        outSlope: {x: 0, y: 0, z: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    path: AnimationRotationParent
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -109,7 +134,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Scar L/Untitled_70
+    path: AnimationRotationParent/Scar L/Untitled_70
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -197,7 +222,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -231,7 +256,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip/leftFingers/indexKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/indexKnuckle
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -265,7 +290,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip/leftFingers/indexTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/indexTarget
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -299,7 +324,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip/leftFingers/middleKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/middleKnuckle
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -333,7 +358,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip/leftFingers/middleTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/middleTarget
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -367,7 +392,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip/leftFingers/ringKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/ringKnuckle
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -401,7 +426,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip/leftFingers/ringTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/ringTarget
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -435,7 +460,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip/leftFingers/pinkyKuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/pinkyKuckle
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -469,7 +494,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: ref_left_hand_grip/leftFingers/pinkyTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/pinkyTarget
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves: []
@@ -481,81 +506,88 @@ AnimationClip:
   m_ClipBindingConstant:
     genericBindings:
     - serializedVersion: 2
-      path: 2002544510
+      path: 1145604877
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 4105796092
+      path: 3350041999
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 1692358157
+      path: 899683148
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3698704248
+      path: 2100347977
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3710996973
+      path: 3703267246
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 1420187150
+      path: 98112335
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 2545062414
+      path: 922216767
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 146863210
+      path: 2619915211
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 4042006142
+      path: 1370056015
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 3452030295
+      path: 1820636774
       attribute: 1
       script: {fileID: 0}
       typeID: 4
       customType: 0
       isPPtrCurve: 0
     - serializedVersion: 2
-      path: 4105796092
+      path: 3350041999
       attribute: 2
       script: {fileID: 0}
       typeID: 4
       customType: 0
+      isPPtrCurve: 0
+    - serializedVersion: 2
+      path: 1577423815
+      attribute: 4
+      script: {fileID: 0}
+      typeID: 4
+      customType: 4
       isPPtrCurve: 0
     pptrCurveMapping: []
   m_AnimationClipSettings:
@@ -622,7 +654,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Scar L/Untitled_70
+    path: AnimationRotationParent/Scar L/Untitled_70
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -668,7 +700,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Scar L/Untitled_70
+    path: AnimationRotationParent/Scar L/Untitled_70
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -714,7 +746,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Scar L/Untitled_70
+    path: AnimationRotationParent/Scar L/Untitled_70
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -805,7 +837,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -896,7 +928,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -987,7 +1019,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1024,7 +1056,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip/leftFingers/indexKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/indexKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1061,7 +1093,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip/leftFingers/indexKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/indexKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1098,7 +1130,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip/leftFingers/indexKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/indexKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1135,7 +1167,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip/leftFingers/indexTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/indexTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1172,7 +1204,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip/leftFingers/indexTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/indexTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1209,7 +1241,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip/leftFingers/indexTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/indexTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1246,7 +1278,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip/leftFingers/middleKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/middleKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1283,7 +1315,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip/leftFingers/middleKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/middleKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1320,7 +1352,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip/leftFingers/middleKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/middleKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1357,7 +1389,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip/leftFingers/middleTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/middleTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1394,7 +1426,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip/leftFingers/middleTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/middleTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1431,7 +1463,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip/leftFingers/middleTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/middleTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1468,7 +1500,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip/leftFingers/ringKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/ringKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1505,7 +1537,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip/leftFingers/ringKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/ringKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1542,7 +1574,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip/leftFingers/ringKnuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/ringKnuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1579,7 +1611,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip/leftFingers/ringTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/ringTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1616,7 +1648,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip/leftFingers/ringTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/ringTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1653,7 +1685,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip/leftFingers/ringTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/ringTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1690,7 +1722,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip/leftFingers/pinkyKuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/pinkyKuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1727,7 +1759,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip/leftFingers/pinkyKuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/pinkyKuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1764,7 +1796,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip/leftFingers/pinkyKuckle
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/pinkyKuckle
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1801,7 +1833,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: ref_left_hand_grip/leftFingers/pinkyTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/pinkyTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1838,7 +1870,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: ref_left_hand_grip/leftFingers/pinkyTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/pinkyTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1875,7 +1907,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: ref_left_hand_grip/leftFingers/pinkyTarget
+    path: AnimationRotationParent/ref_left_hand_grip/leftFingers/pinkyTarget
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1930,7 +1962,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.x
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -1985,7 +2017,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.y
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2040,7 +2072,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.z
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2095,7 +2127,91 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalRotation.w
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5833333
+        value: -25
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: localEulerAnglesRaw.x
+    path: AnimationRotationParent
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5833333
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: localEulerAnglesRaw.y
+    path: AnimationRotationParent
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.5833333
+        value: 60
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 136
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0.33333334
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: localEulerAnglesRaw.z
+    path: AnimationRotationParent
     classID: 4
     script: {fileID: 0}
   m_EulerEditorCurves:
@@ -2151,7 +2267,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.z
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2206,7 +2322,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.y
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
     classID: 4
     script: {fileID: 0}
   - curve:
@@ -2261,7 +2377,37 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAngles.x
-    path: ref_left_hand_grip
+    path: AnimationRotationParent/ref_left_hand_grip
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.x
+    path: AnimationRotationParent
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.y
+    path: AnimationRotationParent
+    classID: 4
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve: []
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: m_LocalEulerAngles.z
+    path: AnimationRotationParent
     classID: 4
     script: {fileID: 0}
   m_HasGenericRootTransform: 0

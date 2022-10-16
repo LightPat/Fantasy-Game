@@ -13,6 +13,11 @@ namespace LightPat.ProceduralAnimations
         Rig rig;
         Animator animator;
 
+        public Rig GetRig()
+        {
+            return rig;
+        }
+
         private void Start()
         {
             rig = GetComponent<Rig>();

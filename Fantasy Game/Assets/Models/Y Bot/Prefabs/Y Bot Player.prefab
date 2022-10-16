@@ -5456,7 +5456,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca85ff0777225244866ef2ae714725b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equippedWeapon: {fileID: 4661039144465074813, guid: 2bb06372e8ca47246982908bb8bc2dec, type: 3}
+  equippedWeapon: {fileID: 783794268, guid: 0536132dc1c27574396b0c3b13534f89, type: 3}
   startingWeapons: []
 --- !u!114 &1163105829
 MonoBehaviour:
@@ -6013,6 +6013,7 @@ MonoBehaviour:
   positiveZChangeLimit: 20
   negativeZChangeLimit: -180
   scrollSensitivity: 0.5
+  disableUpdate: 0
 --- !u!1 &8255947769684297494
 GameObject:
   m_ObjectHideFlags: 0
@@ -8125,12 +8126,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 479381a31ae265e468308da33f5a25d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableRootMotion: 0
+  drag: 1
   rightArmRig: {fileID: 2513949398972815566}
   leftArmRig: {fileID: 7284513825998588540}
+  disableRightHand: 0
   disableLeftHand: 0
-  leftHandTarget: {fileID: 7284513826573182685}
-  disable: 0
-  drag: 1
 --- !u!136 &6721924885171941239
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -17,6 +17,7 @@ namespace LightPat.Core.Player
 
         [HideInInspector] public PlayerHUD playerHUD;
 
+        Attributes attributes;
         Animator animator;
         Rigidbody rb;
         PlayerCameraFollow playerCamera;
@@ -28,6 +29,7 @@ namespace LightPat.Core.Player
             playerCamera = GetComponentInChildren<PlayerCameraFollow>();
             prevRotationState = !rotateBodyWithCamera;
             playerHUD = GetComponentInChildren<PlayerHUD>();
+            attributes = GetComponent<Attributes>();
             // Change bodyRotation to be the spawn rotation
             bodyRotation = transform.localEulerAngles;
         }
@@ -85,30 +87,33 @@ namespace LightPat.Core.Player
             // Look angle animator logic for sword swings
             if (lookInput != Vector2.zero)
             {
-                if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
+                if (!attributes.blocking)
                 {
-                    lookAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
-                }
-
-                if (lookAngle == 0)
-                {
-                    if (prevLookAngle > 0)
+                    if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
                     {
-                        lookAngle = 1;
+                        lookAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
                     }
-                    else if (prevLookAngle < 0)
+
+                    if (lookAngle == 0)
                     {
-                        lookAngle = -1;
+                        if (prevLookAngle > 0)
+                        {
+                            lookAngle = 1;
+                        }
+                        else if (prevLookAngle < 0)
+                        {
+                            lookAngle = -1;
+                        }
                     }
-                }
 
-                if (prevLookAngle < 0 & lookAngle == 180)
-                {
-                    lookAngle *= -1;
-                }
+                    if (prevLookAngle < 0 & lookAngle == 180)
+                    {
+                        lookAngle *= -1;
+                    }
 
-                animator.SetFloat("lookAngle", lookAngle);
-                prevLookAngle = lookAngle;
+                    animator.SetFloat("lookAngle", lookAngle);
+                    prevLookAngle = lookAngle;
+                }
             }
 
             if (disableLookInput) { return; }

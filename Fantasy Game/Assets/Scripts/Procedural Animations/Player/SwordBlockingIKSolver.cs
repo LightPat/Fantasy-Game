@@ -14,6 +14,7 @@ namespace LightPat.ProceduralAnimations
         public float positiveZChangeLimit;
         public float negativeZChangeLimit;
         public float scrollSensitivity;
+        public bool disableUpdate;
 
         Animator animator;
         Vector3 startingLeftRot;

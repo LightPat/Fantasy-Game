@@ -220,16 +220,23 @@ namespace LightPat.Core.Player
                         rightHandTarget.target = blockConstraints;
                         rightArmRig.weightTarget = 1;
                         spineAimRig.weightTarget = 1;
+                        blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
                     }
                     else
                     {
                         spineAimRig.weightTarget = 0;
                         rightArmRig.weightTarget = 0;
-                        rightHandTarget.target = rightHandIK.data.tip;
+                        StartCoroutine(ChangeFollowTargetAfterWeightTargetReached(rightHandTarget, rightHandIK.data.tip, rightArmRig.GetRig()));
                         blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
                     }
                 }
             }
+        }
+
+        private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, Rig rig)
+        {
+            yield return new WaitUntil(() => rig.weight == 0);
+            followTarget.target = newTarget;
         }
 
         void OnScroll(InputValue value)

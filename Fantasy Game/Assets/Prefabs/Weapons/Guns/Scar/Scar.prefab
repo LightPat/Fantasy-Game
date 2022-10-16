@@ -5731,7 +5731,7 @@ MonoBehaviour:
   magazineInHandOffsetRot: {x: -49.119, y: -37.24, z: 142.191}
   reloadSpeed: 2
   gunshotClip: {fileID: 8300000, guid: 3b33a323014c91348be693380a6338e5, type: 3}
-  gunshotVolume: 0.6
+  gunshotVolume: 0.8
 --- !u!114 &8340945284047069963
 MonoBehaviour:
   m_ObjectHideFlags: 0

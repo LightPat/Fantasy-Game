@@ -141,6 +141,11 @@ namespace LightPat.Core.Player
             GameObject newMagazine = Instantiate(magazineObject, playerWeaponAnimationHandler.leftHandTarget.transform);
             newMagazine.SetActive(false);
 
+            gunAnimator.SetBool("reload", true);
+            yield return new WaitUntil(() => gunAnimator.GetCurrentAnimatorStateInfo(1).IsName("Pre Reload"));
+            gunAnimator.SetBool("reload", false);
+            yield return new WaitUntil(() => gunAnimator.IsInTransition(1));
+
             // Unload current magazine
             GameObject oldMagazine = magazineObject;
             oldMagazine.transform.SetParent(null, true);
@@ -178,12 +183,22 @@ namespace LightPat.Core.Player
             newMagazine.transform.localScale = scale;
             newMagazine.transform.localPosition = localPos;
             newMagazine.transform.localRotation = localRot;
+
+            // Play rest of reload animation
+            gunAnimator.SetBool("reload", true);
+            yield return new WaitUntil(() => gunAnimator.GetCurrentAnimatorStateInfo(1).IsName("Post Reload"));
+            leftHand.lerp = false;
+            playerRootMotionManager.disableLeftHand = false;
+            gunAnimator.SetBool("reload", false);
+            yield return new WaitUntil(() => gunAnimator.IsInTransition(1));
+
             magazineObject = newMagazine;
             currentBullets = magazineSize;
             playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
-            leftHand.lerp = false;
-            playerRootMotionManager.disableLeftHand = false;
             playerWeaponAnimationHandler.leftFingerRig.weightTarget = 1;
+
+            yield return new WaitUntil(() => gunAnimator.GetCurrentAnimatorStateInfo(1).IsName("Empty"));
+
             reloading = false;
 
             if (fullAuto)

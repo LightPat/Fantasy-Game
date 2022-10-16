@@ -4991,9 +4991,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4661039144465074814}
+  - component: {fileID: 4018101685643672838}
   - component: {fileID: 4661039144465074812}
   - component: {fileID: 4661039144465074813}
-  - component: {fileID: 4018101685643672838}
   m_Layer: 0
   m_Name: Tanfoglio
   m_TagString: Untagged
@@ -5024,6 +5024,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &4018101685643672838
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4661039144465074815}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 22100000, guid: 3f72650b195787449aa3858d19063f7e, type: 2}
+  m_CullingMode: 1
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!54 &4661039144465074812
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -5158,30 +5177,12 @@ MonoBehaviour:
   magazineInHandOffsetPos: {x: -0.107, y: 0.1528, z: 0.0369}
   magazineInHandOffsetRot: {x: -0.351, y: 85.318, z: -76.249}
   reloadSpeed: 5
+  reloadTargets: []
   gunshotClip: {fileID: 8300000, guid: 73c3ffd8d0dfb684688e5a6735f983fe, type: 3}
   gunshotVolume: 0.3
   reloadClip: {fileID: 0}
   reloadVolume: 1
   constraintPositionMultipliers: {x: 0.03, y: 0.16, z: 0.7}
---- !u!95 &4018101685643672838
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4661039144465074815}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 3f72650b195787449aa3858d19063f7e, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4661039144472507981
 GameObject:
   m_ObjectHideFlags: 0

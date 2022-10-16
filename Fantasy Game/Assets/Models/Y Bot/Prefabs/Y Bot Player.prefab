@@ -968,6 +968,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0.5, y: -0.5, z: 0}
+  debugLines: 0
 --- !u!1 &445843197934824745
 GameObject:
   m_ObjectHideFlags: 0
@@ -1592,6 +1593,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &1349334999672018969
 GameObject:
   m_ObjectHideFlags: 0
@@ -2212,6 +2214,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &2397733172319920052
 GameObject:
   m_ObjectHideFlags: 0
@@ -2608,6 +2611,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &3035056446802960472
 GameObject:
   m_ObjectHideFlags: 0
@@ -2861,6 +2865,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &3406205562832618320
 GameObject:
   m_ObjectHideFlags: 0
@@ -3182,6 +3187,7 @@ MonoBehaviour:
   tipAxis: 2
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &3862690178826707261
 GameObject:
   m_ObjectHideFlags: 0
@@ -3280,6 +3286,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &4079676030980887336
 GameObject:
   m_ObjectHideFlags: 0
@@ -4386,6 +4393,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &6490377077648406289
 GameObject:
   m_ObjectHideFlags: 0
@@ -4701,6 +4709,7 @@ MonoBehaviour:
   tipAxis: 2
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &7062400754056519918
 GameObject:
   m_ObjectHideFlags: 0
@@ -4854,6 +4863,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &7284513825001385110
 GameObject:
   m_ObjectHideFlags: 0
@@ -5182,6 +5192,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: -0.5, y: -0.5, z: 0}
+  debugLines: 0
 --- !u!1 &7284513825998588542
 GameObject:
   m_ObjectHideFlags: 0
@@ -5445,9 +5456,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca85ff0777225244866ef2ae714725b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equippedWeapon: {fileID: 0}
-  startingWeapons:
-  - {fileID: 0}
+  equippedWeapon: {fileID: 1689723259, guid: e7f88e83aa05fe4418efbc470fe96757, type: 3}
+  startingWeapons: []
 --- !u!114 &1163105829
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5581,6 +5591,7 @@ MonoBehaviour:
   tipAxis: 1
   tipMultiplier: -1
   offset: {x: 0, y: 0, z: 0}
+  debugLines: 0
 --- !u!1 &7606523032337324403
 GameObject:
   m_ObjectHideFlags: 0
@@ -6800,10 +6811,6 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: d80833a43179bae45a386ec332eb830c, type: 2}
-    - target: {fileID: 5866666021909216657, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
-      propertyPath: m_CullingMode
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6240733294840144465, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -8120,9 +8127,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightArmRig: {fileID: 2513949398972815566}
   leftArmRig: {fileID: 7284513825998588540}
-  rightHandTarget: {fileID: 7708844698936418226}
-  leftHandTarget: {fileID: 7284513826573182685}
-  disableRootMotion: 0
+  disableLeftHand: 0
+  disable: 0
   drag: 1
 --- !u!136 &6721924885171941239
 CapsuleCollider:

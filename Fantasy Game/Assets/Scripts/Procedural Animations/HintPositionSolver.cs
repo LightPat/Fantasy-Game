@@ -13,6 +13,8 @@ namespace LightPat.ProceduralAnimations
         public Axis tipAxis;
         public float tipMultiplier = 1;
         public Vector3 offset;
+        public bool debugLines;
+
         public enum Axis
         {
             X,
@@ -50,6 +52,12 @@ namespace LightPat.ProceduralAnimations
                 case Axis.Z:
                     tipPosition += tip.forward * tipMultiplier;
                     break;
+            }
+
+            if (debugLines)
+            {
+                Debug.DrawLine(tip.position, tipPosition, Color.red, Time.deltaTime);
+                Debug.DrawLine(root.position, rootPosition, Color.green, Time.deltaTime);
             }
 
             transform.position = (rootPosition + tipPosition) / 2;

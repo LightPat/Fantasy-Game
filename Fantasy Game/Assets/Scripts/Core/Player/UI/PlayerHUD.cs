@@ -8,6 +8,8 @@ namespace LightPat.Core.Player
     public class PlayerHUD : MonoBehaviour
     {
         public Transform weaponSlots;
+        public GameObject weaponSlotPrefab;
+        public Vector2 slotSpacing;
         public Transform lookAngleDisplay;
         public float lookAngleRotSpeed;
         public Transform ammoDisplay;
@@ -16,6 +18,18 @@ namespace LightPat.Core.Player
         public TextMeshProUGUI fpsCounter;
 
         WeaponLoadout weaponLoadout;
+
+        public void AddWeaponSlot()
+        {
+            GameObject slot = Instantiate(weaponSlotPrefab, weaponSlots);
+            slot.GetComponent<TextMeshProUGUI>().SetText("Slot " + weaponSlots.childCount.ToString());
+            for (int i = 0; i < weaponSlots.childCount; i++)
+            {
+                weaponSlots.GetChild(i).localPosition = new Vector3(slotSpacing.x, (weaponSlots.childCount-1-i) * slotSpacing.y, 0);
+            }
+
+            ammoDisplay.localPosition = new Vector3(slotSpacing.x, weaponSlots.childCount * slotSpacing.y, 0);
+        }
 
         public void UpdateSlotText(int slotIndex)
         {

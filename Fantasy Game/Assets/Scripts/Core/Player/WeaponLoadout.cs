@@ -48,7 +48,10 @@ namespace LightPat.Core.Player
             weapons.Add(weapon);
             int slot = weapons.Count - 1;
             if (playerHUD)
+            {
+                playerHUD.AddWeaponSlot();
                 playerHUD.UpdateSlotText(slot);
+            }
             return slot;
         }
 

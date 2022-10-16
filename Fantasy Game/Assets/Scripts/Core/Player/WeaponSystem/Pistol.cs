@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LightPat.Util;
 
 namespace LightPat.Core.Player
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-namespace LightPat.Util
+namespace LightPat.ProceduralAnimations
 {
     public class RigWeightTarget : MonoBehaviour
     {

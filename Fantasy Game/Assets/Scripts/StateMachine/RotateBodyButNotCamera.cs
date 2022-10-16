@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using LightPat.Core.Player;
-using LightPat.Util;
+using LightPat.ProceduralAnimations;
 
 namespace LightPat.StateMachine
 {

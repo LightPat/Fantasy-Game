@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 using UnityEngine.Animations.Rigging;
-using LightPat.Util;
+using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {

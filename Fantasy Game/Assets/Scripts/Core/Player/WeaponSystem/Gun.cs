@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LightPat.Util;
+using LightPat.ProceduralAnimations;
 using TMPro;
 
 namespace LightPat.Core.Player

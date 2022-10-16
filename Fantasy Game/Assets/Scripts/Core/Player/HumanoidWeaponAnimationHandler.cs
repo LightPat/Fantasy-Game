@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
-using LightPat.Util;
 using System;
+using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {

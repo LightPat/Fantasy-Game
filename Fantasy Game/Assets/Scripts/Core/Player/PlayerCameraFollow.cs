@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using LightPat.Util;
 using UnityEngine.Animations.Rigging;
+using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {

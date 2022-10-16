@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LightPat.Util
+namespace LightPat.ProceduralAnimations
 {
     public class SwordBlockingIKSolver : MonoBehaviour
     {

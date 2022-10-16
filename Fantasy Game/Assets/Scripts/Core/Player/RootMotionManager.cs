@@ -2,19 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using LightPat.Util;
 
 namespace LightPat.Core.Player
 {
     public class RootMotionManager : MonoBehaviour
     {
-        public Rig rightArmRig;
-        public Rig leftArmRig;
-        public bool disableLeftHand;
-
         Rigidbody rb;
         Animator animator;
         WeaponLoadout weaponLoadout;
+
         private void Start()
         {
             rb = GetComponentInParent<Rigidbody>();
@@ -22,25 +18,39 @@ namespace LightPat.Core.Player
             weaponLoadout = GetComponentInParent<WeaponLoadout>();
         }
 
-        public bool disable;
+        [Header("OnAnimatorMove")]
+        public bool disableRootMotion;
         public float drag;
         private void OnAnimatorMove()
         {
-            if (disable) { return; }
+            if (disableRootMotion) { return; }
 
             Vector3 newVelocity = Vector3.MoveTowards(rb.velocity * Time.timeScale, animator.velocity, drag);
             newVelocity.y = rb.velocity.y * Time.timeScale;
             rb.velocity = newVelocity / Time.timeScale;
         }
 
+        [Header("OnAnimatorIK")]
+        public Rig rightArmRig;
+        public Rig leftArmRig;
+        public bool disableRightHand;
+        public bool disableLeftHand;
         private void OnAnimatorIK(int layerIndex)
         {
             if (!weaponLoadout.equippedWeapon) { return; }
 
-            animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightArmRig.weight);
-            animator.SetIKRotationWeight(AvatarIKGoal.RightHand, rightArmRig.weight);
-            animator.SetIKPosition(AvatarIKGoal.RightHand, weaponLoadout.equippedWeapon.rightHandGrip.position);
-            animator.SetIKRotation(AvatarIKGoal.RightHand, weaponLoadout.equippedWeapon.rightHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
+            if (disableRightHand)
+            {
+                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, 0);
+                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, 0);
+            }
+            else
+            {
+                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightArmRig.weight);
+                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, rightArmRig.weight);
+                animator.SetIKPosition(AvatarIKGoal.RightHand, weaponLoadout.equippedWeapon.rightHandGrip.position);
+                animator.SetIKRotation(AvatarIKGoal.RightHand, weaponLoadout.equippedWeapon.rightHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
+            }
 
             if (disableLeftHand)
             {

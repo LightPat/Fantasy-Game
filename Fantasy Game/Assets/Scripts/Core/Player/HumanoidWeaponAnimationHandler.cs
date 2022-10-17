@@ -136,33 +136,36 @@ namespace LightPat.Core.Player
                 if (hit.transform == transform) { continue; }
                 if (hit.transform.GetComponent<Weapon>())
                 {
-                    // If we already have a weapon equipped just put the weapon we click in our reserves
-                    if (weaponLoadout.equippedWeapon == null)
-                    {
-                        Weapon weapon = hit.transform.GetComponent<Weapon>();
-                        animatorLayerWeightManager.SetLayerWeight(weapon.GetComponent<Weapon>().animationClass, 1);
-                        Destroy(weapon.GetComponent<Rigidbody>());
-                        ReparentWeapon(weapon, "player");
-                        weaponLoadout.DrawWeapon(weaponLoadout.AddWeapon(weapon));
-                        EnableCombatIKs();
-                    }
-                    else
-                    {
-                        Weapon weapon = hit.transform.GetComponent<Weapon>();
-                        Destroy(weapon.GetComponent<Rigidbody>());
-                        ReparentWeapon(weapon, "stowed");
-
-                        Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
-                        if (sheath)
-                        {
-                            sheath.gameObject.SetActive(true);
-                            sheath.transform.SetParent(GetStowPoint(weapon), true);
-                            sheath.hasPlayer = true;
-                        }
-                        weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
-                    }
+                    EquipWeapon(hit.transform.GetComponent<Weapon>());
                 }
                 break;
+            }
+        }
+
+        public void EquipWeapon(Weapon weapon)
+        {
+            // If we already have a weapon equipped just put the weapon we click in our reserves
+            if (weaponLoadout.equippedWeapon == null)
+            {
+                animatorLayerWeightManager.SetLayerWeight(weapon.GetComponent<Weapon>().animationClass, 1);
+                Destroy(weapon.GetComponent<Rigidbody>());
+                ReparentWeapon(weapon, "player");
+                weaponLoadout.DrawWeapon(weaponLoadout.AddWeapon(weapon));
+                EnableCombatIKs();
+            }
+            else
+            {
+                Destroy(weapon.GetComponent<Rigidbody>());
+                ReparentWeapon(weapon, "stowed");
+
+                Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                if (sheath)
+                {
+                    sheath.gameObject.SetActive(true);
+                    sheath.transform.SetParent(GetStowPoint(weapon), true);
+                    sheath.hasPlayer = true;
+                }
+                weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
             }
         }
 

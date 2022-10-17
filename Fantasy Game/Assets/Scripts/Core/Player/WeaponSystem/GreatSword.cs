@@ -24,7 +24,8 @@ namespace LightPat.Core.Player
 
         private void OnTransformParentChanged()
         {
-            GetComponentInParent<Animator>().SetFloat("swingSpeed", swingSpeed);
+            if (GetComponentInParent<HumanoidWeaponAnimationHandler>())
+                GetComponentInParent<Animator>().SetFloat("swingSpeed", swingSpeed);
         }
     }
 }

@@ -18,16 +18,6 @@ namespace LightPat.StateMachine
             playerController.playerCamera.updateRotationWithTarget = true;
             playerController.disableCameraLookInput = true;
             playerController.playerCamera.neckAimRig.weightTarget = 0;
-
-            //rigBuilder = animator.GetComponent<RigBuilder>();
-            //foreach (RigLayer rigLayer in rigBuilder.layers)
-            //{
-            //    if (rigLayer.name == "NeckAimRig")
-            //    {
-            //        rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
-            //        break;
-            //    }
-            //}
         }
 
         // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks

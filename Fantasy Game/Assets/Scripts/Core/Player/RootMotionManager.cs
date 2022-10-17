@@ -16,6 +16,8 @@ namespace LightPat.Core.Player
             rb = GetComponentInParent<Rigidbody>();
             animator = GetComponent<Animator>();
             weaponLoadout = GetComponentInParent<WeaponLoadout>();
+            rightArmConstraint = rightArmRig.GetComponentInChildren<TwoBoneIKConstraint>();
+            leftArmConstraint = leftArmRig.GetComponentInChildren<TwoBoneIKConstraint>();
         }
 
         [Header("OnAnimatorMove")]
@@ -35,6 +37,8 @@ namespace LightPat.Core.Player
         public Rig leftArmRig;
         public bool disableRightHand;
         public bool disableLeftHand;
+        TwoBoneIKConstraint rightArmConstraint;
+        TwoBoneIKConstraint leftArmConstraint;
         private void OnAnimatorIK(int layerIndex)
         {
             if (!weaponLoadout.equippedWeapon) { return; }
@@ -46,8 +50,8 @@ namespace LightPat.Core.Player
             }
             else
             {
-                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightArmRig.weight);
-                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, rightArmRig.weight);
+                animator.SetIKPositionWeight(AvatarIKGoal.RightHand, rightArmRig.weight * rightArmConstraint.weight);
+                animator.SetIKRotationWeight(AvatarIKGoal.RightHand, rightArmRig.weight * rightArmConstraint.weight);
                 animator.SetIKPosition(AvatarIKGoal.RightHand, weaponLoadout.equippedWeapon.rightHandGrip.position);
                 animator.SetIKRotation(AvatarIKGoal.RightHand, weaponLoadout.equippedWeapon.rightHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
             }
@@ -59,8 +63,8 @@ namespace LightPat.Core.Player
             }
             else
             {
-                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftArmRig.weight);
-                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, leftArmRig.weight);
+                animator.SetIKPositionWeight(AvatarIKGoal.LeftHand, leftArmRig.weight * leftArmConstraint.weight);
+                animator.SetIKRotationWeight(AvatarIKGoal.LeftHand, leftArmRig.weight * leftArmConstraint.weight);
                 animator.SetIKPosition(AvatarIKGoal.LeftHand, weaponLoadout.equippedWeapon.leftHandGrip.position);
                 animator.SetIKRotation(AvatarIKGoal.LeftHand, weaponLoadout.equippedWeapon.leftHandGrip.rotation * Quaternion.Euler(-90, 0, 0));
             }

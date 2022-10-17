@@ -3047,7 +3047,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disconnectDistance: 1.1
-  lerpWeight: 0
+  lerpWeight: 1
   weightSpeed: 5
   debugDistance: 0
 --- !u!1 &3694511130045752679
@@ -5140,7 +5140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disconnectDistance: 1.1
-  lerpWeight: 0
+  lerpWeight: 1
   weightSpeed: 5
   debugDistance: 0
 --- !u!1 &7284513825679342996

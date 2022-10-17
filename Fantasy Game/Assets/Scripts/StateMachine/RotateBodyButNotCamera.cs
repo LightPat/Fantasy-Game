@@ -9,25 +9,25 @@ namespace LightPat.StateMachine
 {
     public class RotateBodyButNotCamera : StateMachineBehaviour
     {
-        public float aimWeightTarget;
-        public bool updateCameraRotation;
-
-        private RigBuilder rigBuilder;
+        PlayerController playerController;
 
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            rigBuilder = animator.GetComponent<RigBuilder>();
-            foreach (RigLayer rigLayer in rigBuilder.layers)
-            {
-                if (rigLayer.name == "AimRig")
-                {
-                    rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
-                    Camera.main.GetComponent<PlayerCameraFollow>().updateRotationWithTarget = updateCameraRotation;
-                    animator.GetComponentInParent<PlayerController>().disableCameraLookInput = updateCameraRotation;
-                    break;
-                }
-            }
+            playerController = animator.GetComponentInParent<PlayerController>();
+            playerController.playerCamera.updateRotationWithTarget = true;
+            playerController.disableCameraLookInput = true;
+            playerController.playerCamera.neckAimRig.weightTarget = 0;
+
+            //rigBuilder = animator.GetComponent<RigBuilder>();
+            //foreach (RigLayer rigLayer in rigBuilder.layers)
+            //{
+            //    if (rigLayer.name == "NeckAimRig")
+            //    {
+            //        rigLayer.rig.GetComponent<RigWeightTarget>().weightTarget = aimWeightTarget;
+            //        break;
+            //    }
+            //}
         }
 
         // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
@@ -37,10 +37,12 @@ namespace LightPat.StateMachine
         //}
 
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
-        //override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-        //{
-            
-        //}
+        override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            playerController.playerCamera.updateRotationWithTarget = false;
+            playerController.disableCameraLookInput = false;
+            playerController.playerCamera.neckAimRig.weightTarget = 1;
+        }
 
         // OnStateMove is called right after Animator.OnAnimatorMove()
         //override public void OnStateMove(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

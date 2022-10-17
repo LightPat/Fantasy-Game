@@ -56,7 +56,7 @@ namespace LightPat.Core.Player
                 else
                     transform.SetParent(null, true);
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
-                if (playerWeaponLoadout.equippedWeapon != null & deactivateWeaponLayers)
+                if (playerWeaponLoadout.equippedWeapon != null)
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponLoadout.equippedWeapon.animationClass), 1);
             }
 

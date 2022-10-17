@@ -315,6 +315,7 @@ MonoBehaviour:
   zRotOffsetSpeed: 10
   targetZRot: 0
   updateRotationWithTarget: 0
+  deactivateWeaponLayers: 0
 --- !u!1 &1180194538
 GameObject:
   m_ObjectHideFlags: 0
@@ -5381,7 +5382,6 @@ MonoBehaviour:
   disableLookInput: 0
   disableCameraLookInput: 0
   rotateBodyWithCamera: 0
-  attemptedXAngle: 0
   toggleSprint: 0
   toggleCrouch: 0
   reach: 5
@@ -5457,7 +5457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca85ff0777225244866ef2ae714725b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equippedWeapon: {fileID: 783794268, guid: 0536132dc1c27574396b0c3b13534f89, type: 3}
+  equippedWeapon: {fileID: 0}
   startingWeapons: []
 --- !u!114 &1163105829
 MonoBehaviour:
@@ -6808,6 +6808,10 @@ PrefabInstance:
     - target: {fileID: 5120724536234783804, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5822821947120931875, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 4f9bf7f5be3283345994b7f1aafe237c, type: 3}
       propertyPath: m_Controller

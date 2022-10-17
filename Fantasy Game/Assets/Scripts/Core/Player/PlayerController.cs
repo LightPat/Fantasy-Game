@@ -70,7 +70,7 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool disableCameraLookInput;
         public bool rotateBodyWithCamera;
-        [HideInInspector] public float attemptedXAngle;
+        public float attemptedXAngle { get; private set; }
         Vector2 lookInput;
         Vector3 bodyRotation;
         float lookAngle;
@@ -421,7 +421,7 @@ namespace LightPat.Core.Player
             }
         }
 
-        [Header("Spine Lean Settings")]
+        [Header("Lean Settings")]
         public RigWeightTarget spineRig;
         public MultiAimConstraint spineAim;
         public MultiAimConstraint[] aimConstraints;
@@ -429,7 +429,6 @@ namespace LightPat.Core.Player
         public float leftLean;
         public float leanSpeed;
         float targetLean;
-
         public void SetLean(float newTilt)
         {
             targetLean = newTilt;

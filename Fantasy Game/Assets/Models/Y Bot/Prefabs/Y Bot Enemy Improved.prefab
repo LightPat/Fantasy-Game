@@ -5320,6 +5320,9 @@ MonoBehaviour:
   neckAimRig: {fileID: 7284513825018453871}
   aimTarget: {fileID: 7284513825001385109}
   moveTransitionSpeed: 4
+  roamRadius: 10
+  roamSpeed: 0
+  roamingRotationSpeed: 5
 --- !u!114 &7284513826171149810
 MonoBehaviour:
   m_ObjectHideFlags: 0

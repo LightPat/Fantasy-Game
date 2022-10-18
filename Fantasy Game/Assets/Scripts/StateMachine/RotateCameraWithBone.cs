@@ -14,6 +14,8 @@ namespace LightPat.StateMachine
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            if (animator.GetLayerWeight(layerIndex) != 1) { return; }
+
             playerController = animator.GetComponentInParent<PlayerController>();
 
             if (playerController)
@@ -32,6 +34,8 @@ namespace LightPat.StateMachine
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            if (animator.GetLayerWeight(layerIndex) != 1) { return; }
+
             if (playerController)
             {
                 playerController.playerCamera.deactivateWeaponLayers = false;

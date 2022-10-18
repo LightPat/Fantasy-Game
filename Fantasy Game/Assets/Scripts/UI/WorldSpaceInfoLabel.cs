@@ -12,14 +12,26 @@ namespace LightPat.UI
         public float rotationSpeed = 0.4f;
         public float animationSpeed = 0.02f;
         public float viewDistance = 10f;
+        Vector3 positionOffset;
+        Transform target;
 
         private void Start()
         {
             nameDisplay.SetText(transform.parent.name);
+            target = transform.parent;
+            positionOffset = transform.localPosition;
+            transform.SetParent(null, true);
         }
 
         private void Update()
         {
+            if (target == null)
+                Destroy(gameObject);
+
+            gameObject.SetActive(target.gameObject.activeInHierarchy);
+
+            transform.position = target.position + positionOffset;
+
             Quaternion rotTarget = Quaternion.LookRotation(Camera.main.transform.position - transform.position);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, rotTarget, rotationSpeed);
 

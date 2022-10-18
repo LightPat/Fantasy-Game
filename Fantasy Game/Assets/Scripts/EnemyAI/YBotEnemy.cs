@@ -22,12 +22,12 @@ namespace LightPat.EnemyAI
         Vector3 startingPosition;
         Vector3 roamingPosition;
         bool lookingAround = true;
-        public bool roaming;
         Rigidbody rb;
         Animator animator;
         HumanoidWeaponAnimationHandler humanoidWeaponAnimationHandler;
         WeaponLoadout weaponLoadout;
-        Weapon targetWeapon;
+        public Weapon targetWeapon;
+        public fightingState fightState;
 
         public void MoveToPoint(Vector3 worldPosition, float stopDistance = 1)
         {
@@ -78,50 +78,16 @@ namespace LightPat.EnemyAI
 
         private void Update()
         {
-            if (roaming)
+            if (fightState == fightingState.stationary | fightState == fightingState.combat)
             {
-                if (lookingAround)
-                {
-                    animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
-                    animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), 0, Time.deltaTime * moveTransitionSpeed));
-                    if (RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed) < 5)
-                    {
-                        lookingAround = false;
-                    }
-                }
-                else if (Vector3.Distance(transform.position, roamingPosition) > 2) // If we haven't reached our roaming position yet
-                {
-                    MoveToPoint(roamingPosition, 0);
-                    RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
-
-                    if (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
-                    {
-                        roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                        while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
-                        {
-                            roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                        }
-                        RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
-                    }
-                }
-                else // Once we've reached our roaming position, get a new one
-                {
-                    //lookingAround = true;
-                    roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-
-                    if (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
-                    {
-                        roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                        while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
-                        {
-                            roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                        }
-                        RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
-                    }
-                }
+                animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
+                animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), 0, Time.deltaTime * moveTransitionSpeed));
             }
 
-            if (!weaponLoadout.equippedWeapon)
+            if (fightState == fightingState.roaming)
+                OnRoaming();
+
+            if (fightState == fightingState.moveToTarget)
             {
                 if (targetWeapon)
                 {
@@ -129,13 +95,19 @@ namespace LightPat.EnemyAI
                     LookAtPoint(point);
                     RotateBodyToPoint(point);
                     MoveToPoint(point, weaponStopDistance);
-                    roaming = false;
-                }
-                else
-                {
-                    roaming = true;
-                }
 
+                    Vector3 centerPoint = targetWeapon.GetComponentInChildren<Renderer>().bounds.center;
+                    if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(centerPoint.x, centerPoint.z)) < weaponStopDistance)
+                    {
+                        humanoidWeaponAnimationHandler.EquipWeapon(targetWeapon);
+                        targetWeapon = null;
+                        fightState = fightingState.roaming;
+                    }
+                }
+            }
+
+            if (!weaponLoadout.equippedWeapon)
+            {
                 Utilities.DrawBoxCastBox(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z) - transform.forward, new Vector3(3, 2, 3), transform.rotation, transform.forward, boxCastDistance, Color.red);
                 RaycastHit[] allHits = Physics.BoxCastAll(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z) - transform.forward, new Vector3(3, 2, 3), transform.forward, transform.rotation, boxCastDistance);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
@@ -147,23 +119,54 @@ namespace LightPat.EnemyAI
                         if (!targetWeapon)
                         {
                             targetWeapon = hit.transform.GetComponent<Weapon>();
+                            fightState = fightingState.moveToTarget;
                             break;
-                        }
-                        else
-                        {
-                            Vector3 centerPoint = targetWeapon.GetComponentInChildren<Renderer>().bounds.center;
-                            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(centerPoint.x, centerPoint.z)) < weaponStopDistance)
-                            {
-                                humanoidWeaponAnimationHandler.EquipWeapon(hit.transform.GetComponent<Weapon>());
-                                targetWeapon = null;
-                            }
                         }
                     }
                 }
             }
-            else
+        }
+
+        void OnRoaming()
+        {
+            if (lookingAround)
             {
-                roaming = true;
+                animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
+                animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), 0, Time.deltaTime * moveTransitionSpeed));
+                if (RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed) < 5)
+                {
+                    lookingAround = false;
+                }
+            }
+            else if (Vector3.Distance(transform.position, roamingPosition) > 2) // If we haven't reached our roaming position yet
+            {
+                MoveToPoint(roamingPosition, 0);
+                RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
+
+                if (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
+                {
+                    roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+                    while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
+                    {
+                        roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+                    }
+                    RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
+                }
+            }
+            else // Once we've reached our roaming position, get a new one
+            {
+                //lookingAround = true;
+                roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+
+                if (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
+                {
+                    roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+                    while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
+                    {
+                        roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+                    }
+                    RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
+                }
             }
         }
 

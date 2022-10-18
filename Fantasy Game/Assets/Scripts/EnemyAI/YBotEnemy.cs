@@ -22,6 +22,7 @@ namespace LightPat.EnemyAI
         Vector3 startingPosition;
         Vector3 roamingPosition;
         bool lookingAround = true;
+        Attributes attributes;
         Rigidbody rb;
         Animator animator;
         HumanoidWeaponAnimationHandler humanoidWeaponAnimationHandler;
@@ -54,6 +55,12 @@ namespace LightPat.EnemyAI
             neckAimRig.weightTarget = 1;
         }
 
+        public void LerpTowardsPoint(Vector3 worldPosition)
+        {
+            aimTarget.position = Vector3.Lerp(aimTarget.position, worldPosition, Time.deltaTime * 4);
+            neckAimRig.weightTarget = 1;
+        }
+
         public void RotateBodyToPoint(Vector3 worldPosition)
         {
             rb.MoveRotation(Quaternion.LookRotation(new Vector3(worldPosition.x, transform.position.y, worldPosition.z) - transform.position, Vector3.up));
@@ -72,12 +79,15 @@ namespace LightPat.EnemyAI
             animator = GetComponentInChildren<Animator>();
             humanoidWeaponAnimationHandler = GetComponent<HumanoidWeaponAnimationHandler>();
             weaponLoadout = GetComponent<WeaponLoadout>();
+            attributes = GetComponent<Attributes>();
             startingPosition = transform.position;
             roamingPosition = transform.position + transform.forward;
         }
 
         private void Update()
         {
+            if (attributes.HP <= 0) { return; }
+
             if (fightState == fightingState.stationary | fightState == fightingState.combat)
             {
                 animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
@@ -93,7 +103,7 @@ namespace LightPat.EnemyAI
                 {
                     Vector3 point = targetWeapon.GetComponentInChildren<Renderer>().bounds.center;
                     LookAtPoint(point);
-                    RotateBodyToPoint(point);
+                    RotateBodyTowardsPoint(point, roamingRotationSpeed);
                     MoveToPoint(point, weaponStopDistance);
 
                     Vector3 centerPoint = targetWeapon.GetComponentInChildren<Renderer>().bounds.center;
@@ -140,6 +150,7 @@ namespace LightPat.EnemyAI
             }
             else if (Vector3.Distance(transform.position, roamingPosition) > 2) // If we haven't reached our roaming position yet
             {
+                LerpTowardsPoint(roamingPosition);
                 MoveToPoint(roamingPosition, 0);
                 RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
 

@@ -21,7 +21,7 @@ namespace LightPat.Core
         public Material imageMaterial;
         public TextMeshProUGUI healthPointsUIText;
 
-        float HP;
+        public float HP { get; private set; }
         Animator animator;
 
         private void Start()

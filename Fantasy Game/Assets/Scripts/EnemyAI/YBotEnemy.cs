@@ -27,7 +27,7 @@ namespace LightPat.EnemyAI
         Animator animator;
         HumanoidWeaponAnimationHandler humanoidWeaponAnimationHandler;
         WeaponLoadout weaponLoadout;
-        public Weapon targetWeapon;
+        Weapon targetWeapon;
         public fightingState fightState;
 
         public void MoveToPoint(Vector3 worldPosition, float stopDistance = 1)

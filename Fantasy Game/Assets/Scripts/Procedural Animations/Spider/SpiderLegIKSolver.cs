@@ -77,8 +77,8 @@ namespace LightPat.ProceduralAnimations.Spider
             if (lerpProgress < 1)
             {
                 // Scale lerp speed with how fast we are moving
-                float velocityAverage = Mathf.Abs(controller.physics.velocity.x + controller.physics.velocity.y + controller.physics.velocity.z) * controller.lerpSpeedMultiplier;
-                float angularVelocityAverage = Mathf.Abs(controller.physics.angularVelocity.x + controller.physics.angularVelocity.y + controller.physics.angularVelocity.z) * controller.angularLerpSpeedMultiplier;
+                float velocityAverage = controller.physics.velocity.magnitude * controller.lerpSpeedMultiplier;
+                float angularVelocityAverage = controller.physics.angularVelocity.magnitude * controller.angularLerpSpeedMultiplier;
                 
                 lerpSpeed = velocityAverage + angularVelocityAverage;
                 if (lerpSpeed < controller.minimumLerpSpeed)

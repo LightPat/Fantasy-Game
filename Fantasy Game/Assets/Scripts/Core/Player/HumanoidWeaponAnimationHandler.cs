@@ -220,6 +220,7 @@ namespace LightPat.Core.Player
                 if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 {
                     GetComponent<Attributes>().blocking = blocking;
+                    animator.SetBool("attack2", blocking);
                     if (blocking)
                     {
                         rightHandTarget.target = blockConstraints;

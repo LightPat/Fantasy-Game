@@ -158,7 +158,6 @@ namespace LightPat.EnemyAI
                     {
                         roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
                     }
-                    Debug.Log("2 " + Vector3.Distance(transform.position, roamingPosition));
                     RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
                 }
             }

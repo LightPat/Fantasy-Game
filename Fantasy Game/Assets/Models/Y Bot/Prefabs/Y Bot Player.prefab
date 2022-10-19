@@ -4910,6 +4910,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 1097985365}
   disableUpdate: 0
+  offset: {x: 0, y: 0, z: 0}
 --- !u!1 &7284513825018453866
 GameObject:
   m_ObjectHideFlags: 0
@@ -5428,7 +5429,9 @@ MonoBehaviour:
   rightHandIK: {fileID: 3097663621319562256}
   leftHandIK: {fileID: 7284513825337906067}
   rightHandTarget: {fileID: 1616088852410723405}
+  rightHandHint: {fileID: 553492111}
   leftHandTarget: {fileID: 7284513826573182684}
+  leftHandHint: {fileID: 1303539365}
   spineAimRig: {fileID: 6763357609041427354}
   rightFingerRig: {fileID: 1040125804926793722}
   leftFingerRig: {fileID: 2556111997334914949}

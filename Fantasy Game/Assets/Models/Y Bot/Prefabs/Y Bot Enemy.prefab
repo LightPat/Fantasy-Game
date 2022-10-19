@@ -5317,7 +5317,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boxCastDistance: 5
   weaponStopDistance: 2
-  firstPersonCamera: {fileID: 1097985364}
   neckAimRig: {fileID: 7284513825018453871}
   aimTarget: {fileID: 7284513825001385109}
   moveTransitionSpeed: 4
@@ -5359,7 +5358,9 @@ MonoBehaviour:
   rightHandIK: {fileID: 3097663621319562256}
   leftHandIK: {fileID: 7284513825337906067}
   rightHandTarget: {fileID: 1616088852410723405}
+  rightHandHint: {fileID: 553492111}
   leftHandTarget: {fileID: 7284513826573182684}
+  leftHandHint: {fileID: 1303539365}
   spineAimRig: {fileID: 6763357609041427354}
   rightFingerRig: {fileID: 1040125804926793722}
   leftFingerRig: {fileID: 2556111997334914949}

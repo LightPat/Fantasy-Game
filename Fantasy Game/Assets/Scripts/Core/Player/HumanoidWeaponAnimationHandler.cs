@@ -17,7 +17,9 @@ namespace LightPat.Core.Player
         public TwoBoneIKConstraint rightHandIK;
         public TwoBoneIKConstraint leftHandIK;
         public FollowTarget rightHandTarget;
+        public HintPositionSolver rightHandHint;
         public FollowTarget leftHandTarget;
+        public HintPositionSolver leftHandHint;
         public RigWeightTarget spineAimRig;
         public RigWeightTarget rightFingerRig;
         public RigWeightTarget leftFingerRig;
@@ -544,6 +546,7 @@ namespace LightPat.Core.Player
             }
             else if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
             {
+                leftHandHint.offset = new Vector3(-1, -1, 0);
                 leftArmRig.weightTarget = 1;
                 leftHandTarget.target = weaponLoadout.equippedWeapon.leftHandGrip;
                 Transform leftFingers = weaponLoadout.equippedWeapon.GetComponent<GreatSword>().leftFingersGrips;
@@ -599,6 +602,7 @@ namespace LightPat.Core.Player
             rightFingerRig.weightTarget = 0;
             leftFingerRig.weightTarget = 0;
             spineAimRig.weightTarget = 0;
+            leftHandHint.offset = new Vector3(-0.5f, -0.5f, 0);
 
             if (playerController)
             {

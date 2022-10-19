@@ -11,7 +11,6 @@ namespace LightPat.EnemyAI
     {
         public float boxCastDistance;
         public float weaponStopDistance;
-        public Camera firstPersonCamera;
         public RigWeightTarget neckAimRig;
         public Transform aimTarget;
         public float moveTransitionSpeed = 4;
@@ -52,12 +51,6 @@ namespace LightPat.EnemyAI
         public void LookAtPoint(Vector3 worldPosition)
         {
             aimTarget.position = worldPosition;
-            neckAimRig.weightTarget = 1;
-        }
-
-        public void LerpTowardsPoint(Vector3 worldPosition)
-        {
-            aimTarget.position = Vector3.Lerp(aimTarget.position, worldPosition, Time.deltaTime * 4);
             neckAimRig.weightTarget = 1;
         }
 
@@ -150,19 +143,8 @@ namespace LightPat.EnemyAI
             }
             else if (Vector3.Distance(transform.position, roamingPosition) > 2) // If we haven't reached our roaming position yet
             {
-                LerpTowardsPoint(roamingPosition);
                 MoveToPoint(roamingPosition, 0);
                 RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
-
-                if (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
-                {
-                    roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                    while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
-                    {
-                        roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                    }
-                    RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
-                }
             }
             else // Once we've reached our roaming position, get a new one
             {
@@ -172,10 +154,11 @@ namespace LightPat.EnemyAI
                 if (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
                 {
                     roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                    while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
+                    while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position) | Vector3.Distance(transform.position, roamingPosition) < roamRadius)
                     {
                         roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
                     }
+                    Debug.Log("2 " + Vector3.Distance(transform.position, roamingPosition));
                     RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
                 }
             }

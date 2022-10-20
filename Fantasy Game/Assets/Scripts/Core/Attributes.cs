@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.Linq;
 
 namespace LightPat.Core
 {
@@ -33,8 +34,19 @@ namespace LightPat.Core
 
         public void InflictDamage(float damage, GameObject inflicter)
         {
-            if (!blocking)
+            float damageAngle = Vector3.Angle(inflicter.transform.forward, transform.forward);
+
+            if (blocking)
+            {
+                float[] array = new float[3] { 0, 90, 180 };
+                float nearest = array.OrderBy(x => Mathf.Abs((long)x - damageAngle)).First();
+                if (nearest != 180)
+                    HP -= damage;
+            }
+            else
+            {
                 HP -= damage;
+            }
 
             if (HP < 0)
                 HP = 0;
@@ -43,9 +55,7 @@ namespace LightPat.Core
 
             if (animator != null)
             {
-                Vector3 dir = (inflicter.transform.position - transform.position).normalized;
-                animator.SetFloat("damageAngle", Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z)));
-                animator.SetBool("reactDamage", true);
+                animator.SetFloat("damageAngle", damageAngle);
                 StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
 
                 if (HP <= 0)
@@ -64,8 +74,19 @@ namespace LightPat.Core
 
         public void InflictDamage(float damage, GameObject inflicter, Projectile projectile)
         {
-            if (!blocking)
+            float damageAngle = Vector3.Angle(projectile.transform.forward, transform.forward);
+
+            if (blocking)
+            {
+                float[] array = new float[3] { 0, 90, 180 };
+                float nearest = array.OrderBy(x => Mathf.Abs((long)x - damageAngle)).First();
+                if (nearest != 180)
+                    HP -= damage;
+            }
+            else
+            {
                 HP -= damage;
+            }
 
             if (HP < 0)
                 HP = 0;
@@ -74,10 +95,7 @@ namespace LightPat.Core
 
             if (animator != null)
             {
-                Vector3 dir = (projectile.transform.position - transform.position).normalized;
-                float damageAngle = Vector2.SignedAngle(new Vector2(transform.forward.x, transform.forward.z), new Vector2(dir.x, dir.z));
                 animator.SetFloat("damageAngle", damageAngle);
-                animator.SetBool("reactDamage", true);
                 StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
 
                 if (HP <= 0)
@@ -107,11 +125,6 @@ namespace LightPat.Core
                 imageMaterial.SetFloat("healthPercentage", HP / maxHealth);
                 healthPointsUIText.SetText(HP + " / " + maxHealth);
             }
-        }
-
-        void OnAttacked(GameObject attacker)
-        {
-            //Debug.Log(name + " is being attacked by: " + attacker);
         }
     }
 }

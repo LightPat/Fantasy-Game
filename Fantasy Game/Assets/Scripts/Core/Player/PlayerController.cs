@@ -495,9 +495,10 @@ namespace LightPat.Core.Player
             }
         }
 
-        void OnProjectileHit(float hitMarkerTime)
+        void OnProjectileHit(HitmarkerData hitmarkerData)
         {
-            StartCoroutine(playerHUD.ToggleHitMarker(hitMarkerTime));
+            AudioManager.Instance.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
+            StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerData.hitmarkerTime));
         }
     }
 }

@@ -5353,6 +5353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85a3165032590e4180a6bc8d2133305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCamera: {fileID: 1097985365}
   rightArmRig: {fileID: 1346904523005087575}
   leftArmRig: {fileID: 975685839}
   rightHandIK: {fileID: 3097663621319562256}

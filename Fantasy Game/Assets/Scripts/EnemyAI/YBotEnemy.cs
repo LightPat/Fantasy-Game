@@ -81,8 +81,15 @@ namespace LightPat.EnemyAI
         {
             if (attributes.HP <= 0) { return; }
 
-            if (fightState == fightingState.stationary | fightState == fightingState.combat)
+            if (fightState == fightingState.stationary)
             {
+                animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
+                animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), 0, Time.deltaTime * moveTransitionSpeed));
+            }
+
+            if (fightState == fightingState.combat)
+            {
+                humanoidWeaponAnimationHandler.Attack1(true);
                 animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
                 animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), 0, Time.deltaTime * moveTransitionSpeed));
             }
@@ -104,7 +111,8 @@ namespace LightPat.EnemyAI
                     {
                         humanoidWeaponAnimationHandler.EquipWeapon(targetWeapon);
                         targetWeapon = null;
-                        fightState = fightingState.roaming;
+                        //fightState = fightingState.roaming;
+                        fightState = fightingState.combat;
                     }
                 }
             }
@@ -161,6 +169,11 @@ namespace LightPat.EnemyAI
                     RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
                 }
             }
+        }
+
+        void OnProjectileHit()
+        {
+
         }
 
         private void OnDrawGizmos()

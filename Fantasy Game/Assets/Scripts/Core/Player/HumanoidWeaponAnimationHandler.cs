@@ -11,6 +11,7 @@ namespace LightPat.Core.Player
     [RequireComponent(typeof(WeaponLoadout))]
     public class HumanoidWeaponAnimationHandler : MonoBehaviour
     {
+        public Transform mainCamera;
         [Header("Rigging Assignments")]
         public RigWeightTarget rightArmRig;
         public RigWeightTarget leftArmRig;
@@ -188,11 +189,16 @@ namespace LightPat.Core.Player
             }
         }
 
+        public void Attack1(bool pressed)
+        {
+            animator.SetBool("attack1", pressed);
+            if (weaponLoadout.equippedWeapon == null) { return; }
+            weaponLoadout.equippedWeapon.Attack1(pressed);
+        }
+
         void OnAttack1(InputValue value)
         {
-            animator.SetBool("attack1", value.isPressed);
-            if (weaponLoadout.equippedWeapon == null) { return; }
-            weaponLoadout.equippedWeapon.Attack1(value.isPressed);
+            Attack1(value.isPressed);
         }
 
         [Header("Sword blocking")]
@@ -218,11 +224,10 @@ namespace LightPat.Core.Player
             {
                 if (!value.isPressed) { return; }
                 blocking = !blocking;
-                //animator.SetBool("attack2", blocking);
+                animator.SetBool("attack2", blocking);
                 if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 {
                     GetComponent<Attributes>().blocking = blocking;
-                    animator.SetBool("attack2", blocking);
                     if (blocking)
                     {
                         rightHandTarget.target = blockConstraints;
@@ -413,6 +418,7 @@ namespace LightPat.Core.Player
                 // If the collision is detected on one of our equippedWeapon's colliders
                 if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponLoadout.equippedWeapon)
                 {
+                    animator.SetBool("attack1", false);
                     if (collision.transform.GetComponent<Attributes>())
                     {
                         collision.transform.GetComponent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
@@ -616,6 +622,11 @@ namespace LightPat.Core.Player
         void OnDeath()
         {
             OnDrop();
+        }
+
+        void OnAttacked(GameObject attacker)
+        {
+            //Debug.Log(name + " is being attacked by: " + attacker);
         }
     }
 }

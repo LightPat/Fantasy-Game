@@ -41,14 +41,28 @@ namespace LightPat.Core
                 Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
                 if (hit)
                 {
-                    //Debug.Log(damage + " " + inflicter + " " + this);
                     hit.InflictDamage(damage, inflicter, this);
-                    AudioManager.Instance.PlayClipAtPoint(hitmarkerSound, inflicter.transform.position, hitmarkerVolume);
-                    inflicter.SendMessage("OnProjectileHit", hitmarkerTime);
+                    // Change this to be a damage inflicted sound that happens on the target
+                    //AudioManager.Instance.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
+                    inflicter.SendMessage("OnProjectileHit", new HitmarkerData(hitmarkerSound, hitmarkerVolume, hitmarkerTime));
                 }
             }
 
             Destroy(gameObject);
+        }
+    }
+
+    public class HitmarkerData
+    {
+        public AudioClip hitmarkerSound;
+        public float hitmarkerVolume;
+        public float hitmarkerTime;
+
+        public HitmarkerData(AudioClip hitmarkerSound, float hitmarkerVolume, float hitmarkerTime)
+        {
+            this.hitmarkerSound = hitmarkerSound;
+            this.hitmarkerVolume = hitmarkerVolume;
+            this.hitmarkerTime = hitmarkerTime;
         }
     }
 }

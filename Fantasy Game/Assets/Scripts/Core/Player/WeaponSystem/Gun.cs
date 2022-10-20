@@ -99,7 +99,7 @@ namespace LightPat.Core.Player
 
             // Add force so that the bullet flies through the air
             RaycastHit hit;
-            if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.forward, out hit, maxRange))
+            if (Physics.Raycast(playerWeaponAnimationHandler.mainCamera.position, playerWeaponAnimationHandler.mainCamera.forward, out hit, maxRange))
             {
                 b.GetComponent<Rigidbody>().AddForce((hit.point - b.transform.position).normalized * bulletForce, ForceMode.VelocityChange);
             }
@@ -120,7 +120,8 @@ namespace LightPat.Core.Player
                 StartCoroutine(Recoil());
 
             currentBullets -= 1;
-            playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+            if (playerController)
+                playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             if (currentBullets == 0) { StartCoroutine(Reload()); }
 
             gunshotSource.PlayOneShot(gunshotClip, gunshotVolume);
@@ -196,7 +197,8 @@ namespace LightPat.Core.Player
 
             magazineObject = newMagazine;
             currentBullets = magazineSize;
-            playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+            if (playerController)
+                playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             reloading = false;
 
             if (fullAuto)
@@ -217,7 +219,8 @@ namespace LightPat.Core.Player
             float curveTime = 0;
             while (curveTime < curveLength)
             {
-                playerController.Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)));
+                if (playerController)
+                    playerController.Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)));
                 curveTime += 0.1f;
                 yield return null;
             }

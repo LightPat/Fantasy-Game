@@ -5424,6 +5424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85a3165032590e4180a6bc8d2133305, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainCamera: {fileID: 1097985365}
   rightArmRig: {fileID: 1346904523005087575}
   leftArmRig: {fileID: 975685839}
   rightHandIK: {fileID: 3097663621319562256}
@@ -6010,8 +6011,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentBone: {fileID: 4574459911224855332}
-  leftBlockRotation: {x: 0, y: 160, z: 25}
-  leftMults: {x: -0.37, y: 0.1, z: 0.45}
+  leftBlockRotation: {x: 21.81, y: 170.4, z: -13.84}
+  leftMults: {x: -0.27, y: -0.02, z: 0.6}
   rightBlockRotation: {x: 25.9, y: 0, z: -13.84}
   rightMults: {x: 0.27, y: -0.02, z: 0.36}
   positiveZChangeLimit: 20

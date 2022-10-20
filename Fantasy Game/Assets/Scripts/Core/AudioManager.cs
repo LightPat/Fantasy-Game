@@ -9,6 +9,7 @@ namespace LightPat.Core
         public static AudioManager Instance { get { return _instance; } }
         private static List<AudioSource> audioSources = new List<AudioSource>();
         public GameObject audioSourcePrefab;
+        public float initialVolume = 1;
 
         private static AudioManager _instance;
 
@@ -51,6 +52,7 @@ namespace LightPat.Core
             {
                 RegisterAudioSource(audioSouce);
             }
+            AudioListener.volume = initialVolume;
         }
 
         private void Update()

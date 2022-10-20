@@ -418,7 +418,7 @@ namespace LightPat.Core.Player
                 // If the collision is detected on one of our equippedWeapon's colliders
                 if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponLoadout.equippedWeapon)
                 {
-                    animator.SetBool("attack1", false);
+                    StartCoroutine(Utilities.InvertedResetAnimatorBoolAfter1Frame(animator, "attack1"));
                     if (collision.transform.GetComponent<Attributes>())
                     {
                         collision.transform.GetComponent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);

@@ -405,7 +405,7 @@ namespace LightPat.Core.Player
             leftHandTarget.lerp = false;
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnTriggerEnter(Collider other)
         {
             // For inflicting damage using collision weapons (swords)
             if (weaponLoadout.equippedWeapon == null) { return; }
@@ -413,35 +413,22 @@ namespace LightPat.Core.Player
             if (!sword) { return; }
             if (!sword.swinging) { return; }
 
-            for (int i = 0; i < collision.contactCount; i++)
+            if (other.GetComponentInParent<Sliceable>())
             {
-                // If the collision is detected on one of our equippedWeapon's colliders
-                if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponLoadout.equippedWeapon)
-                {
-                    sword.StopSwing();
-
-                    if (collision.transform.GetComponent<Sliceable>())
-                    {
-                        sword.SliceStart();
-                    }
-
-                    if (collision.transform.GetComponent<Attributes>())
-                    {
-                        collision.transform.GetComponent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
-                    }
-                }
+                sword.SliceStart();
+            }
+            else
+            {
+                sword.StopSwing();
+                if (other.gameObject.GetComponentInParent<Attributes>())
+                    other.gameObject.GetComponentInParent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
             }
         }
 
-        private void OnCollisionExit(Collision collision)
+        private void OnTriggerExit(Collider other)
         {
-            // For inflicting damage using collision weapons (swords)
-            if (weaponLoadout.equippedWeapon == null) { return; }
-            GreatSword sword = weaponLoadout.equippedWeapon.GetComponent<GreatSword>();
-            if (!sword) { return; }
-
-            if (collision.transform.GetComponent<Sliceable>())
-                sword.SliceEnd(collision);
+            if (other.GetComponentInParent<Sliceable>())
+                weaponLoadout.equippedWeapon.GetComponent<GreatSword>().SliceEnd(other);
         }
 
         private void ReparentWeapon(Weapon weapon, string action)

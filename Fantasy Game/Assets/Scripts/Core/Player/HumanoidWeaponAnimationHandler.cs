@@ -419,12 +419,29 @@ namespace LightPat.Core.Player
                 if (collision.GetContact(i).thisCollider.GetComponentInParent<Weapon>() == weaponLoadout.equippedWeapon)
                 {
                     sword.StopSwing();
+
+                    if (collision.transform.GetComponent<Sliceable>())
+                    {
+                        sword.SliceStart();
+                    }
+
                     if (collision.transform.GetComponent<Attributes>())
                     {
                         collision.transform.GetComponent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
                     }
                 }
             }
+        }
+
+        private void OnCollisionExit(Collision collision)
+        {
+            // For inflicting damage using collision weapons (swords)
+            if (weaponLoadout.equippedWeapon == null) { return; }
+            GreatSword sword = weaponLoadout.equippedWeapon.GetComponent<GreatSword>();
+            if (!sword) { return; }
+
+            if (collision.transform.GetComponent<Sliceable>())
+                sword.SliceEnd(collision);
         }
 
         private void ReparentWeapon(Weapon weapon, string action)

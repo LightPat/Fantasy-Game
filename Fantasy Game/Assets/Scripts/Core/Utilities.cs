@@ -13,13 +13,6 @@ namespace LightPat.Core
             animator.SetBool(parameterName, false);
         }
 
-        public static IEnumerator InvertedResetAnimatorBoolAfter1Frame(Animator animator, string parameterName)
-        {
-            animator.SetBool(parameterName, false);
-            yield return null;
-            animator.SetBool(parameterName, true);
-        }
-
         public static IEnumerator DestroyAfterParticleSystemStops(ParticleSystem particleSystem)
         {
             yield return new WaitUntil(() => !particleSystem.isPlaying);

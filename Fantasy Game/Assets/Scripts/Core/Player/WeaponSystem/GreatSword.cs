@@ -22,7 +22,6 @@ namespace LightPat.Core.Player
         {
             StopCoroutine(swingRoutine);
             StartCoroutine(ResetSwing());
-            Debug.Log("Stop swing called");
         }
 
         public override void Attack1(bool pressed)
@@ -199,7 +198,6 @@ namespace LightPat.Core.Player
             Vector3 newNormal = transformedNormal + Vector3.up * _forceAppliedToCut;
             rigidbody.AddForce(newNormal, ForceMode.Impulse);
             slicing = false;
-            Debug.Log("Finished slicing " + other.gameObject);
         }
     }
 }

@@ -6,7 +6,9 @@ namespace LightPat.ProceduralAnimations
 {
     public class SwordBlockingIKSolver : MonoBehaviour
     {
-        public Transform parentBone;
+        public Transform neckBone;
+        public Transform rightShoulderBone;
+        public Transform leftShoulderBone;
         public Vector3 leftBlockRotation;
         public Vector3 leftMults;
         public Vector3 rightBlockRotation;
@@ -30,6 +32,7 @@ namespace LightPat.ProceduralAnimations
         {
             leftBlockRotation = startingLeftRot;
             rightBlockRotation = startingRightRot;
+            animator.SetBool("mirrorIdle", false);
         }
 
         private void Start()
@@ -43,13 +46,13 @@ namespace LightPat.ProceduralAnimations
         {
             if (animator.GetFloat("lookAngle") < 0) // Left block
             {
-                transform.rotation = parentBone.rotation * Quaternion.Euler(leftBlockRotation);
-                transform.position = parentBone.position + parentBone.right * leftMults.x + parentBone.up * leftMults.y + parentBone.forward * leftMults.z;
+                transform.rotation = neckBone.rotation * Quaternion.Euler(leftBlockRotation);
+                transform.position = neckBone.position + neckBone.right * leftMults.x + neckBone.up * leftMults.y + neckBone.forward * leftMults.z;
             }
             else // Right block
             {
-                transform.rotation = parentBone.rotation * Quaternion.Euler(rightBlockRotation);
-                transform.position = parentBone.position + parentBone.right * rightMults.x + parentBone.up * rightMults.y + parentBone.forward * rightMults.z;
+                transform.rotation = neckBone.rotation * Quaternion.Euler(rightBlockRotation);
+                transform.position = neckBone.position + neckBone.right * rightMults.x + neckBone.up * rightMults.y + neckBone.forward * rightMults.z;
             }
         }
     }

@@ -237,6 +237,11 @@ namespace LightPat.Core.Player
                         rightArmRig.weightSpeed = blockSpeed;
                         spineAimRig.weightSpeed = blockSpeed;
                         blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
+
+                        if (animator.GetFloat("lookAngle") < 0)
+                            animator.SetBool("mirrorIdle", true);
+                        else
+                            animator.SetBool("mirrorIdle", false);
                     }
                     else
                     {
@@ -417,11 +422,13 @@ namespace LightPat.Core.Player
             {
                 sword.SliceStart();
             }
+            else if(other.gameObject.GetComponentInParent<Attributes>())
+            {
+                other.gameObject.GetComponentInParent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
+            }
             else
             {
                 sword.StopSwing();
-                if (other.gameObject.GetComponentInParent<Attributes>())
-                    other.gameObject.GetComponentInParent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
             }
         }
 

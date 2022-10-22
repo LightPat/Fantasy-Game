@@ -6010,7 +6010,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab29019be3950f047a38e36bcc03f737, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentBone: {fileID: 4574459911224855332}
+  neckBone: {fileID: 4574459911224855332}
+  leftShoulderBone: {fileID: 4936371722118223810}
+  rightShoulderBone: {fileID: 516619163063119531}
   leftBlockRotation: {x: 21.81, y: 170.4, z: -13.84}
   leftMults: {x: -0.27, y: -0.02, z: 0.6}
   rightBlockRotation: {x: 25.9, y: 0, z: -13.84}

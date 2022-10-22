@@ -13,15 +13,32 @@ namespace LightPat.Core.Player
 
         Animator playerAnimator;
         Coroutine swingRoutine;
+        bool attack1;
+
+        public void StopSwing()
+        {
+            StopCoroutine(swingRoutine);
+            StartCoroutine(ResetSwing());
+        }
 
         public override void Attack1(bool pressed)
         {
+            attack1 = pressed;
             if (swingRoutine != null)
                 StopCoroutine(swingRoutine);
             if (pressed)
                 swingRoutine = StartCoroutine(Swing());
             else
                 swinging = false;
+        }
+
+        private IEnumerator ResetSwing()
+        {
+            swinging = false;
+            playerAnimator.SetBool("attack1", false);
+            yield return null;
+            playerAnimator.SetBool("attack1", attack1);
+            Attack1(attack1);
         }
 
         private IEnumerator Swing()

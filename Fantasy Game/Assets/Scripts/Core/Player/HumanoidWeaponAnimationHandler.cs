@@ -206,6 +206,7 @@ namespace LightPat.Core.Player
         public float blockSpeed = 1;
         bool blocking;
         float oldRigSpeed;
+        int oldCullingMask;
         void OnAttack2(InputValue value)
         {
             if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
@@ -242,6 +243,13 @@ namespace LightPat.Core.Player
                             animator.SetBool("mirrorIdle", true);
                         else
                             animator.SetBool("mirrorIdle", false);
+
+                        if (playerController)
+                        {
+                            Camera playerCamera = playerController.playerCamera.GetComponent<Camera>();
+                            oldCullingMask = playerCamera.cullingMask;
+                            playerCamera.cullingMask = -1;
+                        }
                     }
                     else
                     {
@@ -250,6 +258,8 @@ namespace LightPat.Core.Player
                         spineAimRig.weightSpeed = oldRigSpeed;
                         StartCoroutine(ChangeFollowTargetAfterWeightTargetReached(rightHandTarget, rightHandIK.data.tip, rightArmRig, oldRigSpeed));
                         blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
+                        if (playerController)
+                            playerController.playerCamera.GetComponent<Camera>().cullingMask = oldCullingMask;
                     }
                 }
             }

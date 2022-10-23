@@ -190,6 +190,8 @@ namespace LightPat.Core.Player
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
             float xTarget = moveInput.x;
+            if (animator.GetBool("mirrorIdle"))
+                xTarget *= -1;
             if (running) { xTarget *= runTarget; }
             float x = Mathf.Lerp(animator.GetFloat("moveInputX"), xTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("moveInputX", x);

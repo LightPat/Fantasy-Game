@@ -33,7 +33,7 @@ namespace LightPat.EnemyAI
         Weapon targetWeapon;
         public fightingState fightState;
 
-        public void MoveToPoint(Vector3 worldPosition, float stopDistance = 1)
+        public void MoveToPoint(Vector3 worldPosition, float stopDistance = 1, bool sprint = false)
         {
             Vector2 startPos = new Vector2(transform.position.x, transform.position.z);
             Vector2 endPos = new Vector2(worldPosition.x, worldPosition.z);
@@ -47,6 +47,8 @@ namespace LightPat.EnemyAI
             {
                 Vector2 dir = (endPos - startPos).normalized;
                 Vector3 move = (Quaternion.Inverse(transform.rotation) * new Vector3(dir.x, 0, dir.y)).normalized;
+                if (sprint)
+                    move *= 2;
                 animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), move.x, Time.deltaTime * moveTransitionSpeed));
                 animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), move.z, Time.deltaTime * moveTransitionSpeed));
             }
@@ -101,22 +103,21 @@ namespace LightPat.EnemyAI
                     if (hit.transform == transform) { continue; }
                     if (hit.transform.GetComponent<Attributes>())
                     {
+                        // Ignore dead targets
+                        if (hit.transform.GetComponent<Attributes>().HP <= 0) { continue; }
+                        
+                        // Aim for the head
                         Vector3 targetPoint = hit.transform.GetComponent<Attributes>().headCollider.transform.position;
                         RotateBodyToPoint(targetPoint);
                         LookAtPoint(targetPoint);
-                        MoveToPoint(targetPoint, combatTargetStopDistance);
+                        MoveToPoint(targetPoint, combatTargetStopDistance, true);
                         humanoidWeaponAnimationHandler.Attack1(true);
                         attributesFound = true;
                         break;
                     }
                 }
 
-                if (attributesFound)
-                {
-                    animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
-                    animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), 0, Time.deltaTime * moveTransitionSpeed));
-                }
-                else
+                if (!attributesFound)
                 {
                     humanoidWeaponAnimationHandler.Attack1(false);
                     OnRoaming();

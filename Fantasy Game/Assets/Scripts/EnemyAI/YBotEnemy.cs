@@ -31,7 +31,7 @@ namespace LightPat.EnemyAI
         HumanoidWeaponAnimationHandler humanoidWeaponAnimationHandler;
         WeaponLoadout weaponLoadout;
         Weapon targetWeapon;
-        public fightingState fightState;
+        fightingState fightState;
 
         public void MoveToPoint(Vector3 worldPosition, float stopDistance = 1, bool sprint = false)
         {
@@ -81,11 +81,16 @@ namespace LightPat.EnemyAI
             attributes = GetComponent<Attributes>();
             startingPosition = transform.position;
             roamingPosition = transform.position + transform.forward;
+
+            if (weaponLoadout.equippedWeapon)
+                fightState = fightingState.combat;
+            else
+                fightState = fightingState.roaming;
         }
 
         private void Update()
         {
-            if (attributes.HP <= 0) { return; }
+            if (attributes.HP <= 0) { humanoidWeaponAnimationHandler.Attack1(false); return; }
 
             if (fightState == fightingState.stationary)
             {

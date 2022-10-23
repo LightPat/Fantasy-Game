@@ -240,7 +240,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 119
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -5484,6 +5484,7 @@ MonoBehaviour:
   healthPointsWorldText: {fileID: 0}
   imageMaterial: {fileID: 2100000, guid: 5a1994db17ab058418ca8780878488e8, type: 2}
   healthPointsUIText: {fileID: 3141844424034199059}
+  headCollider: {fileID: 4203814480446809361}
 --- !u!114 &3945321872001441854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6011,8 +6012,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   neckBone: {fileID: 4574459911224855332}
-  leftShoulderBone: {fileID: 4936371722118223810}
   rightShoulderBone: {fileID: 516619163063119531}
+  leftShoulderBone: {fileID: 4936371722118223810}
   leftBlockRotation: {x: 21.81, y: 170.4, z: -13.84}
   leftMults: {x: -0.27, y: -0.02, z: 0.6}
   rightBlockRotation: {x: 25.9, y: 0, z: -13.84}

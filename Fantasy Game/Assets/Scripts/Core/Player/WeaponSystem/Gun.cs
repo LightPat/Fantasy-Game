@@ -98,15 +98,19 @@ namespace LightPat.Core.Player
             projectile.hitmarkerTime = minTimeBetweenShots;
 
             // Add force so that the bullet flies through the air
-            RaycastHit hit;
-            if (Physics.Raycast(playerWeaponAnimationHandler.mainCamera.position, playerWeaponAnimationHandler.mainCamera.forward, out hit, maxRange))
+            RaycastHit[] allHits = Physics.RaycastAll(playerWeaponAnimationHandler.mainCamera.position, playerWeaponAnimationHandler.mainCamera.forward, maxRange);
+            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+            bool bHit = false;
+            foreach (RaycastHit hit in allHits)
             {
+                if (hit.transform == playerWeaponAnimationHandler.transform) { continue; }
                 b.GetComponent<Rigidbody>().AddForce((hit.point - b.transform.position).normalized * bulletForce, ForceMode.VelocityChange);
+                bHit = true;
+                break;
             }
-            else
-            {
-                b.GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * bulletForce, ForceMode.VelocityChange);
-            }
+
+            if (!bHit)
+                b.GetComponent<Rigidbody>().AddForce(playerWeaponAnimationHandler.mainCamera.forward * bulletForce, ForceMode.VelocityChange);
 
             // Eject shell from side of gun
             GameObject s = Instantiate(shell, shellSpawnPoint.position, shellSpawnPoint.rotation);

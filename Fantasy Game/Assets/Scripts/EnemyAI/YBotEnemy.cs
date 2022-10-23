@@ -9,11 +9,15 @@ namespace LightPat.EnemyAI
 {
     public class YBotEnemy : Enemy
     {
-        public float boxCastDistance;
-        public float weaponStopDistance;
         public RigWeightTarget neckAimRig;
         public Transform aimTarget;
         public float moveTransitionSpeed = 4;
+        [Header("Combat Settings")]
+        public float combatSphereRadius;
+        public float combatTargetStopDistance;
+        [Header("MoveToTarget Settings")]
+        public float sphereCastRadius;
+        public float weaponStopDistance;
         [Header("Roam Settings")]
         public float roamRadius;
         public float roamingRotationSpeed;
@@ -89,9 +93,34 @@ namespace LightPat.EnemyAI
 
             if (fightState == fightingState.combat)
             {
-                humanoidWeaponAnimationHandler.Attack1(true);
-                animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
-                animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), 0, Time.deltaTime * moveTransitionSpeed));
+                bool attributesFound = false;
+                RaycastHit[] allHits = Physics.SphereCastAll(transform.position, combatSphereRadius, transform.forward, 1);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                foreach (RaycastHit hit in allHits)
+                {
+                    if (hit.transform == transform) { continue; }
+                    if (hit.transform.GetComponent<Attributes>())
+                    {
+                        Vector3 targetPoint = hit.transform.GetComponent<Attributes>().headCollider.transform.position;
+                        RotateBodyToPoint(targetPoint);
+                        LookAtPoint(targetPoint);
+                        MoveToPoint(targetPoint, combatTargetStopDistance);
+                        humanoidWeaponAnimationHandler.Attack1(true);
+                        attributesFound = true;
+                        break;
+                    }
+                }
+
+                if (attributesFound)
+                {
+                    animator.SetFloat("moveInputX", Mathf.Lerp(animator.GetFloat("moveInputX"), 0, Time.deltaTime * moveTransitionSpeed));
+                    animator.SetFloat("moveInputY", Mathf.Lerp(animator.GetFloat("moveInputY"), 0, Time.deltaTime * moveTransitionSpeed));
+                }
+                else
+                {
+                    humanoidWeaponAnimationHandler.Attack1(false);
+                    OnRoaming();
+                }
             }
 
             if (fightState == fightingState.roaming)
@@ -101,17 +130,15 @@ namespace LightPat.EnemyAI
             {
                 if (targetWeapon)
                 {
-                    Vector3 point = targetWeapon.GetComponentInChildren<Renderer>().bounds.center;
-                    LookAtPoint(point);
-                    RotateBodyTowardsPoint(point, roamingRotationSpeed);
-                    MoveToPoint(point, weaponStopDistance);
-
                     Vector3 centerPoint = targetWeapon.GetComponentInChildren<Renderer>().bounds.center;
+                    LookAtPoint(centerPoint);
+                    RotateBodyTowardsPoint(centerPoint, roamingRotationSpeed);
+                    MoveToPoint(centerPoint, weaponStopDistance);
+
                     if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(centerPoint.x, centerPoint.z)) < weaponStopDistance)
                     {
                         humanoidWeaponAnimationHandler.EquipWeapon(targetWeapon);
                         targetWeapon = null;
-                        //fightState = fightingState.roaming;
                         fightState = fightingState.combat;
                     }
                 }
@@ -119,8 +146,7 @@ namespace LightPat.EnemyAI
 
             if (!weaponLoadout.equippedWeapon)
             {
-                Utilities.DrawBoxCastBox(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z) - transform.forward, new Vector3(3, 2, 3), transform.rotation, transform.forward, boxCastDistance, Color.red);
-                RaycastHit[] allHits = Physics.BoxCastAll(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z) - transform.forward, new Vector3(3, 2, 3), transform.forward, transform.rotation, boxCastDistance);
+                RaycastHit[] allHits = Physics.SphereCastAll(transform.position, sphereCastRadius, transform.forward, 1);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
@@ -135,6 +161,23 @@ namespace LightPat.EnemyAI
                         }
                     }
                 }
+
+                //Utilities.DrawBoxCastBox(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z) - transform.forward, new Vector3(3, 2, 3), transform.rotation, transform.forward, 5, Color.red);
+                //RaycastHit[] allHits = Physics.BoxCastAll(new Vector3(transform.position.x, transform.position.y + 1, transform.position.z) - transform.forward, new Vector3(3, 2, 3), transform.forward, transform.rotation, 5);
+                //System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                //foreach (RaycastHit hit in allHits)
+                //{
+                //    if (hit.transform == transform) { continue; }
+                //    if (hit.transform.GetComponent<Weapon>())
+                //    {
+                //        if (!targetWeapon)
+                //        {
+                //            targetWeapon = hit.transform.GetComponent<Weapon>();
+                //            fightState = fightingState.moveToTarget;
+                //            break;
+                //        }
+                //    }
+                //}
             }
         }
 
@@ -176,8 +219,31 @@ namespace LightPat.EnemyAI
 
         }
 
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
+            // Weapon hits
+            Gizmos.color = Color.green;
+            RaycastHit[] allHits = Physics.SphereCastAll(transform.position, sphereCastRadius, transform.forward, 1);
+            foreach (RaycastHit hit in allHits)
+            {
+                if (hit.transform.GetComponent<Weapon>())
+                {
+                    Gizmos.DrawWireSphere(hit.transform.position, 1);
+                }
+            }
+
+            // Attribute hits
+            Gizmos.color = Color.red;
+            allHits = Physics.SphereCastAll(transform.position, combatSphereRadius, transform.forward, 1);
+            foreach (RaycastHit hit in allHits)
+            {
+                if (hit.transform == transform) { continue; }
+                if (hit.transform.GetComponent<Attributes>())
+                {
+                    Gizmos.DrawWireSphere(hit.transform.position, 1);
+                }
+            }
+
             Gizmos.color = Color.yellow;
             if (!Application.isPlaying)
             {

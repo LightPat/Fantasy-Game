@@ -8,6 +8,7 @@ namespace LightPat.Core
 {
     public class Attributes : MonoBehaviour
     {
+        public bool invincible;
         //[Header("Affinity Scores")]
         [HideInInspector] public sbyte[] personalityValues;
         [HideInInspector] public sbyte[] physicalValues;
@@ -21,6 +22,8 @@ namespace LightPat.Core
         [Header("ScreenSpaceOverlay : Only assign for player/allies/bosses")]
         public Material imageMaterial;
         public TextMeshProUGUI healthPointsUIText;
+        [Header("Collider Damage Multipliers")]
+        public Collider headCollider;
 
         public float HP { get; private set; }
         Animator animator;
@@ -34,6 +37,8 @@ namespace LightPat.Core
 
         public void InflictDamage(float damage, GameObject inflicter)
         {
+            if (invincible) { return; }
+
             float damageAngle = Vector3.Angle(inflicter.transform.forward, transform.forward);
 
             if (blocking)
@@ -74,6 +79,8 @@ namespace LightPat.Core
 
         public void InflictDamage(float damage, GameObject inflicter, Projectile projectile)
         {
+            if (invincible) { return; }
+
             float damageAngle = Vector3.Angle(projectile.transform.forward, transform.forward);
 
             if (blocking)

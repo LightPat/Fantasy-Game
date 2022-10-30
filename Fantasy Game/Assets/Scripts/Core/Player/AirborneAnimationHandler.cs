@@ -2,17 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Linq;
+using UnityEngine.Animations.Rigging;
+using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {
     public class AirborneAnimationHandler : MonoBehaviour
     {
+        [Header("Jump Settings")]
         public float jumpHeight;
         public float airborneMoveSpeed;
         public float jumpForceDelay;
-        [Header("Running Jump Settings")]
         public float runningJumpHeight;
+        [Header("Miscellaneous")]
+        public float isGroundedDistance;
+        public float breakfallRollThreshold;
 
         Animator animator;
         Rigidbody rb;
@@ -33,7 +37,58 @@ namespace LightPat.Core.Player
             bool isGrounded = IsGrounded();
 
             animator.SetFloat("yVelocity", rb.velocity.y);
-            animator.SetBool("falling", !isGrounded);
+
+            // Wall running logic
+            if (animator.GetBool("wallRun"))
+            {
+                rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
+                handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+                animator.SetFloat("moveInputX", 0);
+
+                RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.right * rightLeftMultiplier, 5);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                foreach (RaycastHit hit in allHits)
+                {
+                    if (hit.transform == transform) { continue; }
+                    //transform.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.up), Vector3.up);
+                    // Left leg
+                    foreach (Collider c in legTarget.GetComponentInParent<TwoBoneIKConstraint>().data.tip.GetComponentsInChildren<Collider>())
+                    {
+                        Physics.IgnoreCollision(c, hit.collider, true);
+                    }
+                    legTarget.position = hit.point + new Vector3(wallRunFootPositionOffset.x * rightLeftMultiplier, wallRunFootPositionOffset.y, wallRunFootPositionOffset.z);
+                    legTarget.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down), hit.normal);
+                    if (rightLeftMultiplier > 0)
+                        legTarget.Rotate(wallRunFootRotationOffset.x, wallRunFootRotationOffset.y * rightLeftMultiplier, wallRunFootRotationOffset.z, Space.World);
+                    else
+                        legTarget.Rotate(wallRunFootRotationOffset.x - 180, wallRunFootRotationOffset.y * rightLeftMultiplier, wallRunFootRotationOffset.z, Space.World);
+                }
+
+                Transform shoulder = handTarget.GetComponentInParent<TwoBoneIKConstraint>().data.root.parent;
+                allHits = Physics.RaycastAll(shoulder.position, transform.right * rightLeftMultiplier, 5);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                foreach (RaycastHit hit in allHits)
+                {
+                    if (hit.transform == transform) { continue; }
+                    // Left hand
+                    foreach (Collider c in handTarget.GetComponentInParent<TwoBoneIKConstraint>().data.tip.GetComponentsInChildren<Collider>())
+                    {
+                        Physics.IgnoreCollision(c, hit.collider, true);
+                    }
+                    handTarget.position = hit.point + new Vector3(wallRunHandPositionOffset.x * rightLeftMultiplier, wallRunHandPositionOffset.y, wallRunHandPositionOffset.z);
+                    handTarget.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down), hit.normal);
+                    if (rightLeftMultiplier > 0)
+                        handTarget.Rotate(wallRunHandRotationOffset.x, wallRunHandRotationOffset.y * rightLeftMultiplier, wallRunHandRotationOffset.z, Space.World);
+                    else
+                        handTarget.Rotate(wallRunHandRotationOffset.x - 180, wallRunHandRotationOffset.y * rightLeftMultiplier, wallRunHandRotationOffset.z, Space.World);
+                    break;
+                }
+            }
+            else
+            {
+                animator.SetBool("falling", !isGrounded);
+                rb.useGravity = true;
+            }
 
             if (IsAirborne() | IsJumping())
             {
@@ -74,6 +129,7 @@ namespace LightPat.Core.Player
         {
             if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1 | animator.IsInTransition(animator.GetLayerIndex("Airborne"))) { return; }
             StartCoroutine(Jump());
+            EndWallRun();
         }
 
         private IEnumerator Jump()
@@ -103,10 +159,12 @@ namespace LightPat.Core.Player
             moveInput = value.Get<Vector2>();
         }
 
-        public float breakfallRollThreshold;
         bool landingCollisionRunning;
         private void OnCollisionEnter(Collision collision)
         {
+            if (animator.GetBool("falling"))
+                StartWallRun(collision);
+
             if (landingCollisionRunning) { return; }
 
             if ((IsAirborne() | IsJumping()) & !IsLanding())
@@ -116,6 +174,98 @@ namespace LightPat.Core.Player
                 landingCollisionRunning = true;
                 StartCoroutine(ResetLandingBool());
             }
+        }
+
+        [Header("Wall Run Settings")]
+        public float wallRunDelay;
+        public Transform rightLegTarget;
+        public Transform rightHandTarget;
+        public Transform leftLegTarget;
+        public Transform leftHandTarget;
+        public Vector3 wallRunHandPositionOffset;
+        public Vector3 wallRunHandRotationOffset;
+        public Vector3 wallRunFootPositionOffset;
+        public Vector3 wallRunFootRotationOffset;
+
+        Transform legTarget;
+        Transform handTarget;
+        float rightLeftMultiplier;
+        float lastWallRunExitTime;
+
+        void StartWallRun(Collision collision)
+        {
+            if (Time.time - lastWallRunExitTime < wallRunDelay) { return; }
+
+            animator.SetBool("wallRun", true);
+            // Determine if wall is to left or right
+
+            // Wall is on our right
+            if (Vector3.SignedAngle(transform.forward, collision.GetContact(0).point - transform.position, Vector3.up) > 0)
+            {
+                // Variable assignments to use in Update()
+                legTarget = rightLegTarget;
+                handTarget = rightHandTarget;
+                rightLeftMultiplier = 1;
+                
+                // Activate IK Rigs
+                legTarget.GetComponentInParent<Rig>().weight = 1;
+                handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+                handTarget.GetComponent<FollowTarget>().move = false;
+                handTarget.GetComponent<FollowTarget>().rotate = false;
+
+                rb.useGravity = false;
+                GetComponentInChildren<RootMotionManager>().disableRightHand = true;
+                animator.SetBool("falling", false);
+
+                ConstantForce constantForce = gameObject.AddComponent<ConstantForce>();
+                constantForce.relativeForce = new Vector3(50, 0, 0);
+            }
+            else // Wall is on our left
+            {
+                // Variable assignments to use in Update()
+                legTarget = leftLegTarget;
+                handTarget = leftHandTarget;
+                rightLeftMultiplier = -1;
+
+                // Activate IK Rigs
+                legTarget.GetComponentInParent<Rig>().weight = 1;
+                handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+                handTarget.GetComponent<FollowTarget>().move = false;
+                handTarget.GetComponent<FollowTarget>().rotate = false;
+
+                rb.useGravity = false;
+                GetComponentInChildren<RootMotionManager>().disableLeftHand = true;
+                animator.SetBool("falling", false);
+                ConstantForce constantForce = gameObject.AddComponent<ConstantForce>();
+                constantForce.relativeForce = new Vector3(-50, 0, 0);
+            }
+        }
+
+        void EndWallRun()
+        {
+            if (!animator.GetBool("wallRun")) { return; }
+
+            lastWallRunExitTime = Time.time;
+            animator.SetBool("wallRun", false);
+
+            rb.useGravity = true;
+            GetComponentInChildren<RootMotionManager>().disableLeftHand = false;
+            GetComponentInChildren<RootMotionManager>().disableRightHand = false;
+            Destroy(GetComponent<ConstantForce>());
+
+            legTarget.GetComponentInParent<Rig>().weight = 0;
+
+            if (weaponLoadout.equippedWeapon)
+                handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
+            else
+                handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 0;
+
+            handTarget.GetComponent<FollowTarget>().move = true;
+            handTarget.GetComponent<FollowTarget>().rotate = true;
+
+            legTarget = null;
+            handTarget = null;
+            rightLeftMultiplier = 0;
         }
 
         private IEnumerator ResetLandingBool()
@@ -147,7 +297,6 @@ namespace LightPat.Core.Player
             return animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Airborne")).IsTag("Landing");
         }
 
-        public float isGroundedDistance;
         bool IsGrounded()
         {
             RaycastHit hit;

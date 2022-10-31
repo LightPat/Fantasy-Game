@@ -63,6 +63,8 @@ namespace LightPat.Core.Player
             if (!updateRotationWithTarget) // "Tilt" the parent constraint by a Z offset so that you don't have to mess with the camera's actual rotation
             {
                 leanConstraint.data.offset = Vector3.Lerp(leanConstraint.data.offset, new Vector3(0, 0, targetZRot), zRotOffsetSpeed * Time.deltaTime);
+                //if (!playerController.rotateBodyWithCamera)
+                //    transform.parent.localRotation = Quaternion.Slerp(transform.parent.localRotation, Quaternion.Euler(0, 0, targetZRot), zRotOffsetSpeed * Time.deltaTime);
             }
             else // Remove localRotation from camera during an animation because the rotation is stored on the parent
             {

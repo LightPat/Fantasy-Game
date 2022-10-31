@@ -7,8 +7,8 @@ namespace LightPat.ProceduralAnimations
 {
     public class RigWeightTarget : MonoBehaviour
     {
-        public float weightTarget;
-        public float weightSpeed;
+        public float weightTarget = 1;
+        public float weightSpeed = 5;
         public bool instantWeight;
         Rig rig;
         Animator animator;

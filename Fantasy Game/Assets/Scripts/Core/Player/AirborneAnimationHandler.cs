@@ -45,18 +45,21 @@ namespace LightPat.Core.Player
                 handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
                 animator.SetFloat("moveInputX", 0);
 
-                RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.right * rightLeftMultiplier, 5);
+                RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.right * rightLeftMultiplier, 3);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
                     if (hit.transform == transform) { continue; }
-                    //transform.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.up), Vector3.up);
+
+                    transform.rotation = Quaternion.FromToRotation(hit.normal, Vector3.right * rightLeftMultiplier * -1);
+                    rootRotationConstraint.localRotation = Quaternion.Euler(0, 0, zRot * rightLeftMultiplier);
+
                     // Left leg
                     foreach (Collider c in legTarget.GetComponentInParent<TwoBoneIKConstraint>().data.tip.GetComponentsInChildren<Collider>())
                     {
                         Physics.IgnoreCollision(c, hit.collider, true);
                     }
-                    legTarget.position = hit.point + new Vector3(wallRunFootPositionOffset.x * rightLeftMultiplier, wallRunFootPositionOffset.y, wallRunFootPositionOffset.z);
+                    legTarget.position = hit.point + transform.rotation * new Vector3(wallRunFootPositionOffset.x * rightLeftMultiplier, wallRunFootPositionOffset.y, wallRunFootPositionOffset.z);
                     legTarget.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down), hit.normal);
                     if (rightLeftMultiplier > 0)
                         legTarget.Rotate(wallRunFootRotationOffset.x, wallRunFootRotationOffset.y * rightLeftMultiplier, wallRunFootRotationOffset.z, Space.World);
@@ -65,7 +68,7 @@ namespace LightPat.Core.Player
                 }
 
                 Transform shoulder = handTarget.GetComponentInParent<TwoBoneIKConstraint>().data.root.parent;
-                allHits = Physics.RaycastAll(shoulder.position, transform.right * rightLeftMultiplier, 5);
+                allHits = Physics.RaycastAll(shoulder.position, transform.right * rightLeftMultiplier, 3);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
@@ -75,7 +78,7 @@ namespace LightPat.Core.Player
                     {
                         Physics.IgnoreCollision(c, hit.collider, true);
                     }
-                    handTarget.position = hit.point + new Vector3(wallRunHandPositionOffset.x * rightLeftMultiplier, wallRunHandPositionOffset.y, wallRunHandPositionOffset.z);
+                    handTarget.position = hit.point + transform.rotation * new Vector3(wallRunHandPositionOffset.x * rightLeftMultiplier, wallRunHandPositionOffset.y, wallRunHandPositionOffset.z);
                     handTarget.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down), hit.normal);
                     if (rightLeftMultiplier > 0)
                         handTarget.Rotate(wallRunHandRotationOffset.x, wallRunHandRotationOffset.y * rightLeftMultiplier, wallRunHandRotationOffset.z, Space.World);
@@ -87,7 +90,6 @@ namespace LightPat.Core.Player
             else
             {
                 animator.SetBool("falling", !isGrounded);
-                rb.useGravity = true;
             }
 
             if (IsAirborne() | IsJumping())
@@ -177,7 +179,10 @@ namespace LightPat.Core.Player
         }
 
         [Header("Wall Run Settings")]
+        public RigWeightTarget wallRunRig;
+        public float zRot;
         public float wallRunDelay;
+        public Transform rootRotationConstraint;
         public Transform rightLegTarget;
         public Transform rightHandTarget;
         public Transform leftLegTarget;
@@ -197,10 +202,9 @@ namespace LightPat.Core.Player
             if (Time.time - lastWallRunExitTime < wallRunDelay) { return; }
 
             animator.SetBool("wallRun", true);
-            // Determine if wall is to left or right
 
-            // Wall is on our right
-            if (Vector3.SignedAngle(transform.forward, collision.GetContact(0).point - transform.position, Vector3.up) > 0)
+            // Determine if wall is to left or right
+            if (Vector3.SignedAngle(transform.forward, collision.GetContact(0).point - transform.position, Vector3.up) > 0) // Wall is on our right
             {
                 // Variable assignments to use in Update()
                 legTarget = rightLegTarget;
@@ -212,13 +216,7 @@ namespace LightPat.Core.Player
                 handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
                 handTarget.GetComponent<FollowTarget>().move = false;
                 handTarget.GetComponent<FollowTarget>().rotate = false;
-
-                rb.useGravity = false;
                 GetComponentInChildren<RootMotionManager>().disableRightHand = true;
-                animator.SetBool("falling", false);
-
-                ConstantForce constantForce = gameObject.AddComponent<ConstantForce>();
-                constantForce.relativeForce = new Vector3(50, 0, 0);
             }
             else // Wall is on our left
             {
@@ -232,13 +230,14 @@ namespace LightPat.Core.Player
                 handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
                 handTarget.GetComponent<FollowTarget>().move = false;
                 handTarget.GetComponent<FollowTarget>().rotate = false;
-
-                rb.useGravity = false;
                 GetComponentInChildren<RootMotionManager>().disableLeftHand = true;
-                animator.SetBool("falling", false);
-                ConstantForce constantForce = gameObject.AddComponent<ConstantForce>();
-                constantForce.relativeForce = new Vector3(-50, 0, 0);
             }
+
+            rb.useGravity = false;
+            animator.SetBool("falling", false);
+            ConstantForce wallForce = gameObject.AddComponent<ConstantForce>();
+            wallForce.relativeForce = new Vector3(50 * rightLeftMultiplier, 0, 0);
+            wallRunRig.weightTarget = 1;
         }
 
         void EndWallRun()
@@ -266,6 +265,8 @@ namespace LightPat.Core.Player
             legTarget = null;
             handTarget = null;
             rightLeftMultiplier = 0;
+            rootRotationConstraint.localRotation = Quaternion.Euler(0, 0, 0);
+            wallRunRig.weightTarget = 0;
         }
 
         private IEnumerator ResetLandingBool()

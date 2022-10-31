@@ -69,8 +69,8 @@ namespace LightPat.Core.Player
         public bool disableCameraLookInput;
         public bool rotateBodyWithCamera;
         public float attemptedXAngle { get; private set; }
-        Vector2 lookInput;
         Vector3 bodyRotation;
+        Vector2 lookInput;
         float lookAngle;
         float prevLookAngle;
         void OnLook(InputValue value)
@@ -190,11 +190,13 @@ namespace LightPat.Core.Player
             // Wall running logic
             if (animator.GetBool("wallRun"))
             {
-                //rotateBodyWithCamera = false;
+                rotateBodyWithCamera = false;
                 bodyRotationSpeed = 0;
             }
             else
             {
+                if (GetComponent<WeaponLoadout>().equippedWeapon)
+                    rotateBodyWithCamera = true;
                 bodyRotationSpeed = 4;
             }
 

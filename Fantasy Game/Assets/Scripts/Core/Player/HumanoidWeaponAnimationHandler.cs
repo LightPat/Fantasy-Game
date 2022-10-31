@@ -8,6 +8,7 @@ using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {
+    [RequireComponent(typeof(WeaponLoadout))]
     public class HumanoidWeaponAnimationHandler : MonoBehaviour
     {
         public Transform mainCamera;

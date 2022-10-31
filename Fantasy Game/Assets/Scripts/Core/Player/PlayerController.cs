@@ -185,20 +185,19 @@ namespace LightPat.Core.Player
         }
 
         bool prevRotationState;
-        GameObject emptyCameraParent;
         private void Update()
         {
             // Wall running logic
             if (animator.GetBool("wallRun"))
             {
-                //rotateBodyWithCamera = false;
-                //bodyRotationSpeed = 0;
+                rotateBodyWithCamera = false;
+                bodyRotationSpeed = 0;
             }
             else
             {
-                //if (GetComponent<WeaponLoadout>().equippedWeapon)
-                //    rotateBodyWithCamera = true;
-                //bodyRotationSpeed = 4;
+                if (GetComponent<WeaponLoadout>().equippedWeapon)
+                    rotateBodyWithCamera = true;
+                bodyRotationSpeed = 4;
             }
 
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
@@ -245,12 +244,7 @@ namespace LightPat.Core.Player
 
             if (!rotateBodyWithCamera & prevRotationState)
             {
-                if (!emptyCameraParent)
-                {
-                    emptyCameraParent = new GameObject();
-                    emptyCameraParent.name = "cameraParent";
-                }
-                playerCamera.transform.SetParent(emptyCameraParent.transform, true);
+                playerCamera.transform.SetParent(null, true);
             }
             else if (rotateBodyWithCamera & !prevRotationState)
             {

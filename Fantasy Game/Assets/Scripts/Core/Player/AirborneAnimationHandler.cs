@@ -238,6 +238,13 @@ namespace LightPat.Core.Player
             ConstantForce wallForce = gameObject.AddComponent<ConstantForce>();
             wallForce.relativeForce = new Vector3(50 * rightLeftMultiplier, 0, 0);
             wallRunRig.weightTarget = 1;
+            PlayerController playerController;
+            if (TryGetComponent(out playerController))
+            {
+                //playerController.playerCamera.targetZRot = 20 * rightLeftMultiplier;
+                playerController.rotateBodyWithCamera = false;
+                //playerController.bodyRotationSpeed = 0;
+            }
         }
 
         void EndWallRun()
@@ -267,6 +274,14 @@ namespace LightPat.Core.Player
             rightLeftMultiplier = 0;
             rootRotationConstraint.localRotation = Quaternion.Euler(0, 0, 0);
             wallRunRig.weightTarget = 0;
+            PlayerController playerController;
+            if (TryGetComponent(out playerController))
+            {
+                //playerController.playerCamera.targetZRot = 0;
+                if (GetComponent<WeaponLoadout>().equippedWeapon)
+                    playerController.rotateBodyWithCamera = false;
+                //playerController.bodyRotationSpeed = 4;
+            }
         }
 
         private IEnumerator ResetLandingBool()

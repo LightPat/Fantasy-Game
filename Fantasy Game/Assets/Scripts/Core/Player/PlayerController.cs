@@ -187,19 +187,6 @@ namespace LightPat.Core.Player
         bool prevRotationState;
         private void Update()
         {
-            // Wall running logic
-            if (animator.GetBool("wallRun"))
-            {
-                rotateBodyWithCamera = false;
-                bodyRotationSpeed = 0;
-            }
-            else
-            {
-                if (GetComponent<WeaponLoadout>().equippedWeapon)
-                    rotateBodyWithCamera = true;
-                bodyRotationSpeed = 4;
-            }
-
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
             float xTarget = moveInput.x;

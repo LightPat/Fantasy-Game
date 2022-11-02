@@ -164,7 +164,7 @@ namespace LightPat.Core.Player
         bool landingCollisionRunning;
         private void OnCollisionEnter(Collision collision)
         {
-            if (animator.GetBool("falling"))
+            if (animator.GetBool("falling") & collision.transform.CompareTag("Stairs"))
                 StartWallRun(collision);
 
             if (landingCollisionRunning) { return; }

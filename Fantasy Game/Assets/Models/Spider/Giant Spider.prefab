@@ -184,7 +184,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2540662555291290618}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 127.41, y: 26.02, z: -102.79}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2650516123853188901}
@@ -265,6 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b494da67310674387fd7696b2df54d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  invincible: 0
   personalityValues: 
   physicalValues: 
   magicalValues: 
@@ -274,6 +275,7 @@ MonoBehaviour:
   healthPointsWorldText: {fileID: 1128949079051625111}
   imageMaterial: {fileID: 0}
   healthPointsUIText: {fileID: 0}
+  headCollider: {fileID: 4462661782665568674}
 --- !u!1 &2540662555633761530
 GameObject:
   m_ObjectHideFlags: 0

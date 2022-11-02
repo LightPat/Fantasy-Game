@@ -139,7 +139,7 @@ namespace LightPat.EnemyAI
                     Vector3 centerPoint = targetWeapon.GetComponentInChildren<Renderer>().bounds.center;
                     LookAtPoint(centerPoint);
                     RotateBodyTowardsPoint(centerPoint, roamingRotationSpeed);
-                    MoveToPoint(centerPoint, weaponStopDistance);
+                    MoveToPoint(centerPoint, weaponStopDistance, true);
 
                     if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(centerPoint.x, centerPoint.z)) < weaponStopDistance)
                     {
@@ -198,7 +198,7 @@ namespace LightPat.EnemyAI
                     lookingAround = false;
                 }
             }
-            else if (Vector3.Distance(transform.position, roamingPosition) > 2) // If we haven't reached our roaming position yet
+            else if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(roamingPosition.x, roamingPosition.z)) > 2) // If we haven't reached our roaming position yet
             {
                 MoveToPoint(roamingPosition, 0);
                 RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
@@ -211,10 +211,10 @@ namespace LightPat.EnemyAI
                 if (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position))
                 {
                     roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                    while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position) | Vector3.Distance(transform.position, roamingPosition) < roamRadius)
-                    {
-                        roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
-                    }
+                    //while (Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position) | Vector3.Distance(transform.position, roamingPosition) < roamRadius)
+                    //{
+                    //    roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+                    //}
                     RotateBodyTowardsPoint(roamingPosition, roamingRotationSpeed);
                 }
             }

@@ -695,7 +695,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_TargetDisplay: 0
 --- !u!114 &7359635137111091740
 MonoBehaviour:
@@ -751,7 +751,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponSlots: {fileID: 1803209960343868280}
   weaponSlotPrefab: {fileID: 7788259331222921194, guid: eab63d15d4462fd41b42b3c791da8e5a, type: 3}
-  slotSpacing: {x: 5, y: 50, z: 0}
+  slotSpacing: {x: 5, y: 50}
   lookAngleDisplay: {fileID: 2885815892989646882}
   lookAngleRotSpeed: 5
   ammoDisplay: {fileID: 8174273620497678379}

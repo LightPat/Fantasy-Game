@@ -47,7 +47,7 @@ namespace LightPat.Core.Player
                 //animator.SetFloat("moveInputY", 0);
 
                 RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.right * rightLeftMultiplier, 3);
-                //if (allHits.Length == 0) { EndWallRun(); return; }
+                if (allHits.Length == 0) { EndWallRun(); return; }
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
@@ -69,7 +69,7 @@ namespace LightPat.Core.Player
 
                 Transform shoulder = handTarget.GetComponentInParent<TwoBoneIKConstraint>().data.root.parent;
                 allHits = Physics.RaycastAll(shoulder.position, transform.right * rightLeftMultiplier, 3);
-                //if (allHits.Length == 0) { EndWallRun(); return; }
+                if (allHits.Length == 0) { EndWallRun(); return; }
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {

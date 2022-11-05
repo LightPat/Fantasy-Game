@@ -675,7 +675,7 @@ MonoBehaviour:
   shellForce: {x: 3, y: 1, z: 0}
   shellTorque: {x: 0, y: 50, z: 0}
   maxRange: 150
-  fireRate: 650
+  fireRate: 400
   sumTimeOfFireAnimationClips: 1
   muzzleFlash: {fileID: 8581960830230116372}
   smokeSpawnPoint: {fileID: 2973889832374973423}

@@ -5626,7 +5626,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandGrip: {fileID: 1649158069711076073}
   leftHandGrip: {fileID: 1649158070069413448}
-  idealPersonality: 
   baseDamage: 20
   stowPoint: Spine
   drawSpeed: 2

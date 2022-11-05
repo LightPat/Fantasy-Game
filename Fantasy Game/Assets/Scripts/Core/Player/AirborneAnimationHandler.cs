@@ -43,15 +43,18 @@ namespace LightPat.Core.Player
             {
                 rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
                 handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
-                animator.SetFloat("moveInputX", 0);
+                //animator.SetFloat("moveInputX", 0);
+                //animator.SetFloat("moveInputY", 0);
 
                 RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.right * rightLeftMultiplier, 3);
+                //if (allHits.Length == 0) { EndWallRun(); return; }
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
                     if (hit.transform == transform) { continue; }
 
-                    transform.rotation = Quaternion.FromToRotation(hit.normal, Vector3.right * rightLeftMultiplier * -1);
+                    //transform.rotation = Quaternion.LookRotation(hit.normal, Vector3.right * rightLeftMultiplier * -1);
+                    transform.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down * rightLeftMultiplier));
                     rootRotationConstraint.localRotation = Quaternion.Euler(0, 0, zRot * rightLeftMultiplier);
 
                     // Left leg
@@ -69,6 +72,7 @@ namespace LightPat.Core.Player
 
                 Transform shoulder = handTarget.GetComponentInParent<TwoBoneIKConstraint>().data.root.parent;
                 allHits = Physics.RaycastAll(shoulder.position, transform.right * rightLeftMultiplier, 3);
+                //if (allHits.Length == 0) { EndWallRun(); return; }
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
@@ -117,8 +121,9 @@ namespace LightPat.Core.Player
             if (IsAirborne())
             {
                 Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * airborneMoveSpeed;
+
                 // If rigidbody's velocity magnitude is greater than moveForce's magnitude
-                if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude > new Vector2(moveForce.x, moveForce.z).magnitude) { return; }
+                if (new Vector2(rb.velocity.x, rb.velocity.z).magnitude > new Vector2(moveForce.x, moveForce.z).magnitude + airborneMoveSpeed) { return; }
 
                 moveForce.x -= rb.velocity.x;
                 moveForce.z -= rb.velocity.z;
@@ -164,7 +169,7 @@ namespace LightPat.Core.Player
         bool landingCollisionRunning;
         private void OnCollisionEnter(Collision collision)
         {
-            if (animator.GetBool("falling") & collision.transform.CompareTag("Stairs"))
+            if (animator.GetBool("falling"))
                 StartWallRun(collision);
 
             if (landingCollisionRunning) { return; }

@@ -90,7 +90,7 @@ namespace LightPat.EnemyAI
 
         private void Update()
         {
-            if (attributes.HP <= 0) { humanoidWeaponAnimationHandler.Attack1(false); return; }
+            if (attributes.HP <= 0) { return; }
 
             if (fightState == fightingState.stationary)
             {

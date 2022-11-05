@@ -191,7 +191,7 @@ namespace LightPat.EnemyAI
             allowAttack = true;
         }
 
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             Gizmos.color = Color.yellow;
             if (!Application.isPlaying)

@@ -5870,23 +5870,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpHeight: 4
-  airborneMoveSpeed: 3
+  airborneMoveSpeed: 5
   jumpForceDelay: 0
   runningJumpHeight: 3
   isGroundedDistance: 2
   breakfallRollThreshold: 100
   wallRunRig: {fileID: 9211027351311965373}
   zRot: 20
-  wallRunDelay: 1
+  wallRunDelay: 0.2
   rootRotationConstraint: {fileID: 100698120}
   rightLegTarget: {fileID: 548850743}
   rightHandTarget: {fileID: 7708844698936418226}
   leftLegTarget: {fileID: 9174669157334797600}
   leftHandTarget: {fileID: 7284513826573182685}
   wallRunHandPositionOffset: {x: -0.06, y: 0, z: 0.4}
-  wallRunHandRotationOffset: {x: 1, y: 83.8, z: -65.1}
-  wallRunFootPositionOffset: {x: -0.1, y: 0.33, z: 0}
-  wallRunFootRotationOffset: {x: 180, y: 110, z: 0}
+  wallRunHandRotationOffset: {x: 11.1, y: 88.21, z: 81.04}
+  wallRunFootPositionOffset: {x: -0.11, y: 0.33, z: 0}
+  wallRunFootRotationOffset: {x: -179.8, y: -247.9, z: 67.6}
 --- !u!114 &7284513826171149811
 MonoBehaviour:
   m_ObjectHideFlags: 0

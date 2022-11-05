@@ -63,11 +63,8 @@ namespace LightPat.Core.Player
                         Physics.IgnoreCollision(c, hit.collider, true);
                     }
                     legTarget.position = hit.point + transform.rotation * new Vector3(wallRunFootPositionOffset.x * rightLeftMultiplier, wallRunFootPositionOffset.y, wallRunFootPositionOffset.z);
-                    legTarget.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down), hit.normal);
-                    if (rightLeftMultiplier > 0)
-                        legTarget.Rotate(wallRunFootRotationOffset.x, wallRunFootRotationOffset.y * rightLeftMultiplier, wallRunFootRotationOffset.z, Space.World);
-                    else
-                        legTarget.Rotate(wallRunFootRotationOffset.x - 180, wallRunFootRotationOffset.y * rightLeftMultiplier, wallRunFootRotationOffset.z, Space.World);
+                    legTarget.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down * rightLeftMultiplier)) * Quaternion.Euler(wallRunFootRotationOffset * rightLeftMultiplier);
+                    break;
                 }
 
                 Transform shoulder = handTarget.GetComponentInParent<TwoBoneIKConstraint>().data.root.parent;
@@ -83,11 +80,7 @@ namespace LightPat.Core.Player
                         Physics.IgnoreCollision(c, hit.collider, true);
                     }
                     handTarget.position = hit.point + transform.rotation * new Vector3(wallRunHandPositionOffset.x * rightLeftMultiplier, wallRunHandPositionOffset.y, wallRunHandPositionOffset.z);
-                    handTarget.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down), hit.normal);
-                    if (rightLeftMultiplier > 0)
-                        handTarget.Rotate(wallRunHandRotationOffset.x, wallRunHandRotationOffset.y * rightLeftMultiplier, wallRunHandRotationOffset.z, Space.World);
-                    else
-                        handTarget.Rotate(wallRunHandRotationOffset.x - 180, wallRunHandRotationOffset.y * rightLeftMultiplier, wallRunHandRotationOffset.z, Space.World);
+                    handTarget.rotation = Quaternion.LookRotation(Vector3.Cross(hit.normal, Vector3.down * rightLeftMultiplier)) * Quaternion.Euler(wallRunHandRotationOffset * rightLeftMultiplier);
                     break;
                 }
             }

@@ -26,10 +26,12 @@ namespace LightPat.Core.Player
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody>();
             playerCamera = GetComponentInChildren<PlayerCameraFollow>();
-            prevRotationState = !rotateBodyWithCamera;
+            prevCamRotState = !rotateBodyWithCamera;
             playerHUD = GetComponentInChildren<PlayerHUD>();
             // Change bodyRotation to be the spawn rotation
             bodyRotation = transform.localEulerAngles;
+            currentBodyRotSpeed = bodyRotationSpeed;
+            camConstraint = playerCamera.neckAimRig.GetComponentInChildren<MultiRotationConstraint>();
         }
 
         // Teleportation stair walking
@@ -61,6 +63,7 @@ namespace LightPat.Core.Player
         }
 
         [Header("Mouse Look Settings")]
+        public Vector4 rotateWithBoneLookLimit;
         public float sensitivity;
         public float bodyRotationSpeed;
         public float mouseUpXRotLimit;
@@ -73,6 +76,9 @@ namespace LightPat.Core.Player
         Vector2 lookInput;
         float lookAngle;
         float prevLookAngle;
+        float currentBodyRotSpeed;
+        Vector3 rotateWithBoneRotOffset;
+        MultiRotationConstraint camConstraint;
         void OnLook(InputValue value)
         {
             Look(value.Get<Vector2>(), sensitivity, Time.timeScale);
@@ -112,8 +118,30 @@ namespace LightPat.Core.Player
                 prevLookAngle = lookAngle;
             }
 
-            if (disableLookInput) { return; }
             lookInput *= sensitivity * timeScale;
+            if (playerCamera.updateRotationWithTarget)
+            {
+                rotateWithBoneRotOffset += new Vector3(-lookInput.y / 2, lookInput.x / 2, 0);
+                rotateWithBoneRotOffset.x = Mathf.Clamp(rotateWithBoneRotOffset.x, rotateWithBoneLookLimit.y, rotateWithBoneLookLimit.x);
+                rotateWithBoneRotOffset.y = Mathf.Clamp(rotateWithBoneRotOffset.y, rotateWithBoneLookLimit.w, rotateWithBoneLookLimit.z);
+
+                //if (Mathf.Abs(rotateWithBoneRotOffset.x) > rotateWithBoneLookLimit.x)
+                //{
+                //    if (rotateWithBoneRotOffset.x > 0)
+                //        rotateWithBoneRotOffset.x = rotateWithBoneLookLimit.x;
+                //    else
+                //        rotateWithBoneRotOffset.x = rotateWithBoneLookLimit.y;
+                //}
+                //if (Mathf.Abs(rotateWithBoneRotOffset.y) > rotateWithBoneLookLimit.z)
+                //{
+                //    if (rotateWithBoneRotOffset.y > 0)
+                //        rotateWithBoneRotOffset.y = rotateWithBoneLookLimit.z;
+                //    else
+                //        rotateWithBoneRotOffset.y = rotateWithBoneLookLimit.w;
+                //}
+            }
+
+            if (disableLookInput) { return; }
 
             // Body Rotation Logic (Rotation Around Y Axis)
             bodyRotation = new Vector3(transform.eulerAngles.x, bodyRotation.y + lookInput.x, transform.eulerAngles.z);
@@ -129,18 +157,12 @@ namespace LightPat.Core.Player
             {
                 float xAngle = Vector3.Angle(transform.forward, camTransform.forward);
                 if (camTransform.forward.y > 0)
-                {
                     xAngle *= -1;
-                }
                 float zRot = Mathf.Abs(playerCamera.targetZRot);
                 if (xAngle > mouseDownXRotLimit - zRot & lookInput.y < 0)
-                {
                     return;
-                }
                 else if (xAngle < mouseUpXRotLimit + zRot & lookInput.y > 0)
-                {
                     return;
-                }
             }
 
             // When not leaning
@@ -151,40 +173,28 @@ namespace LightPat.Core.Player
                 attemptedXAngle = Vector3.Angle(Quaternion.Euler(bodyRotation) * Vector3.forward, camTransform.forward);
 
                 if (camTransform.forward.y > 0)
-                {
                     attemptedXAngle *= -1;
-                }
 
                 if (attemptedXAngle > mouseDownXRotLimit)
-                {
                     camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, bodyRotation.y, 0);
-                }
                 else if (attemptedXAngle < mouseUpXRotLimit)
-                {
                     camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, bodyRotation.y, 0);
-                }
             }
-            else
+            else // When leaning
             {
                 attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
 
                 if (camTransform.forward.y > 0)
-                {
                     attemptedXAngle *= -1;
-                }
 
                 if (attemptedXAngle > mouseDownXRotLimit)
-                {
                     camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, 0, 0);
-                }
                 else if (attemptedXAngle < mouseUpXRotLimit)
-                {
                     camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, 0, 0);
-                }
             }
         }
 
-        bool prevRotationState;
+        bool prevCamRotState;
         private void Update()
         {
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
@@ -202,53 +212,55 @@ namespace LightPat.Core.Player
             animator.SetFloat("moveInputY", y);
 
             if (moveInput == Vector2.zero)
-            {
-                // Only change idle time if we are at rest
-                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle"))
-                {
+                if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) // Only change idle time if we are at rest
                     // This is used so that some states that don't have exit transitions can "remember" that the user moved during their playtime, also so that crouching and jumping is not considered "idle"
                     if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsTag("PauseIdleTime"))
-                    {
                         animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
-                    }
-                }
-            }
             else // If moveInput is not Vector2.zero
-            {
                 animator.SetFloat("idleTime", 0);
-            }
-
             // Don't want to enter idle loop while crouching
             if (crouching)
-            {
                 animator.SetFloat("idleTime", 0);
-            }
-
             // If we jump set idleTime to 0
-            if (animator.GetBool("jumping")) { animator.SetFloat("idleTime", 0); }
+            if (animator.GetBool("jumping"))
+                animator.SetFloat("idleTime", 0);
 
             animator.speed = animatorSpeed;
 
-            if (!rotateBodyWithCamera & prevRotationState)
-            {
-                playerCamera.transform.SetParent(null, true);
-            }
-            else if (rotateBodyWithCamera & !prevRotationState)
-            {
-                transform.rotation = Quaternion.Euler(bodyRotation);
-                playerCamera.transform.SetParent(cameraParent, true);
-                playerCamera.transform.localPosition = Vector3.zero;
-            }
+            if (!rotateBodyWithCamera & prevCamRotState)
+                StartCoroutine(ReparentCamera(true));
+            else if (rotateBodyWithCamera & !prevCamRotState)
+                StartCoroutine(ReparentCamera(false));
 
             if (!rotateBodyWithCamera)
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * bodyRotationSpeed));
-
-            prevRotationState = rotateBodyWithCamera;
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
 
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
             {
                 aimConstraint.data.offset = Vector3.Lerp(aimConstraint.data.offset, new Vector3(0, 0, targetLean), leanSpeed * Time.deltaTime);
+            }
+
+            if (playerCamera.updateRotationWithTarget)
+                camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, rotateWithBoneRotOffset, 5 * Time.deltaTime);
+            else
+                rotateWithBoneRotOffset = Vector3.zero; camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, rotateWithBoneRotOffset, 5 * Time.deltaTime);
+
+            prevCamRotState = rotateBodyWithCamera;
+        }
+
+        IEnumerator ReparentCamera(bool mode)
+        {
+            yield return new WaitUntil(() => !playerCamera.updateRotationWithTarget);
+            if (mode)
+            {
+                playerCamera.transform.SetParent(null, true);
+            }
+            else
+            {
+                transform.rotation = Quaternion.Euler(bodyRotation);
+                playerCamera.transform.SetParent(cameraParent, true);
+                playerCamera.transform.localPosition = Vector3.zero;
             }
         }
 
@@ -300,9 +312,7 @@ namespace LightPat.Core.Player
                     ascending = true;
 
                     if (!running)
-                    {
                         animator.SetBool("sprinting", false);
-                    }
                 }
             }
             else
@@ -313,9 +323,7 @@ namespace LightPat.Core.Player
                 ascending = true;
 
                 if (!value.isPressed)
-                {
                     animator.SetBool("sprinting", false);
-                }
             }
         }
 
@@ -329,35 +337,23 @@ namespace LightPat.Core.Player
                     runTarget += 1;
 
                     if (runTarget == 4)
-                    {
                         animator.SetBool("sprinting", true);
-                    }
                     else
-                    {
                         animator.SetBool("sprinting", false);
-                    }
 
                     if (runTarget == 4)
-                    {
                         ascending = false;
-                    }
                 }
                 else
                 {
                     runTarget -= 1;
                     if (runTarget == 2)
-                    {
                         ascending = true;
-                    }
 
                     if (runTarget == 4)
-                    {
                         animator.SetBool("sprinting", true);
-                    }
                     else
-                    {
                         animator.SetBool("sprinting", false);
-                    }
                 }
             }
         }
@@ -370,8 +366,7 @@ namespace LightPat.Core.Player
             {
                 if (running)
                 {
-                    animator.SetBool("crouching", true);
-                    StartCoroutine(ResetSlide());
+                    StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "crouching"));
                     return;
                 }
             }
@@ -391,12 +386,6 @@ namespace LightPat.Core.Player
             }
         }
 
-        private IEnumerator ResetSlide()
-        {
-            yield return null;
-            animator.SetBool("crouching", false);
-        }
-
         [Header("Interact Settings")]
         public float reach;
         void OnInteract()
@@ -406,14 +395,19 @@ namespace LightPat.Core.Player
 
             foreach (RaycastHit hit in allHits)
             {
-                if (hit.transform == transform)
-                {
-                    continue;
-                }
+                if (hit.transform == transform) { continue; }
 
                 if (hit.transform.GetComponent<Interactable>())
                 {
                     hit.transform.GetComponent<Interactable>().Invoke(gameObject);
+                }
+                else if (hit.transform.GetComponent<Helicopter>())
+                {
+                    transform.SetParent(hit.transform.GetComponent<Helicopter>().passengerSeat, true);
+                    animator.SetBool("sitting", true);
+                    bodyRotation = Quaternion.LookRotation(hit.transform.Find("Seat1").forward, Vector3.up).eulerAngles;
+                    transform.rotation = Quaternion.LookRotation(hit.transform.Find("Seat1").forward, Vector3.up);
+                    currentBodyRotSpeed = 0;
                 }
                 break;
             }
@@ -426,6 +420,7 @@ namespace LightPat.Core.Player
         public float rightLean;
         public float leftLean;
         public float leanSpeed;
+        public bool disableLeanInput;
         float targetLean;
         public void SetLean(float newTilt)
         {
@@ -435,6 +430,7 @@ namespace LightPat.Core.Player
 
         void OnLeanRight()
         {
+            if (disableLeanInput) { return; }
             if (spineRig.weightTarget != 1) { return; }
             else if (playerCamera.updateRotationWithTarget) { return; }
 
@@ -443,17 +439,11 @@ namespace LightPat.Core.Player
                 // Check if we are aiming too low or too high to lean
                 float xAngle = Vector3.Angle(transform.forward, playerCamera.transform.forward) + Mathf.Abs(rightLean);
                 if (playerCamera.transform.forward.y > 0)
-                {
                     xAngle *= -1;
-                }
                 if (xAngle > mouseDownXRotLimit)
-                {
                     return;
-                }
                 else if (xAngle < mouseUpXRotLimit)
-                {
                     return;
-                }
 
                 playerCamera.targetZRot = rightLean;
                 targetLean = rightLean;
@@ -467,6 +457,7 @@ namespace LightPat.Core.Player
 
         void OnLeanLeft()
         {
+            if (disableLeanInput) { return; }
             if (spineRig.weightTarget != 1) { return; }
             else if (playerCamera.updateRotationWithTarget) { return; }
 
@@ -475,17 +466,11 @@ namespace LightPat.Core.Player
                 // Check if we are aiming too low or too high to lean
                 float xAngle = Vector3.Angle(transform.forward, playerCamera.transform.forward) + Mathf.Abs(leftLean);
                 if (playerCamera.transform.forward.y > 0)
-                {
                     xAngle *= -1;
-                }
                 if (xAngle > mouseDownXRotLimit)
-                {
                     return;
-                }
                 else if (xAngle < mouseUpXRotLimit)
-                {
                     return;
-                }
 
                 targetLean = leftLean;
                 playerCamera.targetZRot = leftLean;

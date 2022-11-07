@@ -39,7 +39,9 @@ namespace LightPat.Core.Player
 
             if (updateRotationWithTarget & !previousRotationState) // if we just activated updateRotationWithTarget
             {
-                neckAimRig.weightTarget = 0;
+                //neckAimRig.weightTarget = 0;
+                neckAimRig.GetComponentInChildren<MultiAimConstraint>().weight = 0;
+                neckAimRig.GetComponentInChildren<MultiRotationConstraint>().weight = 1;
                 playerController.disableLookInput = true;
                 playerController.SetLean(0);
                 transform.SetParent(BoneRotParent, true);
@@ -49,7 +51,9 @@ namespace LightPat.Core.Player
             }
             else if (!updateRotationWithTarget & previousRotationState) // if we just deactivated updateRotationWithTarget
             {
-                neckAimRig.weightTarget = 1;
+                //neckAimRig.weightTarget = 1;
+                neckAimRig.GetComponentInChildren<MultiRotationConstraint>().weight = 0;
+                neckAimRig.GetComponentInChildren<MultiAimConstraint>().weight = 1;
                 playerController.disableLookInput = false;
                 if (playerController.rotateBodyWithCamera)
                     transform.SetParent(CamParent, true);
@@ -61,13 +65,9 @@ namespace LightPat.Core.Player
             }
 
             if (!updateRotationWithTarget) // "Tilt" the parent constraint by a Z offset so that you don't have to mess with the camera's actual rotation
-            {
                 leanConstraint.data.offset = Vector3.Lerp(leanConstraint.data.offset, new Vector3(0, 0, targetZRot), zRotOffsetSpeed * Time.deltaTime);
-            }
             else // Remove localRotation from camera during an animation because the rotation is stored on the parent
-            {
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, zLocalRotDecay * Time.deltaTime);
-            }
 
             // Remove local Z rot over time
             if (playerController.rotateBodyWithCamera)

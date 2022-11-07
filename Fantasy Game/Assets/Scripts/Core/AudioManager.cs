@@ -17,7 +17,6 @@ namespace LightPat.Core
         {
             audioSource.spatialBlend = 1;
             audioSource.minDistance = 5;
-            audioSource.maxDistance = 500;
             audioSources.Add(audioSource);
         }
 

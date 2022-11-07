@@ -128,6 +128,11 @@ namespace LightPat.Core.Player
         void OnJump()
         {
             if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1 | animator.IsInTransition(animator.GetLayerIndex("Airborne"))) { return; }
+            if (animator.GetBool("sitting"))
+            {
+                animator.SetBool("sitting", false);
+                return;
+            }
             StartCoroutine(Jump());
             EndWallRun();
         }
@@ -239,9 +244,8 @@ namespace LightPat.Core.Player
             PlayerController playerController;
             if (TryGetComponent(out playerController))
             {
-                //playerController.playerCamera.targetZRot = 20 * rightLeftMultiplier;
-                playerController.rotateBodyWithCamera = false;
-                //playerController.bodyRotationSpeed = 0;
+                playerController.disableLeanInput = true;
+                playerController.SetLean(0);
             }
         }
 
@@ -269,17 +273,14 @@ namespace LightPat.Core.Player
 
             legTarget = null;
             handTarget = null;
-            rightLeftMultiplier = 0;
             rootRotationConstraint.localRotation = Quaternion.Euler(0, 0, 0);
             wallRunRig.weightTarget = 0;
             PlayerController playerController;
             if (TryGetComponent(out playerController))
             {
-                //playerController.playerCamera.targetZRot = 0;
-                if (GetComponent<WeaponLoadout>().equippedWeapon)
-                    playerController.rotateBodyWithCamera = false;
-                //playerController.bodyRotationSpeed = 4;
+                playerController.disableLeanInput = false;
             }
+            rightLeftMultiplier = 0;
         }
 
         private IEnumerator ResetLandingBool()

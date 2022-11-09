@@ -224,7 +224,7 @@ namespace LightPat.Core.Player
             while (curveTime < curveLength)
             {
                 if (playerController)
-                    playerController.Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)));
+                    playerController.Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)), 1, Time.timeScale, true);
                 curveTime += 0.1f;
                 yield return null;
             }

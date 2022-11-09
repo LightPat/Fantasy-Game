@@ -84,26 +84,24 @@ namespace LightPat.Core.Player
                     break;
                 }
             }
-            else
+            else if (!transform.parent)
             {
                 animator.SetBool("falling", !isGrounded);
             }
 
             if (IsAirborne() | IsJumping())
-            {
                 rootMotionManager.drag = 0;
-            }
             else
-            {
                 rootMotionManager.drag = 1;
-            }
 
             // If we were falling on the last frame and we are not on this one
             if (!prevGrounded & isGrounded)
             {
                 if (rb.velocity.magnitude > breakfallRollThreshold)
+                {
                     animator.SetBool("breakfallRoll", true);
                     animator.SetFloat("landingAngle", Vector2.SignedAngle(new Vector2(rb.velocity.x, rb.velocity.z), new Vector2(transform.forward.x, transform.forward.z)));
+                }
             }
 
             prevGrounded = isGrounded;
@@ -128,11 +126,7 @@ namespace LightPat.Core.Player
         void OnJump()
         {
             if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1 | animator.IsInTransition(animator.GetLayerIndex("Airborne"))) { return; }
-            if (animator.GetBool("sitting"))
-            {
-                animator.SetBool("sitting", false);
-                return;
-            }
+            if (animator.GetBool("sitting")) { return; }
             StartCoroutine(Jump());
             EndWallRun();
         }

@@ -10,10 +10,12 @@ namespace LightPat.StateMachine
         public bool deactivateWeaponLayers;
 
         PlayerController playerController;
+        bool reached;
 
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            reached = false;
             if (animator.GetLayerWeight(layerIndex) != 1 & layerIndex != 0) { return; }
 
             playerController = animator.GetComponentInParent<PlayerController>();
@@ -22,6 +24,7 @@ namespace LightPat.StateMachine
             {
                 playerController.playerCamera.deactivateWeaponLayers = deactivateWeaponLayers;
                 playerController.playerCamera.updateRotationWithTarget = true;
+                reached = true;
             }
         }
 
@@ -34,13 +37,11 @@ namespace LightPat.StateMachine
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            if (animator.GetLayerWeight(layerIndex) != 1) { return; }
+            //if (animator.GetLayerWeight(layerIndex) != 1) { return; }
+            if (!reached) { return; }
 
-            if (playerController)
-            {
-                playerController.playerCamera.deactivateWeaponLayers = false;
-                playerController.playerCamera.updateRotationWithTarget = false;
-            }
+            playerController.playerCamera.deactivateWeaponLayers = false;
+            playerController.playerCamera.updateRotationWithTarget = false;
         }
 
         // OnStateMove is called right after Animator.OnAnimatorMove()

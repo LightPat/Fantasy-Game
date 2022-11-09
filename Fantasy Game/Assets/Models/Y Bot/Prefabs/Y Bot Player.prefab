@@ -2852,6 +2852,7 @@ GameObject:
   - component: {fileID: 4517939697010483076}
   - component: {fileID: 149279927226817122}
   - component: {fileID: 2556111997334914949}
+  - component: {fileID: 254714673}
   m_Layer: 0
   m_Name: LeftFingerRig
   m_TagString: Untagged
@@ -2920,6 +2921,31 @@ MonoBehaviour:
   weightTarget: 0
   weightSpeed: 50
   instantWeight: 0
+--- !u!114 &254714673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2495148966039634455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7a0585f60b53c34694b4916d763ac7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterConstraint: {fileID: 7284513825337906067}
+  slaveTwoBoneConstraints:
+  - {fileID: 730487395330635733}
+  - {fileID: 7708645064858431636}
+  - {fileID: 8569994728305402575}
+  - {fileID: 6833163024548058369}
+  - {fileID: 6585169691689582893}
+  slaveAimConstraints:
+  - {fileID: 3060631241284637988}
+  - {fileID: 8886283118446038596}
+  - {fileID: 5798788530538508959}
+  - {fileID: 3290844097931989345}
+  - {fileID: 6245362779485815196}
 --- !u!1 &2576825395548638663
 GameObject:
   m_ObjectHideFlags: 0
@@ -2965,15 +2991,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Weight: 0
-  m_Effectors:
-  - m_Transform: {fileID: 9174669157334797600}
-    m_Style:
-      shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
-      color: {r: 1, g: 1, b: 0, a: 0.5}
-      size: 0.1
-      position: {x: 0, y: 0, z: 0}
-      rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
+  m_Effectors: []
 --- !u!1 &2860282880175213526
 GameObject:
   m_ObjectHideFlags: 0
@@ -3841,7 +3859,6 @@ GameObject:
   m_Component:
   - component: {fileID: 23351831093896827}
   - component: {fileID: 730487395330635733}
-  - component: {fileID: 779215694}
   m_Layer: 0
   m_Name: ThumbTipIK
   m_TagString: Untagged
@@ -3891,22 +3908,6 @@ MonoBehaviour:
     m_MaintainTargetRotationOffset: 0
   m_SourceObjectsGUIToggle: 0
   m_SettingsGUIToggle: 0
---- !u!114 &779215694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4079676030980887336}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bcf7cb4eab6a1341a81381c202f2d3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disconnectDistance: 0.15
-  lerpWeight: 1
-  weightSpeed: 50
-  debugDistance: 0
 --- !u!1 &4110574033763108923
 GameObject:
   m_ObjectHideFlags: 0
@@ -4113,6 +4114,7 @@ GameObject:
   - component: {fileID: 4174566177076923681}
   - component: {fileID: 2748651740865913710}
   - component: {fileID: 1040125804926793722}
+  - component: {fileID: 1398551932}
   m_Layer: 0
   m_Name: RightFingerRig
   m_TagString: Untagged
@@ -4181,6 +4183,31 @@ MonoBehaviour:
   weightTarget: 0
   weightSpeed: 50
   instantWeight: 0
+--- !u!114 &1398551932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4579226878007231299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7a0585f60b53c34694b4916d763ac7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  masterConstraint: {fileID: 3097663621319562256}
+  slaveTwoBoneConstraints:
+  - {fileID: 2818029874447712095}
+  - {fileID: 4035625747760147428}
+  - {fileID: 8695908131384756452}
+  - {fileID: 5793182254145083590}
+  - {fileID: 7165687847771179221}
+  slaveAimConstraints:
+  - {fileID: 8665535968945623278}
+  - {fileID: 3782591281096966363}
+  - {fileID: 2094851501882416969}
+  - {fileID: 7569913314434056790}
+  - {fileID: 8596279798762550030}
 --- !u!1 &4678427029261709336
 GameObject:
   m_ObjectHideFlags: 0
@@ -5007,7 +5034,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1266137411097725933}
   - component: {fileID: 2818029874447712095}
-  - component: {fileID: 313140383}
   m_Layer: 0
   m_Name: ThumbTipIK
   m_TagString: Untagged
@@ -5057,22 +5083,6 @@ MonoBehaviour:
     m_MaintainTargetRotationOffset: 0
   m_SourceObjectsGUIToggle: 0
   m_SettingsGUIToggle: 0
---- !u!114 &313140383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6495199842111339541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bcf7cb4eab6a1341a81381c202f2d3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disconnectDistance: 0.15
-  lerpWeight: 1
-  weightSpeed: 50
-  debugDistance: 0
 --- !u!1 &6689121692991661944
 GameObject:
   m_ObjectHideFlags: 0

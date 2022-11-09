@@ -62,7 +62,7 @@ namespace LightPat.Core.Player
             Look(value.Get<Vector2>(), sensitivity, Time.timeScale);
         }
 
-        public void Look(Vector2 lookValue, float sensitivity = 1, float timeScale = 1)
+        public void Look(Vector2 lookValue, float sensitivity = 1, float timeScale = 1, bool instantBoneRot = false)
         {
             lookInput = lookValue;
 
@@ -99,24 +99,19 @@ namespace LightPat.Core.Player
             lookInput *= sensitivity * timeScale;
             if (playerCamera.updateRotationWithTarget)
             {
-                rotateWithBoneRotOffset += new Vector3(-lookInput.y / 2, lookInput.x / 2, 0);
-                rotateWithBoneRotOffset.x = Mathf.Clamp(rotateWithBoneRotOffset.x, rotateWithBoneLookLimit.y, rotateWithBoneLookLimit.x);
-                rotateWithBoneRotOffset.y = Mathf.Clamp(rotateWithBoneRotOffset.y, rotateWithBoneLookLimit.w, rotateWithBoneLookLimit.z);
-
-                //if (Mathf.Abs(rotateWithBoneRotOffset.x) > rotateWithBoneLookLimit.x)
-                //{
-                //    if (rotateWithBoneRotOffset.x > 0)
-                //        rotateWithBoneRotOffset.x = rotateWithBoneLookLimit.x;
-                //    else
-                //        rotateWithBoneRotOffset.x = rotateWithBoneLookLimit.y;
-                //}
-                //if (Mathf.Abs(rotateWithBoneRotOffset.y) > rotateWithBoneLookLimit.z)
-                //{
-                //    if (rotateWithBoneRotOffset.y > 0)
-                //        rotateWithBoneRotOffset.y = rotateWithBoneLookLimit.z;
-                //    else
-                //        rotateWithBoneRotOffset.y = rotateWithBoneLookLimit.w;
-                //}
+                if (!instantBoneRot)
+                {
+                    rotateWithBoneRotOffset += new Vector3(-lookInput.y / 2, lookInput.x / 2, 0);
+                    rotateWithBoneRotOffset.x = Mathf.Clamp(rotateWithBoneRotOffset.x, rotateWithBoneLookLimit.y, rotateWithBoneLookLimit.x);
+                    rotateWithBoneRotOffset.y = Mathf.Clamp(rotateWithBoneRotOffset.y, rotateWithBoneLookLimit.w, rotateWithBoneLookLimit.z);
+                }
+                else
+                {
+                    rotateWithBoneRotOffset += new Vector3(-lookInput.y * 2, lookInput.x * 2, 0);
+                    rotateWithBoneRotOffset.x = Mathf.Clamp(rotateWithBoneRotOffset.x, rotateWithBoneLookLimit.y, rotateWithBoneLookLimit.x);
+                    rotateWithBoneRotOffset.y = Mathf.Clamp(rotateWithBoneRotOffset.y, rotateWithBoneLookLimit.w, rotateWithBoneLookLimit.z);
+                    camConstraint.data.offset = rotateWithBoneRotOffset;
+                }
             }
 
             if (disableLookInput) { return; }
@@ -382,14 +377,24 @@ namespace LightPat.Core.Player
                 else if (hit.collider.GetComponent<HelicopterDoor>())
                 {
                     hit.collider.GetComponent<HelicopterDoor>().ToggleDoor();
-
-                    //transform.SetParent(hit.transform.GetComponent<Helicopter>().passengerSeat, true);
-                    //animator.SetBool("sitting", true);
-                    //bodyRotation = Quaternion.LookRotation(hit.transform.Find("Seat1").forward, Vector3.up).eulerAngles;
-                    //transform.rotation = Quaternion.LookRotation(hit.transform.Find("Seat1").forward, Vector3.up);
-                    //currentBodyRotSpeed = 0;
+                }
+                else if (hit.collider.GetComponent<HelicopterChair>())
+                {
+                    if (animator.GetBool("falling")) { return; }
+                    transform.SetParent(hit.collider.transform, true);
+                    animator.SetBool("sitting", true);
                 }
                 break;
+            }
+        }
+
+        void OnJump()
+        {
+            if (animator.GetBool("sitting"))
+            {
+                bodyRotation = transform.rotation.eulerAngles;
+                animator.SetBool("sitting", false);
+                transform.SetParent(null, true);
             }
         }
 

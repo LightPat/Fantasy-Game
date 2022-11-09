@@ -14,15 +14,11 @@ namespace LightPat.ProceduralAnimations
 
         Animator animator;
         TwoBoneIKConstraint thisConstraint;
-        TwoBoneIKConstraint[] otherTwoBoneConstraints;
-        MultiAimConstraint[] otherAimConstraints;
 
         private void Start()
         {
             animator = GetComponentInParent<Animator>();
             thisConstraint = GetComponent<TwoBoneIKConstraint>();
-            otherTwoBoneConstraints = transform.parent.GetComponentsInChildren<TwoBoneIKConstraint>();
-            otherAimConstraints = transform.parent.GetComponentsInChildren<MultiAimConstraint>();
         }
 
         private void Update()
@@ -33,59 +29,26 @@ namespace LightPat.ProceduralAnimations
             float weightTarget = thisConstraint.weight;
 
             if (Vector3.Distance(thisConstraint.data.target.position, thisConstraint.data.root.position) > disconnectDistance)
-            {
                 weightTarget = 0;
-            }
             else
-            {
                 weightTarget = 1;
-            }
 
             if (lerpWeight)
             {
                 if (Mathf.Abs(weightTarget - thisConstraint.weight) > 0.1)
                 {
                     float currentWeight = Mathf.Lerp(thisConstraint.weight, weightTarget, Time.deltaTime * weightSpeed * animator.speed);
-
                     thisConstraint.weight = currentWeight;
-                    foreach (TwoBoneIKConstraint c in otherTwoBoneConstraints)
-                    {
-                        c.weight = currentWeight;
-                    }
-
-                    foreach (MultiAimConstraint c in otherAimConstraints)
-                    {
-                        c.weight = currentWeight;
-                    }
                 }
                 else
                 {
                     float currentWeight = Mathf.MoveTowards(thisConstraint.weight, weightTarget, Time.deltaTime * animator.speed);
-
                     thisConstraint.weight = currentWeight;
-                    foreach (TwoBoneIKConstraint c in otherTwoBoneConstraints)
-                    {
-                        c.weight = currentWeight;
-                    }
-
-                    foreach (MultiAimConstraint c in otherAimConstraints)
-                    {
-                        c.weight = currentWeight;
-                    }
                 }
             }
             else
             {
                 thisConstraint.weight = weightTarget;
-                foreach (TwoBoneIKConstraint c in otherTwoBoneConstraints)
-                {
-                    c.weight = weightTarget;
-                }
-
-                foreach (MultiAimConstraint c in otherAimConstraints)
-                {
-                    c.weight = weightTarget;
-                }
             }
         }
     }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using System;
+using System.Linq;
 using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
@@ -428,23 +429,37 @@ namespace LightPat.Core.Player
             if (!sword.swinging) { return; }
 
             if (other.GetComponentInParent<Sliceable>())
-            {
                 sword.SliceStart();
-            }
             else if(other.gameObject.GetComponentInParent<Attributes>())
-            {
                 other.gameObject.GetComponentInParent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
-            }
             else
-            {
                 sword.StopSwing();
-            }
         }
 
         private void OnTriggerExit(Collider other)
         {
             if (other.GetComponentInParent<Sliceable>())
                 weaponLoadout.equippedWeapon.GetComponent<GreatSword>().SliceEnd(other);
+        }
+
+        private void OnCollisionStay(Collision collision)
+        {
+            if (collision.collider.CompareTag("Stairs") & (Mathf.Abs(animator.GetFloat("moveInputX")) > 0.5f | Mathf.Abs(animator.GetFloat("moveInputY")) > 0.5f))
+            {
+                float[] yPos = new float[collision.contactCount];
+                for (int i = 0; i < collision.contactCount; i++)
+                {
+                    yPos[i] = collision.GetContact(i).point.y;
+                }
+
+                float translateDistance = yPos.Max() - transform.position.y;
+
+                // TODO Change it so that we can't go up stairs that are too high for us
+                //if (collision.collider.bounds.size.y - translateDistance > maxStairStepDistance) { return; }
+
+                if (translateDistance < 0) { return; }
+                transform.Translate(new Vector3(0, translateDistance, 0));
+            }
         }
 
         private void ReparentWeapon(Weapon weapon, string action)

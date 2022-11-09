@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Linq;
 using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
 
@@ -32,27 +31,6 @@ namespace LightPat.Core.Player
             bodyRotation = transform.localEulerAngles;
             currentBodyRotSpeed = bodyRotationSpeed;
             camConstraint = playerCamera.neckAimRig.GetComponentInChildren<MultiRotationConstraint>();
-        }
-
-        // Teleportation stair walking
-        private void OnCollisionStay(Collision collision)
-        {
-            if (collision.transform.CompareTag("Stairs") & moveInput != Vector2.zero)
-            {
-                float[] yPos = new float[collision.contactCount];
-                for (int i = 0; i < collision.contactCount; i++)
-                {
-                    yPos[i] = collision.GetContact(i).point.y;
-                }
-
-                float translateDistance = yPos.Max() - transform.position.y;
-
-                // TODO Change it so that we can't go up stairs that are too high for us
-                //if (collision.collider.bounds.size.y - translateDistance > maxStairStepDistance) { return; }
-
-                if (translateDistance < 0) { return; }
-                transform.Translate(new Vector3(0, translateDistance, 0));
-            }
         }
 
         Vector2 moveInput;
@@ -401,13 +379,15 @@ namespace LightPat.Core.Player
                 {
                     hit.transform.GetComponent<Interactable>().Invoke(gameObject);
                 }
-                else if (hit.transform.GetComponent<Helicopter>())
+                else if (hit.collider.GetComponent<HelicopterDoor>())
                 {
-                    transform.SetParent(hit.transform.GetComponent<Helicopter>().passengerSeat, true);
-                    animator.SetBool("sitting", true);
-                    bodyRotation = Quaternion.LookRotation(hit.transform.Find("Seat1").forward, Vector3.up).eulerAngles;
-                    transform.rotation = Quaternion.LookRotation(hit.transform.Find("Seat1").forward, Vector3.up);
-                    currentBodyRotSpeed = 0;
+                    hit.collider.GetComponent<HelicopterDoor>().ToggleDoor();
+
+                    //transform.SetParent(hit.transform.GetComponent<Helicopter>().passengerSeat, true);
+                    //animator.SetBool("sitting", true);
+                    //bodyRotation = Quaternion.LookRotation(hit.transform.Find("Seat1").forward, Vector3.up).eulerAngles;
+                    //transform.rotation = Quaternion.LookRotation(hit.transform.Find("Seat1").forward, Vector3.up);
+                    //currentBodyRotSpeed = 0;
                 }
                 break;
             }

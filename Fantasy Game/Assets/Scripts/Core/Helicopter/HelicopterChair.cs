@@ -6,18 +6,37 @@ namespace LightPat.Core
 {
     public class HelicopterChair : MonoBehaviour
     {
+        [Header("Sitting Down")]
         public Vector3 occupantPosition;
         public Vector3 occupantRotation;
+        [Header("Exitting Chair")]
+        public Vector3 exitPosOffset;
+
+        Transform occupant;
+
+        public bool TrySitting(Transform newOccupant)
+        {
+            if (occupant) { return false; }
+
+            newOccupant.SetParent(transform, true);
+            occupant = newOccupant;
+            return true;
+        }
+
+        public bool ExitSitting()
+        {
+            occupant.SetParent(null, true);
+            occupant.Translate(transform.rotation * exitPosOffset, Space.World);
+            occupant = null;
+            return false;
+        }
 
         private void Update()
         {
-            if (transform.childCount > 0)
+            if (occupant)
             {
-                transform.GetChild(0).localPosition = occupantPosition;
-                transform.GetChild(0).localRotation = Quaternion.Euler(occupantRotation);
-
-                //transform.GetChild(0).localPosition = Vector3.Lerp(transform.GetChild(0).localPosition, occupantPosition, Time.deltaTime * 5);
-                //transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(occupantRotation), Time.deltaTime * 5);
+                occupant.localPosition = occupantPosition;
+                occupant.localRotation = Quaternion.Euler(occupantRotation);
             }
         }
 

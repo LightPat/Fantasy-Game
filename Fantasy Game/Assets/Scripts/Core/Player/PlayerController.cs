@@ -361,6 +361,7 @@ namespace LightPat.Core.Player
 
         [Header("Interact Settings")]
         public float reach;
+        HelicopterChair chair;
         void OnInteract()
         {
             RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
@@ -381,8 +382,8 @@ namespace LightPat.Core.Player
                 else if (hit.collider.GetComponent<HelicopterChair>())
                 {
                     if (animator.GetBool("falling")) { return; }
-                    transform.SetParent(hit.collider.transform, true);
-                    animator.SetBool("sitting", true);
+                    chair = hit.collider.GetComponent<HelicopterChair>();
+                    animator.SetBool("sitting", chair.TrySitting(transform));
                 }
                 break;
             }
@@ -393,8 +394,8 @@ namespace LightPat.Core.Player
             if (animator.GetBool("sitting"))
             {
                 bodyRotation = transform.rotation.eulerAngles;
-                animator.SetBool("sitting", false);
-                transform.SetParent(null, true);
+                animator.SetBool("sitting", chair.ExitSitting());
+                Debug.Log(bodyRotation);
             }
         }
 

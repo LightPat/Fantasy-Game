@@ -201,9 +201,21 @@ namespace LightPat.Core.Player
             animator.speed = animatorSpeed;
 
             if (!rotateBodyWithCamera & prevCamRotState)
-                StartCoroutine(ReparentCamera(true));
+            {
+                if (!playerCamera.updateRotationWithTarget)
+                {
+                    playerCamera.transform.SetParent(null, true);
+                }
+            }
             else if (rotateBodyWithCamera & !prevCamRotState)
-                StartCoroutine(ReparentCamera(false));
+            {
+                if (!playerCamera.updateRotationWithTarget)
+                {
+                    transform.rotation = Quaternion.Euler(bodyRotation);
+                    playerCamera.transform.SetParent(cameraParent, true);
+                    playerCamera.transform.localPosition = Vector3.zero;
+                }
+            }
 
             if (!rotateBodyWithCamera)
                 rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
@@ -220,21 +232,6 @@ namespace LightPat.Core.Player
                 rotateWithBoneRotOffset = Vector3.zero; camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, rotateWithBoneRotOffset, 5 * Time.deltaTime);
 
             prevCamRotState = rotateBodyWithCamera;
-        }
-
-        IEnumerator ReparentCamera(bool mode)
-        {
-            yield return new WaitUntil(() => !playerCamera.updateRotationWithTarget);
-            if (mode)
-            {
-                playerCamera.transform.SetParent(null, true);
-            }
-            else
-            {
-                transform.rotation = Quaternion.Euler(bodyRotation);
-                playerCamera.transform.SetParent(cameraParent, true);
-                playerCamera.transform.localPosition = Vector3.zero;
-            }
         }
 
         void OnAbility()

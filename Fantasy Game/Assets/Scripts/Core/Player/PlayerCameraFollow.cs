@@ -34,8 +34,8 @@ namespace LightPat.Core.Player
 
         private void Update()
         {
-            if (!playerController.rotateBodyWithCamera)
-                transform.position = followTarget.position;
+            //if (!playerController.rotateBodyWithCamera)
+            transform.position = followTarget.position;
 
             if (updateRotationWithTarget & !previousRotationState) // if we just activated updateRotationWithTarget
             {

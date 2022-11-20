@@ -13,6 +13,7 @@ namespace LightPat.Core
         public float tailRotorSpeed;
         public bool engineStarted;
         public Camera vehicleCamera;
+        public bool grounded;
 
         float currentRotorSpeed;
         GameObject driver;
@@ -40,19 +41,25 @@ namespace LightPat.Core
 
             antiGravity.force = new Vector3(0, -Physics.gravity.y * currentRotorSpeed * rb.mass, 0);
 
-            if (driver)
-            {
-                Vector3 targetRotation = new Vector3(0, 180, 0);
-                targetRotation.z = moveInput.x * 20;
-                targetRotation.x = -moveInput.y * 20;
-                transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(targetRotation), Time.deltaTime * 2);
-            }
-
             if (!vehicleCamera.transform.parent)
                 vehicleCamera.transform.position += transform.position - prevPosition;
             prevPosition = transform.position;
 
-            rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation, Time.deltaTime * 2));
+            if (IsGrounded())
+            {
+                transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(new Vector3(0, 180, 0)), Time.deltaTime * 2);
+            }
+            else
+            {
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation, Time.deltaTime * 2));
+                if (driver)
+                {
+                    Vector3 targetRotation = new Vector3(0, 180, 0);
+                    targetRotation.z = moveInput.x * 20;
+                    targetRotation.x = -moveInput.y * 20;
+                    transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(targetRotation), Time.deltaTime * 2);
+                }
+            }
         }
 
         float verticalForceAmount;
@@ -64,22 +71,32 @@ namespace LightPat.Core
             Vector3 moveForce = new Vector3(moveInput.x, 0, moveInput.y);
             Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
 
-            // Move vehicle horizontally
-            if (localVelocity.x > velocityLimits.x)
-                moveForce.x -= localVelocity.x - velocityLimits.x;
-            if (localVelocity.x < -velocityLimits.x)
-                moveForce.x -= localVelocity.x + velocityLimits.x;
-            if (localVelocity.z > velocityLimits.z)
-                moveForce.z -= localVelocity.z - velocityLimits.z;
-            if (localVelocity.z < -velocityLimits.z)
-                moveForce.z -= localVelocity.z + velocityLimits.z;
-            if (moveInput == Vector2.zero)
+            if (IsGrounded())
             {
                 moveForce.x = 0 - localVelocity.x;
                 moveForce.z = 0 - localVelocity.z;
+                moveForce = Vector3.ClampMagnitude(moveForce, currentRotorSpeed / 2);
+                rb.AddRelativeForce(moveForce, ForceMode.VelocityChange);
             }
-            moveForce = Vector3.ClampMagnitude(moveForce, currentRotorSpeed / 2);
-            rb.AddRelativeForce(moveForce, ForceMode.VelocityChange);
+            else
+            {
+                // Move vehicle horizontally
+                if (localVelocity.x > velocityLimits.x)
+                    moveForce.x -= localVelocity.x - velocityLimits.x;
+                if (localVelocity.x < -velocityLimits.x)
+                    moveForce.x -= localVelocity.x + velocityLimits.x;
+                if (localVelocity.z > velocityLimits.z)
+                    moveForce.z -= localVelocity.z - velocityLimits.z;
+                if (localVelocity.z < -velocityLimits.z)
+                    moveForce.z -= localVelocity.z + velocityLimits.z;
+                if (moveInput == Vector2.zero)
+                {
+                    moveForce.x = 0 - localVelocity.x;
+                    moveForce.z = 0 - localVelocity.z;
+                }
+                moveForce = Vector3.ClampMagnitude(moveForce, currentRotorSpeed / 2);
+                rb.AddRelativeForce(moveForce, ForceMode.VelocityChange);
+            }
 
             // Move vehicle up and down in the air
             Vector3 verticalForce = new Vector3(0, verticalForceAmount, 0);
@@ -160,9 +177,15 @@ namespace LightPat.Core
         {
             sprinting = pressed;
             if (sprinting)
-                velocityLimits *= 2;
+                velocityLimits = new Vector3(30, 10, 30);
             else
-                velocityLimits /= 2;
+                velocityLimits = new Vector3(15, 10, 15);
+        }
+
+        bool IsGrounded()
+        {
+            Debug.DrawRay(transform.position, Vector3.down * 2, Color.black, Time.deltaTime);
+            return Physics.Raycast(transform.position, Vector3.down, 2);
         }
     }
 }

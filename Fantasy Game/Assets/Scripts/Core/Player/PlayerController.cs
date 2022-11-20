@@ -103,9 +103,10 @@ namespace LightPat.Core.Player
                 prevLookAngle = lookAngle;
             }
 
+            lookInput *= sensitivity * timeScale;
+            
             if (vehicle) { vehicle.SendMessage("OnVehicleLook", lookInput); }
 
-            lookInput *= sensitivity * timeScale;
             if (playerCamera.updateRotationWithTarget)
             {
                 if (!instantBoneRot)
@@ -281,6 +282,8 @@ namespace LightPat.Core.Player
         float runTarget;
         void OnSprint(InputValue value)
         {
+            if (vehicle) { vehicle.SendMessage("OnVehicleSprint", value.isPressed); }
+
             if (toggleSprint)
             {
                 if (value.isPressed)
@@ -341,6 +344,8 @@ namespace LightPat.Core.Player
         bool crouching;
         void OnCrouch(InputValue value)
         {
+            if (vehicle) { vehicle.SendMessage("OnVehicleCrouch", value.isPressed); }
+
             if (value.isPressed)
             {
                 if (running)
@@ -397,12 +402,13 @@ namespace LightPat.Core.Player
 
         void OnJump(InputValue value)
         {
+            if (vehicle) { vehicle.SendMessage("OnVehicleJump", value.isPressed); }
             if (!value.isPressed) { return; }
-            if (animator.GetBool("sitting"))
-            {
-                bodyRotation = transform.rotation.eulerAngles;
-                animator.SetBool("sitting", chair.ExitSitting());
-            }
+            //if (animator.GetBool("sitting"))
+            //{
+            //    bodyRotation = transform.rotation.eulerAngles;
+            //    animator.SetBool("sitting", chair.ExitSitting());
+            //}
         }
 
         [Header("Lean Settings")]

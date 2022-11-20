@@ -36,32 +36,43 @@ namespace LightPat.Core
             tailRotor.Rotate(tailRotorSpeed * Time.deltaTime * currentRotorSpeed, 0, 0, Space.Self);
 
             antiGravity.force = new Vector3(0, -Physics.gravity.y * currentRotorSpeed * rb.mass, 0);
+
+            if (driver)
+            {
+                Vector3 targetRotation = new Vector3(0, 180, 0);
+                targetRotation.z = moveInput.x * 20;
+                targetRotation.x = -moveInput.y * 20;
+                transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(targetRotation), Time.deltaTime * 2);
+            }
         }
 
+        float verticalForceAmount;
         private void FixedUpdate()
         {
             if (!driver) { return; }
 
             Vector3 moveForce = new Vector3(moveInput.x, 0, moveInput.y);
-            Vector3 currentVelocity = rb.velocity;
-            float speedLimit = 5;
-            if (currentVelocity.x > speedLimit)
-            {
-                moveForce.x -= currentVelocity.x;
-            }
-            else if (currentVelocity.x < -speedLimit)
-            {
-                moveForce.x -= currentVelocity.x;
-            }
-            if (currentVelocity.z > speedLimit)
-            {
-                moveForce.z -= currentVelocity.z;
-            }
-            else if (currentVelocity.z < -speedLimit)
-            {
-                moveForce.z -= currentVelocity.z;
-            }
-            rb.AddForce(moveForce, ForceMode.VelocityChange);
+            Vector3 velocityLimits = new Vector3(15, 10, 15);
+            Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
+
+            if (localVelocity.x > velocityLimits.x)
+                moveForce.x -= localVelocity.x - velocityLimits.x;
+            if (localVelocity.x < -velocityLimits.x)
+                moveForce.x -= localVelocity.x + velocityLimits.x;
+            if (localVelocity.z > velocityLimits.z)
+                moveForce.z -= localVelocity.z - velocityLimits.z;
+            if (localVelocity.z < -velocityLimits.z)
+                moveForce.z -= localVelocity.z + velocityLimits.z;
+            rb.AddRelativeForce(moveForce, ForceMode.VelocityChange);
+
+            Vector3 verticalForce = new Vector3(0, verticalForceAmount, 0);
+            if (rb.velocity.y > velocityLimits.y)
+                verticalForce.y -= rb.velocity.y - velocityLimits.y;
+            else if (rb.velocity.y < -velocityLimits.y)
+                verticalForce.y -= rb.velocity.y + velocityLimits.y;
+            rb.AddForce(verticalForce, ForceMode.VelocityChange);
+
+            Debug.Log(localVelocity);
         }
 
         void OnDriverEnter(Animator newDriver)
@@ -86,8 +97,33 @@ namespace LightPat.Core
 
         void OnVehicleLook(Vector2 newLookInput)
         {
-            rb.AddForce(new Vector3(0, Mathf.Clamp(-newLookInput.y, -5, 5), 0), ForceMode.VelocityChange);
             rb.AddTorque(new Vector3(0, newLookInput.x * 0.5f, 0), ForceMode.VelocityChange);
+        }
+
+        bool jumping;
+        void OnVehicleJump(bool pressed)
+        {
+            jumping = pressed;
+            if (jumping)
+                verticalForceAmount = 1;
+            else if (!crouching)
+                verticalForceAmount = 0;
+        }
+        
+        bool crouching;
+        void OnVehicleCrouch(bool pressed)
+        {
+            crouching = pressed;
+            if (crouching)
+                verticalForceAmount = -1;
+            else if (!jumping)
+                verticalForceAmount = 0;
+        }
+
+        bool sprinting;
+        void OnVehicleSprint(bool pressed)
+        {
+            sprinting = pressed;
         }
     }
 }

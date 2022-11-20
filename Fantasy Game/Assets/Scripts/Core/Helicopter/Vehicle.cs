@@ -101,6 +101,7 @@ namespace LightPat.Core
             engineStarted = true;
             vehicleCamera.depth = 1;
             originalCameraPosition = transform.position;
+            vehicleCamera.transform.LookAt(transform.position);
             previousCameraParent = vehicleCamera.transform.parent;
             vehicleCamera.transform.SetParent(null, true);
         }

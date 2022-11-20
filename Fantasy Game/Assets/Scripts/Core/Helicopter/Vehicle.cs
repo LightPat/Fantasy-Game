@@ -18,11 +18,14 @@ namespace LightPat.Core
         GameObject driver;
         Rigidbody rb;
         ConstantForce antiGravity;
+        Vector3 prevPosition;
 
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
             antiGravity = gameObject.AddComponent<ConstantForce>();
+            bodyRotation = transform.rotation;
+            prevPosition = transform.position;
         }
 
         private void Update()
@@ -44,6 +47,12 @@ namespace LightPat.Core
                 targetRotation.x = -moveInput.y * 20;
                 transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(targetRotation), Time.deltaTime * 2);
             }
+
+            if (!vehicleCamera.transform.parent)
+                vehicleCamera.transform.position += transform.position - prevPosition;
+            prevPosition = transform.position;
+
+            rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation, Time.deltaTime * 2));
         }
 
         float verticalForceAmount;
@@ -84,11 +93,16 @@ namespace LightPat.Core
             rb.AddForce(verticalForce, ForceMode.VelocityChange);
         }
 
+        Transform previousCameraParent;
+        Vector3 originalCameraPosition;
         void OnDriverEnter(GameObject newDriver)
         {
             driver = newDriver;
             engineStarted = true;
             vehicleCamera.depth = 1;
+            originalCameraPosition = transform.position;
+            previousCameraParent = vehicleCamera.transform.parent;
+            vehicleCamera.transform.SetParent(null, true);
         }
 
         void OnDriverExit()
@@ -96,6 +110,8 @@ namespace LightPat.Core
             driver = null;
             engineStarted = false;
             vehicleCamera.depth = -1;
+            vehicleCamera.transform.SetParent(previousCameraParent, true);
+            vehicleCamera.transform.position = originalCameraPosition;
         }
 
         Vector2 moveInput;
@@ -104,9 +120,14 @@ namespace LightPat.Core
             moveInput = newMoveInput;
         }
 
+        Quaternion bodyRotation;
         void OnVehicleLook(Vector2 newLookInput)
         {
-            rb.AddTorque(new Vector3(0, newLookInput.x * 0.5f, 0), ForceMode.VelocityChange);
+            vehicleCamera.transform.RotateAround(transform.position, transform.up, newLookInput.x);
+            vehicleCamera.transform.RotateAround(transform.position, transform.right, newLookInput.y);
+            vehicleCamera.transform.LookAt(transform.position);
+            Vector3 targetPoint = new Vector3(transform.position.x, vehicleCamera.transform.position.y, transform.position.z);
+            bodyRotation = Quaternion.LookRotation(targetPoint - vehicleCamera.transform.position, Vector3.up);
         }
 
         bool jumping;

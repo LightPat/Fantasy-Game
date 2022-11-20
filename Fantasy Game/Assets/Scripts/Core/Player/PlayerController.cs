@@ -19,6 +19,12 @@ namespace LightPat.Core.Player
 
         Animator animator;
         Rigidbody rb;
+        public Vehicle vehicle;
+
+        private void OnTransformParentChanged()
+        {
+            vehicle = GetComponentInParent<Vehicle>();
+        }
 
         private void Start()
         {
@@ -37,6 +43,7 @@ namespace LightPat.Core.Player
         void OnMove(InputValue value)
         {
             moveInput = value.Get<Vector2>();
+            if (vehicle) { vehicle.SendMessage("OnVehicleMove", moveInput); }
             if (moveInput.y <= 0 & running) { runTarget = 2; }
         }
 
@@ -95,6 +102,8 @@ namespace LightPat.Core.Player
                 animator.SetFloat("lookAngle", lookAngle);
                 prevLookAngle = lookAngle;
             }
+
+            if (vehicle) { vehicle.SendMessage("OnVehicleLook", lookInput); }
 
             lookInput *= sensitivity * timeScale;
             if (playerCamera.updateRotationWithTarget)
@@ -358,7 +367,7 @@ namespace LightPat.Core.Player
 
         [Header("Interact Settings")]
         public float reach;
-        HelicopterChair chair;
+        VehicleChair chair;
         void OnInteract()
         {
             RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
@@ -372,27 +381,27 @@ namespace LightPat.Core.Player
                 {
                     hit.transform.GetComponent<Interactable>().Invoke(gameObject);
                 }
-                else if (hit.collider.GetComponent<HelicopterDoor>())
+                else if (hit.collider.GetComponent<Door>())
                 {
-                    hit.collider.GetComponent<HelicopterDoor>().ToggleDoor();
+                    hit.collider.GetComponent<Door>().ToggleDoor();
                 }
-                else if (hit.collider.GetComponent<HelicopterChair>())
+                else if (hit.collider.GetComponent<VehicleChair>())
                 {
                     if (animator.GetBool("falling")) { return; }
-                    chair = hit.collider.GetComponent<HelicopterChair>();
+                    chair = hit.collider.GetComponent<VehicleChair>();
                     animator.SetBool("sitting", chair.TrySitting(transform));
                 }
                 break;
             }
         }
 
-        void OnJump()
+        void OnJump(InputValue value)
         {
+            if (!value.isPressed) { return; }
             if (animator.GetBool("sitting"))
             {
                 bodyRotation = transform.rotation.eulerAngles;
                 animator.SetBool("sitting", chair.ExitSitting());
-                Debug.Log(bodyRotation);
             }
         }
 

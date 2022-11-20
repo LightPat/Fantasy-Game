@@ -123,8 +123,9 @@ namespace LightPat.Core.Player
             }
         }
 
-        void OnJump()
+        void OnJump(InputValue value)
         {
+            if (!value.isPressed) { return; }
             if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1 | animator.IsInTransition(animator.GetLayerIndex("Airborne"))) { return; }
             if (animator.GetBool("sitting")) { return; }
             StartCoroutine(Jump());

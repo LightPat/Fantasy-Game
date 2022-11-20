@@ -48,7 +48,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 1
-  m_Constraints: 112
+  m_Constraints: 0
   m_CollisionDetection: 1
 --- !u!114 &7632085764736268833
 MonoBehaviour:
@@ -62,13 +62,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a870814779f25a5418a0d3fd3fcd69b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  passengerSeat: {fileID: 0}
+  vehicleCamera: {fileID: 1446056325132576060}
   mainRotor: {fileID: 4784255296140609403}
   tailRotor: {fileID: 7186597524525524416}
   mainRotorSpeed: 1000
   tailRotorSpeed: 3000
   engineStarted: 0
-  vehicleCamera: {fileID: 1446056325132576060}
+  velocityLimits: {x: 15, y: 10, z: 15}
+  sprintVelocityLimits: {x: 30, y: 15, z: 30}
+  forceClampMultiplier: 0.5
+  moveTiltMulitplier: 20
+  rotationSpeed: 2
 --- !u!1 &8854979421646720379
 GameObject:
   m_ObjectHideFlags: 0
@@ -125,7 +129,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 5000
   field of view: 60
   orthographic: 0
   orthographic size: 5

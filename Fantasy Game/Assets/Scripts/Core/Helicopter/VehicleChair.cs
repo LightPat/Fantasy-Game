@@ -22,7 +22,7 @@ namespace LightPat.Core
             newOccupant.SetParent(transform, true);
             occupant = newOccupant;
             if (driverChair)
-                GetComponentInParent<Vehicle>().SendMessage("OnDriverEnter", occupant.GetComponentInChildren<Animator>());
+                GetComponentInParent<Vehicle>().SendMessage("OnDriverEnter", occupant.gameObject);
             return true;
         }
 

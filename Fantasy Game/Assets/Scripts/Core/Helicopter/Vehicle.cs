@@ -15,7 +15,7 @@ namespace LightPat.Core
         public Camera vehicleCamera;
 
         float currentRotorSpeed;
-        Animator driver;
+        GameObject driver;
         Rigidbody rb;
         ConstantForce antiGravity;
 
@@ -47,14 +47,15 @@ namespace LightPat.Core
         }
 
         float verticalForceAmount;
+        Vector3 velocityLimits = new Vector3(15, 10, 15);
         private void FixedUpdate()
         {
             if (!driver) { return; }
 
             Vector3 moveForce = new Vector3(moveInput.x, 0, moveInput.y);
-            Vector3 velocityLimits = new Vector3(15, 10, 15);
             Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
 
+            // Move vehicle horizontally
             if (localVelocity.x > velocityLimits.x)
                 moveForce.x -= localVelocity.x - velocityLimits.x;
             if (localVelocity.x < -velocityLimits.x)
@@ -63,19 +64,27 @@ namespace LightPat.Core
                 moveForce.z -= localVelocity.z - velocityLimits.z;
             if (localVelocity.z < -velocityLimits.z)
                 moveForce.z -= localVelocity.z + velocityLimits.z;
+            if (moveInput == Vector2.zero)
+            {
+                moveForce.x = 0 - localVelocity.x;
+                moveForce.z = 0 - localVelocity.z;
+            }
+            moveForce = Vector3.ClampMagnitude(moveForce, currentRotorSpeed / 2);
             rb.AddRelativeForce(moveForce, ForceMode.VelocityChange);
 
+            // Move vehicle up and down in the air
             Vector3 verticalForce = new Vector3(0, verticalForceAmount, 0);
             if (rb.velocity.y > velocityLimits.y)
                 verticalForce.y -= rb.velocity.y - velocityLimits.y;
             else if (rb.velocity.y < -velocityLimits.y)
                 verticalForce.y -= rb.velocity.y + velocityLimits.y;
+            else if (verticalForce == Vector3.zero)
+                verticalForce.y = 0 - rb.velocity.y;
+            verticalForce = Vector3.ClampMagnitude(verticalForce, currentRotorSpeed / 2);
             rb.AddForce(verticalForce, ForceMode.VelocityChange);
-
-            Debug.Log(localVelocity);
         }
 
-        void OnDriverEnter(Animator newDriver)
+        void OnDriverEnter(GameObject newDriver)
         {
             driver = newDriver;
             engineStarted = true;
@@ -106,7 +115,9 @@ namespace LightPat.Core
             jumping = pressed;
             if (jumping)
                 verticalForceAmount = 1;
-            else if (!crouching)
+            else if (crouching)
+                verticalForceAmount = -1;
+            else
                 verticalForceAmount = 0;
         }
         
@@ -116,7 +127,9 @@ namespace LightPat.Core
             crouching = pressed;
             if (crouching)
                 verticalForceAmount = -1;
-            else if (!jumping)
+            else if (jumping)
+                verticalForceAmount = 1;
+            else
                 verticalForceAmount = 0;
         }
 
@@ -124,6 +137,10 @@ namespace LightPat.Core
         void OnVehicleSprint(bool pressed)
         {
             sprinting = pressed;
+            if (sprinting)
+                velocityLimits *= 2;
+            else
+                velocityLimits /= 2;
         }
     }
 }

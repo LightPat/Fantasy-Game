@@ -23,7 +23,15 @@ namespace LightPat.Core.Player
 
         private void OnTransformParentChanged()
         {
-            vehicle = GetComponentInParent<Vehicle>();
+            if (transform.parent)
+            {
+                if (transform.parent.GetComponent<VehicleChair>().driverChair)
+                    vehicle = GetComponentInParent<Vehicle>();
+            } 
+            else
+            {
+                vehicle = null;
+            }
         }
 
         private void Start()
@@ -375,6 +383,13 @@ namespace LightPat.Core.Player
         VehicleChair chair;
         void OnInteract()
         {
+            if (animator.GetBool("sitting"))
+            {
+                bodyRotation = transform.rotation.eulerAngles;
+                animator.SetBool("sitting", chair.ExitSitting());
+                return;
+            }
+
             RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
@@ -404,11 +419,6 @@ namespace LightPat.Core.Player
         {
             if (vehicle) { vehicle.SendMessage("OnVehicleJump", value.isPressed); }
             if (!value.isPressed) { return; }
-            //if (animator.GetBool("sitting"))
-            //{
-            //    bodyRotation = transform.rotation.eulerAngles;
-            //    animator.SetBool("sitting", chair.ExitSitting());
-            //}
         }
 
         [Header("Lean Settings")]

@@ -62,7 +62,6 @@ namespace LightPat.Core.Player
         public float mouseUpXRotLimit;
         public float mouseDownXRotLimit;
         public bool disableLookInput;
-        public bool disableCameraLookInput;
         public bool rotateBodyWithCamera;
         public float attemptedXAngle { get; private set; }
         Vector3 bodyRotation;
@@ -140,7 +139,6 @@ namespace LightPat.Core.Player
                 rb.MoveRotation(Quaternion.Euler(bodyRotation));
 
             // Camera Rotation Logic (Rotation Around X Axis)
-            if (disableCameraLookInput) { return; }
             Transform camTransform = playerCamera.transform;
 
             // When leaning

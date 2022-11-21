@@ -25,6 +25,7 @@ namespace LightPat.Core
         ConstantForce antiGravity;
         Vector3 prevPosition;
         Vector3 currentVelocityLimits;
+        Vector3 originalCameraPositionOffset;
 
         private void Start()
         {
@@ -33,6 +34,9 @@ namespace LightPat.Core
             bodyRotation = transform.rotation;
             prevPosition = transform.position;
             currentVelocityLimits = velocityLimits;
+            originalCameraPositionOffset = vehicleCamera.transform.localPosition;
+            vehicleCamera.transform.SetParent(null, true);
+            vehicleCamera.transform.LookAt(transform.position);
         }
 
         private void Update()
@@ -47,8 +51,7 @@ namespace LightPat.Core
 
             antiGravity.force = new Vector3(0, -Physics.gravity.y * currentRotorSpeed * rb.mass, 0);
 
-            if (!vehicleCamera.transform.parent)
-                vehicleCamera.transform.position += transform.position - prevPosition;
+            vehicleCamera.transform.position += transform.position - prevPosition;
             prevPosition = transform.position;
 
             if (IsGrounded())
@@ -115,17 +118,13 @@ namespace LightPat.Core
             rb.AddForce(verticalForce, ForceMode.VelocityChange);
         }
 
-        Transform previousCameraParent;
-        Vector3 originalCameraPosition;
         void OnDriverEnter(GameObject newDriver)
         {
             driver = newDriver;
             engineStarted = true;
             vehicleCamera.depth = 1;
-            originalCameraPosition = transform.position;
+            vehicleCamera.transform.position = transform.position + originalCameraPositionOffset;
             vehicleCamera.transform.LookAt(transform.position);
-            previousCameraParent = vehicleCamera.transform.parent;
-            vehicleCamera.transform.SetParent(null, true);
         }
 
         void OnDriverExit()
@@ -133,8 +132,6 @@ namespace LightPat.Core
             driver = null;
             engineStarted = false;
             vehicleCamera.depth = -1;
-            vehicleCamera.transform.SetParent(previousCameraParent, true);
-            vehicleCamera.transform.position = originalCameraPosition;
         }
 
         Vector2 moveInput;

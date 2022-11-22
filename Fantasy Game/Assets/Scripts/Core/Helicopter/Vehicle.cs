@@ -16,7 +16,6 @@ namespace LightPat.Core
         public Vector3 velocityLimits;
         public Vector3 sprintVelocityLimits;
         public float forceClampMultiplier;
-        public float moveTiltMulitplier;
         public float rotationSpeed;
 
         float currentRotorSpeed;
@@ -64,8 +63,8 @@ namespace LightPat.Core
                 if (driver)
                 {
                     Vector3 targetRotation = new Vector3(0, 180, 0);
-                    targetRotation.z = moveInput.x * moveTiltMulitplier;
-                    targetRotation.x = -moveInput.y * moveTiltMulitplier;
+                    targetRotation.z = moveInput.x * currentVelocityLimits.z;
+                    targetRotation.x = -moveInput.y * currentVelocityLimits.x;
                     transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationSpeed);
                 }
             }

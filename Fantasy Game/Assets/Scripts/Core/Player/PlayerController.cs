@@ -112,7 +112,11 @@ namespace LightPat.Core.Player
 
             lookInput *= sensitivity * timeScale;
             
-            if (vehicle) { vehicle.SendMessage("OnVehicleLook", lookInput); }
+            if (vehicle)
+            {
+                vehicle.SendMessage("OnVehicleLook", lookInput);
+                return;
+            }
 
             if (playerCamera.updateRotationWithTarget)
             {

@@ -223,8 +223,7 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                if (!value.isPressed) { return; }
-                blocking = !blocking;
+                blocking = value.isPressed;
                 animator.SetBool("attack2", blocking);
                 if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 {

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using LightPat.Core;
+using Unity.Netcode;
+using TMPro;
 
 namespace LightPat.UI
 {
@@ -20,9 +22,45 @@ namespace LightPat.UI
             gameObject.SetActive(false);
         }
 
-        public void StartGame()
+        public void StartClient()
         {
-            StartCoroutine(WaitForAnimation(transitionClipName));
+            NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes(GetComponentInChildren<TMP_InputField>().text);
+            if (NetworkManager.Singleton.StartClient())
+                StartCoroutine(WaitForAnimation(transitionClipName)); // This isn't reached due to network scene synchronization
+        }
+
+        public void StartServer()
+        {
+            if (NetworkManager.Singleton.StartServer())
+                NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+        }
+
+        private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+        {
+            // The client identifier to be authenticated
+            var clientId = request.ClientNetworkId;
+
+            // Additional connection data defined by user code
+            var connectionData = request.Payload;
+
+            // Your approval logic determines the following values
+            response.Approved = true;
+            response.CreatePlayerObject = false;
+
+            // The prefab hash value of the NetworkPrefab, if null the default NetworkManager player prefab is used
+            response.PlayerPrefabHash = null;
+
+            // Position to spawn the player object (if null it uses default of Vector3.zero)
+            response.Position = Vector3.zero;
+
+            // Rotation to spawn the player object (if null it uses the default of Quaternion.identity)
+            response.Rotation = Quaternion.identity;
+
+            // If additional approval steps are needed, set this to true until the additional steps are complete
+            // once it transitions from true to false the connection approval response will be processed.
+            response.Pending = false;
+
+            ClientManager.Singleton.AddClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData)));
         }
 
         private IEnumerator WaitForAnimation(string animationName)
@@ -31,7 +69,12 @@ namespace LightPat.UI
             instantiated.GetComponent<Animator>().Play(animationName);
             yield return new WaitForEndOfFrame();
             yield return new WaitForSeconds(instantiated.GetComponent<Animator>().GetCurrentAnimatorClipInfo(0)[0].clip.length);
-            SceneManager.LoadScene("Level1");
+        }
+
+        private void Start()
+        {
+            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
+            NetworkManager.Singleton.OnClientDisconnectCallback += (id) => { ClientManager.Singleton.RemoveClient(id); };
         }
     }
 }

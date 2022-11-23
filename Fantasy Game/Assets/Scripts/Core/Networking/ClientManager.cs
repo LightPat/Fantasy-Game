@@ -28,7 +28,6 @@ namespace LightPat.Core
         public void QueueClient(ulong clientId, ClientData clientData)
         {
             queuedClientData.Enqueue(new KeyValuePair<ulong, ClientData>(clientId, clientData));
-            SynchronizeClients();
         }
 
         public void PopClient()
@@ -37,6 +36,7 @@ namespace LightPat.Core
             KeyValuePair<ulong, ClientData> valuePair = queuedClientData.Dequeue();
             clientDataDictionary.Add(valuePair.Key, valuePair.Value);
             AddClientRpc(valuePair.Key, valuePair.Value);
+            SynchronizeClients();
         }
 
         public void RemoveClient(ulong clientId)

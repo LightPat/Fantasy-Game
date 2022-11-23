@@ -12,7 +12,6 @@ namespace LightPat.UI
     {
         public GameObject playerNamePrefab;
         public Transform playerNamesParent;
-        public List<string> playerList;
         public Vector3 iconSpacing;
 
         List<GameObject> playerIcons = new List<GameObject>();
@@ -24,25 +23,11 @@ namespace LightPat.UI
 
         public void ToggleReady(string playerName)
         {
-            Image image = playerIcons[playerList.IndexOf(playerName)].transform.Find("ReadyIcon").GetComponent<Image>();
-            if (image.color != new Color(0, 255, 0, 255))
-                image.color = new Color(0, 255, 0, 255);
-            else
-                image.color = new Color(255, 0, 0, 255);
-        }
-
-        private void Start()
-        {
-            //foreach (string playerName in playerList)
-            //{
-            //    GameObject nameIcon = Instantiate(playerNamePrefab, playerNamesParent);
-            //    nameIcon.GetComponentInChildren<TextMeshProUGUI>().SetText(playerName);
-            //    playerIcons.Add(nameIcon);
-            //    for (int i = 0; i < playerNamesParent.childCount; i++)
-            //    {
-            //        playerNamesParent.GetChild(i).localPosition = new Vector3(iconSpacing.x, -(i + 1) * iconSpacing.y, 0);
-            //    }
-            //}
+            //Image image = playerIcons[playerList.IndexOf(playerName)].transform.Find("ReadyIcon").GetComponent<Image>();
+            //if (image.color != new Color(0, 255, 0, 255))
+            //    image.color = new Color(0, 255, 0, 255);
+            //else
+            //    image.color = new Color(255, 0, 0, 255);
         }
 
         private void Update()

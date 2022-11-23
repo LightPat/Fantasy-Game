@@ -52,7 +52,7 @@ namespace LightPat.UI
                 Destroy(child.gameObject);
             }
 
-            foreach (ClientData clientData in ClientManager.Singleton.clientDataDictionary.Values)
+            foreach (ClientData clientData in ClientManager.Singleton.GetClientDataDictionary().Values)
             {
                 GameObject nameIcon = Instantiate(playerNamePrefab, playerNamesParent);
                 nameIcon.GetComponentInChildren<TextMeshProUGUI>().SetText(clientData.playerName);

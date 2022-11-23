@@ -7,7 +7,8 @@ namespace LightPat.Core
 {
     public class ClientManager : NetworkBehaviour
     {
-        public Dictionary<ulong, ClientData> clientDataDictionary { get; private set; }
+        private Dictionary<ulong, ClientData> clientDataDictionary = new Dictionary<ulong, ClientData>();
+        private Queue<KeyValuePair<ulong, ClientData>> queuedClientData = new Queue<KeyValuePair<ulong, ClientData>>();
 
         private static ClientManager _singleton;
 
@@ -24,16 +25,30 @@ namespace LightPat.Core
             }
         }
 
-        private void Awake()
+        public void QueueClient(ulong clientId, ClientData clientData)
         {
-            _singleton = this;
-            DontDestroyOnLoad(gameObject);
-            clientDataDictionary = new Dictionary<ulong, ClientData>();
+            queuedClientData.Enqueue(new KeyValuePair<ulong, ClientData>(clientId, clientData));
+            SynchronizeClients();
         }
 
-        public void AddClient(ulong clientId, ClientData clientData)
+        public void PopClient()
         {
-            clientDataDictionary.Add(clientId, clientData);
+            if (!IsServer) { return; }
+            KeyValuePair<ulong, ClientData> valuePair = queuedClientData.Dequeue();
+            clientDataDictionary.Add(valuePair.Key, valuePair.Value);
+            AddClientRpc(valuePair.Key, valuePair.Value);
+        }
+
+        public void RemoveClient(ulong clientId)
+        {
+            if (!IsServer) { return; }
+            clientDataDictionary.Remove(clientId);
+            RemoveClientRpc(clientId);
+        }
+
+        public Dictionary<ulong, ClientData> GetClientDataDictionary()
+        {
+            return clientDataDictionary;
         }
 
         public ClientData GetClient(ulong clientId)
@@ -41,19 +56,37 @@ namespace LightPat.Core
             return clientDataDictionary[clientId];
         }
 
-        public void RemoveClient(ulong clientId)
+        private void Awake()
         {
-            clientDataDictionary.Remove(clientId);
+            _singleton = this;
+            DontDestroyOnLoad(gameObject);
         }
+
+        private void SynchronizeClients()
+        {
+            foreach (ulong clientId in clientDataDictionary.Keys)
+            {
+                SynchronizeClientRpc(clientId, clientDataDictionary[clientId]);
+            }
+        }
+
+        [ClientRpc] void SynchronizeClientRpc(ulong clientId, ClientData clientData) { clientDataDictionary[clientId] = clientData; }
+        [ClientRpc] void AddClientRpc(ulong clientId, ClientData clientData) { clientDataDictionary.Add(clientId, clientData); }
+        [ClientRpc] void RemoveClientRpc(ulong clientId) { clientDataDictionary.Remove(clientId); }
     }
 
-    public class ClientData
+    public struct ClientData : INetworkSerializable
     {
         public string playerName;
 
         public ClientData(string playerName)
         {
             this.playerName = playerName;
+        }
+
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref playerName);
         }
     }
 }

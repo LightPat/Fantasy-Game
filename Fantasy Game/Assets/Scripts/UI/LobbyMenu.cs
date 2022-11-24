@@ -14,9 +14,12 @@ namespace LightPat.UI
         public GameObject playerNamePrefab;
         public Transform playerNamesParent;
         public Vector3 iconSpacing;
+        public GameObject startButton;
 
         public void LeaveLobby()
         {
+            Destroy(NetworkManager.Singleton.gameObject);
+            NetworkManager.Singleton.Shutdown();
             SceneManager.LoadScene("StartMenu");
         }
 
@@ -25,6 +28,11 @@ namespace LightPat.UI
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
             ClientData oldClientData = ClientManager.Singleton.GetClient(localClientId);
             ClientManager.Singleton.OverwriteClientData(localClientId, new ClientData(oldClientData.clientName, !oldClientData.ready, oldClientData.lobbyLeader));
+        }
+
+        public void StartGame()
+        {
+            NetworkManager.Singleton.SceneManager.LoadScene("Level1", LoadSceneMode.Single);
         }
 
         private void Update()

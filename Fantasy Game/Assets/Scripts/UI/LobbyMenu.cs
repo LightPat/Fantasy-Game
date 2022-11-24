@@ -24,7 +24,7 @@ namespace LightPat.UI
         {
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
             ClientData oldClientData = ClientManager.Singleton.GetClient(localClientId);
-            ClientManager.Singleton.ToggleReady(localClientId, new ClientData(oldClientData.clientName, !oldClientData.ready, oldClientData.lobbyLeader));
+            ClientManager.Singleton.OverwriteClientData(localClientId, new ClientData(oldClientData.clientName, !oldClientData.ready, oldClientData.lobbyLeader));
         }
 
         private void Update()
@@ -38,12 +38,15 @@ namespace LightPat.UI
             {
                 GameObject nameIcon = Instantiate(playerNamePrefab, playerNamesParent);
                 nameIcon.GetComponentInChildren<TextMeshProUGUI>().SetText(clientData.clientName);
-                Image image = nameIcon.transform.Find("ReadyIcon").GetComponent<Image>();
 
                 if (clientData.ready)
-                    image.color = new Color(0, 255, 0, 255);
+                    nameIcon.transform.Find("ReadyIcon").GetComponent<Image>().color = new Color(0, 255, 0, 255);
                 else
-                    image.color = new Color(255, 0, 0, 255);
+                    nameIcon.transform.Find("ReadyIcon").GetComponent<Image>().color = new Color(255, 0, 0, 255);
+                if (clientData.lobbyLeader)
+                    nameIcon.transform.Find("CrownIcon").GetComponent<RawImage>().color = new Color(255, 255, 255, 255);
+                else
+                    nameIcon.transform.Find("CrownIcon").GetComponent<RawImage>().color = new Color(255, 255, 255, 0);
 
                 for (int i = 0; i < playerNamesParent.childCount; i++)
                 {

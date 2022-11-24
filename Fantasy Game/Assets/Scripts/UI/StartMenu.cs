@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using LightPat.Core;
 using Unity.Netcode;
 using TMPro;
+using System.Linq;
 
 namespace LightPat.UI
 {
@@ -60,7 +61,7 @@ namespace LightPat.UI
             // once it transitions from true to false the connection approval response will be processed.
             response.Pending = false;
 
-            ClientManager.Singleton.QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData), false, false));
+            ClientManager.Singleton.QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData), false, clientId == 1));
         }
 
         private IEnumerator WaitForAnimation(string animationName)

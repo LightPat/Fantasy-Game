@@ -56,9 +56,10 @@ namespace LightPat.Core
             return clientDataDictionary[clientId];
         }
 
-        public void ToggleReady(ulong clientId, ClientData clientData)
+        public void OverwriteClientData(ulong clientId, ClientData clientData)
         {
-            ChangeClientServerRpc(clientId, clientData);
+            if (IsServer) { Debug.LogError("Calling a server Rpc from the server, this is supposed to only be called from clients"); return; }
+            OverwriteClientServerRpc(clientId, clientData);
         }
 
         private void Awake()
@@ -80,7 +81,7 @@ namespace LightPat.Core
         [ClientRpc] void RemoveClientRpc(ulong clientId) { clientDataDictionary.Remove(clientId); }
 
         [ServerRpc(RequireOwnership = false)]
-        void ChangeClientServerRpc(ulong clientId, ClientData clientData)
+        void OverwriteClientServerRpc(ulong clientId, ClientData clientData)
         {
             clientDataDictionary[clientId] = clientData;
             SynchronizeClients();

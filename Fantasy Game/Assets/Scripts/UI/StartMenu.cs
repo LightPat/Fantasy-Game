@@ -60,7 +60,7 @@ namespace LightPat.UI
             // once it transitions from true to false the connection approval response will be processed.
             response.Pending = false;
 
-            ClientManager.Singleton.QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData)));
+            ClientManager.Singleton.QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData), false, false));
         }
 
         private IEnumerator WaitForAnimation(string animationName)

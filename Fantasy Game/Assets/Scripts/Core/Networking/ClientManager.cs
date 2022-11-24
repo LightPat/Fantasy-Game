@@ -56,6 +56,11 @@ namespace LightPat.Core
             return clientDataDictionary[clientId];
         }
 
+        public void ToggleReady(ulong clientId, ClientData clientData)
+        {
+            ChangeClientServerRpc(clientId, clientData);
+        }
+
         private void Awake()
         {
             _singleton = this;
@@ -73,20 +78,33 @@ namespace LightPat.Core
         [ClientRpc] void SynchronizeClientRpc(ulong clientId, ClientData clientData) { clientDataDictionary[clientId] = clientData; }
         [ClientRpc] void AddClientRpc(ulong clientId, ClientData clientData) { clientDataDictionary.Add(clientId, clientData); }
         [ClientRpc] void RemoveClientRpc(ulong clientId) { clientDataDictionary.Remove(clientId); }
+
+        [ServerRpc(RequireOwnership = false)]
+        void ChangeClientServerRpc(ulong clientId, ClientData clientData)
+        {
+            clientDataDictionary[clientId] = clientData;
+            SynchronizeClients();
+        }
     }
 
     public struct ClientData : INetworkSerializable
     {
-        public string playerName;
+        public string clientName;
+        public bool ready;
+        public bool lobbyLeader;
 
-        public ClientData(string playerName)
+        public ClientData(string clientName, bool ready, bool lobbyLeader)
         {
-            this.playerName = playerName;
+            this.clientName = clientName;
+            this.ready = ready;
+            this.lobbyLeader = lobbyLeader;
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
-            serializer.SerializeValue(ref playerName);
+            serializer.SerializeValue(ref clientName);
+            serializer.SerializeValue(ref ready);
+            serializer.SerializeValue(ref lobbyLeader);
         }
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using LightPat.Core;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine.UI;
 
 namespace LightPat.UI
@@ -14,20 +15,16 @@ namespace LightPat.UI
         public Transform playerNamesParent;
         public Vector3 iconSpacing;
 
-        List<GameObject> playerIcons = new List<GameObject>();
-
         public void LeaveLobby()
         {
             SceneManager.LoadScene("StartMenu");
         }
 
-        public void ToggleReady(string playerName)
+        public void ToggleReady()
         {
-            //Image image = playerIcons[playerList.IndexOf(playerName)].transform.Find("ReadyIcon").GetComponent<Image>();
-            //if (image.color != new Color(0, 255, 0, 255))
-            //    image.color = new Color(0, 255, 0, 255);
-            //else
-            //    image.color = new Color(255, 0, 0, 255);
+            ulong localClientId = NetworkManager.Singleton.LocalClientId;
+            ClientData oldClientData = ClientManager.Singleton.GetClient(localClientId);
+            ClientManager.Singleton.ToggleReady(localClientId, new ClientData(oldClientData.clientName, !oldClientData.ready, oldClientData.lobbyLeader));
         }
 
         private void Update()
@@ -40,8 +37,14 @@ namespace LightPat.UI
             foreach (ClientData clientData in ClientManager.Singleton.GetClientDataDictionary().Values)
             {
                 GameObject nameIcon = Instantiate(playerNamePrefab, playerNamesParent);
-                nameIcon.GetComponentInChildren<TextMeshProUGUI>().SetText(clientData.playerName);
-                playerIcons.Add(nameIcon);
+                nameIcon.GetComponentInChildren<TextMeshProUGUI>().SetText(clientData.clientName);
+                Image image = nameIcon.transform.Find("ReadyIcon").GetComponent<Image>();
+
+                if (clientData.ready)
+                    image.color = new Color(0, 255, 0, 255);
+                else
+                    image.color = new Color(255, 0, 0, 255);
+
                 for (int i = 0; i < playerNamesParent.childCount; i++)
                 {
                     playerNamesParent.GetChild(i).localPosition = new Vector3(iconSpacing.x, -(i + 1) * iconSpacing.y, 0);

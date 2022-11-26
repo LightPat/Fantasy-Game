@@ -61,7 +61,7 @@ namespace LightPat.UI
             // once it transitions from true to false the connection approval response will be processed.
             response.Pending = false;
 
-            ClientManager.Singleton.QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData), false, clientId == 1));
+            ClientManager.Singleton.QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData), false));
         }
 
         private IEnumerator WaitForAnimation(string animationName)
@@ -75,8 +75,8 @@ namespace LightPat.UI
         private void Start()
         {
             NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-            NetworkManager.Singleton.OnClientConnectedCallback += (id) => { ClientManager.Singleton.PopClient(); };
-            NetworkManager.Singleton.OnClientDisconnectCallback += (id) => { ClientManager.Singleton.RemoveClient(id); };
+            NetworkManager.Singleton.OnClientConnectedCallback += (id) => { ClientManager.Singleton.ClientConnectCallback(); };
+            NetworkManager.Singleton.OnClientDisconnectCallback += (id) => { ClientManager.Singleton.ClientDisconnectCallback(id); };
         }
     }
 }

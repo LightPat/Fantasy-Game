@@ -10,7 +10,7 @@ namespace LightPat.Core
     /// for transforms that'll always be owned by the server.
     /// </summary>
     [DisallowMultipleComponent]
-    public class ClientNetworkTransform : NetworkTransform
+    public class OwnerNetworkTransform : NetworkTransform
     {
         /// <summary>
         /// Used to determine who can write to this transform. Owner client only.

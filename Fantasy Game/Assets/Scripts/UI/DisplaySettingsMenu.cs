@@ -31,7 +31,7 @@ namespace LightPat.UI
             for (int i = 0; i < Screen.resolutions.Length; i++)
             {
                 // If the resolution is 16:9
-                if ((Screen.resolutions[i].width * 9 / Screen.resolutions[i].height) == 16 & Screen.currentResolution.refreshRate == Screen.resolutions[i].refreshRate)
+                if ((Screen.resolutions[i].width * 9 / Screen.resolutions[i].height) == 16 & Mathf.Abs(Screen.currentResolution.refreshRate - Screen.resolutions[i].refreshRate) < 5)
                 {
                     resolutionOptions.Add(Screen.resolutions[i].ToString());
                     supportedResolutions.Add(Screen.resolutions[i]);

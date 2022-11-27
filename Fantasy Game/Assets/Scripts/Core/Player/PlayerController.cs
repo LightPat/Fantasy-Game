@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : NetworkBehaviour
     {
         public Transform cameraParent;
         [Header("Animation Settings")]
@@ -21,7 +22,21 @@ namespace LightPat.Core.Player
         Rigidbody rb;
         public Vehicle vehicle;
 
-        private void OnDestroy()
+        public override void OnNetworkSpawn()
+        {
+            if (IsOwner)
+            {
+                GetComponent<PlayerInput>().enabled = true;
+                GetComponent<ActionMapHandler>().enabled = true;
+                playerCamera.tag = "MainCamera";
+            }
+            else
+            {
+                playerCamera.updateRotationWithTarget = true;
+            }
+        }
+
+        public override void OnNetworkDespawn()
         {
             Destroy(playerCamera.gameObject);
         }
@@ -39,7 +54,7 @@ namespace LightPat.Core.Player
             }
         }
 
-        private void Start()
+        private void Awake()
         {
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody>();

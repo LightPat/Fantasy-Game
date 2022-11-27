@@ -10,7 +10,7 @@ namespace LightPat.Core.Player
         PlayerInput playerInput;
         GameObject HUD;
 
-        private void Start()
+        private void OnEnable()
         {
             playerInput = GetComponent<PlayerInput>();
             HUD = transform.Find("PlayerHUD").gameObject;

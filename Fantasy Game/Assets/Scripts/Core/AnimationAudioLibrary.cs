@@ -22,7 +22,7 @@ namespace LightPat.Core
         private void PlayClip(string clipName)
         {
             int index = Array.IndexOf(clipNames, clipName);
-            AudioManager.Instance.PlayClipAtPoint(audioClips[index], transform.position, volumes[index]);
+            AudioManager.Singleton.PlayClipAtPoint(audioClips[index], transform.position, volumes[index]);
         }
     }
 }

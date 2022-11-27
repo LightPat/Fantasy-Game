@@ -21,6 +21,11 @@ namespace LightPat.Core.Player
         Rigidbody rb;
         public Vehicle vehicle;
 
+        private void OnDestroy()
+        {
+            Destroy(playerCamera.gameObject);
+        }
+
         private void OnTransformParentChanged()
         {
             if (transform.parent)
@@ -494,7 +499,7 @@ namespace LightPat.Core.Player
 
         void OnProjectileHit(HitmarkerData hitmarkerData)
         {
-            AudioManager.Instance.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
+            AudioManager.Singleton.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
             StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerData.hitmarkerTime));
         }
     }

@@ -9,6 +9,7 @@ namespace LightPat.Core
 {
     public class ClientManager : NetworkBehaviour
     {
+        public GameObject[] playerPrefabOptions;
         public NetworkVariable<ulong> lobbyLeaderId { get; private set; } = new NetworkVariable<ulong>();
         private Dictionary<ulong, ClientData> clientDataDictionary = new Dictionary<ulong, ClientData>();
         private Queue<KeyValuePair<ulong, ClientData>> queuedClientData = new Queue<KeyValuePair<ulong, ClientData>>();
@@ -95,11 +96,16 @@ namespace LightPat.Core
         {
             _singleton = this;
             DontDestroyOnLoad(gameObject);
+            foreach (GameObject g in playerPrefabOptions)
+            {
+                NetworkManager.Singleton.AddNetworkPrefab(g);
+            }
         }
 
         [ClientRpc] void SynchronizeClientRpc(ulong clientId, ClientData clientData) { clientDataDictionary[clientId] = clientData; }
         [ClientRpc] void AddClientRpc(ulong clientId, ClientData clientData) { Debug.Log(clientData.clientName + " has connected."); clientDataDictionary.Add(clientId, clientData); }
         [ClientRpc] void RemoveClientRpc(ulong clientId) { clientDataDictionary.Remove(clientId); }
+        [ClientRpc] void SpawnAllPlayersOnSceneChangeClientRpc(string sceneName) { StartCoroutine(SpawnLocalPlayerOnSceneChange(sceneName)); }
 
         [ServerRpc(RequireOwnership = false)]
         public void OverwriteClientDataServerRpc(ulong clientId, ClientData clientData)
@@ -109,10 +115,25 @@ namespace LightPat.Core
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void ChangeSceneServerRpc(ulong clientId, string sceneName)
+        public void ChangeSceneServerRpc(ulong clientId, string sceneName, bool spawnPlayers)
         {
             if (clientId != lobbyLeaderId.Value) { Debug.LogError("You can only change the scene if you are the lobby leader!"); return; }
             NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+            if (spawnPlayers)
+                SpawnAllPlayersOnSceneChangeClientRpc(sceneName);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void SpawnPlayerServerRpc(ulong clientId)
+        {
+            GameObject g = Instantiate(playerPrefabOptions[0]);
+            g.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);
+        }
+
+        private IEnumerator SpawnLocalPlayerOnSceneChange(string sceneName)
+        {
+            yield return new WaitUntil(() => SceneManager.GetActiveScene().name == sceneName);
+            SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
         }
     }
 

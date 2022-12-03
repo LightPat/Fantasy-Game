@@ -635,7 +635,7 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 0.3
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
@@ -5930,6 +5930,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraParent: {fileID: 662794819149635413}
+  thirdPersonCamera: {fileID: 1180194542}
   moveTransitionSpeed: 5
   animatorSpeed: 1
   playerHUD: {fileID: 0}
@@ -6112,7 +6113,7 @@ MonoBehaviour:
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
   InLocalSpace: 0
-  Interpolate: 1
+  Interpolate: 0
 --- !u!114 &2976839138020853649
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,6 +14,8 @@ namespace LightPat.UI
         public GameObject settingsMenu;
         public GameObject sceneTransition;
         public string transitionClipName;
+        public TMP_InputField playerNameInput;
+        public TMP_InputField IPAddressInput;
 
         public void OpenSettingsMenu()
         {
@@ -25,15 +27,25 @@ namespace LightPat.UI
 
         public void StartClient()
         {
-            NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes(GetComponentInChildren<TMP_InputField>().text);
+            NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes(playerNameInput.text);
+            NetworkManager.Singleton.GetComponent<Unity.Netcode.Transports.UTP.UnityTransport>().ConnectionData.Address = IPAddressInput.text;
+            //NetworkManager.Singleton.GetComponent<Unity.Netcode.Transports.UNET.UNetTransport>().ConnectAddress = IPAddressInput.text;
             if (NetworkManager.Singleton.StartClient())
-                StartCoroutine(WaitForAnimation(transitionClipName)); // This isn't reached due to network scene synchronization
+            {
+                Debug.Log("Started Client, looking for " + IPAddressInput.text);
+                //StartCoroutine(WaitForAnimation(transitionClipName)); // This isn't reached due to network scene synchronization
+            }
         }
 
         public void StartServer()
         {
+            NetworkManager.Singleton.GetComponent<Unity.Netcode.Transports.UTP.UnityTransport>().ConnectionData.Address = IPAddressInput.text;
+            //NetworkManager.Singleton.GetComponent<Unity.Netcode.Transports.UNET.UNetTransport>().ConnectAddress = IPAddressInput.text;
             if (NetworkManager.Singleton.StartServer())
+            {
+                Debug.Log("Started Server at " + IPAddressInput.text);
                 NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+            }
         }
 
         private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)

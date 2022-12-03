@@ -11,12 +11,13 @@ namespace LightPat.Core.Player
     public class PlayerController : NetworkBehaviour
     {
         public Transform cameraParent;
+        public Camera thirdPersonCamera;
+        public PlayerCameraFollow playerCamera { get; private set; }
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float animatorSpeed = 1;
 
         [HideInInspector] public PlayerHUD playerHUD;
-        public PlayerCameraFollow playerCamera { get; private set; }
 
         Animator animator;
         Rigidbody rb;
@@ -33,6 +34,7 @@ namespace LightPat.Core.Player
             else
             {
                 playerCamera.updateRotationWithTarget = true;
+                playerCamera.gameObject.SetActive(false);
             }
         }
 
@@ -210,6 +212,8 @@ namespace LightPat.Core.Player
         bool prevCamRotState;
         private void Update()
         {
+            if (!IsOwner) { return; }
+
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
             float xTarget = moveInput.x;

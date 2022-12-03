@@ -10,6 +10,11 @@ namespace LightPat.Networking
         private string output;
         private string stack;
 
+        private void Start()
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+
         void OnEnable()
         {
             Application.logMessageReceived += Log;

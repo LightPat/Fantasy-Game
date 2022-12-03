@@ -33,6 +33,8 @@ namespace LightPat.Core.Player
             }
             else
             {
+                GetComponent<PlayerInput>().enabled = false;
+                GetComponent<ActionMapHandler>().enabled = false;
                 playerCamera.updateRotationWithTarget = true;
                 playerCamera.gameObject.SetActive(false);
                 playerHUD.gameObject.SetActive(false);

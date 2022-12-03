@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace LightPat.Core
+namespace LightPat.Core.Player
 {
     public class ServerCamera : MonoBehaviour
     {

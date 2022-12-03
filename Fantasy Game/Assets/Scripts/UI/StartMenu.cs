@@ -40,8 +40,8 @@ namespace LightPat.UI
                 Debug.LogError("Please select a player name before starting");
                 return;
             }
-
             NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes(playerNameInput.text);
+
             NetworkManager.Singleton.GetComponent<Unity.Netcode.Transports.UTP.UnityTransport>().ConnectionData.Address = targetIP;
             if (NetworkManager.Singleton.StartClient())
             {
@@ -84,6 +84,23 @@ namespace LightPat.UI
             if (NetworkManager.Singleton.StartServer())
             {
                 Debug.Log("Started Server at " + targetIP + ". Make sure you opened port 7777 for UDP traffic!");
+                NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
+            }
+        }
+
+        public void StartHost()
+        {
+            if (playerNameInput.text == "")
+            {
+                Debug.LogError("Please select a player name before starting");
+                return;
+            }
+            NetworkManager.Singleton.NetworkConfig.ConnectionData = System.Text.Encoding.ASCII.GetBytes(playerNameInput.text);
+
+            NetworkManager.Singleton.GetComponent<Unity.Netcode.Transports.UTP.UnityTransport>().ConnectionData.Address = "127.0.0.1";
+            if (NetworkManager.Singleton.StartHost())
+            {
+                Debug.Log("Hosting local game");
                 NetworkManager.Singleton.SceneManager.LoadScene("Lobby", LoadSceneMode.Single);
             }
         }

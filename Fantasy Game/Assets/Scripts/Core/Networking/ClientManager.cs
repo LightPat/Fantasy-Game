@@ -10,6 +10,7 @@ namespace LightPat.Core
     public class ClientManager : NetworkBehaviour
     {
         public GameObject[] playerPrefabOptions;
+        public GameObject serverCameraPrefab;
         public NetworkVariable<ulong> lobbyLeaderId { get; private set; } = new NetworkVariable<ulong>();
         private Dictionary<ulong, ClientData> clientDataDictionary = new Dictionary<ulong, ClientData>();
         private Queue<KeyValuePair<ulong, ClientData>> queuedClientData = new Queue<KeyValuePair<ulong, ClientData>>();
@@ -78,6 +79,12 @@ namespace LightPat.Core
             SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
+        private IEnumerator SpawnServerCamera(string sceneName)
+        {
+            yield return new WaitUntil(() => SceneManager.GetActiveScene().name == sceneName);
+            Instantiate(serverCameraPrefab);
+        }
+
         private void Awake()
         {
             _singleton = this;
@@ -88,16 +95,16 @@ namespace LightPat.Core
             }
 
             NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-            NetworkManager.Singleton.OnClientConnectedCallback += (id) => { ClientConnectCallback(); };
+            NetworkManager.Singleton.OnClientConnectedCallback += (id) => { ClientConnectCallback(id); };
             NetworkManager.Singleton.OnClientDisconnectCallback += (id) => { ClientDisconnectCallback(id); };
         }
 
-        void ClientConnectCallback()
+        void ClientConnectCallback(ulong clientId)
         {
             if (!IsServer) { return; }
             KeyValuePair<ulong, ClientData> valuePair = queuedClientData.Dequeue();
             clientDataDictionary.Add(valuePair.Key, valuePair.Value);
-            Debug.Log(valuePair.Value.clientName + " has connected.");
+            Debug.Log(valuePair.Value.clientName + " has connected. ID: " + clientId);
             AddClientRpc(valuePair.Key, valuePair.Value);
             SynchronizeClientDictionaries();
             if (lobbyLeaderId.Value == 0) { RefreshLobbyLeader(); }
@@ -105,7 +112,7 @@ namespace LightPat.Core
 
         void ClientDisconnectCallback(ulong clientId)
         {
-            Debug.Log(clientDataDictionary[clientId].clientName + " has disconnected.");
+            Debug.Log(clientDataDictionary[clientId].clientName + " has disconnected. ID: " + clientId);
             if (!IsServer) { return; }
             clientDataDictionary.Remove(clientId);
             if (clientId == lobbyLeaderId.Value) { RefreshLobbyLeader(); }
@@ -141,7 +148,7 @@ namespace LightPat.Core
         }
 
         [ClientRpc] void SynchronizeClientRpc(ulong clientId, ClientData clientData) { clientDataDictionary[clientId] = clientData; }
-        [ClientRpc] void AddClientRpc(ulong clientId, ClientData clientData) { Debug.Log(clientData.clientName + " has connected."); clientDataDictionary.Add(clientId, clientData); }
+        [ClientRpc] void AddClientRpc(ulong clientId, ClientData clientData) { Debug.Log(clientData.clientName + " has connected. ID: " + clientId); clientDataDictionary.Add(clientId, clientData); }
         [ClientRpc] void RemoveClientRpc(ulong clientId) { clientDataDictionary.Remove(clientId); }
         [ClientRpc] void SpawnAllPlayersOnSceneChangeClientRpc(string sceneName) { StartCoroutine(SpawnLocalPlayerOnSceneChange(sceneName)); }
 
@@ -158,7 +165,10 @@ namespace LightPat.Core
             if (clientId != lobbyLeaderId.Value) { Debug.LogError("You can only change the scene if you are the lobby leader!"); return; }
             NetworkManager.Singleton.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
             if (spawnPlayers)
+            {
+                StartCoroutine(SpawnServerCamera(sceneName));
                 SpawnAllPlayersOnSceneChangeClientRpc(sceneName);
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]

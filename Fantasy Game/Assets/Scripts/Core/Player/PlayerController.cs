@@ -35,6 +35,7 @@ namespace LightPat.Core.Player
             {
                 playerCamera.updateRotationWithTarget = true;
                 playerCamera.gameObject.SetActive(false);
+                playerHUD.gameObject.SetActive(false);
             }
         }
 

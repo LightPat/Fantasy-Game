@@ -31,15 +31,27 @@ namespace LightPat.UI
             for (int i = 0; i < Screen.resolutions.Length; i++)
             {
                 // If the resolution is 16:9
-                if ((Screen.resolutions[i].width * 9 / Screen.resolutions[i].height) == 16 & Mathf.Abs(Screen.currentResolution.refreshRate - Screen.resolutions[i].refreshRate) < 5)
+                if ((Screen.resolutions[i].width * 9 / Screen.resolutions[i].height) == 16 & Mathf.Abs(Screen.currentResolution.refreshRate - Screen.resolutions[i].refreshRate) < 3)
                 {
                     resolutionOptions.Add(Screen.resolutions[i].ToString());
                     supportedResolutions.Add(Screen.resolutions[i]);
                 }
 
-                if (Screen.resolutions[i].Equals(Screen.currentResolution))
+                if (Screen.fullScreenMode == FullScreenMode.Windowed)
                 {
-                    currentResIndex = resolutionOptions.Count - 1;
+                    if (Screen.resolutions[i].width == Screen.width & Screen.resolutions[i].height == Screen.height
+                       & Mathf.Abs(Screen.currentResolution.refreshRate - Screen.resolutions[i].refreshRate) < 3)
+                    {
+                        currentResIndex = resolutionOptions.IndexOf(Screen.resolutions[i].ToString());
+                    }
+                }
+                else
+                {
+                    if (Screen.resolutions[i].width == Screen.currentResolution.width & Screen.resolutions[i].height == Screen.currentResolution.height
+                       & Mathf.Abs(Screen.currentResolution.refreshRate - Screen.resolutions[i].refreshRate) < 3)
+                    {
+                        currentResIndex = resolutionOptions.IndexOf(Screen.resolutions[i].ToString());
+                    }
                 }
             }
 
@@ -76,6 +88,10 @@ namespace LightPat.UI
             QualitySettings.SetQualityLevel(graphicsQualityDropdown.value, true);
 
             Screen.SetResolution(res.width, res.height, fsMode, res.refreshRate);
+
+            currentResolutionDisplay.SetText("Current Resolution: " + resolutionDropdown.options[resolutionDropdown.value].text);
+            currentFullscreenModeDisplay.SetText("Current Fullscreen Mode: " + fullscreenModeDropdown.options[fullscreenModeDropdown.value].text);
+            currentGraphicsQualityDisplay.SetText("Current Graphics Quality: " + QualitySettings.names[QualitySettings.GetQualityLevel()]);
         }
     }
 }

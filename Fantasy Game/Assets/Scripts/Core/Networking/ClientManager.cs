@@ -44,26 +44,6 @@ namespace LightPat.Core
             queuedClientData.Enqueue(new KeyValuePair<ulong, ClientData>(clientId, clientData));
         }
 
-        public void ClientConnectCallback()
-        {
-            if (!IsServer) { return; }
-            KeyValuePair<ulong, ClientData> valuePair = queuedClientData.Dequeue();
-            clientDataDictionary.Add(valuePair.Key, valuePair.Value);
-            Debug.Log(valuePair.Value.clientName + " has connected.");
-            AddClientRpc(valuePair.Key, valuePair.Value);
-            SynchronizeClientDictionaries();
-            if (lobbyLeaderId.Value == 0) { RefreshLobbyLeader(); }
-        }
-
-        public void ClientDisconnectCallback(ulong clientId)
-        {
-            Debug.Log(clientDataDictionary[clientId].clientName + " has disconnected.");
-            if (!IsServer) { return; }
-            clientDataDictionary.Remove(clientId);
-            if (clientId == lobbyLeaderId.Value) { RefreshLobbyLeader(); }
-            RemoveClientRpc(clientId);
-        }
-
         public override void OnNetworkSpawn()
         {
             lobbyLeaderId.OnValueChanged += OnLobbyLeaderChanged;
@@ -92,6 +72,12 @@ namespace LightPat.Core
             }
         }
 
+        private IEnumerator SpawnLocalPlayerOnSceneChange(string sceneName)
+        {
+            yield return new WaitUntil(() => SceneManager.GetActiveScene().name == sceneName);
+            SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
+        }
+
         private void Awake()
         {
             _singleton = this;
@@ -100,6 +86,58 @@ namespace LightPat.Core
             {
                 NetworkManager.Singleton.AddNetworkPrefab(g);
             }
+
+            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
+            NetworkManager.Singleton.OnClientConnectedCallback += (id) => { ClientConnectCallback(); };
+            NetworkManager.Singleton.OnClientDisconnectCallback += (id) => { ClientDisconnectCallback(id); };
+        }
+
+        void ClientConnectCallback()
+        {
+            if (!IsServer) { return; }
+            KeyValuePair<ulong, ClientData> valuePair = queuedClientData.Dequeue();
+            clientDataDictionary.Add(valuePair.Key, valuePair.Value);
+            Debug.Log(valuePair.Value.clientName + " has connected.");
+            AddClientRpc(valuePair.Key, valuePair.Value);
+            SynchronizeClientDictionaries();
+            if (lobbyLeaderId.Value == 0) { RefreshLobbyLeader(); }
+        }
+
+        void ClientDisconnectCallback(ulong clientId)
+        {
+            Debug.Log(clientDataDictionary[clientId].clientName + " has disconnected.");
+            if (!IsServer) { return; }
+            clientDataDictionary.Remove(clientId);
+            if (clientId == lobbyLeaderId.Value) { RefreshLobbyLeader(); }
+            RemoveClientRpc(clientId);
+        }
+
+        private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+        {
+            // The client identifier to be authenticated
+            var clientId = request.ClientNetworkId;
+
+            // Additional connection data defined by user code
+            var connectionData = request.Payload;
+
+            // Your approval logic determines the following values
+            response.Approved = true;
+            response.CreatePlayerObject = false;
+
+            // The prefab hash value of the NetworkPrefab, if null the default NetworkManager player prefab is used
+            response.PlayerPrefabHash = null;
+
+            // Position to spawn the player object (if null it uses default of Vector3.zero)
+            response.Position = Vector3.zero;
+
+            // Rotation to spawn the player object (if null it uses the default of Quaternion.identity)
+            response.Rotation = Quaternion.identity;
+
+            // If additional approval steps are needed, set this to true until the additional steps are complete
+            // once it transitions from true to false the connection approval response will be processed.
+            response.Pending = false;
+
+            QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData), false));
         }
 
         [ClientRpc] void SynchronizeClientRpc(ulong clientId, ClientData clientData) { clientDataDictionary[clientId] = clientData; }
@@ -128,12 +166,6 @@ namespace LightPat.Core
         {
             GameObject g = Instantiate(playerPrefabOptions[0]);
             g.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);
-        }
-
-        private IEnumerator SpawnLocalPlayerOnSceneChange(string sceneName)
-        {
-            yield return new WaitUntil(() => SceneManager.GetActiveScene().name == sceneName);
-            SpawnPlayerServerRpc(NetworkManager.Singleton.LocalClientId);
         }
     }
 

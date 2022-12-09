@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
-    public class Vehicle : MonoBehaviour
+    public class Vehicle : NetworkBehaviour
     {
         public Camera vehicleCamera;
         public Transform mainRotor;
@@ -19,16 +20,31 @@ namespace LightPat.Core
         public float rotationSpeed;
 
         float currentRotorSpeed;
-        GameObject driver;
+        NetworkObject driver;
         Rigidbody rb;
         ConstantForce antiGravity;
         Vector3 prevPosition;
         Vector3 currentVelocityLimits;
         Vector3 originalCameraPositionOffset;
 
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer)
+                GetComponent<NestedNetworkObject>().NestedSpawn();
+        }
+
+        private void OnTransformChildrenChanged()
+        {
+            if (transform.childCount < 1) { return; }
+            mainRotor = transform.GetChild(0).Find("mainRotor");
+            tailRotor = transform.GetChild(0).Find("tailRotor");
+            rb.useGravity = true;
+        }
+
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
+            rb.useGravity = false;
             antiGravity = gameObject.AddComponent<ConstantForce>();
             bodyRotation = transform.rotation;
             prevPosition = transform.position;
@@ -40,6 +56,8 @@ namespace LightPat.Core
 
         private void Update()
         {
+            if (!mainRotor | !tailRotor) { return; }
+
             // Rotate rotors
             if (engineStarted)
                 currentRotorSpeed = Mathf.MoveTowards(currentRotorSpeed, 1, Time.deltaTime / 4);
@@ -117,26 +135,62 @@ namespace LightPat.Core
             rb.AddForce(verticalForce, ForceMode.VelocityChange);
         }
 
-        void OnDriverEnter(GameObject newDriver)
+        void OnDriverEnter(NetworkObject newDriver)
         {
+            // This method is only called on the server from a message sent from VehicleChair
+            OnDriverEnterClientRpc(newDriver.NetworkObjectId);
+            NetworkObject.ChangeOwnership(newDriver.OwnerClientId);
+            foreach (NestedNetworkObject netObj in GetComponentsInChildren<NestedNetworkObject>())
+            {
+                netObj.NetworkObject.ChangeOwnership(newDriver.OwnerClientId);
+            }
             driver = newDriver;
             engineStarted = true;
-            vehicleCamera.depth = 1;
-            vehicleCamera.transform.position = transform.position + originalCameraPositionOffset;
-            vehicleCamera.transform.LookAt(transform.position);
+        }
+
+        [ClientRpc]
+        void OnDriverEnterClientRpc(ulong networkObjectId)
+        {
+            driver = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
+            engineStarted = true;
+
+            if (driver.IsLocalPlayer)
+            {
+                vehicleCamera.depth = 1;
+                vehicleCamera.transform.position = transform.position + originalCameraPositionOffset;
+                vehicleCamera.transform.LookAt(transform.position);
+            }
         }
 
         void OnDriverExit()
         {
+            OnDriverExitClientRpc();
+            NetworkObject.RemoveOwnership();
+            foreach (NestedNetworkObject netObj in GetComponentsInChildren<NestedNetworkObject>())
+            {
+                netObj.NetworkObject.RemoveOwnership();
+            }
             driver = null;
             engineStarted = false;
-            vehicleCamera.depth = -1;
+        }
+
+        [ClientRpc]
+        void OnDriverExitClientRpc()
+        {
+            if (driver.IsLocalPlayer)
+            {
+                vehicleCamera.depth = -1;
+            }
+
+            driver = null;
+            engineStarted = false;
         }
 
         Vector2 moveInput;
         void OnVehicleMove(Vector2 newMoveInput)
         {
             moveInput = newMoveInput;
+            Debug.Log(moveInput);
         }
 
         Quaternion bodyRotation;

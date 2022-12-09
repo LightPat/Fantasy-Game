@@ -41,7 +41,7 @@ namespace LightPat.Core.Player
             }
         }
 
-        public override void OnNetworkDespawn()
+        public override void OnDestroy()
         {
             Destroy(playerCamera.gameObject);
         }
@@ -50,13 +50,23 @@ namespace LightPat.Core.Player
         {
             if (transform.parent)
             {
-                if (transform.parent.GetComponent<VehicleChair>().driverChair)
-                    vehicle = GetComponentInParent<Vehicle>();
-            } 
+                VehicleChair chair;
+                if (transform.parent.TryGetComponent(out chair))
+                {
+                    if (chair.driverChair)
+                    {
+                        vehicle = GetComponentInParent<Vehicle>();
+                    }
+                }
+            }
             else
             {
                 vehicle = null;
             }
+
+            if (!IsOwner) { return; }
+
+            GetComponent<OwnerNetworkTransform>().InLocalSpace = transform.parent != null;
         }
 
         private void Awake()
@@ -217,6 +227,14 @@ namespace LightPat.Core.Player
         {
             if (!IsOwner) { return; }
 
+            if (GetComponentInParent<VehicleChair>())
+            {
+                VehicleChair chair = GetComponentInParent<VehicleChair>();
+                transform.localPosition = chair.occupantPosition;
+                transform.localRotation = Quaternion.Euler(chair.occupantRotation);
+                bodyRotation = transform.eulerAngles;
+            }
+
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
             float xTarget = moveInput.x;
@@ -266,7 +284,7 @@ namespace LightPat.Core.Player
 
             if (!rotateBodyWithCamera)
                 rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
-
+            
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
             {
@@ -414,7 +432,6 @@ namespace LightPat.Core.Player
         {
             if (animator.GetBool("sitting"))
             {
-                bodyRotation = transform.rotation.eulerAngles;
                 animator.SetBool("sitting", chair.ExitSitting());
                 return;
             }
@@ -438,7 +455,7 @@ namespace LightPat.Core.Player
                 {
                     if (animator.GetBool("falling")) { return; }
                     chair = hit.collider.GetComponent<VehicleChair>();
-                    animator.SetBool("sitting", chair.TrySitting(transform));
+                    animator.SetBool("sitting", chair.TrySitting(NetworkObject));
                 }
                 break;
             }

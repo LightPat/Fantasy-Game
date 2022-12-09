@@ -81,6 +81,7 @@ namespace LightPat.Core
 
         private IEnumerator SpawnServerCamera(string sceneName)
         {
+            if (IsClient) { yield break; }
             yield return new WaitUntil(() => SceneManager.GetActiveScene().name == sceneName);
             Instantiate(serverCameraPrefab);
         }
@@ -95,13 +96,14 @@ namespace LightPat.Core
             }
 
             NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
-            NetworkManager.Singleton.OnClientConnectedCallback += (id) => { ClientConnectCallback(id); };
+            NetworkManager.Singleton.OnClientConnectedCallback += (id) => { StartCoroutine(ClientConnectCallback(id)); };
             NetworkManager.Singleton.OnClientDisconnectCallback += (id) => { ClientDisconnectCallback(id); };
         }
 
-        void ClientConnectCallback(ulong clientId)
+        private IEnumerator ClientConnectCallback(ulong clientId)
         {
-            if (!IsServer) { return; }
+            yield return null;
+            if (!IsServer) { yield break; }
             KeyValuePair<ulong, ClientData> valuePair = queuedClientData.Dequeue();
             clientDataDictionary.Add(valuePair.Key, valuePair.Value);
             Debug.Log(valuePair.Value.clientName + " has connected. ID: " + clientId);
@@ -147,8 +149,8 @@ namespace LightPat.Core
             QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData), false));
         }
 
-        [ClientRpc] void SynchronizeClientRpc(ulong clientId, ClientData clientData) { clientDataDictionary[clientId] = clientData; }
-        [ClientRpc] void AddClientRpc(ulong clientId, ClientData clientData) { Debug.Log(clientData.clientName + " has connected. ID: " + clientId); clientDataDictionary.Add(clientId, clientData); }
+        [ClientRpc] void SynchronizeClientRpc(ulong clientId, ClientData clientData) { if (IsHost) { return; } clientDataDictionary[clientId] = clientData; }
+        [ClientRpc] void AddClientRpc(ulong clientId, ClientData clientData) { if (IsHost) { return; } Debug.Log(clientData.clientName + " has connected. ID: " + clientId); clientDataDictionary.Add(clientId, clientData); }
         [ClientRpc] void RemoveClientRpc(ulong clientId) { clientDataDictionary.Remove(clientId); }
         [ClientRpc] void SpawnAllPlayersOnSceneChangeClientRpc(string sceneName) { StartCoroutine(SpawnLocalPlayerOnSceneChange(sceneName)); }
 
@@ -175,7 +177,7 @@ namespace LightPat.Core
         void SpawnPlayerServerRpc(ulong clientId)
         {
             GameObject g = Instantiate(playerPrefabOptions[0]);
-            g.GetComponent<NetworkObject>().SpawnWithOwnership(clientId, true);
+            g.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
     }
 

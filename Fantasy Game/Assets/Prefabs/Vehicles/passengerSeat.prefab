@@ -112,6 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   driverChair: 0
+  jointAnchorPosition: {x: 1.02, y: 2.6, z: 12.74}
   occupantPosition: {x: 0, y: -0.27, z: -0.44}
   occupantRotation: {x: -90, y: 180, z: 0}
   exitPosOffset: {x: 0, y: 0.1, z: 0}

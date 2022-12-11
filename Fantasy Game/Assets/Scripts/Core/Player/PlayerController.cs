@@ -41,32 +41,57 @@ namespace LightPat.Core.Player
             }
         }
 
-        public override void OnDestroy()
+        //public override void OnDestroy()
+        //{
+        //    Destroy(playerCamera.gameObject);
+        //}
+
+        void OnDriverEnter(Vehicle newVehicle)
         {
-            Destroy(playerCamera.gameObject);
+            vehicle = newVehicle;
         }
 
-        private void OnTransformParentChanged()
+        void OnDriverExit()
         {
-            if (transform.parent)
-            {
-                VehicleChair chair;
-                if (transform.parent.TryGetComponent(out chair))
-                {
-                    if (chair.driverChair)
-                    {
-                        vehicle = GetComponentInParent<Vehicle>();
-                    }
-                }
-            }
-            else
-            {
-                vehicle = null;
-            }
+            vehicle = null;
+        }
 
-            if (!IsOwner) { return; }
+        void OnChairEnter(VehicleChair newChair)
+        {
+            chair = newChair;
 
-            GetComponent<OwnerNetworkTransform>().InLocalSpace = transform.parent != null;
+            Destroy(rb);
+            transform.localPosition = chair.occupantPosition;
+            transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
+            bodyRotation = transform.eulerAngles;
+            animator.SetBool("sitting", true);
+
+            if (!IsOwner)
+                GetComponent<OwnerNetworkTransform>().Interpolate = false;
+        }
+
+        void OnChairExit()
+        {
+            transform.Translate(transform.rotation * chair.exitPosOffset, Space.World);
+
+            bodyRotation = transform.eulerAngles;
+            animator.SetBool("sitting", false);
+
+            rb = gameObject.AddComponent<Rigidbody>();
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+            chair = null;
+
+            if (!IsOwner)
+                GetComponent<OwnerNetworkTransform>().Interpolate = true;
+        }
+
+        public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
+        {
+            base.OnNetworkObjectParentChanged(parentNetworkObject);
+            GetComponent<OwnerNetworkTransform>().InLocalSpace = parentNetworkObject != null;
         }
 
         private void Awake()
@@ -225,15 +250,15 @@ namespace LightPat.Core.Player
         bool prevCamRotState;
         private void Update()
         {
-            if (!IsOwner) { return; }
+            //if (chair)
+            //{
+            //    transform.position = chair.transform.position + chair.occupantPosition;
+            //    transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
+            //    bodyRotation = transform.eulerAngles;
+            //    return;
+            //}
 
-            if (GetComponentInParent<VehicleChair>())
-            {
-                VehicleChair chair = GetComponentInParent<VehicleChair>();
-                transform.localPosition = chair.occupantPosition;
-                transform.localRotation = Quaternion.Euler(chair.occupantRotation);
-                bodyRotation = transform.eulerAngles;
-            }
+            if (!IsOwner) { return; }
 
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
@@ -282,8 +307,11 @@ namespace LightPat.Core.Player
                 }
             }
 
-            if (!rotateBodyWithCamera)
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
+            if (rb)
+            {
+                if (!rotateBodyWithCamera)
+                    rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
+            }
             
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
@@ -432,7 +460,7 @@ namespace LightPat.Core.Player
         {
             if (animator.GetBool("sitting"))
             {
-                animator.SetBool("sitting", chair.ExitSitting());
+                chair.ExitSittingServerRpc();
                 return;
             }
 
@@ -454,8 +482,7 @@ namespace LightPat.Core.Player
                 else if (hit.collider.GetComponent<VehicleChair>())
                 {
                     if (animator.GetBool("falling")) { return; }
-                    chair = hit.collider.GetComponent<VehicleChair>();
-                    animator.SetBool("sitting", chair.TrySitting(NetworkObject));
+                    hit.collider.GetComponent<VehicleChair>().TrySittingServerRpc(NetworkObjectId);
                 }
                 break;
             }

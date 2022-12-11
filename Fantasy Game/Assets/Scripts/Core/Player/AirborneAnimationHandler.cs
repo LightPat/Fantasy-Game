@@ -34,6 +34,12 @@ namespace LightPat.Core.Player
         bool prevGrounded;
         private void Update()
         {
+            if (!rb)
+            {
+                rb = GetComponent<Rigidbody>();
+                return;
+            }
+
             bool isGrounded = IsGrounded();
 
             animator.SetFloat("yVelocity", rb.velocity.y);
@@ -126,8 +132,8 @@ namespace LightPat.Core.Player
         void OnJump(InputValue value)
         {
             if (!value.isPressed) { return; }
-            if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1 | animator.IsInTransition(animator.GetLayerIndex("Airborne"))) { return; }
             if (animator.GetBool("sitting")) { return; }
+            if (IsAirborne() | IsJumping() | IsLanding() | rb.velocity.y > 1 | animator.IsInTransition(animator.GetLayerIndex("Airborne"))) { return; }
             StartCoroutine(Jump());
             EndWallRun();
         }
@@ -162,7 +168,7 @@ namespace LightPat.Core.Player
         bool landingCollisionRunning;
         private void OnCollisionEnter(Collision collision)
         {
-            if (animator.GetBool("falling"))
+            if (animator.GetBool("falling") & collision.gameObject.tag == "WallRun")
                 StartWallRun(collision);
 
             if (landingCollisionRunning) { return; }

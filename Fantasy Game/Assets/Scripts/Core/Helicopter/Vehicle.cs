@@ -44,7 +44,6 @@ namespace LightPat.Core
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
-            rb.useGravity = false;
             antiGravity = gameObject.AddComponent<ConstantForce>();
             bodyRotation = transform.rotation;
             prevPosition = transform.position;
@@ -77,7 +76,6 @@ namespace LightPat.Core
             }
             else
             {
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation, Time.deltaTime * 2));
                 if (driver)
                 {
                     Vector3 targetRotation = new Vector3(0, 180, 0);
@@ -92,6 +90,9 @@ namespace LightPat.Core
         private void FixedUpdate()
         {
             if (!driver) { return; }
+
+            if (!IsGrounded())
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation, Time.fixedDeltaTime * 2));
 
             Vector3 moveForce = new Vector3(moveInput.x, 0, moveInput.y);
             Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
@@ -135,17 +136,19 @@ namespace LightPat.Core
             rb.AddForce(verticalForce, ForceMode.VelocityChange);
         }
 
-        void OnDriverEnter(NetworkObject newDriver)
+        public void OnDriverEnter(ulong networkObjectId)
         {
-            // This method is only called on the server from a message sent from VehicleChair
-            OnDriverEnterClientRpc(newDriver.NetworkObjectId);
-            NetworkObject.ChangeOwnership(newDriver.OwnerClientId);
-            foreach (NestedNetworkObject netObj in GetComponentsInChildren<NestedNetworkObject>())
-            {
-                netObj.NetworkObject.ChangeOwnership(newDriver.OwnerClientId);
-            }
-            driver = newDriver;
+            if (!IsServer) { Debug.LogWarning("Calling OnDriverEnter from a client"); return; }
+
+            driver = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
             engineStarted = true;
+
+            NetworkObject.ChangeOwnership(driver.OwnerClientId);
+            transform.GetChild(0).GetComponent<NestedNetworkObject>().NetworkObject.ChangeOwnership(driver.OwnerClientId);
+
+            driver.SendMessage("OnDriverEnter", this);
+
+            OnDriverEnterClientRpc(networkObjectId);
         }
 
         [ClientRpc]
@@ -160,37 +163,41 @@ namespace LightPat.Core
                 vehicleCamera.transform.position = transform.position + originalCameraPositionOffset;
                 vehicleCamera.transform.LookAt(transform.position);
             }
+
+            driver.SendMessage("OnDriverEnter", this);
         }
 
-        void OnDriverExit()
+        public void OnDriverExit()
         {
-            OnDriverExitClientRpc();
+            if (!IsServer) { Debug.LogWarning("Calling OnDriverExit from a client"); return; }
+
             NetworkObject.RemoveOwnership();
-            foreach (NestedNetworkObject netObj in GetComponentsInChildren<NestedNetworkObject>())
-            {
-                netObj.NetworkObject.RemoveOwnership();
-            }
-            driver = null;
+            transform.GetChild(0).GetComponent<NestedNetworkObject>().NetworkObject.RemoveOwnership();
+
+            driver.SendMessage("OnDriverExit");
+
+            OnDriverExitClientRpc();
+
             engineStarted = false;
+            driver = null;
         }
 
         [ClientRpc]
         void OnDriverExitClientRpc()
         {
             if (driver.IsLocalPlayer)
-            {
                 vehicleCamera.depth = -1;
-            }
 
-            driver = null;
+            driver.SendMessage("OnDriverExit");
+
             engineStarted = false;
+            driver = null;
         }
 
         Vector2 moveInput;
         void OnVehicleMove(Vector2 newMoveInput)
         {
             moveInput = newMoveInput;
-            Debug.Log(moveInput);
         }
 
         Quaternion bodyRotation;

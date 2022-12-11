@@ -14,7 +14,6 @@ GameObject:
   - component: {fileID: 3591444384845649937}
   - component: {fileID: 4738155926965007352}
   - component: {fileID: 7431050703702058504}
-  - component: {fileID: -967100274185675000}
   m_Layer: 0
   m_Name: Helicopter
   m_TagString: Untagged
@@ -52,7 +51,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 3
+  m_CollisionDetection: 1
 --- !u!114 &7632085764736268833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -131,18 +130,6 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
---- !u!114 &-967100274185675000
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7632085764736268835}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6c0be61502bb534f922ebb746851216, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8854979421646720379
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ namespace LightPat.Core.Player
         Animator animator;
         WeaponLoadout weaponLoadout;
 
-        private void Start()
+        private void Awake()
         {
             rb = GetComponentInParent<Rigidbody>();
             animator = GetComponent<Animator>();
@@ -26,6 +26,11 @@ namespace LightPat.Core.Player
         private void OnAnimatorMove()
         {
             if (disableRootMotion) { return; }
+            if (!rb)
+            {
+                rb = transform.parent.GetComponent<Rigidbody>();
+                return;
+            }
 
             Vector3 newVelocity = Vector3.MoveTowards(rb.velocity * Time.timeScale, animator.velocity, drag);
             newVelocity.y = rb.velocity.y * Time.timeScale;

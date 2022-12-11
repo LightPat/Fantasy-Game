@@ -3436,6 +3436,7 @@ GameObject:
   - component: {fileID: 4172934153987069652}
   - component: {fileID: 1926565483164311932}
   - component: {fileID: 6111430678191382662}
+  - component: {fileID: 7374802638131832261}
   m_Layer: 0
   m_Name: cabin
   m_TagString: Untagged
@@ -3532,6 +3533,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.833641, y: 4.2782063, z: 0.6471749}
   m_Center: {x: -0.11055374, y: 10.703687, z: 2.579779}
+--- !u!65 &7374802638131832261
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7517060734851088399}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.315892, y: 1.2390652, z: 4.1710706}
+  m_Center: {x: -0.1708231, y: 0.024528336, z: 4.161624}
 --- !u!1 &7685987732427142170
 GameObject:
   m_ObjectHideFlags: 0
@@ -4305,6 +4319,7 @@ GameObject:
   - component: {fileID: 6346652961685510075}
   - component: {fileID: 7339025583892872717}
   - component: {fileID: 4270139208719424829}
+  - component: {fileID: -7111171513084600058}
   m_Layer: 0
   m_Name: Helicopter Model
   m_TagString: Untagged
@@ -4451,3 +4466,17 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 1
   Interpolate: 1
+--- !u!114 &-7111171513084600058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9193954989730624563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dc9f20cf92676449b8ed35faf8cc48a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 7901537269606958420}

@@ -115,7 +115,7 @@ MonoBehaviour:
   jointAnchorPosition: {x: -1.65, y: 2.17, z: 8.24}
   occupantPosition: {x: 0, y: 0.27, z: -0.44}
   occupantRotation: {x: 90, y: 0, z: 0}
-  exitPosOffset: {x: 0, y: 0.1, z: 0}
+  exitPosOffset: {x: 0, y: 0.1, z: 1}
 --- !u!114 &7560891294858150364
 MonoBehaviour:
   m_ObjectHideFlags: 0

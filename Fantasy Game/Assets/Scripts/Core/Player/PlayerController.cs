@@ -63,7 +63,7 @@ namespace LightPat.Core.Player
             Destroy(rb);
             transform.localPosition = chair.occupantPosition;
             transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
-            bodyRotation = transform.eulerAngles;
+            bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             animator.SetBool("sitting", true);
 
             if (!IsOwner)
@@ -74,7 +74,7 @@ namespace LightPat.Core.Player
         {
             transform.Translate(transform.rotation * chair.exitPosOffset, Space.World);
 
-            bodyRotation = transform.eulerAngles;
+            bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             animator.SetBool("sitting", false);
 
             rb = gameObject.AddComponent<Rigidbody>();
@@ -102,7 +102,7 @@ namespace LightPat.Core.Player
             prevCamRotState = !rotateBodyWithCamera;
             playerHUD = GetComponentInChildren<PlayerHUD>();
             // Change bodyRotation to be the spawn rotation
-            bodyRotation = transform.localEulerAngles;
+            bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             currentBodyRotSpeed = bodyRotationSpeed;
             camConstraint = playerCamera.neckAimRig.GetComponentInChildren<MultiRotationConstraint>();
         }
@@ -198,7 +198,7 @@ namespace LightPat.Core.Player
             if (disableLookInput) { return; }
 
             // Body Rotation Logic (Rotation Around Y Axis)
-            bodyRotation = new Vector3(transform.eulerAngles.x, bodyRotation.y + lookInput.x, transform.eulerAngles.z);
+            bodyRotation = new Vector3(0, bodyRotation.y + lookInput.x, 0);
             if (rotateBodyWithCamera)
                 rb.MoveRotation(Quaternion.Euler(bodyRotation));
 
@@ -307,10 +307,12 @@ namespace LightPat.Core.Player
                 }
             }
 
-            if (rb)
+            if (!rotateBodyWithCamera)
             {
-                if (!rotateBodyWithCamera)
+                if (rb)
                     rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
+                else
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
             }
             
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);

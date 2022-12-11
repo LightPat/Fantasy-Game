@@ -49,7 +49,8 @@ namespace LightPat.Core
         public void ExitSittingServerRpc()
         {
             occupant.TryRemoveParent();
-            ExitSitting();
+            if (!IsHost)
+                ExitSitting();
 
             ExitSittingClientRpc();
 

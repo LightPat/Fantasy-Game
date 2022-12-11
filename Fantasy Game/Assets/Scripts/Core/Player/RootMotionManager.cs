@@ -29,6 +29,7 @@ namespace LightPat.Core.Player
             if (!rb)
             {
                 rb = transform.parent.GetComponent<Rigidbody>();
+                transform.parent.position += animator.deltaPosition;
                 return;
             }
 

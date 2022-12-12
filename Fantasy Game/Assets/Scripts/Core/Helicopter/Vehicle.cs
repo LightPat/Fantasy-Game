@@ -146,8 +146,8 @@ namespace LightPat.Core
             NetworkObject.ChangeOwnership(driver.OwnerClientId);
             transform.GetChild(0).GetComponent<NestedNetworkObject>().NetworkObject.ChangeOwnership(driver.OwnerClientId);
 
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
             driver.SendMessage("OnDriverEnter", this);
-
             OnDriverEnterClientRpc(networkObjectId);
         }
 
@@ -164,6 +164,7 @@ namespace LightPat.Core
                 vehicleCamera.transform.LookAt(transform.position);
             }
 
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
             driver.SendMessage("OnDriverEnter", this);
         }
 
@@ -174,6 +175,7 @@ namespace LightPat.Core
             NetworkObject.RemoveOwnership();
             transform.GetChild(0).GetComponent<NestedNetworkObject>().NetworkObject.RemoveOwnership();
 
+            rb.constraints = RigidbodyConstraints.None;
             driver.SendMessage("OnDriverExit");
 
             OnDriverExitClientRpc();
@@ -188,6 +190,7 @@ namespace LightPat.Core
             if (driver.IsLocalPlayer)
                 vehicleCamera.depth = -1;
 
+            rb.constraints = RigidbodyConstraints.None;
             driver.SendMessage("OnDriverExit");
 
             engineStarted = false;

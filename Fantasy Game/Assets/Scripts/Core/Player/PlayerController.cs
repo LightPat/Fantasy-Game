@@ -11,7 +11,6 @@ namespace LightPat.Core.Player
 {
     public class PlayerController : NetworkBehaviour
     {
-        public Transform cameraParent;
         public Camera thirdPersonCamera;
         public PlayerCameraFollow playerCamera { get; private set; }
         [Header("Animation Settings")]
@@ -41,11 +40,6 @@ namespace LightPat.Core.Player
                 playerHUD.gameObject.SetActive(false);
             }
         }
-
-        //public override void OnDestroy()
-        //{
-        //    Destroy(playerCamera.gameObject);
-        //}
 
         void OnDriverEnter(Vehicle newVehicle)
         {
@@ -100,6 +94,7 @@ namespace LightPat.Core.Player
                 {
                     Destroy(rb);
                     TrySetParentServerRpc(collision.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
+                    rotateBodyWithCamera = true;
                 }
             }
         }
@@ -236,8 +231,10 @@ namespace LightPat.Core.Player
             {
                 if (rb)
                     rb.MoveRotation(Quaternion.Euler(bodyRotation));
-                else
+                else if (playerCamera.updateRotationWithTarget)
                     transform.rotation = Quaternion.Euler(bodyRotation);
+                else if (transform.parent)
+                    transform.localRotation = Quaternion.Euler(bodyRotation);
             }
 
             // Camera Rotation Logic (Rotation Around X Axis)
@@ -336,8 +333,10 @@ namespace LightPat.Core.Player
             {
                 if (rb)
                     rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
-                else
+                else if (playerCamera.updateRotationWithTarget)
                     transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
+                else if (transform.parent)
+                    transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
             }
             
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);
@@ -373,6 +372,12 @@ namespace LightPat.Core.Player
                     }
                     else
                     {
+                        if (GetComponent<WeaponLoadout>().equippedWeapon)
+                            rotateBodyWithCamera = true;
+                        else
+                            rotateBodyWithCamera = false;
+
+                        rotateBodyWithCamera = false;
                         rb = gameObject.AddComponent<Rigidbody>();
                         rb.constraints = RigidbodyConstraints.FreezeRotation;
                         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -385,6 +390,11 @@ namespace LightPat.Core.Player
                 // If we have no hits
                 if (allHits.Length == 0)
                 {
+                    if (GetComponent<WeaponLoadout>().equippedWeapon)
+                        rotateBodyWithCamera = true;
+                    else
+                        rotateBodyWithCamera = false;
+
                     rb = gameObject.AddComponent<Rigidbody>();
                     rb.constraints = RigidbodyConstraints.FreezeRotation;
                     rb.interpolation = RigidbodyInterpolation.Interpolate;

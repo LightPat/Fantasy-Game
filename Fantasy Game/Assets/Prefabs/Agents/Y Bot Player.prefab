@@ -5928,12 +5928,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cb34a01506f60c4d97b1107c76509bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraParent: {fileID: 662794819149635413}
-  thirdPersonCamera: {fileID: 1180194542}
   moveTransitionSpeed: 5
   animatorSpeed: 1
   playerHUD: {fileID: 0}
-  vehicle: {fileID: 0}
   rotateWithBoneLookLimit: {x: 55, y: -90, z: 100, w: -100}
   sensitivity: 0.15
   bodyRotationSpeed: 4
@@ -5943,7 +5940,7 @@ MonoBehaviour:
   rotateBodyWithCamera: 0
   toggleSprint: 0
   toggleCrouch: 0
-  reach: 5
+  reach: 7
   spineRig: {fileID: 6763357609041427354}
   spineAim: {fileID: 5503431950255359835}
   aimConstraints:
@@ -6016,7 +6013,7 @@ MonoBehaviour:
   spineStow: {fileID: 685456554}
   leftHipStow: {fileID: 8313513781927897783}
   rightHipStow: {fileID: 3618166832557303963}
-  weaponReachDistance: 5
+  weaponReachDistance: 7
   dropForce: {x: 0, y: 0, z: 5}
   blockConstraints: {fileID: 2499275057994608015}
   blockSpeed: 10

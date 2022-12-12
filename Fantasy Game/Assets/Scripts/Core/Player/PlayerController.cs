@@ -11,7 +11,6 @@ namespace LightPat.Core.Player
 {
     public class PlayerController : NetworkBehaviour
     {
-        public Camera thirdPersonCamera;
         public PlayerCameraFollow playerCamera { get; private set; }
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
@@ -21,7 +20,7 @@ namespace LightPat.Core.Player
 
         Animator animator;
         Rigidbody rb;
-        public Vehicle vehicle;
+        Vehicle vehicle;
 
         public override void OnNetworkSpawn()
         {

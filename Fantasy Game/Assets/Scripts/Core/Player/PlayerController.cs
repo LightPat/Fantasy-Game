@@ -100,7 +100,6 @@ namespace LightPat.Core.Player
                 {
                     Destroy(rb);
                     TrySetParentServerRpc(collision.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
-                    rotateBodyWithCamera = true;
                 }
             }
         }
@@ -121,6 +120,11 @@ namespace LightPat.Core.Player
         {
             base.OnNetworkObjectParentChanged(parentNetworkObject);
             GetComponent<OwnerNetworkTransform>().InLocalSpace = parentNetworkObject != null;
+        }
+
+        private void OnTransformParentChanged()
+        {
+            playerCamera.RefreshCameraParent();
         }
 
         private void Awake()
@@ -153,7 +157,7 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool rotateBodyWithCamera;
         public float attemptedXAngle { get; private set; }
-        Vector3 bodyRotation;
+        public Vector3 bodyRotation { get; private set; }
         Vector2 lookInput;
         float lookAngle;
         float prevLookAngle;
@@ -323,21 +327,9 @@ namespace LightPat.Core.Player
 
             animator.speed = animatorSpeed;
 
-            if (!rotateBodyWithCamera & prevCamRotState)
+            if (rotateBodyWithCamera != prevCamRotState)
             {
-                if (!playerCamera.updateRotationWithTarget)
-                {
-                    playerCamera.transform.SetParent(null, true);
-                }
-            }
-            else if (rotateBodyWithCamera & !prevCamRotState)
-            {
-                if (!playerCamera.updateRotationWithTarget)
-                {
-                    transform.rotation = Quaternion.Euler(bodyRotation);
-                    playerCamera.transform.SetParent(cameraParent, true);
-                    playerCamera.transform.localPosition = Vector3.zero;
-                }
+                playerCamera.RefreshCameraParent();
             }
 
             if (!rotateBodyWithCamera)

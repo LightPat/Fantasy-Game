@@ -14,8 +14,9 @@ namespace LightPat.Core
             if (!NetworkManager.Singleton.IsServer) { return; }
             foreach (SpawnData spawnData in spawnArray)
             {
-                GameObject g = Instantiate(spawnData.gameObject, spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnPosition));
-                g.GetComponent<NetworkObject>().Spawn(true);
+                GameObject g = Instantiate(spawnData.gameObject, spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation));
+                NetworkObject networkObject = g.GetComponent<NetworkObject>();
+                networkObject.Spawn(true);
             }
         }
     }
@@ -25,6 +26,6 @@ namespace LightPat.Core
     {
         public GameObject gameObject;
         public Vector3 spawnPosition;
-        public Quaternion spawnRotation;
+        public Vector3 spawnRotation;
     }
 }

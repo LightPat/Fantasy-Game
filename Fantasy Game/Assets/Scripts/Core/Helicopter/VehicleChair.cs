@@ -9,7 +9,6 @@ namespace LightPat.Core
     public class VehicleChair : NetworkBehaviour
     {
         public bool driverChair;
-        public Vector3 jointAnchorPosition;
         [Header("Sitting Down")]
         public Vector3 occupantPosition;
         public Vector3 occupantRotation;

@@ -32,7 +32,7 @@ namespace LightPat.Core.Player
             layerWeightManager = playerController.GetComponentInChildren<AnimatorLayerWeightManager>();
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             transform.position = followTarget.position;
 

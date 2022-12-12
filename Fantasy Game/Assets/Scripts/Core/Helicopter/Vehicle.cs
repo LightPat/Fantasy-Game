@@ -70,9 +70,10 @@ namespace LightPat.Core
             vehicleCamera.transform.position += transform.position - prevPosition;
             prevPosition = transform.position;
 
+            // TODO Move to fixedUpdate
             if (IsGrounded())
             {
-                transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(new Vector3(0, 180, 0)), Time.deltaTime * rotationSpeed);
+                //transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(new Vector3(0, 180, 0)), Time.deltaTime * rotationSpeed);
             }
             else
             {
@@ -81,7 +82,7 @@ namespace LightPat.Core
                     Vector3 targetRotation = new Vector3(0, 180, 0);
                     targetRotation.z = moveInput.x * currentVelocityLimits.z;
                     targetRotation.x = -moveInput.y * currentVelocityLimits.x;
-                    transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationSpeed);
+                    //transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationSpeed);
                 }
             }
         }
@@ -90,9 +91,6 @@ namespace LightPat.Core
         private void FixedUpdate()
         {
             if (!driver) { return; }
-
-            if (!IsGrounded())
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation, Time.fixedDeltaTime * 2));
 
             Vector3 moveForce = new Vector3(moveInput.x, 0, moveInput.y);
             Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
@@ -106,6 +104,8 @@ namespace LightPat.Core
             }
             else
             {
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation, Time.fixedDeltaTime * 2));
+
                 // Move vehicle horizontally
                 if (localVelocity.x > currentVelocityLimits.x)
                     moveForce.x -= localVelocity.x - currentVelocityLimits.x;

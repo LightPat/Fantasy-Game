@@ -132,8 +132,8 @@ namespace LightPat.Core.Player
         public float weaponReachDistance;
         void OnInteract()
         {
-            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, weaponReachDistance);
-            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+            RaycastHit[] allHits = Physics.RaycastAll(playerController.playerCamera.transform.position, playerController.playerCamera.transform.forward, weaponReachDistance);
+            Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
             foreach (RaycastHit hit in allHits)
             {
                 if (hit.transform == transform) { continue; }

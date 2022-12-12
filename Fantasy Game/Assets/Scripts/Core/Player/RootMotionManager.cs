@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using System.Linq;
 
 namespace LightPat.Core.Player
 {
@@ -29,7 +30,21 @@ namespace LightPat.Core.Player
             if (!rb)
             {
                 rb = transform.parent.GetComponent<Rigidbody>();
-                transform.parent.position += animator.deltaPosition;
+
+                RaycastHit[] allHits = Physics.RaycastAll(transform.parent.position, animator.deltaPosition, 1);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                bool applyRootMotion = true;
+                foreach (RaycastHit hit in allHits)
+                {
+                    if (GetComponentsInChildren<Collider>().Contains(hit.collider)) { continue; }
+
+                    applyRootMotion = false;
+                    break;
+                }
+
+                if (applyRootMotion)
+                    transform.parent.position += animator.deltaPosition;
+
                 return;
             }
 

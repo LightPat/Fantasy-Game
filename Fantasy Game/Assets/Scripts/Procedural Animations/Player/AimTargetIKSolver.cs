@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.ProceduralAnimations
 {
-    public class AimTargetIKSolver : MonoBehaviour
+    public class AimTargetIKSolver : NetworkBehaviour
     {
         public Transform mainCamera;
         public bool disableUpdate;
@@ -12,6 +13,7 @@ namespace LightPat.ProceduralAnimations
 
         private void Update()
         {
+            if (!IsOwner) { return; }
             if (disableUpdate) { return; }
             if (!mainCamera) { return; }
             transform.position = mainCamera.position + mainCamera.forward * 3 + offset;

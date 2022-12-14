@@ -32,11 +32,11 @@ namespace LightPat.UI
             ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ToggleReady());
         }
 
-        //bool loadingGame;
+        bool loadingGame;
         public void StartGame()
         {
-            //if (loadingGame) { return; }
-            //loadingGame = true;
+            if (loadingGame) { return; }
+            loadingGame = true;
             Debug.Log("Loading game");
             ClientManager.Singleton.ChangeSceneServerRpc(NetworkManager.Singleton.LocalClientId, "Level1", true);
         }

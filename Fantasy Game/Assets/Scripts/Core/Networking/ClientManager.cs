@@ -11,6 +11,7 @@ namespace LightPat.Core
     public class ClientManager : NetworkBehaviour
     {
         public GameObject[] playerPrefabOptions;
+        public GameObject[] weaponPrefabOptions;
         public GameObject serverCameraPrefab;
         public NetworkVariable<ulong> lobbyLeaderId { get; private set; } = new NetworkVariable<ulong>();
         public NetworkVariable<GameMode> gameMode { get; private set; } = new NetworkVariable<GameMode>();
@@ -154,7 +155,7 @@ namespace LightPat.Core
             // once it transitions from true to false the connection approval response will be processed.
             response.Pending = false;
 
-            QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData), false));
+            QueueClient(clientId, new ClientData(System.Text.Encoding.ASCII.GetString(connectionData)));
         }
 
         [ClientRpc] void SynchronizeClientRpc(ulong clientId, ClientData clientData) { if (IsHost) { return; } clientDataDictionary[clientId] = clientData; }
@@ -185,6 +186,7 @@ namespace LightPat.Core
         void SpawnPlayerServerRpc(ulong clientId)
         {
             GameObject g = Instantiate(playerPrefabOptions[clientDataDictionary[clientId].playerPrefabOptionIndex]);
+            g.transform.position = new Vector3(95, 2, -95); // Remove this and replace with an actual spawn position variable in clientData
             g.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
     }
@@ -197,10 +199,10 @@ namespace LightPat.Core
         public Team team;
         public Color[] colors;
 
-        public ClientData(string clientName, bool ready)
+        public ClientData(string clientName)
         {
             this.clientName = clientName;
-            this.ready = ready;
+            ready = false;
             playerPrefabOptionIndex = 0;
             team = Team.Red;
             colors = new Color[1];

@@ -169,7 +169,7 @@ namespace LightPat.Core.Player
         bool landingCollisionRunning;
         private void OnCollisionEnter(Collision collision)
         {
-            if (animator.GetBool("falling") & collision.gameObject.tag == "WallRun")
+            if (animator.GetBool("falling") & collision.gameObject.CompareTag("WallRun"))
                 StartWallRun(collision);
 
             if (landingCollisionRunning) { return; }

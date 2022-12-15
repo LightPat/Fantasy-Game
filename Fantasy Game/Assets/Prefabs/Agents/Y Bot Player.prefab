@@ -1241,7 +1241,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &134661303928610975
 GameObject:
@@ -1432,7 +1432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &445843197934824745
 GameObject:
@@ -1495,7 +1495,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &543805332510148296
 GameObject:
@@ -1841,7 +1841,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &1137466333507122681
 GameObject:
@@ -1992,7 +1992,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &1229222617434678027
 GameObject:
@@ -2117,7 +2117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &1349334999672018969
 GameObject:
@@ -2398,7 +2398,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &1464800937837827350
 GameObject:
@@ -2461,7 +2461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &1568665450102832475
 GameObject:
@@ -2726,7 +2726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &2337193948242267740
 GameObject:
@@ -2892,7 +2892,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &2397733172319920052
 GameObject:
@@ -2955,7 +2955,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &2400135801048174365
 GameObject:
@@ -3391,7 +3391,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &3035056446802960472
 GameObject:
@@ -3454,7 +3454,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &3103661946944218872
 GameObject:
@@ -3624,7 +3624,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &3395020785785876295
 GameObject:
@@ -3690,7 +3690,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &3406205562832618320
 GameObject:
@@ -3812,7 +3812,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &3527312375393479570
 GameObject:
@@ -4042,7 +4042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &3862690178826707261
 GameObject:
@@ -4105,7 +4105,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &4031041308733123267
 GameObject:
@@ -4171,7 +4171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &4079676030980887336
 GameObject:
@@ -4440,7 +4440,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &4579226878007231299
 GameObject:
@@ -4608,7 +4608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &4701502106407251590
 GameObject:
@@ -4794,7 +4794,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &5147185206152134397
 GameObject:
@@ -5072,7 +5072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &6107211170429883560
 GameObject:
@@ -5223,7 +5223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &6247323519654522750
 GameObject:
@@ -5377,7 +5377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &6490377077648406289
 GameObject:
@@ -5691,7 +5691,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &7062400754056519918
 GameObject:
@@ -5809,7 +5809,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &7272580389499287774
 GameObject:
@@ -5875,7 +5875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &7284513825001385110
 GameObject:
@@ -6236,7 +6236,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &7284513825998588542
 GameObject:
@@ -6660,7 +6660,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &7372957586520473898
 GameObject:
@@ -6726,7 +6726,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &7606523032337324403
 GameObject:
@@ -7111,7 +7111,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &7888455732580471302
 GameObject:
@@ -7417,7 +7417,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &8752435679340015519
 GameObject:
@@ -7480,7 +7480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ea7d9d4f8d4b8342ac694a7245a3ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   interpolationSpeed: 10
 --- !u!1 &9176074733373249087
 GameObject:

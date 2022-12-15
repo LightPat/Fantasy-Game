@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: b1486d63b21b35047af97255084d9be9
+guid: 94f272114f865df4fa1827b40e9d921d
 ModelImporter:
   serializedVersion: 20200
   internalIDToNameTable:
@@ -7,8 +7,8 @@ ModelImporter:
       74: -203655887218126122
     second: mixamo.com
   - first:
-      74: -8006947986997193762
-    second: Burpee
+      74: 4637745809603780968
+    second: Sitting Idle
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -38,26 +38,26 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Burpee
+      name: Sitting Idle
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 188
+      lastFrame: 257
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
       loopBlendPositionXZ: 0
       keepOriginalOrientation: 1
-      keepOriginalPositionY: 1
+      keepOriginalPositionY: 0
       keepOriginalPositionXZ: 0
-      heightFromFeet: 0
+      heightFromFeet: 1
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []

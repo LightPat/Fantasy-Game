@@ -13,7 +13,11 @@ namespace LightPat.ProceduralAnimations
 
         private void Update()
         {
-            if (!IsOwner) { return; }
+            if (IsSpawned)
+            {
+                if (!IsOwner) { return; }
+            }
+            
             if (disableUpdate) { return; }
             if (!mainCamera) { return; }
             transform.position = mainCamera.position + mainCamera.forward * 3 + offset;

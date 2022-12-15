@@ -22,6 +22,17 @@ namespace LightPat.Core.Player
         Rigidbody rb;
         Vehicle vehicle;
 
+        public void TurnOnDisplayModelMode()
+        {
+            GetComponent<PlayerInput>().enabled = false;
+            GetComponent<ActionMapHandler>().enabled = false;
+            playerCamera.updateRotationWithTarget = true;
+            playerCamera.gameObject.SetActive(false);
+            playerHUD.gameObject.SetActive(false);
+            Cursor.lockState = CursorLockMode.None;
+            animator.SetFloat("idleTime", 50001);
+        }
+
         public override void OnNetworkSpawn()
         {
             if (IsOwner)
@@ -38,6 +49,10 @@ namespace LightPat.Core.Player
                 playerCamera.gameObject.SetActive(false);
                 playerHUD.gameObject.SetActive(false);
             }
+
+            MaterialColorChange colors = gameObject.AddComponent<MaterialColorChange>();
+            colors.materialColors = ClientManager.Singleton.GetClient(OwnerClientId).colors;
+            colors.Apply();
         }
 
         void OnDriverEnter(Vehicle newVehicle)

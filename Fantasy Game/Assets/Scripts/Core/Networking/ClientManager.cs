@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using System.ComponentModel;
 
 namespace LightPat.Core
 {
@@ -12,6 +13,7 @@ namespace LightPat.Core
         public GameObject[] playerPrefabOptions;
         public GameObject serverCameraPrefab;
         public NetworkVariable<ulong> lobbyLeaderId { get; private set; } = new NetworkVariable<ulong>();
+        public NetworkVariable<GameMode> gameMode { get; private set; } = new NetworkVariable<GameMode>();
         private Dictionary<ulong, ClientData> clientDataDictionary = new Dictionary<ulong, ClientData>();
         private Queue<KeyValuePair<ulong, ClientData>> queuedClientData = new Queue<KeyValuePair<ulong, ClientData>>();
 
@@ -43,6 +45,12 @@ namespace LightPat.Core
         public void QueueClient(ulong clientId, ClientData clientData)
         {
             queuedClientData.Enqueue(new KeyValuePair<ulong, ClientData>(clientId, clientData));
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void UpdateGameModeServerRpc(GameMode newGameMode)
+        {
+            gameMode.Value = newGameMode;
         }
 
         public override void OnNetworkSpawn()
@@ -176,7 +184,7 @@ namespace LightPat.Core
         [ServerRpc(RequireOwnership = false)]
         void SpawnPlayerServerRpc(ulong clientId)
         {
-            GameObject g = Instantiate(playerPrefabOptions[0]);
+            GameObject g = Instantiate(playerPrefabOptions[clientDataDictionary[clientId].playerPrefabOptionIndex]);
             g.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
     }
@@ -185,11 +193,17 @@ namespace LightPat.Core
     {
         public string clientName;
         public bool ready;
+        public int playerPrefabOptionIndex;
+        public Team team;
+        public Color[] colors;
 
         public ClientData(string clientName, bool ready)
         {
             this.clientName = clientName;
             this.ready = ready;
+            playerPrefabOptionIndex = 0;
+            team = Team.Red;
+            colors = new Color[1];
         }
 
         public ClientData ToggleReady()
@@ -199,10 +213,47 @@ namespace LightPat.Core
             return copy;
         }
 
+        public ClientData ChangePlayerPrefabOption(int newOption)
+        {
+            ClientData copy = this;
+            copy.playerPrefabOptionIndex = newOption;
+            return copy;
+        }
+
+        public ClientData ChangeTeam(Team newTeam)
+        {
+            ClientData copy = this;
+            copy.team = newTeam;
+            return copy;
+        }
+
+        public ClientData ChangeColors(Color[] newColorArray)
+        {
+            ClientData copy = this;
+            copy.colors = newColorArray;
+            return copy;
+        }
+
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref clientName);
             serializer.SerializeValue(ref ready);
+            serializer.SerializeValue(ref playerPrefabOptionIndex);
+            serializer.SerializeValue(ref team);
+            serializer.SerializeValue(ref colors);
         }
+    }
+
+    public enum Team
+    {
+        Red,
+        Blue
+    }
+
+    public enum GameMode
+    {
+        CaptureTheFlag,
+        HordeMode,
+        GhostInTheGraveyard
     }
 }

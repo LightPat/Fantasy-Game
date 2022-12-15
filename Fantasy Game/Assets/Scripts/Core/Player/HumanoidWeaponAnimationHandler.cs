@@ -11,6 +11,7 @@ namespace LightPat.Core.Player
 {
     public class HumanoidWeaponAnimationHandler : MonoBehaviour
     {
+        public int maxWeapons = 3;
         public Transform mainCamera;
         [Header("Rigging Assignments")]
         public RigWeightTarget rightArmRig;
@@ -132,6 +133,8 @@ namespace LightPat.Core.Player
         public float weaponReachDistance;
         void OnInteract()
         {
+            if (weaponLoadout.GetWeaponListLength() >= maxWeapons) { return; }
+
             RaycastHit[] allHits = Physics.RaycastAll(playerController.playerCamera.transform.position, playerController.playerCamera.transform.forward, weaponReachDistance);
             Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
             foreach (RaycastHit hit in allHits)

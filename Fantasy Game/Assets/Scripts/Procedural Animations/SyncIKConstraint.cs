@@ -24,8 +24,8 @@ namespace LightPat.ProceduralAnimations
 
         public override void OnNetworkSpawn()
         {
-            //if (IsOwner)
-            //    NetworkManager.NetworkTickSystem.Tick += UpdateConstraint;
+            if (IsOwner)
+                NetworkManager.NetworkTickSystem.Tick += UpdateConstraint;
         }
 
         public override void OnNetworkDespawn()

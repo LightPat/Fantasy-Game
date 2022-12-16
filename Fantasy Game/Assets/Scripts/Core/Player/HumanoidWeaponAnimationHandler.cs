@@ -249,6 +249,31 @@ namespace LightPat.Core.Player
         void OnAttack1(InputValue value)
         {
             Attack1(value.isPressed);
+            OnAttack1ServerRpc(value.isPressed);
+        }
+
+        [ServerRpc]
+        void OnAttack1ServerRpc(bool pressed)
+        {
+            Attack1(pressed);
+
+            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
+            clientIdList.Remove(OwnerClientId);
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = clientIdList.ToArray()
+                }
+            };
+
+            OnAttack1ClientRpc(pressed, clientRpcParams);
+        }
+
+        [ClientRpc]
+        void OnAttack1ClientRpc(bool pressed, ClientRpcParams clientRpcParams = default)
+        {
+            Attack1(pressed);
         }
 
         [Header("Sword blocking")]
@@ -339,6 +364,31 @@ namespace LightPat.Core.Player
             if (weaponLoadout.equippedWeapon == null) { return; }
             if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload());
+            OnReloadServerRpc();
+        }
+
+        [ServerRpc]
+        void OnReloadServerRpc()
+        {
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload());
+
+            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
+            clientIdList.Remove(OwnerClientId);
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = clientIdList.ToArray()
+                }
+            };
+
+            OnReloadClientRpc(clientRpcParams);
+        }
+
+        [ClientRpc]
+        void OnReloadClientRpc(ClientRpcParams clientRpcParams = default)
+        {
             StartCoroutine(weaponLoadout.equippedWeapon.Reload());
         }
 

@@ -143,7 +143,7 @@ namespace LightPat.EnemyAI
 
                     if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(centerPoint.x, centerPoint.z)) < weaponStopDistance)
                     {
-                        humanoidWeaponAnimationHandler.EquipWeapon(targetWeapon);
+                        humanoidWeaponAnimationHandler.EquipWeapon(targetWeapon.GetComponent<NetworkedWeapon>());
                         targetWeapon = null;
                         fightState = fightingState.combat;
                     }

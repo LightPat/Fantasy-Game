@@ -180,20 +180,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandGrip: {fileID: 8712646920768113520}
   leftHandGrip: {fileID: 1759096557103307721}
-  idealPersonality: 
+  weaponName: Katana
   baseDamage: 1
-  weaponClass: Great Sword
   stowPoint: Spine
   drawSpeed: 1.5
+  animationClass: 
   playerPositionOffset: {x: 0.345, y: 0.017, z: 0.159}
   playerRotationOffset: {x: 193.022, y: 157.456, z: 89.103}
   transitionPositionOffset: {x: 0.345, y: 0.017, z: 0.159}
   transitionRotationOffset: {x: 193.022, y: 157.456, z: 89.103}
   stowedPositionOffset: {x: 0.168, y: 0.879, z: -0.218}
   stowedRotationOffset: {x: 187.713, y: 79.155, z: -179.284}
+  disableUpdate: 0
   settingOffsets: 0
-  disableRotation: 0
   offsetType: 
+  disableAttack: 0
 --- !u!1 &6085640905189597076
 GameObject:
   m_ObjectHideFlags: 0

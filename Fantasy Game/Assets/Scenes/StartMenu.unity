@@ -2903,11 +2903,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefabOptions:
   - {fileID: 7284513826171149821, guid: 93383a051b6c478488eade2780b460ee, type: 3}
-  weaponPrefabOptions:
-  - {fileID: 1649158069515847000, guid: e7f88e83aa05fe4418efbc470fe96757, type: 3}
-  - {fileID: 4661039144465074815, guid: 2bb06372e8ca47246982908bb8bc2dec, type: 3}
-  - {fileID: 7871640728394659331, guid: 0536132dc1c27574396b0c3b13534f89, type: 3}
   serverCameraPrefab: {fileID: 2298131365329834814, guid: 4938f92883654a04190b024def748a52, type: 3}
+  weaponPrefabOptions:
+  - {fileID: 1689723259, guid: e7f88e83aa05fe4418efbc470fe96757, type: 3}
+  - {fileID: 4661039144465074813, guid: 2bb06372e8ca47246982908bb8bc2dec, type: 3}
+  - {fileID: 783794268, guid: 0536132dc1c27574396b0c3b13534f89, type: 3}
 --- !u!1 &1586138263
 GameObject:
   m_ObjectHideFlags: 0

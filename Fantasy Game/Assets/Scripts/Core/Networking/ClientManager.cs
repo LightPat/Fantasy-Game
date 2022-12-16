@@ -11,8 +11,8 @@ namespace LightPat.Core
     public class ClientManager : NetworkBehaviour
     {
         public GameObject[] playerPrefabOptions;
-        public GameObject[] weaponPrefabOptions;
         public GameObject serverCameraPrefab;
+        public Weapon[] weaponPrefabOptions;
         public NetworkVariable<ulong> lobbyLeaderId { get; private set; } = new NetworkVariable<ulong>();
         public NetworkVariable<GameMode> gameMode { get; private set; } = new NetworkVariable<GameMode>();
         private Dictionary<ulong, ClientData> clientDataDictionary = new Dictionary<ulong, ClientData>();
@@ -102,6 +102,10 @@ namespace LightPat.Core
             foreach (GameObject g in playerPrefabOptions)
             {
                 NetworkManager.Singleton.AddNetworkPrefab(g);
+            }
+            foreach (Weapon g in weaponPrefabOptions)
+            {
+                NetworkManager.Singleton.AddNetworkPrefab(g.gameObject);
             }
 
             NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;

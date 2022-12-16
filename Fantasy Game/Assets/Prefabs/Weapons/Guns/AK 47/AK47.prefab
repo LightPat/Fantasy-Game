@@ -650,6 +650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandGrip: {fileID: 6258016477829235357}
   leftHandGrip: {fileID: 2988615204759881577}
+  weaponName: AK 47
   baseDamage: 20
   stowPoint: Spine
   drawSpeed: 2

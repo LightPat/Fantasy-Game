@@ -22,14 +22,12 @@ namespace LightPat.ProceduralAnimations
 
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
-            if (IsOwner)
-                NetworkManager.NetworkTickSystem.Tick += UpdateRig;
+            //if (IsOwner)
+            //    NetworkManager.NetworkTickSystem.Tick += UpdateRig;
         }
 
         public override void OnNetworkDespawn()
         {
-            base.OnNetworkDespawn();
             if (IsOwner)
                 NetworkManager.NetworkTickSystem.Tick -= UpdateRig;
         }

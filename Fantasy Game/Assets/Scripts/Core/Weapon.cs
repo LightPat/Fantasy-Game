@@ -10,7 +10,7 @@ namespace LightPat.Core
         public Transform leftHandGrip;
 
         [Header("Weapon Settings")]
-        //public sbyte[] idealPersonality;
+        public string weaponName;
         public int baseDamage;
         public string stowPoint;
         public float drawSpeed = 1;
@@ -71,6 +71,7 @@ namespace LightPat.Core
 
         protected void Start()
         {
+            name = weaponName;
             targetLocalPosition = playerPositionOffset;
             targetLocalRotation = playerRotationOffset;
         }

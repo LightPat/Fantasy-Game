@@ -6,10 +6,11 @@ using UnityEngine.Animations.Rigging;
 using System;
 using System.Linq;
 using LightPat.ProceduralAnimations;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
-    public class HumanoidWeaponAnimationHandler : MonoBehaviour
+    public class HumanoidWeaponAnimationHandler : NetworkBehaviour
     {
         public int maxWeapons = 3;
         public Transform mainCamera;
@@ -45,7 +46,7 @@ namespace LightPat.Core.Player
         FollowTarget[] rightFingerIKs;
         FollowTarget[] leftFingerIKs;
 
-        private void Start()
+        private void Awake()
         {
             playerController = GetComponent<PlayerController>();
             animatorLayerWeightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
@@ -140,16 +141,32 @@ namespace LightPat.Core.Player
             foreach (RaycastHit hit in allHits)
             {
                 if (hit.transform == transform) { continue; }
-                if (hit.transform.GetComponent<Weapon>())
+                if (hit.transform.GetComponent<NetworkedWeapon>())
                 {
-                    EquipWeapon(hit.transform.GetComponent<Weapon>());
+                    EquipWeapon(hit.transform.GetComponent<NetworkedWeapon>());
                 }
                 break;
             }
         }
 
-        public void EquipWeapon(Weapon weapon)
+        public void EquipWeapon(NetworkedWeapon networkedWeapon)
         {
+            Weapon weapon = networkedWeapon.GetComponent<NetworkedWeapon>().GenerateLocalInstance(true);
+            if (weapon == null) { return; }
+            StartCoroutine(EquipAfter1Frame(weapon));
+            for (int i = 0; i < ClientManager.Singleton.weaponPrefabOptions.Length; i++)
+            {
+                if (ClientManager.Singleton.weaponPrefabOptions[i].weaponName == weapon.weaponName)
+                {
+                    EquipWeaponServerRpc(i);
+                    break;
+                }
+            }
+        }
+
+        IEnumerator EquipAfter1Frame(Weapon weapon)
+        {
+            yield return null;
             // If we already have a weapon equipped just put the weapon we click in our reserves
             if (weaponLoadout.equippedWeapon == null)
             {
@@ -173,6 +190,36 @@ namespace LightPat.Core.Player
                 }
                 weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
             }
+        }
+
+        [ServerRpc]
+        void EquipWeaponServerRpc(int weaponIndex)
+        {
+            GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
+            Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
+            weapon.transform.position = transform.position + transform.forward + transform.up;
+            StartCoroutine(EquipAfter1Frame(weapon));
+
+            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
+            clientIdList.Remove(OwnerClientId);
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = clientIdList.ToArray()
+                }
+            };
+
+            EquipWeaponClientRpc(weaponIndex, clientRpcParams);
+        }
+
+        [ClientRpc]
+        void EquipWeaponClientRpc(int weaponIndex, ClientRpcParams clientRpcParams = default)
+        {
+            GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
+            Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
+            weapon.transform.position = transform.position + transform.forward + transform.up;
+            StartCoroutine(EquipAfter1Frame(weapon));
         }
 
         [Header("Weapon Drop Settings")]
@@ -301,6 +348,43 @@ namespace LightPat.Core.Player
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
             if (chosenWeapon == null) { return; }
+            if (weaponLoadout.equippedWeapon == chosenWeapon)
+                StartCoroutine(StowWeapon());
+            else if (weaponLoadout.equippedWeapon != null)
+                StartCoroutine(SwitchWeapon(slot));
+            else
+                StartCoroutine(DrawWeapon(slot));
+            OnQueryWeaponSlotServerRpc(slot);
+        }
+
+        [ServerRpc]
+        void OnQueryWeaponSlotServerRpc(int slot)
+        {
+            Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
+            if (weaponLoadout.equippedWeapon == chosenWeapon)
+                StartCoroutine(StowWeapon());
+            else if (weaponLoadout.equippedWeapon != null)
+                StartCoroutine(SwitchWeapon(slot));
+            else
+                StartCoroutine(DrawWeapon(slot));
+
+            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
+            clientIdList.Remove(OwnerClientId);
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = clientIdList.ToArray()
+                }
+            };
+
+            OnQueryWeaponSlotClientRpc(slot, clientRpcParams);
+        }
+
+        [ClientRpc]
+        void OnQueryWeaponSlotClientRpc(int slot, ClientRpcParams clientRpcParams = default)
+        {
+            Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
             if (weaponLoadout.equippedWeapon == chosenWeapon)
                 StartCoroutine(StowWeapon());
             else if (weaponLoadout.equippedWeapon != null)

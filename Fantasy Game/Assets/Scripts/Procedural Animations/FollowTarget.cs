@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 
 namespace LightPat.ProceduralAnimations
 {
-    public class FollowTarget : NetworkBehaviour
+    public class FollowTarget : MonoBehaviour
     {
         public Transform target;
         public bool move = true;
@@ -15,8 +14,6 @@ namespace LightPat.ProceduralAnimations
 
         private void Update()
         {
-            if (!IsOwner) { return; }
-
             if (target)
             {
                 if (lerp)

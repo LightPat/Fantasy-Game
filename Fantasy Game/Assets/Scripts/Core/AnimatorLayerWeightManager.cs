@@ -15,8 +15,8 @@ namespace LightPat.Core
 
         public override void OnNetworkSpawn()
         {
-            if (IsOwner)
-                NetworkManager.NetworkTickSystem.Tick += UpdateLayers;
+            //if (IsOwner)
+            //    NetworkManager.NetworkTickSystem.Tick += UpdateLayers;
         }
 
         public override void OnNetworkDespawn()

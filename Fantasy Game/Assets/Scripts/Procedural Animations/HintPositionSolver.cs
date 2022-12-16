@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.Netcode;
 
 namespace LightPat.ProceduralAnimations
 {
-    public class HintPositionSolver : NetworkBehaviour
+    public class HintPositionSolver : MonoBehaviour
     {
         public Transform root;
         public Axis rootAxis;
@@ -27,8 +26,6 @@ namespace LightPat.ProceduralAnimations
         Vector3 tipPosition;
         private void Update()
         {
-            if (!IsOwner) { return; }
-
             rootPosition = root.position;
             switch (rootAxis)
             {

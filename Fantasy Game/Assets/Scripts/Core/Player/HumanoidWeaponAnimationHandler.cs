@@ -479,8 +479,14 @@ namespace LightPat.Core.Player
             yield return new WaitUntil(() => !weaponChangeRunning);
 
             weaponChangeRunning = true;
-            leftHandTarget.lerp = true;
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
+            if (!equippedWeapon)
+            {
+                weaponChangeRunning = false;
+                yield break;
+            }
+
+            leftHandTarget.lerp = true;
             equippedWeapon.disableAttack = true;
             animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
 

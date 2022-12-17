@@ -8867,7 +8867,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionSpeed: 5
---- !u!114 &2789472279165629102
+--- !u!114 &2363941241399803070
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8887,19 +8887,24 @@ MonoBehaviour:
   - crouching
   - jumping
   - falling
-  listtest:
-  - parameterNamesToSync:
-    - moveInputX
-    - moveInputY
-    - sprinting
-    - running
-    - crouching
-    - jumping
-    - falling
-  - parameterNamesToSync: []
-  - parameterNamesToSync: []
-  - parameterNamesToSync: []
-  - parameterNamesToSync: []
+  - mirrorIdle
+  - landingAngle
+  - landingMagnitude
+  - yVelocity
+  - breakfallRoll
+  - idleTime
+  - fistCombat
+  - attack1
+  - attack2
+  - damageAngle
+  - reactDamage
+  - melee
+  - dead
+  - lookAngle
+  - swingSpeed
+  - wallRun
+  - sitting
+  - anyStateLoopReached
 --- !u!114 &4199552101985882351
 MonoBehaviour:
   m_ObjectHideFlags: 0

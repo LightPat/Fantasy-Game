@@ -4319,7 +4319,7 @@ GameObject:
   - component: {fileID: 6346652961685510075}
   - component: {fileID: 7339025583892872717}
   - component: {fileID: 4270139208719424829}
-  - component: {fileID: -7111171513084600058}
+  - component: {fileID: 5441316386387948588}
   m_Layer: 0
   m_Name: Helicopter Model
   m_TagString: Untagged
@@ -4466,7 +4466,7 @@ MonoBehaviour:
   ScaleThreshold: 0.01
   InLocalSpace: 1
   Interpolate: 1
---- !u!114 &-7111171513084600058
+--- !u!114 &5441316386387948588
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4475,8 +4475,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9193954989730624563}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dc9f20cf92676449b8ed35faf8cc48a, type: 3}
+  m_Script: {fileID: 11500000, guid: 7de9e3819c4fc254c9764185604ae246, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TransitionStateInfoList: []
-  m_Animator: {fileID: 7901537269606958420}
+  parameterNamesToSync:
+  - rightDoorOpen
+  - leftDoorOpen
+  - driverDoorOpen
+  - passengerDoorOpen
+  refreshParameters: 0

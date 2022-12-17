@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace LightPat.Core
 {
-    //[ExecuteAlways]
+    [ExecuteAlways]
     public class CustomNetworkAnimator : NetworkBehaviour
     {
         public List<string> parameterNamesToSync = new List<string>();
@@ -31,16 +31,15 @@ namespace LightPat.Core
             animator = GetComponent<Animator>();
         }
 
-        // Uncomment execute always to generate list of parameter strings
-        //private void Update()
-        //{
-        //    if (!refreshParameters) { return; }
-        //    parameterNamesToSync.Clear();
-        //    foreach (AnimatorControllerParameter parameter in animator.parameters)
-        //    {
-        //        parameterNamesToSync.Add(parameter.name);
-        //    }
-        //}
+        private void Update()
+        {
+            if (!refreshParameters) { return; }
+            parameterNamesToSync.Clear();
+            foreach (AnimatorControllerParameter parameter in animator.parameters)
+            {
+                parameterNamesToSync.Add(parameter.name);
+            }
+        }
 
         void UpdateAnimator()
         {

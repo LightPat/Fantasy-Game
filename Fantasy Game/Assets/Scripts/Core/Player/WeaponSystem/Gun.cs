@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using LightPat.ProceduralAnimations;
 using TMPro;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
@@ -52,12 +53,13 @@ namespace LightPat.Core.Player
         AudioSource gunshotSource;
         float minTimeBetweenShots;
 
-        public override void Attack1(bool pressed)
+        public override NetworkObject Attack1(bool pressed)
         {
             firing = pressed;
 
             if (firing)
-                Shoot();
+                return Shoot();
+            return null;
         }
 
         private void OnTransformParentChanged()
@@ -70,47 +72,28 @@ namespace LightPat.Core.Player
             }
         }
 
-        private void Shoot()
+        private NetworkObject Shoot()
         {
-            if (reloading) { return; }
+            if (reloading) { return null; }
             float time = Time.time;
             timeSinceLastShot = time - lastShotTime;
-            if (timeSinceLastShot < minTimeBetweenShots) { return; }
-            if (currentBullets < 1) { return; }
-            if (disableAttack) { return; }
+            if (timeSinceLastShot < minTimeBetweenShots) { return null; }
+            if (currentBullets < 1) { return null; }
+            if (disableAttack) { return null; }
             lastShotTime = time;
 
-            // Play 2 clips that are x seconds long combined, within the time that a next shot can be fired
+            // Play 2 animation clips that are x seconds long combined, within the time that a next shot can be fired
             gunAnimator.SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
             if (!fullAuto)
                 StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(gunAnimator, "fire"));
 
+            // Display muzzle flash
             muzzleFlash.Play();
             GameObject smoke = Instantiate(smokePrefab, smokeSpawnPoint);
             StartCoroutine(Utilities.DestroyAfterParticleSystemStops(smoke.GetComponent<ParticleSystem>()));
 
-            // Spawn the bullet
-            GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
-            Projectile projectile = b.GetComponent<Projectile>();
-            projectile.inflicter = playerWeaponAnimationHandler.gameObject;
-            projectile.originWeapon = this;
-            projectile.damage = baseDamage;
-            projectile.hitmarkerTime = minTimeBetweenShots;
-
-            // Add force so that the bullet flies through the air
-            RaycastHit[] allHits = Physics.RaycastAll(playerWeaponAnimationHandler.mainCamera.position, playerWeaponAnimationHandler.mainCamera.forward, maxRange);
-            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
-            bool bHit = false;
-            foreach (RaycastHit hit in allHits)
-            {
-                if (hit.transform == playerWeaponAnimationHandler.transform) { continue; }
-                b.GetComponent<Rigidbody>().AddForce((hit.point - b.transform.position).normalized * bulletForce, ForceMode.VelocityChange);
-                bHit = true;
-                break;
-            }
-
-            if (!bHit)
-                b.GetComponent<Rigidbody>().AddForce(playerWeaponAnimationHandler.mainCamera.forward * bulletForce, ForceMode.VelocityChange);
+            // Play gunshot sound
+            gunshotSource.PlayOneShot(gunshotClip, gunshotVolume);
 
             // Eject shell from side of gun
             GameObject s = Instantiate(shell, shellSpawnPoint.position, shellSpawnPoint.rotation);
@@ -119,16 +102,47 @@ namespace LightPat.Core.Player
             rb.AddRelativeForce(shellForce * Random.Range(0.7f, 1.3f), ForceMode.VelocityChange);
             Destroy(s, 5);
 
-            // Apply recoil
-            if (!disableRecoil)
-                StartCoroutine(Recoil());
+            // Spawn the bullet
+            if (NetworkManager.Singleton.IsServer)
+            {
+                GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
+                Projectile projectile = b.GetComponent<Projectile>();
+                projectile.inflicter = playerWeaponAnimationHandler.gameObject;
+                projectile.originWeapon = this;
+                projectile.damage = baseDamage;
+                projectile.hitmarkerTime = minTimeBetweenShots;
+                NetworkObject projectileNetObj = b.GetComponent<NetworkObject>();
 
-            currentBullets -= 1;
-            if (playerController)
-                playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
-            if (currentBullets == 0) { StartCoroutine(Reload()); }
+                // Add force so that the bullet flies through the air
+                RaycastHit[] allHits = Physics.RaycastAll(playerWeaponAnimationHandler.mainCamera.position, playerWeaponAnimationHandler.mainCamera.forward, maxRange);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                bool bHit = false;
+                foreach (RaycastHit hit in allHits)
+                {
+                    if (hit.transform == playerWeaponAnimationHandler.transform) { continue; }
+                    b.GetComponent<Rigidbody>().AddForce((hit.point - b.transform.position).normalized * bulletForce, ForceMode.VelocityChange);
+                    bHit = true;
+                    break;
+                }
 
-            gunshotSource.PlayOneShot(gunshotClip, gunshotVolume);
+                if (!bHit)
+                    b.GetComponent<Rigidbody>().AddForce(playerWeaponAnimationHandler.mainCamera.forward * bulletForce, ForceMode.VelocityChange);
+
+                // Apply recoil
+                if (!disableRecoil)
+                    StartCoroutine(Recoil());
+
+                currentBullets -= 1;
+                if (playerController)
+                    playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+                if (currentBullets == 0) { playerWeaponAnimationHandler.SendMessage("OnReload"); }
+
+                return projectileNetObj;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public override IEnumerator Reload()

@@ -8905,6 +8905,7 @@ MonoBehaviour:
   - wallRun
   - sitting
   - anyStateLoopReached
+  refreshParameters: 0
 --- !u!114 &4199552101985882351
 MonoBehaviour:
   m_ObjectHideFlags: 0

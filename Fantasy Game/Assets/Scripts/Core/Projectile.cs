@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
-    public class Projectile : MonoBehaviour
+    public class Projectile : NetworkBehaviour
     {
         public GameObject inflicter;
         public Weapon originWeapon;
@@ -17,19 +18,23 @@ namespace LightPat.Core
         bool damageRunning;
         Vector3 startPos; // Despawn bullet after a certain distance traveled
 
-        private void Start()
+        public override void OnNetworkSpawn()
         {
             startPos = transform.position;
         }
 
         private void FixedUpdate()
         {
+            if (!IsServer) { return; }
+
             if (Vector3.Distance(startPos, transform.position) > maxDestroyDistance)
-                Destroy(gameObject);
+                NetworkObject.Despawn(true);
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!IsServer) { return; }
+
             if (other.GetComponent<Projectile>()) { return; }
 
             if (other.attachedRigidbody)
@@ -48,7 +53,7 @@ namespace LightPat.Core
                 }
             }
 
-            Destroy(gameObject);
+            NetworkObject.Despawn(true);
         }
     }
 

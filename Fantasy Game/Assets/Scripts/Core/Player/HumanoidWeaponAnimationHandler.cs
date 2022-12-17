@@ -285,7 +285,9 @@ namespace LightPat.Core.Player
         {
             animator.SetBool("attack1", pressed);
             if (weaponLoadout.equippedWeapon == null) { return; }
-            weaponLoadout.equippedWeapon.Attack1(pressed);
+            NetworkObject netObj = weaponLoadout.equippedWeapon.Attack1(pressed);
+            if (netObj)
+                netObj.Spawn();
         }
 
         void OnAttack1(InputValue value)

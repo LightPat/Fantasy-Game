@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
@@ -24,7 +25,7 @@ namespace LightPat.Core.Player
             StartCoroutine(ResetSwing());
         }
 
-        public override void Attack1(bool pressed)
+        public override NetworkObject Attack1(bool pressed)
         {
             attack1 = pressed;
             if (swingRoutine != null)
@@ -36,6 +37,7 @@ namespace LightPat.Core.Player
                 StartCoroutine(ResetColliders());
                 swinging = false;
             }
+            return null;
         }
 
         private IEnumerator ResetSwing()

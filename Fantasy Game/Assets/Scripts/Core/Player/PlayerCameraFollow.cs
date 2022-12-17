@@ -24,6 +24,7 @@ namespace LightPat.Core.Player
         Animator playerAnimator;
         WeaponLoadout playerWeaponLoadout;
         AnimatorLayerWeightManager layerWeightManager;
+        Transform aimTarget;
 
         public void RefreshCameraParent()
         {
@@ -51,11 +52,15 @@ namespace LightPat.Core.Player
             playerAnimator = playerController.GetComponentInChildren<Animator>();
             playerWeaponLoadout = playerController.GetComponent<WeaponLoadout>();
             layerWeightManager = playerController.GetComponentInChildren<AnimatorLayerWeightManager>();
+            aimTarget = playerController.GetComponentInChildren<AimTargetIKSolver>().transform;
         }
 
         private void LateUpdate()
         {
             transform.position = followTarget.position;
+
+            // If we are not the owner of this player, look at the aim target and do nothing else
+            if (!playerController.IsOwner) { transform.LookAt(aimTarget); return; }
 
             if (updateRotationWithTarget & !previousRotationState) // if we just activated updateRotationWithTarget
             {

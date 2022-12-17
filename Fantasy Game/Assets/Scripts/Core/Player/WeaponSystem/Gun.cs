@@ -102,6 +102,18 @@ namespace LightPat.Core.Player
             rb.AddRelativeForce(shellForce * Random.Range(0.7f, 1.3f), ForceMode.VelocityChange);
             Destroy(s, 5);
 
+            if (playerWeaponAnimationHandler.IsOwner)
+            {
+                // Apply recoil
+                if (!disableRecoil)
+                    StartCoroutine(Recoil());
+
+                currentBullets -= 1;
+                if (playerController)
+                    playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+                if (currentBullets == 0) { playerWeaponAnimationHandler.SendMessage("OnReload"); }
+            }
+
             // Spawn the bullet
             if (NetworkManager.Singleton.IsServer)
             {
@@ -127,15 +139,6 @@ namespace LightPat.Core.Player
 
                 if (!bHit)
                     b.GetComponent<Rigidbody>().AddForce(playerWeaponAnimationHandler.mainCamera.forward * bulletForce, ForceMode.VelocityChange);
-
-                // Apply recoil
-                if (!disableRecoil)
-                    StartCoroutine(Recoil());
-
-                currentBullets -= 1;
-                if (playerController)
-                    playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
-                if (currentBullets == 0) { playerWeaponAnimationHandler.SendMessage("OnReload"); }
 
                 return projectileNetObj;
             }

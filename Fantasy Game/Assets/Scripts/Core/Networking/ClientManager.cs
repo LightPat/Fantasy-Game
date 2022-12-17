@@ -192,6 +192,7 @@ namespace LightPat.Core
             GameObject g = Instantiate(playerPrefabOptions[clientDataDictionary[clientId].playerPrefabOptionIndex]);
             g.transform.position = new Vector3(95, 2, -95); // Remove this and replace with an actual spawn position variable in clientData
             g.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+            //g.SendMessage("StartEquipInitialWeapons");
         }
     }
 
@@ -202,6 +203,7 @@ namespace LightPat.Core
         public int playerPrefabOptionIndex;
         public Team team;
         public Color[] colors;
+        public int[] initialWeapons;
 
         public ClientData(string clientName)
         {
@@ -210,6 +212,7 @@ namespace LightPat.Core
             playerPrefabOptionIndex = 0;
             team = Team.Red;
             colors = new Color[1];
+            initialWeapons = new int[0];
         }
 
         public ClientData ToggleReady()
@@ -240,6 +243,13 @@ namespace LightPat.Core
             return copy;
         }
 
+        public ClientData ChangeInitialWeapons(int[] newWeapons)
+        {
+            ClientData copy = this;
+            copy.initialWeapons = newWeapons;
+            return copy;
+        }
+
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref clientName);
@@ -247,6 +257,7 @@ namespace LightPat.Core
             serializer.SerializeValue(ref playerPrefabOptionIndex);
             serializer.SerializeValue(ref team);
             serializer.SerializeValue(ref colors);
+            serializer.SerializeValue(ref initialWeapons);
         }
     }
 

@@ -41,6 +41,7 @@ namespace LightPat.Core.Player
 
         public void ChangeSlotStyle(int slotIndex, FontStyles fontStyle)
         {
+            if (slotIndex == -1) { return; }
             weaponSlots.GetChild(slotIndex).GetComponent<TextMeshProUGUI>().fontStyle = fontStyle;
         }
 

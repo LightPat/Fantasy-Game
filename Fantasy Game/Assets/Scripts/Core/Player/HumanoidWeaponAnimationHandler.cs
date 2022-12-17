@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using LightPat.ProceduralAnimations;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 
 namespace LightPat.Core.Player
 {
@@ -54,7 +55,14 @@ namespace LightPat.Core.Player
             weaponLoadout = GetComponent<WeaponLoadout>();
             rightFingerIKs = rightFingerRig.GetComponentsInChildren<FollowTarget>();
             leftFingerIKs = leftFingerRig.GetComponentsInChildren<FollowTarget>();
+        }
 
+        public override void OnNetworkSpawn()
+        {
+            foreach (int i in ClientManager.Singleton.GetClient(OwnerClientId).initialWeapons)
+            {
+                weaponLoadout.startingWeapons.Add(ClientManager.Singleton.weaponPrefabOptions[i]);
+            }
             StartCoroutine(EquipInitialWeapons());
         }
 
@@ -73,6 +81,10 @@ namespace LightPat.Core.Player
                 if (startingWeapon.gameObject.scene.name == null)
                 {
                     GameObject g = Instantiate(startingWeapon.gameObject);
+                    Destroy(g.GetComponent<NetworkedWeapon>());
+                    Destroy(g.GetComponent<NetworkTransform>());
+                    Destroy(g.GetComponent<NetworkObject>());
+                    yield return new WaitUntil(() => !g.GetComponent<NetworkObject>());
                     weapon = g.GetComponent<Weapon>();
                     ReparentWeapon(weapon, "stowed");
                     g.transform.localPosition = weapon.stowedPositionOffset;
@@ -104,6 +116,10 @@ namespace LightPat.Core.Player
                 if (startingWeapon.gameObject.scene.name == null)
                 {
                     GameObject g = Instantiate(startingWeapon.gameObject);
+                    Destroy(g.GetComponent<NetworkedWeapon>());
+                    Destroy(g.GetComponent<NetworkTransform>());
+                    Destroy(g.GetComponent<NetworkObject>());
+                    yield return new WaitUntil(() => !g.GetComponent<NetworkObject>());
                     weapon = g.GetComponent<Weapon>();
                     ReparentWeapon(weapon, "player");
                     g.transform.localPosition = weapon.stowedPositionOffset;
@@ -195,10 +211,13 @@ namespace LightPat.Core.Player
         [ServerRpc]
         void EquipWeaponServerRpc(int weaponIndex)
         {
-            GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
-            Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
-            weapon.transform.position = transform.position + transform.forward + transform.up;
-            StartCoroutine(EquipAfter1Frame(weapon));
+            if (!IsHost)
+            {
+                GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
+                Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
+                weapon.transform.position = transform.position + transform.forward + transform.up;
+                StartCoroutine(EquipAfter1Frame(weapon));
+            }
 
             List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
             clientIdList.Remove(OwnerClientId);
@@ -398,25 +417,37 @@ namespace LightPat.Core.Player
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
             if (chosenWeapon == null) { return; }
+            string actionType = "";
             if (weaponLoadout.equippedWeapon == chosenWeapon)
+            {
                 StartCoroutine(StowWeapon());
+                actionType = "stow";
+            }
             else if (weaponLoadout.equippedWeapon != null)
+            {
                 StartCoroutine(SwitchWeapon(slot));
+                actionType = "switch";
+            }
             else
+            {
                 StartCoroutine(DrawWeapon(slot));
-            OnQueryWeaponSlotServerRpc(slot);
+                actionType = "draw";
+            }
+            OnQueryWeaponSlotServerRpc(slot, actionType);
         }
 
         [ServerRpc]
-        void OnQueryWeaponSlotServerRpc(int slot)
+        void OnQueryWeaponSlotServerRpc(int slot, string actionType)
         {
-            Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
-            if (weaponLoadout.equippedWeapon == chosenWeapon)
-                StartCoroutine(StowWeapon());
-            else if (weaponLoadout.equippedWeapon != null)
-                StartCoroutine(SwitchWeapon(slot));
-            else
-                StartCoroutine(DrawWeapon(slot));
+            if (!IsHost)
+            {
+                if (actionType == "stow")
+                    StartCoroutine(StowWeapon());
+                else if (actionType == "switch")
+                    StartCoroutine(SwitchWeapon(slot));
+                else if (actionType == "draw")
+                    StartCoroutine(DrawWeapon(slot));
+            }
 
             List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
             clientIdList.Remove(OwnerClientId);
@@ -428,23 +459,26 @@ namespace LightPat.Core.Player
                 }
             };
 
-            OnQueryWeaponSlotClientRpc(slot, clientRpcParams);
+            OnQueryWeaponSlotClientRpc(slot, actionType, clientRpcParams);
         }
 
         [ClientRpc]
-        void OnQueryWeaponSlotClientRpc(int slot, ClientRpcParams clientRpcParams = default)
+        void OnQueryWeaponSlotClientRpc(int slot, string actionType, ClientRpcParams clientRpcParams = default)
         {
-            Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
-            if (weaponLoadout.equippedWeapon == chosenWeapon)
+            if (actionType == "stow")
                 StartCoroutine(StowWeapon());
-            else if (weaponLoadout.equippedWeapon != null)
+            else if (actionType == "switch")
                 StartCoroutine(SwitchWeapon(slot));
-            else
+            else if (actionType == "draw")
                 StartCoroutine(DrawWeapon(slot));
         }
 
+        bool weaponChangeRunning;
         private IEnumerator StowWeapon()
         {
+            yield return new WaitUntil(() => !weaponChangeRunning);
+
+            weaponChangeRunning = true;
             leftHandTarget.lerp = true;
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
             equippedWeapon.disableAttack = true;
@@ -472,10 +506,14 @@ namespace LightPat.Core.Player
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
             leftHandTarget.lerp = false;
+            weaponChangeRunning = false;
         }
 
         private IEnumerator DrawWeapon(int slotIndex)
         {
+            yield return new WaitUntil(() => !weaponChangeRunning);
+
+            weaponChangeRunning = true;
             leftHandTarget.lerp = true;
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
             animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
@@ -501,10 +539,14 @@ namespace LightPat.Core.Player
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
             leftHandTarget.lerp = false;
+            weaponChangeRunning = false;
         }
 
         private IEnumerator SwitchWeapon(int slotIndex)
         {
+            yield return new WaitUntil(() => !weaponChangeRunning);
+
+            weaponChangeRunning = true;
             leftHandTarget.lerp = true;
             // Stow equipped weapon
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
@@ -554,6 +596,7 @@ namespace LightPat.Core.Player
 
             yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
             leftHandTarget.lerp = false;
+            weaponChangeRunning = false;
         }
 
         private void OnTriggerEnter(Collider other)

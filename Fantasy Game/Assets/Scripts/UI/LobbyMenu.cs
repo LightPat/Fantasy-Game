@@ -21,8 +21,10 @@ namespace LightPat.UI
         public GameObject WaitingToStartText;
         public TMP_Dropdown gameModeDropdown;
         public TMP_Dropdown playerModelDropdown;
-        [Header("Capture The Flag")]
-        public GameObject test;
+        [Header("Loadout dropdowns")]
+        public TMP_Dropdown primaryWeaponDropdown;
+        public TMP_Dropdown secondaryWeaponDropdown;
+        public TMP_Dropdown tertiaryWeaponDropdown;
 
         GameObject playerModel;
         MaterialColorChange colors;
@@ -46,6 +48,8 @@ namespace LightPat.UI
         {
             if (loadingGame) { return; }
             loadingGame = true;
+            ulong localClientId = NetworkManager.Singleton.LocalClientId;
+            ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangeInitialWeapons(new int[] { primaryWeaponDropdown.value, secondaryWeaponDropdown.value, tertiaryWeaponDropdown.value }));
             Debug.Log("Loading game");
             if (gameModeDropdown.options[gameModeDropdown.value].text == "CaptureTheFlag")
                 ClientManager.Singleton.ChangeSceneServerRpc(NetworkManager.Singleton.LocalClientId, "Level1", true);
@@ -165,6 +169,21 @@ namespace LightPat.UI
             }
             gameModeDropdown.ClearOptions();
             gameModeDropdown.AddOptions(gameModes);
+
+            List<TMP_Dropdown.OptionData> weapons = new List<TMP_Dropdown.OptionData>();
+            foreach (Weapon weapon in ClientManager.Singleton.weaponPrefabOptions)
+            {
+                weapons.Add(new TMP_Dropdown.OptionData(weapon.weaponName));
+            }
+            primaryWeaponDropdown.ClearOptions();
+            primaryWeaponDropdown.AddOptions(weapons);
+            primaryWeaponDropdown.value = 0;
+            secondaryWeaponDropdown.ClearOptions();
+            secondaryWeaponDropdown.AddOptions(weapons);
+            secondaryWeaponDropdown.value = 1;
+            tertiaryWeaponDropdown.ClearOptions();
+            tertiaryWeaponDropdown.AddOptions(weapons);
+            tertiaryWeaponDropdown.value = 2;
 
             cameraPositionOffset = Camera.main.transform.localPosition;
 

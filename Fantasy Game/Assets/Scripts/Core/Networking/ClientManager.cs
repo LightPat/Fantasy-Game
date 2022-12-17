@@ -190,9 +190,7 @@ namespace LightPat.Core
         void SpawnPlayerServerRpc(ulong clientId)
         {
             GameObject g = Instantiate(playerPrefabOptions[clientDataDictionary[clientId].playerPrefabOptionIndex]);
-            g.transform.position = new Vector3(95, 2, -95); // Remove this and replace with an actual spawn position variable in clientData
             g.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
-            //g.SendMessage("StartEquipInitialWeapons");
         }
     }
 

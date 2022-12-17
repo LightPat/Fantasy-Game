@@ -247,15 +247,38 @@ namespace LightPat.Core.Player
         {
             if (weaponLoadout.equippedWeapon)
             {
-                animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
-                weaponLoadout.equippedWeapon.transform.position += transform.forward;
-                weaponLoadout.equippedWeapon.transform.SetParent(null, true);
-                Rigidbody rb = weaponLoadout.equippedWeapon.gameObject.AddComponent<Rigidbody>();
-                rb.interpolation = RigidbodyInterpolation.Interpolate;
-                rb.AddForce(rb.transform.rotation * dropForce, ForceMode.VelocityChange);
-                weaponLoadout.RemoveEquippedWeapon();
-                DisableCombatIKs();
+                for (int i = 0; i < ClientManager.Singleton.weaponPrefabOptions.Length; i++)
+                {
+                    if (weaponLoadout.equippedWeapon.weaponName == ClientManager.Singleton.weaponPrefabOptions[i].weaponName)
+                    {
+                        DropWeaponServerRpc(i);
+                    }
+                }
             }
+        }
+
+        [ServerRpc]
+        void DropWeaponServerRpc(int weaponIndex)
+        {
+            GameObject droppedWeapon = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject, weaponLoadout.equippedWeapon.transform.position + transform.forward, weaponLoadout.equippedWeapon.transform.rotation);
+            droppedWeapon.GetComponent<NetworkObject>().Spawn();
+            droppedWeapon.GetComponent<Rigidbody>().AddForce(droppedWeapon.transform.rotation * dropForce, ForceMode.VelocityChange);
+
+            animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
+            Destroy(weaponLoadout.equippedWeapon.gameObject);
+            weaponLoadout.RemoveEquippedWeapon();
+            DisableCombatIKs();
+
+            DropWeaponClientRpc();
+        }
+
+        [ClientRpc]
+        void DropWeaponClientRpc()
+        {
+            animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
+            Destroy(weaponLoadout.equippedWeapon.gameObject);
+            weaponLoadout.RemoveEquippedWeapon();
+            DisableCombatIKs();
         }
 
         public void Attack1(bool pressed)
@@ -274,7 +297,8 @@ namespace LightPat.Core.Player
         [ServerRpc]
         void OnAttack1ServerRpc(bool pressed)
         {
-            Attack1(pressed);
+            if (!IsHost)
+                Attack1(pressed);
 
             List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
             clientIdList.Remove(OwnerClientId);
@@ -289,11 +313,7 @@ namespace LightPat.Core.Player
             OnAttack1ClientRpc(pressed, clientRpcParams);
         }
 
-        [ClientRpc]
-        void OnAttack1ClientRpc(bool pressed, ClientRpcParams clientRpcParams = default)
-        {
-            Attack1(pressed);
-        }
+        [ClientRpc] void OnAttack1ClientRpc(bool pressed, ClientRpcParams clientRpcParams = default) { Attack1(pressed); }
 
         [Header("Sword blocking")]
         public Transform blockConstraints;
@@ -301,11 +321,11 @@ namespace LightPat.Core.Player
         bool blocking;
         float oldRigSpeed;
         int oldCullingMask;
-        void OnAttack2(InputValue value)
+        public void Attack2(bool pressed)
         {
             if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
             {
-                if (!value.isPressed) { return; }
+                if (pressed) { return; }
                 if (!animator.GetBool("fistCombat"))
                 {
                     animator.SetBool("fistCombat", true);
@@ -317,7 +337,7 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                blocking = value.isPressed;
+                blocking = pressed;
                 animator.SetBool("attack2", blocking);
                 if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 {
@@ -357,6 +377,32 @@ namespace LightPat.Core.Player
                 }
             }
         }
+
+        void OnAttack2(InputValue value)
+        {
+            Attack2(value.isPressed);
+        }
+
+        [ServerRpc]
+        void OnAttack2ServerRpc(bool pressed)
+        {
+            if (!IsHost)
+                Attack2(pressed);
+
+            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
+            clientIdList.Remove(OwnerClientId);
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = clientIdList.ToArray()
+                }
+            };
+
+            OnAttack2ClientRpc(pressed, clientRpcParams);
+        }
+
+        [ClientRpc] void OnAttack2ClientRpc(bool pressed, ClientRpcParams clientRpcParams = default) { Attack2(pressed); }
 
         private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, RigWeightTarget rig, float originalSpeed)
         {

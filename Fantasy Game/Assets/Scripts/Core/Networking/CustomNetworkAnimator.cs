@@ -10,6 +10,7 @@ namespace LightPat.Core
     public class CustomNetworkAnimator : NetworkBehaviour
     {
         public List<string> parameterNamesToSync = new List<string>();
+        public bool refreshParameters;
 
         Animator animator;
 
@@ -33,6 +34,7 @@ namespace LightPat.Core
         // Uncomment execute always to generate list of parameter strings
         //private void Update()
         //{
+        //    if (!refreshParameters) { return; }
         //    parameterNamesToSync.Clear();
         //    foreach (AnimatorControllerParameter parameter in animator.parameters)
         //    {

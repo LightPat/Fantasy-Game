@@ -11,6 +11,7 @@ namespace LightPat.Core.Player
 {
     public class PlayerController : NetworkBehaviour
     {
+        public GameObject worldSpaceLabel;
         public PlayerCameraFollow playerCamera { get; private set; }
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
@@ -35,16 +36,21 @@ namespace LightPat.Core.Player
 
         public override void OnNetworkSpawn()
         {
+            name = ClientManager.Singleton.GetClient(OwnerClientId).clientName;
+
             if (IsOwner)
             {
                 GetComponent<PlayerInput>().enabled = true;
                 GetComponent<ActionMapHandler>().enabled = true;
+                playerCamera.GetComponent<AudioListener>().enabled = true;
                 playerCamera.tag = "MainCamera";
+                Destroy(worldSpaceLabel);
             }
             else
             {
                 GetComponent<PlayerInput>().enabled = false;
                 GetComponent<ActionMapHandler>().enabled = false;
+                playerCamera.GetComponent<AudioListener>().enabled = false;
                 playerCamera.GetComponent<Camera>().depth = -1;
                 playerHUD.gameObject.SetActive(false);
             }

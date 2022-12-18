@@ -48,15 +48,19 @@ namespace LightPat.UI
         {
             if (loadingGame) { return; }
             loadingGame = true;
-            ulong localClientId = NetworkManager.Singleton.LocalClientId;
-            ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangeInitialWeapons(new int[] { primaryWeaponDropdown.value, secondaryWeaponDropdown.value, tertiaryWeaponDropdown.value }));
             Debug.Log("Loading game");
             if (gameModeDropdown.options[gameModeDropdown.value].text == "CaptureTheFlag")
-                ClientManager.Singleton.ChangeSceneServerRpc(NetworkManager.Singleton.LocalClientId, "Level1", true);
+                ClientManager.Singleton.ChangeSceneServerRpc(NetworkManager.Singleton.LocalClientId, "TestScene", true);
             else if (gameModeDropdown.options[gameModeDropdown.value].text == "HordeMode")
                 Debug.LogError("Horde mode isn't done yet");
             else if (gameModeDropdown.options[gameModeDropdown.value].text == "GhostInTheGraveyard")
                 Debug.LogError("Ghost in the graveyard isn't done yet");
+        }
+
+        public void UpdateWeaponLoadout()
+        {
+            ulong localClientId = NetworkManager.Singleton.LocalClientId;
+            ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangeInitialWeapons(new int[] { primaryWeaponDropdown.value, secondaryWeaponDropdown.value, tertiaryWeaponDropdown.value }));
         }
 
         public void UpdatePlayerDisplay()
@@ -177,13 +181,10 @@ namespace LightPat.UI
             }
             primaryWeaponDropdown.ClearOptions();
             primaryWeaponDropdown.AddOptions(weapons);
-            primaryWeaponDropdown.value = 0;
             secondaryWeaponDropdown.ClearOptions();
             secondaryWeaponDropdown.AddOptions(weapons);
-            secondaryWeaponDropdown.value = 1;
             tertiaryWeaponDropdown.ClearOptions();
             tertiaryWeaponDropdown.AddOptions(weapons);
-            tertiaryWeaponDropdown.value = 2;
 
             cameraPositionOffset = Camera.main.transform.localPosition;
 
@@ -196,6 +197,9 @@ namespace LightPat.UI
             yield return new WaitUntil(() => ClientManager.Singleton.GetClientDataDictionary().ContainsKey(NetworkManager.Singleton.LocalClientId));
             UpdatePlayerDisplay();
             UpdateGameModeValue();
+            primaryWeaponDropdown.value = 0;
+            secondaryWeaponDropdown.value = 1;
+            tertiaryWeaponDropdown.value = 2;
         }
 
         private void Update()

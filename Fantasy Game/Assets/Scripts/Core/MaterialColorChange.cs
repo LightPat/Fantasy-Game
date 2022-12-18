@@ -10,7 +10,15 @@ public class MaterialColorChange : MonoBehaviour
 
     void Awake()
     {
-        materialRenderers = GetComponentsInChildren<Renderer>();
+        List<Renderer> materialRenderersList = new List<Renderer>();
+        foreach (Renderer renderer in GetComponentsInChildren<Renderer>())
+        {
+            if (renderer.material.HasProperty("_Color"))
+            {
+                materialRenderersList.Add(renderer);
+            }
+        }
+        materialRenderers = materialRenderersList.ToArray();
 
         originalColors = new Color[materialRenderers.Length];
         for (int i = 0; i < materialRenderers.Length; i++)

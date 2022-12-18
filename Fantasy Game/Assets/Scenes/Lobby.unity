@@ -593,7 +593,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 259672672}
         m_TargetAssemblyTypeName: LightPat.UI.LobbyMenu, UI
-        m_MethodName: UpdateGameModeValue
+        m_MethodName: UpdateWeaponLoadout
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4032,7 +4032,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 259672672}
         m_TargetAssemblyTypeName: LightPat.UI.LobbyMenu, UI
-        m_MethodName: UpdateGameModeValue
+        m_MethodName: UpdateWeaponLoadout
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6426,7 +6426,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 259672672}
         m_TargetAssemblyTypeName: LightPat.UI.LobbyMenu, UI
-        m_MethodName: UpdateGameModeValue
+        m_MethodName: UpdateWeaponLoadout
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

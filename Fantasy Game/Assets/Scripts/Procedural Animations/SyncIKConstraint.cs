@@ -66,12 +66,17 @@ namespace LightPat.ProceduralAnimations
         [ServerRpc]
         void SendConstraintServerRpc(Vector3 newOffset, ConstraintType offsetType, ulong clientId)
         {
-            if (offsetType == ConstraintType.aim)
-                aimConstraint.data.offset = newOffset;
-            else if (offsetType == ConstraintType.rotation)
-                rotationConstraint.data.offset = newOffset;
-            else if (offsetType == ConstraintType.position)
-                positionConstraint.data.offset = newOffset;
+            Debug.Log("Sync IK Constraint " + this);
+
+            if (!IsHost)
+            {
+                if (offsetType == ConstraintType.aim)
+                    aimConstraint.data.offset = newOffset;
+                else if (offsetType == ConstraintType.rotation)
+                    rotationConstraint.data.offset = newOffset;
+                else if (offsetType == ConstraintType.position)
+                    positionConstraint.data.offset = newOffset;
+            }
 
             List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
             clientIdList.Remove(clientId);

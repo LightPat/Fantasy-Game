@@ -15,11 +15,15 @@ namespace LightPat.Core
         public float hitmarkerVolume = 1;
         public float hitmarkerTime;
 
+        [HideInInspector] public Vector3 startForce;
+
         bool damageRunning;
         Vector3 startPos; // Despawn bullet after a certain distance traveled
 
         public override void OnNetworkSpawn()
         {
+            Debug.Log("Projectile spawned at: " + Time.time);
+            GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
             startPos = transform.position;
         }
 

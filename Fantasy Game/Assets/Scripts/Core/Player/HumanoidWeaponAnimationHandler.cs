@@ -287,7 +287,7 @@ namespace LightPat.Core.Player
             if (weaponLoadout.equippedWeapon == null) { return; }
             NetworkObject netObj = weaponLoadout.equippedWeapon.Attack1(pressed);
             if (netObj)
-                netObj.Spawn();
+                netObj.Spawn(true);
         }
 
         void OnAttack1(InputValue value)

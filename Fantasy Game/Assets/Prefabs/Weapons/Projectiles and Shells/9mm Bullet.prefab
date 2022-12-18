@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 8783793137523742588}
   - component: {fileID: 8083592299719464484}
   - component: {fileID: 6735074288099303180}
-  - component: {fileID: 7551811609407829201}
+  - component: {fileID: 7473461110865419507}
   m_Layer: 0
   m_Name: 9mm Bullet
   m_TagString: Untagged
@@ -229,7 +229,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &7551811609407829201
+--- !u!114 &7473461110865419507
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -238,7 +238,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8783793137523742586}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   SyncPositionX: 1

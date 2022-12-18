@@ -132,13 +132,13 @@ namespace LightPat.Core.Player
                 foreach (RaycastHit hit in allHits)
                 {
                     if (hit.transform == playerWeaponAnimationHandler.transform) { continue; }
-                    b.GetComponent<Rigidbody>().AddForce((hit.point - b.transform.position).normalized * bulletForce, ForceMode.VelocityChange);
+                    projectile.startForce = (hit.point - b.transform.position).normalized * bulletForce;
                     bHit = true;
                     break;
                 }
 
                 if (!bHit)
-                    b.GetComponent<Rigidbody>().AddForce(playerWeaponAnimationHandler.mainCamera.forward * bulletForce, ForceMode.VelocityChange);
+                    projectile.startForce = playerWeaponAnimationHandler.mainCamera.forward * bulletForce;
 
                 return projectileNetObj;
             }

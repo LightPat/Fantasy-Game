@@ -16,8 +16,8 @@ namespace LightPat.Core
 
         public override void OnNetworkSpawn()
         {
-            if (IsOwner)
-                NetworkManager.NetworkTickSystem.Tick += UpdateAnimator;
+            //if (IsOwner)
+            //    NetworkManager.NetworkTickSystem.Tick += UpdateAnimator;
         }
 
         public override void OnNetworkDespawn()

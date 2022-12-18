@@ -431,7 +431,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSourcePrefab: {fileID: 4190215059227863283, guid: 853941c4bee1eca43b031578623830bd, type: 3}
-  initialVolume: 0.1
+  initialVolume: 0
 --- !u!114 &1588784493
 MonoBehaviour:
   m_ObjectHideFlags: 0

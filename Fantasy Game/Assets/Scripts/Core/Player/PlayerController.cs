@@ -661,6 +661,12 @@ namespace LightPat.Core.Player
 
         void OnProjectileHit(HitmarkerData hitmarkerData)
         {
+            if (IsLocalPlayer)
+            {
+                // Execute hitmarker
+            }
+
+            Debug.Log("Hitmarker at " + Time.time);
             AudioManager.Singleton.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
             StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerData.hitmarkerTime));
         }

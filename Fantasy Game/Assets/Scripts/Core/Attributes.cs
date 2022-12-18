@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Linq;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
-    public class Attributes : MonoBehaviour
+    public class Attributes : NetworkBehaviour
     {
         public bool invincible;
         //[Header("Affinity Scores")]
@@ -25,14 +26,30 @@ namespace LightPat.Core
         [Header("Collider Damage Multipliers")]
         public Collider headCollider;
 
-        public float HP { get; private set; }
+        public NetworkVariable<float> HP { get; private set; } = new NetworkVariable<float>();
         Animator animator;
+
+        public override void OnNetworkSpawn()
+        {
+            HP.OnValueChanged = UpdateHPDisplay;
+            HP.Value = maxHealth;
+        }
 
         private void Start()
         {
             animator = GetComponentInChildren<Animator>();
-            HP = maxHealth;
-            UpdateHPDisplay();
+
+            // If we are a NPC, we edit the renderer's material instance
+            if (healthRenderer != null)
+            {
+                healthRenderer.material.SetFloat("healthPercentage", HP.Value / maxHealth);
+                healthPointsWorldText.SetText(HP.Value + " / " + maxHealth);
+            }
+            if (imageMaterial != null) // If we are the player, we have to edit the material directly (limitation of unity's canvas renderer)
+            {
+                imageMaterial.SetFloat("healthPercentage", HP.Value / maxHealth);
+                healthPointsUIText.SetText(HP.Value + " / " + maxHealth);
+            }
         }
 
         public void InflictDamage(float damage, GameObject inflicter)
@@ -46,15 +63,15 @@ namespace LightPat.Core
                 float[] array = new float[3] { 0, 90, 180 };
                 float nearest = array.OrderBy(x => Mathf.Abs((long)x - damageAngle)).First();
                 if (nearest != 180)
-                    HP -= damage;
+                    HP.Value -= damage;
             }
             else
             {
-                HP -= damage;
+                HP.Value -= damage;
             }
 
-            if (HP < 0)
-                HP = 0;
+            if (HP.Value < 0)
+                HP.Value = 0;
 
             SendMessage("OnAttacked", inflicter);
 
@@ -63,7 +80,7 @@ namespace LightPat.Core
                 animator.SetFloat("damageAngle", damageAngle);
                 StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
 
-                if (HP <= 0)
+                if (HP.Value <= 0)
                 {
                     animator.SetBool("dead", true);
                     SendMessage("OnDeath");
@@ -71,10 +88,8 @@ namespace LightPat.Core
             }
             else
             {
-                if (HP <= 0) { gameObject.SetActive(false); }
+                if (HP.Value <= 0) { gameObject.SetActive(false); }
             }
-
-            UpdateHPDisplay();
         }
 
         public void InflictDamage(float damage, GameObject inflicter, Projectile projectile)
@@ -88,15 +103,15 @@ namespace LightPat.Core
                 float[] array = new float[3] { 0, 90, 180 };
                 float nearest = array.OrderBy(x => Mathf.Abs((long)x - damageAngle)).First();
                 if (nearest != 180)
-                    HP -= damage;
+                    HP.Value -= damage;
             }
             else
             {
-                HP -= damage;
+                HP.Value -= damage;
             }
 
-            if (HP < 0)
-                HP = 0;
+            if (HP.Value < 0)
+                HP.Value = 0;
 
             SendMessage("OnAttacked", inflicter);
 
@@ -105,7 +120,7 @@ namespace LightPat.Core
                 animator.SetFloat("damageAngle", damageAngle);
                 StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
 
-                if (HP <= 0)
+                if (HP.Value <= 0)
                 {
                     animator.SetBool("dead", true);
                     SendMessage("OnDeath");
@@ -113,24 +128,22 @@ namespace LightPat.Core
             }
             else
             {
-                if (HP <= 0) { gameObject.SetActive(false); }
+                if (HP.Value <= 0) { gameObject.SetActive(false); }
             }
-
-            UpdateHPDisplay();
         }
 
-        private void UpdateHPDisplay()
+        private void UpdateHPDisplay(float previous, float current)
         {
             // If we are a NPC, we edit the renderer's material instance
             if (healthRenderer != null)
             {
-                healthRenderer.material.SetFloat("healthPercentage", HP / maxHealth);
-                healthPointsWorldText.SetText(HP + " / " + maxHealth);
+                healthRenderer.material.SetFloat("healthPercentage", HP.Value / maxHealth);
+                healthPointsWorldText.SetText(HP.Value + " / " + maxHealth);
             }
             else // If we are the player, we have to edit the material directly (limitation of unity's canvas renderer)
             {
-                imageMaterial.SetFloat("healthPercentage", HP / maxHealth);
-                healthPointsUIText.SetText(HP + " / " + maxHealth);
+                imageMaterial.SetFloat("healthPercentage", HP.Value / maxHealth);
+                healthPointsUIText.SetText(HP.Value + " / " + maxHealth);
             }
         }
     }

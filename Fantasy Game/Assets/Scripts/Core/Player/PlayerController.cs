@@ -659,16 +659,31 @@ namespace LightPat.Core.Player
             }
         }
 
-        void OnProjectileHit(HitmarkerData hitmarkerData)
+        void PlayHitmarker(HitmarkerData hitmarkerData)
         {
             if (IsLocalPlayer)
             {
-                // Execute hitmarker
+                AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[hitmarkerData.hitmarkerSoundIndex], transform.position, hitmarkerData.hitmarkerVolume);
+                StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerData.hitmarkerTime));
             }
+            else
+            {
+                ClientRpcParams clientRpcParams = new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[] { hitmarkerData.targetClient }
+                    }
+                };
+                HitmarkerClientRpc(hitmarkerData.hitmarkerSoundIndex, hitmarkerData.hitmarkerVolume, hitmarkerData.hitmarkerTime, clientRpcParams);
+            }
+        }
 
-            Debug.Log("Hitmarker at " + Time.time);
-            AudioManager.Singleton.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
-            StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerData.hitmarkerTime));
+        [ClientRpc]
+        void HitmarkerClientRpc(int hitmarkerSoundIndex, float hitmarkerVolume, float hitmarkerTime, ClientRpcParams clientRpcParams = default)
+        {
+            AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[hitmarkerSoundIndex], transform.position, hitmarkerVolume);
+            StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerTime));
         }
     }
 }

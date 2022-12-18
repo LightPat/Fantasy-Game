@@ -9,6 +9,8 @@ namespace LightPat.Core
         public GameObject audioSourcePrefab;
         public float initialVolume = 1;
 
+        public AudioClip[] networkAudioClips;
+
         private static List<AudioSource> audioSources = new List<AudioSource>();
         private static AudioManager _singleton;
 

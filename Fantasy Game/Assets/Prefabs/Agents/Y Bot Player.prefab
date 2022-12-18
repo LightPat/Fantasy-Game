@@ -6112,7 +6112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b494da67310674387fd7696b2df54d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invincible: 0
+  invincible: 1
   personalityValues: 
   physicalValues: 
   magicalValues: 

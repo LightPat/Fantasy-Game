@@ -214,7 +214,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &440146891
 GameObject:
@@ -309,7 +309,7 @@ Transform:
   m_LocalScale: {x: 100, y: 1, z: 100}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1083414002
 GameObject:
@@ -384,8 +384,69 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1308077482
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8445490010478372493, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2333982293
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290618, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_Name
+      value: Giant Spider
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -9.32476
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.83
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.1659683
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2540662555291290619, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
 --- !u!1 &1588784490
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,6 +493,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSourcePrefab: {fileID: 4190215059227863283, guid: 853941c4bee1eca43b031578623830bd, type: 3}
   initialVolume: 0
+  networkAudioClips:
+  - {fileID: 8300000, guid: 3cf53b7d782708b409bcd1a45eb1ec9f, type: 3}
 --- !u!114 &1588784493
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -52,25 +52,32 @@ namespace LightPat.Core
                     hit.InflictDamage(damage, inflicter, this);
                     // Change this to be a damage inflicted sound that happens on the target
                     //AudioManager.Instance.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
-                    inflicter.SendMessage("OnProjectileHit", new HitmarkerData(hitmarkerSound, hitmarkerVolume, hitmarkerTime));
+
+                    NetworkObject playerNetObj;
+                    if (inflicter.TryGetComponent(out playerNetObj))
+                    {
+                        if (playerNetObj.IsPlayerObject)
+                            inflicter.SendMessage("PlayHitmarker", new HitmarkerData(System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, playerNetObj.OwnerClientId));
+                    }
                 }
             }
-
             NetworkObject.Despawn(true);
         }
     }
 
-    public class HitmarkerData
+    public struct HitmarkerData
     {
-        public AudioClip hitmarkerSound;
+        public int hitmarkerSoundIndex;
         public float hitmarkerVolume;
         public float hitmarkerTime;
+        public ulong targetClient;
 
-        public HitmarkerData(AudioClip hitmarkerSound, float hitmarkerVolume, float hitmarkerTime)
+        public HitmarkerData(int hitmarkerSoundIndex, float hitmarkerVolume, float hitmarkerTime, ulong targetClient)
         {
-            this.hitmarkerSound = hitmarkerSound;
+            this.hitmarkerSoundIndex = hitmarkerSoundIndex;
             this.hitmarkerVolume = hitmarkerVolume;
             this.hitmarkerTime = hitmarkerTime;
+            this.targetClient = targetClient;
         }
     }
 }

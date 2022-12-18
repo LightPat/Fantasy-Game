@@ -22,7 +22,6 @@ namespace LightPat.Core
 
         public override void OnNetworkSpawn()
         {
-            Debug.Log("Projectile spawned at: " + Time.time);
             GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
             startPos = transform.position;
         }

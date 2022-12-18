@@ -262,8 +262,6 @@ namespace LightPat.Core.Player
             base.Update();
             if (fullAuto)
             {
-                if (firing)
-                    Shoot();
                 if (!reloading)
                     gunAnimator.SetBool("fire", firing);
             }

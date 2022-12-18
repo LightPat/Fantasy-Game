@@ -281,6 +281,24 @@ namespace LightPat.Core.Player
             DisableCombatIKs();
         }
 
+        private void Update()
+        {
+            if (!weaponLoadout.equippedWeapon) { return; }
+
+            Gun gun;
+            if (weaponLoadout.equippedWeapon.TryGetComponent(out gun))
+            {
+                if (gun.fullAuto)
+                {
+                    if (IsOwner)
+                    {
+                        Attack1(attack1);
+                        OnAttack1ServerRpc(attack1);
+                    }
+                }
+            }
+        }
+
         public void Attack1(bool pressed)
         {
             animator.SetBool("attack1", pressed);
@@ -290,8 +308,10 @@ namespace LightPat.Core.Player
                 netObj.Spawn(true);
         }
 
+        bool attack1;
         void OnAttack1(InputValue value)
         {
+            attack1 = value.isPressed;
             Attack1(value.isPressed);
             OnAttack1ServerRpc(value.isPressed);
         }

@@ -72,10 +72,16 @@ namespace LightPat.UI
             colors = playerModel.AddComponent<MaterialColorChange>();
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
             ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangePlayerPrefabOption(playerModelDropdown.value));
-            ColorCycle(false);
+            StartCoroutine(Wait1Frame());
         }
 
-        int colorIndex = 1;
+        private IEnumerator Wait1Frame()
+        {
+            yield return null;
+            ColorCycle(true);
+        }
+
+        int colorIndex;
         public void ColorCycle(bool incrementIndex = true)
         {
             if (incrementIndex)

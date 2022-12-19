@@ -167,10 +167,37 @@ namespace LightPat.Core
         [ClientRpc] void SpawnAllPlayersOnSceneChangeClientRpc(string sceneName) { StartCoroutine(SpawnLocalPlayerOnSceneChange(sceneName)); }
 
         [ServerRpc(RequireOwnership = false)]
-        public void OverwriteClientDataServerRpc(ulong clientId, ClientData clientData)
+        public void ToggleReadyServerRpc(ulong clientId)
         {
-            Debug.Log(clientData.initialWeapons.Length);
-            clientDataDictionary[clientId] = clientData;
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ToggleReady();
+            SynchronizeClientDictionaries();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void ChangePlayerPrefabOptionServerRpc(ulong clientId, int newPlayerPrefabIndex)
+        {
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangePlayerPrefabOption(newPlayerPrefabIndex);
+            SynchronizeClientDictionaries();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void ChangeTeamServerRpc(ulong clientId, Team newTeam)
+        {
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeTeam(newTeam);
+            SynchronizeClientDictionaries();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void ChangeColorsServerRpc(ulong clientId, Color[] newColors)
+        {
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeColors(newColors);
+            SynchronizeClientDictionaries();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void ChangeInitialWeaponsServerRpc(ulong clientId, int[] newInitialWeaponIndexes)
+        {
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeInitialWeapons(newInitialWeaponIndexes);
             SynchronizeClientDictionaries();
         }
 

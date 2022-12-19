@@ -40,7 +40,7 @@ namespace LightPat.UI
         public void ToggleReady()
         {
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
-            ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ToggleReady());
+            ClientManager.Singleton.ToggleReadyServerRpc(localClientId);
         }
 
         bool loadingGame;
@@ -60,7 +60,7 @@ namespace LightPat.UI
         public void UpdateWeaponLoadout()
         {
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
-            ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangeInitialWeapons(new int[] { primaryWeaponDropdown.value, secondaryWeaponDropdown.value, tertiaryWeaponDropdown.value }));
+            ClientManager.Singleton.ChangeInitialWeaponsServerRpc(localClientId, new int[] { primaryWeaponDropdown.value, secondaryWeaponDropdown.value, tertiaryWeaponDropdown.value });
         }
 
         public void UpdatePlayerDisplay()
@@ -71,7 +71,7 @@ namespace LightPat.UI
             playerModel.SendMessage("TurnOnDisplayModelMode");
             colors = playerModel.AddComponent<MaterialColorChange>();
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
-            ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangePlayerPrefabOption(playerModelDropdown.value));
+            ClientManager.Singleton.ChangePlayerPrefabOptionServerRpc(localClientId, playerModelDropdown.value);
             StartCoroutine(Wait1Frame());
         }
 
@@ -122,7 +122,7 @@ namespace LightPat.UI
             }
 
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
-            ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangeColors(colors.materialColors));
+            ClientManager.Singleton.ChangeColorsServerRpc(localClientId, colors.materialColors);
         }
 
         public void UpdateGameModeValue()
@@ -143,7 +143,7 @@ namespace LightPat.UI
                 if (nextTeam)
                 {
                     reached = true;
-                    ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangeTeam(team));
+                    ClientManager.Singleton.ChangeTeamServerRpc(localClientId, team);
                     break;
                 }
                 if (team == ClientManager.Singleton.GetClient(NetworkManager.Singleton.LocalClientId).team)
@@ -151,7 +151,7 @@ namespace LightPat.UI
             }
 
             if (!reached)
-                ClientManager.Singleton.OverwriteClientDataServerRpc(localClientId, ClientManager.Singleton.GetClient(localClientId).ChangeTeam(Team.Red));
+                ClientManager.Singleton.ChangeTeamServerRpc(localClientId, Team.Red);
 
             StartCoroutine(WaitForTeamChange(originalTeam, localClientId));
         }

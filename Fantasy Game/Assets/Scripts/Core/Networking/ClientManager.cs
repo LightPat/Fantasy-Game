@@ -169,6 +169,7 @@ namespace LightPat.Core
         [ServerRpc(RequireOwnership = false)]
         public void OverwriteClientDataServerRpc(ulong clientId, ClientData clientData)
         {
+            Debug.Log(clientData.initialWeapons.Length);
             clientDataDictionary[clientId] = clientData;
             SynchronizeClientDictionaries();
         }

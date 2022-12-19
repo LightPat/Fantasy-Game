@@ -59,6 +59,7 @@ namespace LightPat.Core.Player
 
         public override void OnNetworkSpawn()
         {
+            weaponLoadout.startingWeapons.Clear();
             foreach (int i in ClientManager.Singleton.GetClient(OwnerClientId).initialWeapons)
             {
                 weaponLoadout.startingWeapons.Add(ClientManager.Singleton.weaponPrefabOptions[i]);

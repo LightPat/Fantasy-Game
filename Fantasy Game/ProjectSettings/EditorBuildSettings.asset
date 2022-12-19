@@ -12,6 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: 07379f5538f661c45a0366691ced4224
   - enabled: 1
-    path: Assets/Scenes/TestScene.unity
-    guid: cdc23c5ab289a044aa2b5d80648d839a
+    path: Assets/Scenes/Level1.unity
+    guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

@@ -50,7 +50,7 @@ namespace LightPat.UI
             loadingGame = true;
             Debug.Log("Loading game");
             if (gameModeDropdown.options[gameModeDropdown.value].text == "CaptureTheFlag")
-                ClientManager.Singleton.ChangeSceneServerRpc(NetworkManager.Singleton.LocalClientId, "TestScene", true);
+                ClientManager.Singleton.ChangeSceneServerRpc(NetworkManager.Singleton.LocalClientId, "Level1", true);
             else if (gameModeDropdown.options[gameModeDropdown.value].text == "HordeMode")
                 Debug.LogError("Horde mode isn't done yet");
             else if (gameModeDropdown.options[gameModeDropdown.value].text == "GhostInTheGraveyard")

@@ -142,7 +142,7 @@ namespace LightPat.Core.Player
                     sheath.hasPlayer = true;
                 }
 
-                yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()));
+                yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()), true);
                 weaponLoadout.ChangeLoadoutPositions(0, weaponLoadout.GetEquippedWeaponIndex());
             }
         }
@@ -489,17 +489,17 @@ namespace LightPat.Core.Player
             string actionType = "";
             if (weaponLoadout.equippedWeapon == chosenWeapon)
             {
-                StartCoroutine(StowWeapon());
+                StartCoroutine(StowWeapon(true));
                 actionType = "stow";
             }
             else if (weaponLoadout.equippedWeapon != null)
             {
-                StartCoroutine(SwitchWeapon(slot));
+                StartCoroutine(SwitchWeapon(slot, true));
                 actionType = "switch";
             }
             else
             {
-                StartCoroutine(DrawWeapon(slot));
+                StartCoroutine(DrawWeapon(slot, true));
                 actionType = "draw";
             }
             OnQueryWeaponSlotServerRpc(slot, actionType);
@@ -511,11 +511,11 @@ namespace LightPat.Core.Player
             if (!IsHost)
             {
                 if (actionType == "stow")
-                    StartCoroutine(StowWeapon());
+                    StartCoroutine(StowWeapon(false));
                 else if (actionType == "switch")
-                    StartCoroutine(SwitchWeapon(slot));
+                    StartCoroutine(SwitchWeapon(slot, false));
                 else if (actionType == "draw")
-                    StartCoroutine(DrawWeapon(slot));
+                    StartCoroutine(DrawWeapon(slot, false));
             }
 
             List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
@@ -535,15 +535,15 @@ namespace LightPat.Core.Player
         void OnQueryWeaponSlotClientRpc(int slot, string actionType, ClientRpcParams clientRpcParams = default)
         {
             if (actionType == "stow")
-                StartCoroutine(StowWeapon());
+                StartCoroutine(StowWeapon(true));
             else if (actionType == "switch")
-                StartCoroutine(SwitchWeapon(slot));
+                StartCoroutine(SwitchWeapon(slot, true));
             else if (actionType == "draw")
-                StartCoroutine(DrawWeapon(slot));
+                StartCoroutine(DrawWeapon(slot, true));
         }
 
         bool weaponChangeRunning;
-        private IEnumerator StowWeapon()
+        private IEnumerator StowWeapon(bool animate)
         {
             yield return new WaitUntil(() => !weaponChangeRunning);
 
@@ -555,23 +555,29 @@ namespace LightPat.Core.Player
                 yield break;
             }
 
-            leftHandTarget.lerp = true;
             equippedWeapon.disableAttack = true;
-            animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
+            if (animate)
+            {
+                leftHandTarget.lerp = true;
+                animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
+            }
 
             DisableCombatIKs();
 
-            animator.SetBool("stow" + equippedWeapon.animationClass, true);
-            yield return null;
-            animator.SetBool("stow" + equippedWeapon.animationClass, false);
+            if (animate)
+            {
+                animator.SetBool("stow" + equippedWeapon.animationClass, true);
+                yield return null;
+                animator.SetBool("stow" + equippedWeapon.animationClass, false);
 
-            // Parent weapon to move with right hand
-            ReparentWeapon(equippedWeapon, "transition");
+                // Parent weapon to move with right hand
+                ReparentWeapon(equippedWeapon, "transition");
 
-            // Wait until stow animation has finished playing
-            int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                // Wait until stow animation has finished playing
+                int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+            }
 
             // Change to stowed mode
             animatorLayerWeightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
@@ -579,32 +585,38 @@ namespace LightPat.Core.Player
             weaponLoadout.StowWeapon();
             equippedWeapon.disableAttack = false;
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            if (animate)
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+
             leftHandTarget.lerp = false;
             weaponChangeRunning = false;
         }
 
-        private IEnumerator DrawWeapon(int slotIndex)
+        private IEnumerator DrawWeapon(int slotIndex, bool animate)
         {
             yield return new WaitUntil(() => !weaponChangeRunning);
 
             weaponChangeRunning = true;
-            leftHandTarget.lerp = true;
+
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
-            animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
-            animator.SetBool("draw" + chosenWeapon.animationClass, true);
-            yield return null;
-            animator.SetBool("draw" + chosenWeapon.animationClass, false);
+            if (animate)
+            {
+                leftHandTarget.lerp = true;
+                animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
+                animator.SetBool("draw" + chosenWeapon.animationClass, true);
+                yield return null;
+                animator.SetBool("draw" + chosenWeapon.animationClass, false);
 
-            int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("DrawWeapon"));
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("DrawWeapon"));
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
-            // Parent weapon to move with right hand
-            ReparentWeapon(chosenWeapon, "transition");
+                // Parent weapon to move with right hand
+                ReparentWeapon(chosenWeapon, "transition");
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+            }
 
             // Change to player mode
             animatorLayerWeightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
@@ -612,42 +624,54 @@ namespace LightPat.Core.Player
             weaponLoadout.DrawWeapon(slotIndex);
             EnableCombatIKs();
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            if (animate)
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+
             leftHandTarget.lerp = false;
             weaponChangeRunning = false;
         }
 
-        private IEnumerator SwitchWeapon(int slotIndex)
+        private IEnumerator SwitchWeapon(int slotIndex, bool animate)
         {
             yield return new WaitUntil(() => !weaponChangeRunning);
 
             weaponChangeRunning = true;
-            leftHandTarget.lerp = true;
-            // Stow equipped weapon
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
+            // Stow equipped weapon
             equippedWeapon.disableAttack = true;
-            animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
 
+            if (animate)
+            {
+                leftHandTarget.lerp = true;
+                animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
+            }
+            
             DisableCombatIKs();
 
-            animator.SetBool("stow" + equippedWeapon.animationClass, true);
-            yield return null;
-            animator.SetBool("stow" + equippedWeapon.animationClass, false);
-
-            // Parent weapon to move with right hand
-            ReparentWeapon(equippedWeapon, "transition");
-
-            // Wait until stow animation has started playing
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
+            if (animate)
+            {
+                animator.SetBool("stow" + equippedWeapon.animationClass, true);
+                yield return null;
+                animator.SetBool("stow" + equippedWeapon.animationClass, false);
+
+                // Parent weapon to move with right hand
+                ReparentWeapon(equippedWeapon, "transition");
+
+                // Wait until stow animation has started playing
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
+            }
 
             // Start drawing next weapon once stow animation has finished playing
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
 
-            animator.SetBool("draw" + chosenWeapon.animationClass, true);
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
-            animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
-            animator.SetBool("draw" + chosenWeapon.animationClass, false);
+            if (animate)
+            {
+                animator.SetBool("draw" + chosenWeapon.animationClass, true);
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
+                animator.SetBool("draw" + chosenWeapon.animationClass, false);
+            }
 
             // Change to stowed mode
             animatorLayerWeightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
@@ -655,12 +679,15 @@ namespace LightPat.Core.Player
             weaponLoadout.StowWeapon();
             equippedWeapon.disableAttack = false;
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
+            if (animate)
+            {
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
 
-            // Parent weapon to move with right hand
-            ReparentWeapon(chosenWeapon, "transition");
+                // Parent weapon to move with right hand
+                ReparentWeapon(chosenWeapon, "transition");
 
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+            }
 
             // Change to player mode
             animatorLayerWeightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
@@ -669,7 +696,9 @@ namespace LightPat.Core.Player
             weaponLoadout.DrawWeapon(slotIndex);
             EnableCombatIKs();
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            if (animate)
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+
             leftHandTarget.lerp = false;
             weaponChangeRunning = false;
         }

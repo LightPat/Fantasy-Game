@@ -9,18 +9,16 @@ namespace LightPat.Core.Player
         public Team team;
         public Flag flagPrefab;
         [SerializeField] private Vector3 flagLocalPosition;
-        [SerializeField] private Flag currentFlag;
         [SerializeField] private CaptureTheFlagManager gameManager;
+
+        private Flag currentFlag;
 
         public void RefreshFlag()
         {
-            if (!currentFlag)
-            {
-                GameObject newFlag = Instantiate(flagPrefab.gameObject, transform.transform, true);
-                newFlag.transform.localPosition = flagLocalPosition;
-                currentFlag = newFlag.GetComponent<Flag>();
-                currentFlag.SetBase(this);
-            }
+            GameObject newFlag = Instantiate(flagPrefab.gameObject, transform.transform, true);
+            newFlag.transform.localPosition = flagLocalPosition;
+            currentFlag = newFlag.GetComponent<Flag>();
+            currentFlag.SetBase(this);
         }
 
         private void Start()

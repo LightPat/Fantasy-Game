@@ -271,36 +271,40 @@ namespace LightPat.Core.Player
             DisableCombatIKs();
         }
 
+        bool prevAttack1State;
         private void Update()
         {
             if (!weaponLoadout.equippedWeapon) { return; }
 
-            Gun gun;
-            if (weaponLoadout.equippedWeapon.TryGetComponent(out gun))
+            if (attack1 != prevAttack1State)
             {
-                if (gun.fullAuto)
+                Gun gun;
+                if (weaponLoadout.equippedWeapon.TryGetComponent(out gun))
                 {
-                    if (IsOwner)
+                    if (gun.fullAuto)
                     {
-                        OnAttack1ServerRpc(attack1);
+                        Attack1(attack1);
                     }
                 }
             }
+
+            prevAttack1State = attack1;
         }
 
+        bool attack1;
         public void Attack1(bool pressed)
         {
-            animator.SetBool("attack1", pressed);
+            attack1 = pressed;
+            if (IsOwner)
+                animator.SetBool("attack1", pressed);
             if (weaponLoadout.equippedWeapon == null) { return; }
             NetworkObject netObj = weaponLoadout.equippedWeapon.Attack1(pressed);
             if (netObj)
                 netObj.Spawn(true);
         }
 
-        bool attack1;
         void OnAttack1(InputValue value)
         {
-            attack1 = value.isPressed;
             OnAttack1ServerRpc(value.isPressed);
         }
 

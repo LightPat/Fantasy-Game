@@ -269,8 +269,10 @@ namespace LightPat.Core.Player
         private new void Update()
         {
             base.Update();
+            if (!playerWeaponAnimationHandler) { return; }
             if (fullAuto)
             {
+                playerWeaponAnimationHandler.Attack1(firing);
                 if (!reloading)
                     gunAnimator.SetBool("fire", firing);
             }

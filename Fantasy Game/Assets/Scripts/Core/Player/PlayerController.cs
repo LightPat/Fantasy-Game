@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using System.Linq;
 
 namespace LightPat.Core.Player
@@ -53,6 +54,14 @@ namespace LightPat.Core.Player
                 playerCamera.GetComponent<AudioListener>().enabled = false;
                 playerCamera.GetComponent<Camera>().depth = -1;
                 playerHUD.gameObject.SetActive(false);
+            }
+
+            if (IsServer)
+            {
+                foreach (NetworkTransform netTransform in GetComponentsInChildren<NetworkTransform>())
+                {
+                    netTransform.Interpolate = false;
+                }
             }
 
             MaterialColorChange colors = gameObject.AddComponent<MaterialColorChange>();

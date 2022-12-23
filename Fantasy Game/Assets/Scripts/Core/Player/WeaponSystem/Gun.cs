@@ -107,12 +107,12 @@ namespace LightPat.Core.Player
                 // Apply recoil
                 if (!disableRecoil)
                     StartCoroutine(Recoil());
-
-                currentBullets -= 1;
-                if (playerController)
-                    playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
-                if (currentBullets == 0) { playerWeaponAnimationHandler.SendMessage("OnReload"); }
             }
+
+            currentBullets -= 1;
+            if (playerController)
+                playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+            if (currentBullets == 0) { StartCoroutine(Reload(NetworkManager.Singleton.IsClient)); }
 
             // Spawn the bullet
             if (NetworkManager.Singleton.IsServer)

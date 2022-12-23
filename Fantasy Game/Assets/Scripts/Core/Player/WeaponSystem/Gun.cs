@@ -148,10 +148,19 @@ namespace LightPat.Core.Player
             }
         }
 
-        public override IEnumerator Reload()
+        public override IEnumerator Reload(bool animate)
         {
             if (currentBullets >= magazineSize) { yield break; }
             if (reloading) { yield break; }
+
+            if (!animate)
+            {
+                currentBullets = magazineSize;
+                if (playerController)
+                    playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+                yield break;
+            }
+
             reloading = true;
             gunAnimator.SetFloat("reloadSpeed", reloadSpeed);
             gunAnimator.SetBool("fire", false);

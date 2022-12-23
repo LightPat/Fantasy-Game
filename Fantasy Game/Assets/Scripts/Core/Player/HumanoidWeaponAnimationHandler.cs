@@ -170,7 +170,6 @@ namespace LightPat.Core.Player
         {
             Weapon weapon = networkedWeapon.GetComponent<NetworkedWeapon>().GenerateLocalInstance(true);
             if (weapon == null) { return; }
-            StartCoroutine(EquipAfter1Frame(weapon));
             for (int i = 0; i < ClientManager.Singleton.weaponPrefabOptions.Length; i++)
             {
                 if (ClientManager.Singleton.weaponPrefabOptions[i].weaponName == weapon.weaponName)
@@ -220,21 +219,11 @@ namespace LightPat.Core.Player
                 StartCoroutine(EquipAfter1Frame(weapon));
             }
 
-            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
-            clientIdList.Remove(OwnerClientId);
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = clientIdList.ToArray()
-                }
-            };
-
-            EquipWeaponClientRpc(weaponIndex, clientRpcParams);
+            EquipWeaponClientRpc(weaponIndex);
         }
 
         [ClientRpc]
-        void EquipWeaponClientRpc(int weaponIndex, ClientRpcParams clientRpcParams = default)
+        void EquipWeaponClientRpc(int weaponIndex)
         {
             GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
             Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
@@ -293,7 +282,6 @@ namespace LightPat.Core.Player
                 {
                     if (IsOwner)
                     {
-                        Attack1(attack1);
                         OnAttack1ServerRpc(attack1);
                     }
                 }
@@ -312,8 +300,7 @@ namespace LightPat.Core.Player
         bool attack1;
         void OnAttack1(InputValue value)
         {
-            attack1 = value.isPressed;
-            Attack1(value.isPressed);
+            //attack1 = value.isPressed;
             OnAttack1ServerRpc(value.isPressed);
         }
 
@@ -323,20 +310,10 @@ namespace LightPat.Core.Player
             if (!IsHost)
                 Attack1(pressed);
 
-            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
-            clientIdList.Remove(OwnerClientId);
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = clientIdList.ToArray()
-                }
-            };
-
-            OnAttack1ClientRpc(pressed, clientRpcParams);
+            OnAttack1ClientRpc(pressed);
         }
 
-        [ClientRpc] void OnAttack1ClientRpc(bool pressed, ClientRpcParams clientRpcParams = default) { Attack1(pressed); }
+        [ClientRpc] void OnAttack1ClientRpc(bool pressed) { Attack1(pressed); }
 
         [Header("Sword blocking")]
         public Transform blockConstraints;
@@ -412,20 +389,10 @@ namespace LightPat.Core.Player
             if (!IsHost)
                 Attack2(pressed);
 
-            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
-            clientIdList.Remove(OwnerClientId);
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = clientIdList.ToArray()
-                }
-            };
-
-            OnAttack2ClientRpc(pressed, clientRpcParams);
+            OnAttack2ClientRpc(pressed);
         }
 
-        [ClientRpc] void OnAttack2ClientRpc(bool pressed, ClientRpcParams clientRpcParams = default) { Attack2(pressed); }
+        [ClientRpc] void OnAttack2ClientRpc(bool pressed) { Attack2(pressed); }
 
         private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, RigWeightTarget rig, float originalSpeed)
         {
@@ -452,32 +419,20 @@ namespace LightPat.Core.Player
             if (weaponLoadout.equippedWeapon == null) { return; }
             if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
-            StartCoroutine(weaponLoadout.equippedWeapon.Reload());
             OnReloadServerRpc();
         }
 
         [ServerRpc]
         void OnReloadServerRpc()
         {
-            StartCoroutine(weaponLoadout.equippedWeapon.Reload());
-
-            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
-            clientIdList.Remove(OwnerClientId);
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = clientIdList.ToArray()
-                }
-            };
-
-            OnReloadClientRpc(clientRpcParams);
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload(false));
+            OnReloadClientRpc();
         }
 
         [ClientRpc]
-        void OnReloadClientRpc(ClientRpcParams clientRpcParams = default)
+        void OnReloadClientRpc()
         {
-            StartCoroutine(weaponLoadout.equippedWeapon.Reload());
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload(true));
         }
 
         void OnQueryWeaponSlot(InputValue value)
@@ -486,23 +441,13 @@ namespace LightPat.Core.Player
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
             if (chosenWeapon == null) { return; }
-            string actionType = "";
+
             if (weaponLoadout.equippedWeapon == chosenWeapon)
-            {
-                StartCoroutine(StowWeapon(true));
-                actionType = "stow";
-            }
+                OnQueryWeaponSlotServerRpc(slot, "stow");
             else if (weaponLoadout.equippedWeapon != null)
-            {
-                StartCoroutine(SwitchWeapon(slot, true));
-                actionType = "switch";
-            }
+                OnQueryWeaponSlotServerRpc(slot, "switch");
             else
-            {
-                StartCoroutine(DrawWeapon(slot, true));
-                actionType = "draw";
-            }
-            OnQueryWeaponSlotServerRpc(slot, actionType);
+                OnQueryWeaponSlotServerRpc(slot, "draw");
         }
 
         [ServerRpc]
@@ -517,22 +462,11 @@ namespace LightPat.Core.Player
                 else if (actionType == "draw")
                     StartCoroutine(DrawWeapon(slot, false));
             }
-
-            List<ulong> clientIdList = NetworkManager.ConnectedClientsIds.ToList();
-            clientIdList.Remove(OwnerClientId);
-            ClientRpcParams clientRpcParams = new ClientRpcParams
-            {
-                Send = new ClientRpcSendParams
-                {
-                    TargetClientIds = clientIdList.ToArray()
-                }
-            };
-
-            OnQueryWeaponSlotClientRpc(slot, actionType, clientRpcParams);
+            OnQueryWeaponSlotClientRpc(slot, actionType);
         }
 
         [ClientRpc]
-        void OnQueryWeaponSlotClientRpc(int slot, string actionType, ClientRpcParams clientRpcParams = default)
+        void OnQueryWeaponSlotClientRpc(int slot, string actionType)
         {
             if (actionType == "stow")
                 StartCoroutine(StowWeapon(true));

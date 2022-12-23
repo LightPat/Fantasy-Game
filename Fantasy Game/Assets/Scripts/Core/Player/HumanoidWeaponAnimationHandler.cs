@@ -6,11 +6,14 @@ using UnityEngine.Animations.Rigging;
 using System;
 using System.Linq;
 using LightPat.ProceduralAnimations;
+using Unity.Netcode;
+using Unity.Netcode.Components;
 
 namespace LightPat.Core.Player
 {
-    public class HumanoidWeaponAnimationHandler : MonoBehaviour
+    public class HumanoidWeaponAnimationHandler : NetworkBehaviour
     {
+        public int maxWeapons = 3;
         public Transform mainCamera;
         [Header("Rigging Assignments")]
         public RigWeightTarget rightArmRig;
@@ -44,7 +47,7 @@ namespace LightPat.Core.Player
         FollowTarget[] rightFingerIKs;
         FollowTarget[] leftFingerIKs;
 
-        private void Start()
+        private void Awake()
         {
             playerController = GetComponent<PlayerController>();
             animatorLayerWeightManager = GetComponentInChildren<AnimatorLayerWeightManager>();
@@ -52,7 +55,15 @@ namespace LightPat.Core.Player
             weaponLoadout = GetComponent<WeaponLoadout>();
             rightFingerIKs = rightFingerRig.GetComponentsInChildren<FollowTarget>();
             leftFingerIKs = leftFingerRig.GetComponentsInChildren<FollowTarget>();
+        }
 
+        public override void OnNetworkSpawn()
+        {
+            weaponLoadout.startingWeapons.Clear();
+            foreach (int i in ClientManager.Singleton.GetClient(OwnerClientId).initialWeapons)
+            {
+                weaponLoadout.startingWeapons.Add(ClientManager.Singleton.weaponPrefabOptions[i]);
+            }
             StartCoroutine(EquipInitialWeapons());
         }
 
@@ -71,6 +82,10 @@ namespace LightPat.Core.Player
                 if (startingWeapon.gameObject.scene.name == null)
                 {
                     GameObject g = Instantiate(startingWeapon.gameObject);
+                    Destroy(g.GetComponent<NetworkedWeapon>());
+                    Destroy(g.GetComponent<NetworkTransform>());
+                    Destroy(g.GetComponent<NetworkObject>());
+                    yield return new WaitUntil(() => !g.GetComponent<NetworkObject>());
                     weapon = g.GetComponent<Weapon>();
                     ReparentWeapon(weapon, "stowed");
                     g.transform.localPosition = weapon.stowedPositionOffset;
@@ -102,6 +117,10 @@ namespace LightPat.Core.Player
                 if (startingWeapon.gameObject.scene.name == null)
                 {
                     GameObject g = Instantiate(startingWeapon.gameObject);
+                    Destroy(g.GetComponent<NetworkedWeapon>());
+                    Destroy(g.GetComponent<NetworkTransform>());
+                    Destroy(g.GetComponent<NetworkObject>());
+                    yield return new WaitUntil(() => !g.GetComponent<NetworkObject>());
                     weapon = g.GetComponent<Weapon>();
                     ReparentWeapon(weapon, "player");
                     g.transform.localPosition = weapon.stowedPositionOffset;
@@ -123,7 +142,7 @@ namespace LightPat.Core.Player
                     sheath.hasPlayer = true;
                 }
 
-                yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()));
+                yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()), true);
                 weaponLoadout.ChangeLoadoutPositions(0, weaponLoadout.GetEquippedWeaponIndex());
             }
         }
@@ -132,21 +151,38 @@ namespace LightPat.Core.Player
         public float weaponReachDistance;
         void OnInteract()
         {
-            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward, weaponReachDistance);
-            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+            if (weaponLoadout.GetWeaponListLength() >= maxWeapons) { return; }
+
+            RaycastHit[] allHits = Physics.RaycastAll(playerController.playerCamera.transform.position, playerController.playerCamera.transform.forward, weaponReachDistance);
+            Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
             foreach (RaycastHit hit in allHits)
             {
                 if (hit.transform == transform) { continue; }
-                if (hit.transform.GetComponent<Weapon>())
+                if (hit.transform.GetComponent<NetworkedWeapon>())
                 {
-                    EquipWeapon(hit.transform.GetComponent<Weapon>());
+                    EquipWeapon(hit.transform.GetComponent<NetworkedWeapon>());
                 }
                 break;
             }
         }
 
-        public void EquipWeapon(Weapon weapon)
+        public void EquipWeapon(NetworkedWeapon networkedWeapon)
         {
+            Weapon weapon = networkedWeapon.GetComponent<NetworkedWeapon>().GenerateLocalInstance(true);
+            if (weapon == null) { return; }
+            for (int i = 0; i < ClientManager.Singleton.weaponPrefabOptions.Length; i++)
+            {
+                if (ClientManager.Singleton.weaponPrefabOptions[i].weaponName == weapon.weaponName)
+                {
+                    EquipWeaponServerRpc(i);
+                    break;
+                }
+            }
+        }
+
+        IEnumerator EquipAfter1Frame(Weapon weapon)
+        {
+            yield return null;
             // If we already have a weapon equipped just put the weapon we click in our reserves
             if (weaponLoadout.equippedWeapon == null)
             {
@@ -172,34 +208,116 @@ namespace LightPat.Core.Player
             }
         }
 
+        [ServerRpc]
+        void EquipWeaponServerRpc(int weaponIndex)
+        {
+            if (!IsHost)
+            {
+                GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
+                Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
+                weapon.transform.position = transform.position + transform.forward + transform.up;
+                StartCoroutine(EquipAfter1Frame(weapon));
+            }
+
+            EquipWeaponClientRpc(weaponIndex);
+        }
+
+        [ClientRpc]
+        void EquipWeaponClientRpc(int weaponIndex)
+        {
+            GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
+            Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
+            weapon.transform.position = transform.position + transform.forward + transform.up;
+            StartCoroutine(EquipAfter1Frame(weapon));
+        }
+
         [Header("Weapon Drop Settings")]
         public Vector3 dropForce;
         void OnDrop()
         {
             if (weaponLoadout.equippedWeapon)
             {
-                animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
-                weaponLoadout.equippedWeapon.transform.position += transform.forward;
-                weaponLoadout.equippedWeapon.transform.SetParent(null, true);
-                Rigidbody rb = weaponLoadout.equippedWeapon.gameObject.AddComponent<Rigidbody>();
-                rb.interpolation = RigidbodyInterpolation.Interpolate;
-                rb.AddForce(rb.transform.rotation * dropForce, ForceMode.VelocityChange);
-                weaponLoadout.RemoveEquippedWeapon();
-                DisableCombatIKs();
+                for (int i = 0; i < ClientManager.Singleton.weaponPrefabOptions.Length; i++)
+                {
+                    if (weaponLoadout.equippedWeapon.weaponName == ClientManager.Singleton.weaponPrefabOptions[i].weaponName)
+                    {
+                        DropWeaponServerRpc(i);
+                    }
+                }
             }
         }
 
+        [ServerRpc]
+        void DropWeaponServerRpc(int weaponIndex)
+        {
+            GameObject droppedWeapon = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject, weaponLoadout.equippedWeapon.transform.position + transform.forward, weaponLoadout.equippedWeapon.transform.rotation);
+            droppedWeapon.GetComponent<NetworkObject>().Spawn();
+            droppedWeapon.GetComponent<Rigidbody>().AddForce(droppedWeapon.transform.rotation * dropForce, ForceMode.VelocityChange);
+
+            animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
+            Destroy(weaponLoadout.equippedWeapon.gameObject);
+            weaponLoadout.RemoveEquippedWeapon();
+            DisableCombatIKs();
+
+            DropWeaponClientRpc();
+        }
+
+        [ClientRpc]
+        void DropWeaponClientRpc()
+        {
+            animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
+            Destroy(weaponLoadout.equippedWeapon.gameObject);
+            weaponLoadout.RemoveEquippedWeapon();
+            DisableCombatIKs();
+        }
+
+        bool prevAttack1State;
+        private void Update()
+        {
+            if (!weaponLoadout.equippedWeapon) { return; }
+
+            if (attack1 != prevAttack1State)
+            {
+                Gun gun;
+                if (weaponLoadout.equippedWeapon.TryGetComponent(out gun))
+                {
+                    if (gun.fullAuto)
+                    {
+                        Attack1(attack1);
+                    }
+                }
+            }
+
+            prevAttack1State = attack1;
+        }
+
+        bool attack1;
         public void Attack1(bool pressed)
         {
-            animator.SetBool("attack1", pressed);
+            attack1 = pressed;
+            if (IsOwner)
+                animator.SetBool("attack1", pressed);
             if (weaponLoadout.equippedWeapon == null) { return; }
-            weaponLoadout.equippedWeapon.Attack1(pressed);
+            NetworkObject netObj = weaponLoadout.equippedWeapon.Attack1(pressed);
+            if (netObj)
+                netObj.Spawn(true);
         }
 
         void OnAttack1(InputValue value)
         {
-            Attack1(value.isPressed);
+            OnAttack1ServerRpc(value.isPressed);
         }
+
+        [ServerRpc]
+        void OnAttack1ServerRpc(bool pressed)
+        {
+            if (!IsHost)
+                Attack1(pressed);
+
+            OnAttack1ClientRpc(pressed);
+        }
+
+        [ClientRpc] void OnAttack1ClientRpc(bool pressed) { Attack1(pressed); }
 
         [Header("Sword blocking")]
         public Transform blockConstraints;
@@ -207,11 +325,11 @@ namespace LightPat.Core.Player
         bool blocking;
         float oldRigSpeed;
         int oldCullingMask;
-        void OnAttack2(InputValue value)
+        public void Attack2(bool pressed)
         {
             if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
             {
-                if (!value.isPressed) { return; }
+                if (pressed) { return; }
                 if (!animator.GetBool("fistCombat"))
                 {
                     animator.SetBool("fistCombat", true);
@@ -223,7 +341,7 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                blocking = value.isPressed;
+                blocking = pressed;
                 animator.SetBool("attack2", blocking);
                 if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 {
@@ -264,6 +382,22 @@ namespace LightPat.Core.Player
             }
         }
 
+        void OnAttack2(InputValue value)
+        {
+            Attack2(value.isPressed);
+        }
+
+        [ServerRpc]
+        void OnAttack2ServerRpc(bool pressed)
+        {
+            if (!IsHost)
+                Attack2(pressed);
+
+            OnAttack2ClientRpc(pressed);
+        }
+
+        [ClientRpc] void OnAttack2ClientRpc(bool pressed) { Attack2(pressed); }
+
         private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, RigWeightTarget rig, float originalSpeed)
         {
             yield return new WaitUntil(() => rig.GetRig().weight == 0);
@@ -289,7 +423,20 @@ namespace LightPat.Core.Player
             if (weaponLoadout.equippedWeapon == null) { return; }
             if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
-            StartCoroutine(weaponLoadout.equippedWeapon.Reload());
+            OnReloadServerRpc();
+        }
+
+        [ServerRpc]
+        void OnReloadServerRpc()
+        {
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload(IsClient));
+            OnReloadClientRpc();
+        }
+
+        [ClientRpc]
+        void OnReloadClientRpc()
+        {
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload(true));
         }
 
         void OnQueryWeaponSlot(InputValue value)
@@ -298,34 +445,77 @@ namespace LightPat.Core.Player
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
             if (chosenWeapon == null) { return; }
+
             if (weaponLoadout.equippedWeapon == chosenWeapon)
-                StartCoroutine(StowWeapon());
+                OnQueryWeaponSlotServerRpc(slot, "stow");
             else if (weaponLoadout.equippedWeapon != null)
-                StartCoroutine(SwitchWeapon(slot));
+                OnQueryWeaponSlotServerRpc(slot, "switch");
             else
-                StartCoroutine(DrawWeapon(slot));
+                OnQueryWeaponSlotServerRpc(slot, "draw");
         }
 
-        private IEnumerator StowWeapon()
+        [ServerRpc]
+        void OnQueryWeaponSlotServerRpc(int slot, string actionType)
         {
-            leftHandTarget.lerp = true;
+            if (!IsHost)
+            {
+                if (actionType == "stow")
+                    StartCoroutine(StowWeapon(IsClient));
+                else if (actionType == "switch")
+                    StartCoroutine(SwitchWeapon(slot, IsClient));
+                else if (actionType == "draw")
+                    StartCoroutine(DrawWeapon(slot, IsClient));
+            }
+            OnQueryWeaponSlotClientRpc(slot, actionType);
+        }
+
+        [ClientRpc]
+        void OnQueryWeaponSlotClientRpc(int slot, string actionType)
+        {
+            if (actionType == "stow")
+                StartCoroutine(StowWeapon(true));
+            else if (actionType == "switch")
+                StartCoroutine(SwitchWeapon(slot, true));
+            else if (actionType == "draw")
+                StartCoroutine(DrawWeapon(slot, true));
+        }
+
+        bool weaponChangeRunning;
+        private IEnumerator StowWeapon(bool animate)
+        {
+            yield return new WaitUntil(() => !weaponChangeRunning);
+
+            weaponChangeRunning = true;
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
+            if (!equippedWeapon)
+            {
+                weaponChangeRunning = false;
+                yield break;
+            }
+
             equippedWeapon.disableAttack = true;
-            animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
+            if (animate)
+            {
+                leftHandTarget.lerp = true;
+                animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
+            }
 
             DisableCombatIKs();
 
-            animator.SetBool("stow" + equippedWeapon.animationClass, true);
-            yield return null;
-            animator.SetBool("stow" + equippedWeapon.animationClass, false);
+            if (animate)
+            {
+                animator.SetBool("stow" + equippedWeapon.animationClass, true);
+                yield return null;
+                animator.SetBool("stow" + equippedWeapon.animationClass, false);
 
-            // Parent weapon to move with right hand
-            ReparentWeapon(equippedWeapon, "transition");
+                // Parent weapon to move with right hand
+                ReparentWeapon(equippedWeapon, "transition");
 
-            // Wait until stow animation has finished playing
-            int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                // Wait until stow animation has finished playing
+                int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+            }
 
             // Change to stowed mode
             animatorLayerWeightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
@@ -333,28 +523,38 @@ namespace LightPat.Core.Player
             weaponLoadout.StowWeapon();
             equippedWeapon.disableAttack = false;
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            if (animate)
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+
             leftHandTarget.lerp = false;
+            weaponChangeRunning = false;
         }
 
-        private IEnumerator DrawWeapon(int slotIndex)
+        private IEnumerator DrawWeapon(int slotIndex, bool animate)
         {
-            leftHandTarget.lerp = true;
+            yield return new WaitUntil(() => !weaponChangeRunning);
+
+            weaponChangeRunning = true;
+
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
-            animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
-            animator.SetBool("draw" + chosenWeapon.animationClass, true);
-            yield return null;
-            animator.SetBool("draw" + chosenWeapon.animationClass, false);
+            if (animate)
+            {
+                leftHandTarget.lerp = true;
+                animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
+                animator.SetBool("draw" + chosenWeapon.animationClass, true);
+                yield return null;
+                animator.SetBool("draw" + chosenWeapon.animationClass, false);
 
-            int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("DrawWeapon"));
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("DrawWeapon"));
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
 
-            // Parent weapon to move with right hand
-            ReparentWeapon(chosenWeapon, "transition");
+                // Parent weapon to move with right hand
+                ReparentWeapon(chosenWeapon, "transition");
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+            }
 
             // Change to player mode
             animatorLayerWeightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
@@ -362,38 +562,54 @@ namespace LightPat.Core.Player
             weaponLoadout.DrawWeapon(slotIndex);
             EnableCombatIKs();
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            if (animate)
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+
             leftHandTarget.lerp = false;
+            weaponChangeRunning = false;
         }
 
-        private IEnumerator SwitchWeapon(int slotIndex)
+        private IEnumerator SwitchWeapon(int slotIndex, bool animate)
         {
-            leftHandTarget.lerp = true;
-            // Stow equipped weapon
-            Weapon equippedWeapon = weaponLoadout.equippedWeapon;
-            equippedWeapon.disableAttack = true;
-            animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
+            yield return new WaitUntil(() => !weaponChangeRunning);
 
+            weaponChangeRunning = true;
+            Weapon equippedWeapon = weaponLoadout.equippedWeapon;
+            // Stow equipped weapon
+            equippedWeapon.disableAttack = true;
+
+            if (animate)
+            {
+                leftHandTarget.lerp = true;
+                animator.SetFloat("drawSpeed", equippedWeapon.drawSpeed);
+            }
+            
             DisableCombatIKs();
 
-            animator.SetBool("stow" + equippedWeapon.animationClass, true);
-            yield return null;
-            animator.SetBool("stow" + equippedWeapon.animationClass, false);
-
-            // Parent weapon to move with right hand
-            ReparentWeapon(equippedWeapon, "transition");
-
-            // Wait until stow animation has started playing
             int animLayerIndex = animator.GetLayerIndex("Draw/Stow Weapon");
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
+            if (animate)
+            {
+                animator.SetBool("stow" + equippedWeapon.animationClass, true);
+                yield return null;
+                animator.SetBool("stow" + equippedWeapon.animationClass, false);
+
+                // Parent weapon to move with right hand
+                ReparentWeapon(equippedWeapon, "transition");
+
+                // Wait until stow animation has started playing
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
+            }
 
             // Start drawing next weapon once stow animation has finished playing
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
 
-            animator.SetBool("draw" + chosenWeapon.animationClass, true);
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
-            animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
-            animator.SetBool("draw" + chosenWeapon.animationClass, false);
+            if (animate)
+            {
+                animator.SetBool("draw" + chosenWeapon.animationClass, true);
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                animator.SetFloat("drawSpeed", chosenWeapon.drawSpeed);
+                animator.SetBool("draw" + chosenWeapon.animationClass, false);
+            }
 
             // Change to stowed mode
             animatorLayerWeightManager.SetLayerWeight(equippedWeapon.animationClass, 0);
@@ -401,12 +617,15 @@ namespace LightPat.Core.Player
             weaponLoadout.StowWeapon();
             equippedWeapon.disableAttack = false;
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
+            if (animate)
+            {
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
 
-            // Parent weapon to move with right hand
-            ReparentWeapon(chosenWeapon, "transition");
+                // Parent weapon to move with right hand
+                ReparentWeapon(chosenWeapon, "transition");
 
-            yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+                yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
+            }
 
             // Change to player mode
             animatorLayerWeightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
@@ -415,8 +634,11 @@ namespace LightPat.Core.Player
             weaponLoadout.DrawWeapon(slotIndex);
             EnableCombatIKs();
 
-            yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+            if (animate)
+                yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty"));
+
             leftHandTarget.lerp = false;
+            weaponChangeRunning = false;
         }
 
         private void OnTriggerEnter(Collider other)

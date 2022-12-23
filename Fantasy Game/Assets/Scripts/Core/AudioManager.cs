@@ -6,12 +6,26 @@ namespace LightPat.Core
 {
     public class AudioManager : MonoBehaviour
     {
-        public static AudioManager Instance { get { return _instance; } }
-        private static List<AudioSource> audioSources = new List<AudioSource>();
         public GameObject audioSourcePrefab;
         public float initialVolume = 1;
 
-        private static AudioManager _instance;
+        public AudioClip[] networkAudioClips;
+
+        private static List<AudioSource> audioSources = new List<AudioSource>();
+        private static AudioManager _singleton;
+
+        public static AudioManager Singleton
+        {
+            get
+            {
+                if (_singleton == null)
+                {
+                    Debug.Log("Audio Manager is Null");
+                }
+
+                return _singleton;
+            }
+        }
 
         public void RegisterAudioSource(AudioSource audioSource)
         {
@@ -38,14 +52,7 @@ namespace LightPat.Core
 
         private void Awake()
         {
-            if (_instance != null && _instance != this)
-            {
-                Destroy(this.gameObject);
-            }
-            else
-            {
-                _instance = this;
-            }
+            _singleton = this;
         }
 
         private void Start()

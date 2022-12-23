@@ -5555,6 +5555,9 @@ GameObject:
   - component: {fileID: 1649158069515847002}
   - component: {fileID: 1689723259}
   - component: {fileID: 8340945284047069963}
+  - component: {fileID: 1483155860483530432}
+  - component: {fileID: 4761783230577947010}
+  - component: {fileID: 3162933958300352835}
   m_Layer: 0
   m_Name: Scar
   m_TagString: Untagged
@@ -5626,6 +5629,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rightHandGrip: {fileID: 1649158069711076073}
   leftHandGrip: {fileID: 1649158070069413448}
+  weaponName: Scar
   baseDamage: 20
   stowPoint: Spine
   drawSpeed: 2
@@ -5755,6 +5759,62 @@ MonoBehaviour:
   - 0.6
   - 0.7
   - 0.7
+--- !u!114 &1483155860483530432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649158069515847000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+--- !u!114 &4761783230577947010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649158069515847000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b45cbc2fe84352143942214ce18017ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  prefabReference: {fileID: 1649158069515847000}
+  maxPickups: 1
+--- !u!114 &3162933958300352835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1649158069515847000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
 --- !u!1 &1649158069711076072
 GameObject:
   m_ObjectHideFlags: 0
@@ -6394,11 +6454,6 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: ac4cb20889c16084b9f436264ffb39a6, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 77e14102883488046aa923ae196fda53, type: 3}
---- !u!1 &8488212916111422682 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7146874140859276102, guid: 77e14102883488046aa923ae196fda53, type: 3}
-  m_PrefabInstance: {fileID: 1649158070034739100}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1254329442983921783 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 77e14102883488046aa923ae196fda53, type: 3}
@@ -6407,6 +6462,11 @@ Transform:
 --- !u!1 &1883513270249099981 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 77e14102883488046aa923ae196fda53, type: 3}
+  m_PrefabInstance: {fileID: 1649158070034739100}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8488212916111422682 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7146874140859276102, guid: 77e14102883488046aa923ae196fda53, type: 3}
   m_PrefabInstance: {fileID: 1649158070034739100}
   m_PrefabAsset: {fileID: 0}
 --- !u!136 &68527870956414956

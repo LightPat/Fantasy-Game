@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Stairs
+  - NoPhysics
+  - WallRun
   layers:
   - Default
   - TransparentFX

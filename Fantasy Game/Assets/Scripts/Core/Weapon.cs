@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
@@ -10,7 +11,7 @@ namespace LightPat.Core
         public Transform leftHandGrip;
 
         [Header("Weapon Settings")]
-        //public sbyte[] idealPersonality;
+        public string weaponName;
         public int baseDamage;
         public string stowPoint;
         public float drawSpeed = 1;
@@ -34,9 +35,10 @@ namespace LightPat.Core
 
         [HideInInspector] public bool disableAttack;
 
-        public virtual void Attack1(bool pressed)
+        public virtual NetworkObject Attack1(bool pressed)
         {
             Debug.LogWarning("Attack1() hasn't been implemented yet on this weapon");
+            return null;
         }
 
         public virtual void Attack2()
@@ -44,7 +46,7 @@ namespace LightPat.Core
             Debug.LogWarning("Attack2() hasn't been implemented yet on this weapon");
         }
 
-        public virtual IEnumerator Reload()
+        public virtual IEnumerator Reload(bool animate)
         {
             Debug.LogWarning("Reload hasn't been implemented yet on this weapon");
             yield return null;
@@ -71,6 +73,7 @@ namespace LightPat.Core
 
         protected void Start()
         {
+            name = weaponName;
             targetLocalPosition = playerPositionOffset;
             targetLocalRotation = playerRotationOffset;
         }

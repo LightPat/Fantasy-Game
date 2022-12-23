@@ -21,10 +21,13 @@ namespace LightPat.UI
             target = transform.parent;
             positionOffset = transform.localPosition;
             transform.SetParent(null, true);
+            name = name + " (" + target.name + ")";
         }
 
         private void Update()
         {
+            if (!Camera.main) { return; }
+
             if (target == null)
                 Destroy(gameObject);
 

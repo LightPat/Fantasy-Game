@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
-    public class Projectile : MonoBehaviour
+    public class Projectile : NetworkBehaviour
     {
         public GameObject inflicter;
         public Weapon originWeapon;
@@ -14,22 +15,29 @@ namespace LightPat.Core
         public float hitmarkerVolume = 1;
         public float hitmarkerTime;
 
+        [HideInInspector] public Vector3 startForce;
+
         bool damageRunning;
         Vector3 startPos; // Despawn bullet after a certain distance traveled
 
-        private void Start()
+        public override void OnNetworkSpawn()
         {
+            GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
             startPos = transform.position;
         }
 
         private void FixedUpdate()
         {
+            if (!IsServer) { return; }
+
             if (Vector3.Distance(startPos, transform.position) > maxDestroyDistance)
-                Destroy(gameObject);
+                NetworkObject.Despawn(true);
         }
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!IsServer) { return; }
+
             if (other.GetComponent<Projectile>()) { return; }
 
             if (other.attachedRigidbody)
@@ -44,25 +52,32 @@ namespace LightPat.Core
                     hit.InflictDamage(damage, inflicter, this);
                     // Change this to be a damage inflicted sound that happens on the target
                     //AudioManager.Instance.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
-                    inflicter.SendMessage("OnProjectileHit", new HitmarkerData(hitmarkerSound, hitmarkerVolume, hitmarkerTime));
+
+                    NetworkObject playerNetObj;
+                    if (inflicter.TryGetComponent(out playerNetObj))
+                    {
+                        if (playerNetObj.IsPlayerObject)
+                            inflicter.SendMessage("PlayHitmarker", new HitmarkerData(System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, playerNetObj.OwnerClientId));
+                    }
                 }
             }
-
-            Destroy(gameObject);
+            NetworkObject.Despawn(true);
         }
     }
 
-    public class HitmarkerData
+    public struct HitmarkerData
     {
-        public AudioClip hitmarkerSound;
+        public int hitmarkerSoundIndex;
         public float hitmarkerVolume;
         public float hitmarkerTime;
+        public ulong targetClient;
 
-        public HitmarkerData(AudioClip hitmarkerSound, float hitmarkerVolume, float hitmarkerTime)
+        public HitmarkerData(int hitmarkerSoundIndex, float hitmarkerVolume, float hitmarkerTime, ulong targetClient)
         {
-            this.hitmarkerSound = hitmarkerSound;
+            this.hitmarkerSoundIndex = hitmarkerSoundIndex;
             this.hitmarkerVolume = hitmarkerVolume;
             this.hitmarkerTime = hitmarkerTime;
+            this.targetClient = targetClient;
         }
     }
 }

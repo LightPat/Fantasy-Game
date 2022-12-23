@@ -11,7 +11,7 @@ namespace LightPat.Core
 
         private void OnCollisionEnter(Collision collision)
         {
-            AudioManager.Instance.PlayClipAtPoint(audioClip[Random.Range(0, audioClip.Length)], collision.GetContact(0).point, volume);
+            AudioManager.Singleton.PlayClipAtPoint(audioClip[Random.Range(0, audioClip.Length)], collision.GetContact(0).point, volume);
         }
     }
 }

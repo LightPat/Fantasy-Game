@@ -90,7 +90,7 @@ namespace LightPat.EnemyAI
 
         private void Update()
         {
-            if (attributes.HP <= 0) { return; }
+            if (attributes.HP.Value <= 0) { return; }
 
             if (fightState == fightingState.stationary)
             {
@@ -109,7 +109,7 @@ namespace LightPat.EnemyAI
                     if (hit.transform.GetComponent<Attributes>())
                     {
                         // Ignore dead targets
-                        if (hit.transform.GetComponent<Attributes>().HP <= 0) { continue; }
+                        if (hit.transform.GetComponent<Attributes>().HP.Value <= 0) { continue; }
                         
                         // Aim for the head
                         Vector3 targetPoint = hit.transform.GetComponent<Attributes>().headCollider.transform.position;
@@ -143,7 +143,7 @@ namespace LightPat.EnemyAI
 
                     if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(centerPoint.x, centerPoint.z)) < weaponStopDistance)
                     {
-                        humanoidWeaponAnimationHandler.EquipWeapon(targetWeapon);
+                        humanoidWeaponAnimationHandler.EquipWeapon(targetWeapon.GetComponent<NetworkedWeapon>());
                         targetWeapon = null;
                         fightState = fightingState.combat;
                     }

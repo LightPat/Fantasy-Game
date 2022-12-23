@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
+using Unity.Netcode.Components;
 
 namespace LightPat.Core
 {
-    public class VehicleChair : MonoBehaviour
+    public class VehicleChair : NetworkBehaviour
     {
         public bool driverChair;
         [Header("Sitting Down")]
@@ -13,36 +15,58 @@ namespace LightPat.Core
         [Header("Exitting Chair")]
         public Vector3 exitPosOffset;
 
-        Transform occupant;
+        NetworkObject occupant;
+        ConfigurableJoint joint;
 
-        public bool TrySitting(Transform newOccupant)
+        [ServerRpc(RequireOwnership = false)]
+        public void TrySittingServerRpc(ulong networkObjectId)
         {
-            if (occupant) { return false; }
+            if (occupant | joint) { return; }
 
-            newOccupant.SetParent(transform, true);
-            occupant = newOccupant;
+            NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].TrySetParent(transform, true);
+            TrySitting(networkObjectId);
+
+            TrySittingClientRpc(networkObjectId);
+
             if (driverChair)
-                GetComponentInParent<Vehicle>().SendMessage("OnDriverEnter", occupant.gameObject);
-            return true;
+                GetComponentInParent<Vehicle>().OnDriverEnter(networkObjectId);
         }
 
-        public bool ExitSitting()
+        [ClientRpc]
+        void TrySittingClientRpc(ulong networkObjectId)
         {
-            occupant.SetParent(null, true);
-            occupant.Translate(transform.rotation * exitPosOffset, Space.World);
+            TrySitting(networkObjectId);
+        }
+
+        private void TrySitting(ulong networkObjectId)
+        {
+            occupant = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
+            occupant.SendMessage("OnChairEnter", this);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void ExitSittingServerRpc()
+        {
+            occupant.TryRemoveParent();
+            if (!IsHost)
+                ExitSitting();
+
+            ExitSittingClientRpc();
+
+            if (driverChair)
+                GetComponentInParent<Vehicle>().OnDriverExit();
+        }
+
+        [ClientRpc]
+        void ExitSittingClientRpc()
+        {
+            ExitSitting();
+        }
+
+        private void ExitSitting()
+        {
+            occupant.SendMessage("OnChairExit");
             occupant = null;
-            if (driverChair)
-                GetComponentInParent<Vehicle>().SendMessage("OnDriverExit");
-            return false;
-        }
-
-        private void Update()
-        {
-            if (occupant)
-            {
-                occupant.localPosition = occupantPosition;
-                occupant.localRotation = Quaternion.Euler(occupantRotation);
-            }
         }
 
         private void OnDrawGizmosSelected()

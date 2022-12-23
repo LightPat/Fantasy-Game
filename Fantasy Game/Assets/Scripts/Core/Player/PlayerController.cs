@@ -4,37 +4,153 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
+using Unity.Netcode;
+using Unity.Netcode.Components;
+using System.Linq;
 
 namespace LightPat.Core.Player
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : NetworkBehaviour
     {
-        public Transform cameraParent;
+        public GameObject worldSpaceLabel;
+        public PlayerCameraFollow playerCamera { get; private set; }
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
         public float animatorSpeed = 1;
 
         [HideInInspector] public PlayerHUD playerHUD;
-        public PlayerCameraFollow playerCamera { get; private set; }
 
         Animator animator;
         Rigidbody rb;
-        public Vehicle vehicle;
+        Vehicle vehicle;
 
-        private void OnTransformParentChanged()
+        public void TurnOnDisplayModelMode()
         {
-            if (transform.parent)
+            GetComponent<PlayerInput>().enabled = false;
+            GetComponent<ActionMapHandler>().enabled = false;
+            playerCamera.updateRotationWithTarget = true;
+            playerCamera.gameObject.SetActive(false);
+            playerHUD.gameObject.SetActive(false);
+            Cursor.lockState = CursorLockMode.None;
+            animator.SetFloat("idleTime", 50001);
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            name = ClientManager.Singleton.GetClient(OwnerClientId).clientName;
+
+            if (IsOwner)
             {
-                if (transform.parent.GetComponent<VehicleChair>().driverChair)
-                    vehicle = GetComponentInParent<Vehicle>();
-            } 
+                GetComponent<PlayerInput>().enabled = true;
+                GetComponent<ActionMapHandler>().enabled = true;
+                playerCamera.GetComponent<AudioListener>().enabled = true;
+                playerCamera.tag = "MainCamera";
+                Destroy(worldSpaceLabel);
+            }
             else
             {
-                vehicle = null;
+                GetComponent<PlayerInput>().enabled = false;
+                GetComponent<ActionMapHandler>().enabled = false;
+                playerCamera.GetComponent<AudioListener>().enabled = false;
+                playerCamera.GetComponent<Camera>().depth = -1;
+                playerHUD.gameObject.SetActive(false);
+            }
+
+            if (IsServer)
+            {
+                foreach (NetworkTransform netTransform in GetComponentsInChildren<NetworkTransform>())
+                {
+                    netTransform.Interpolate = false;
+                }
+            }
+
+            MaterialColorChange colors = gameObject.AddComponent<MaterialColorChange>();
+            colors.materialColors = ClientManager.Singleton.GetClient(OwnerClientId).colors;
+            colors.Apply();
+        }
+
+        void OnDriverEnter(Vehicle newVehicle)
+        {
+            vehicle = newVehicle;
+        }
+
+        void OnDriverExit()
+        {
+            vehicle = null;
+        }
+
+        void OnChairEnter(VehicleChair newChair)
+        {
+            chair = newChair;
+
+            if (rb)
+                Destroy(rb);
+            transform.localPosition = chair.occupantPosition;
+            transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
+            bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
+            animator.SetBool("sitting", true);
+
+            if (!IsOwner)
+                GetComponent<OwnerNetworkTransform>().Interpolate = false;
+        }
+
+        void OnChairExit()
+        {
+            transform.Translate(transform.rotation * chair.exitPosOffset, Space.World);
+
+            bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
+            animator.SetBool("sitting", false);
+
+            rb = gameObject.AddComponent<Rigidbody>();
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+            chair = null;
+
+            if (!IsOwner)
+                GetComponent<OwnerNetworkTransform>().Interpolate = true;
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (!IsOwner) { return; }
+
+            if (collision.collider.CompareTag("NoPhysics") & transform.position.y > collision.GetContact(0).point.y)
+            {
+                if (rb)
+                {
+                    Destroy(rb);
+                    TrySetParentServerRpc(collision.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
+                    rotateBodyWithCamera = true;
+                }
             }
         }
 
-        private void Start()
+        [ServerRpc]
+        private void RemoveParentServerRpc()
+        {
+            NetworkObject.TryRemoveParent();
+        }
+
+        [ServerRpc]
+        private void TrySetParentServerRpc(ulong networkObjectId)
+        {
+            NetworkObject.TrySetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId], true);
+        }
+
+        public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
+        {
+            base.OnNetworkObjectParentChanged(parentNetworkObject);
+            GetComponent<OwnerNetworkTransform>().InLocalSpace = parentNetworkObject != null;
+        }
+
+        private void OnTransformParentChanged()
+        {
+            playerCamera.RefreshCameraParent();
+        }
+
+        private void Awake()
         {
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody>();
@@ -42,7 +158,7 @@ namespace LightPat.Core.Player
             prevCamRotState = !rotateBodyWithCamera;
             playerHUD = GetComponentInChildren<PlayerHUD>();
             // Change bodyRotation to be the spawn rotation
-            bodyRotation = transform.localEulerAngles;
+            bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             currentBodyRotSpeed = bodyRotationSpeed;
             camConstraint = playerCamera.neckAimRig.GetComponentInChildren<MultiRotationConstraint>();
         }
@@ -64,7 +180,7 @@ namespace LightPat.Core.Player
         public bool disableLookInput;
         public bool rotateBodyWithCamera;
         public float attemptedXAngle { get; private set; }
-        Vector3 bodyRotation;
+        public Vector3 bodyRotation { get; private set; }
         Vector2 lookInput;
         float lookAngle;
         float prevLookAngle;
@@ -138,9 +254,16 @@ namespace LightPat.Core.Player
             if (disableLookInput) { return; }
 
             // Body Rotation Logic (Rotation Around Y Axis)
-            bodyRotation = new Vector3(transform.eulerAngles.x, bodyRotation.y + lookInput.x, transform.eulerAngles.z);
+            bodyRotation = new Vector3(0, bodyRotation.y + lookInput.x, 0);
             if (rotateBodyWithCamera)
-                rb.MoveRotation(Quaternion.Euler(bodyRotation));
+            {
+                if (rb)
+                    rb.MoveRotation(Quaternion.Euler(bodyRotation));
+                else if (playerCamera.updateRotationWithTarget)
+                    transform.rotation = Quaternion.Euler(bodyRotation);
+                else if (transform.parent)
+                    transform.localRotation = Quaternion.Euler(bodyRotation);
+            }
 
             // Camera Rotation Logic (Rotation Around X Axis)
             Transform camTransform = playerCamera.transform;
@@ -190,6 +313,15 @@ namespace LightPat.Core.Player
         bool prevCamRotState;
         private void Update()
         {
+            if (!IsOwner) { return; }
+
+            if (chair)
+            {
+                transform.localPosition = chair.occupantPosition;
+                transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
+                bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
+            }
+
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
             float xTarget = moveInput.x;
@@ -220,26 +352,21 @@ namespace LightPat.Core.Player
 
             animator.speed = animatorSpeed;
 
-            if (!rotateBodyWithCamera & prevCamRotState)
+            if (rotateBodyWithCamera != prevCamRotState)
             {
-                if (!playerCamera.updateRotationWithTarget)
-                {
-                    playerCamera.transform.SetParent(null, true);
-                }
-            }
-            else if (rotateBodyWithCamera & !prevCamRotState)
-            {
-                if (!playerCamera.updateRotationWithTarget)
-                {
-                    transform.rotation = Quaternion.Euler(bodyRotation);
-                    playerCamera.transform.SetParent(cameraParent, true);
-                    playerCamera.transform.localPosition = Vector3.zero;
-                }
+                playerCamera.RefreshCameraParent();
             }
 
             if (!rotateBodyWithCamera)
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
-
+            {
+                if (rb)
+                    rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
+                else if (playerCamera.updateRotationWithTarget)
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
+                else if (transform.parent)
+                    transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
+            }
+            
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
             {
@@ -252,6 +379,57 @@ namespace LightPat.Core.Player
                 rotateWithBoneRotOffset = Vector3.zero; camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, rotateWithBoneRotOffset, 5 * Time.deltaTime);
 
             prevCamRotState = rotateBodyWithCamera;
+        }
+
+        private void FixedUpdate()
+        {
+            if (!IsOwner) { return; }
+
+            if (!rb & !chair)
+            {
+                Vector3 startPos = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
+                RaycastHit[] allHits = Physics.RaycastAll(startPos, transform.up * -1, 2);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                foreach (RaycastHit hit in allHits)
+                {
+                    if (GetComponentsInChildren<Collider>().Contains(hit.collider)) { continue; }
+
+                    if (hit.collider.CompareTag("NoPhysics"))
+                    {
+                        transform.position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
+                    }
+                    else
+                    {
+                        if (GetComponent<WeaponLoadout>().equippedWeapon)
+                            rotateBodyWithCamera = true;
+                        else
+                            rotateBodyWithCamera = false;
+
+                        rotateBodyWithCamera = false;
+                        rb = gameObject.AddComponent<Rigidbody>();
+                        rb.constraints = RigidbodyConstraints.FreezeRotation;
+                        rb.interpolation = RigidbodyInterpolation.Interpolate;
+                        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                        RemoveParentServerRpc();
+                    }
+                    break;
+                }
+
+                // If we have no hits
+                if (allHits.Length == 0)
+                {
+                    if (GetComponent<WeaponLoadout>().equippedWeapon)
+                        rotateBodyWithCamera = true;
+                    else
+                        rotateBodyWithCamera = false;
+
+                    rb = gameObject.AddComponent<Rigidbody>();
+                    rb.constraints = RigidbodyConstraints.FreezeRotation;
+                    rb.interpolation = RigidbodyInterpolation.Interpolate;
+                    rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                    RemoveParentServerRpc();
+                }
+            }
         }
 
         void OnAbility()
@@ -387,12 +565,11 @@ namespace LightPat.Core.Player
         {
             if (animator.GetBool("sitting"))
             {
-                bodyRotation = transform.rotation.eulerAngles;
-                animator.SetBool("sitting", chair.ExitSitting());
+                chair.ExitSittingServerRpc();
                 return;
             }
 
-            RaycastHit[] allHits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
+            RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, playerCamera.transform.forward, reach);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
             foreach (RaycastHit hit in allHits)
@@ -410,8 +587,7 @@ namespace LightPat.Core.Player
                 else if (hit.collider.GetComponent<VehicleChair>())
                 {
                     if (animator.GetBool("falling")) { return; }
-                    chair = hit.collider.GetComponent<VehicleChair>();
-                    animator.SetBool("sitting", chair.TrySitting(transform));
+                    hit.collider.GetComponent<VehicleChair>().TrySittingServerRpc(NetworkObjectId);
                 }
                 break;
             }
@@ -492,10 +668,31 @@ namespace LightPat.Core.Player
             }
         }
 
-        void OnProjectileHit(HitmarkerData hitmarkerData)
+        void PlayHitmarker(HitmarkerData hitmarkerData)
         {
-            AudioManager.Instance.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
-            StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerData.hitmarkerTime));
+            if (IsLocalPlayer)
+            {
+                AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[hitmarkerData.hitmarkerSoundIndex], transform.position, hitmarkerData.hitmarkerVolume);
+                StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerData.hitmarkerTime));
+            }
+            else
+            {
+                ClientRpcParams clientRpcParams = new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[] { hitmarkerData.targetClient }
+                    }
+                };
+                HitmarkerClientRpc(hitmarkerData.hitmarkerSoundIndex, hitmarkerData.hitmarkerVolume, hitmarkerData.hitmarkerTime, clientRpcParams);
+            }
+        }
+
+        [ClientRpc]
+        void HitmarkerClientRpc(int hitmarkerSoundIndex, float hitmarkerVolume, float hitmarkerTime, ClientRpcParams clientRpcParams = default)
+        {
+            AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[hitmarkerSoundIndex], transform.position, hitmarkerVolume);
+            StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerTime));
         }
     }
 }

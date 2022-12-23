@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
+using System.Linq;
 
 namespace LightPat.Core.Player
 {
@@ -11,7 +12,7 @@ namespace LightPat.Core.Player
         Animator animator;
         WeaponLoadout weaponLoadout;
 
-        private void Start()
+        private void Awake()
         {
             rb = GetComponentInParent<Rigidbody>();
             animator = GetComponent<Animator>();
@@ -26,6 +27,26 @@ namespace LightPat.Core.Player
         private void OnAnimatorMove()
         {
             if (disableRootMotion) { return; }
+            if (!rb)
+            {
+                rb = transform.parent.GetComponent<Rigidbody>();
+
+                RaycastHit[] allHits = Physics.RaycastAll(transform.parent.position, animator.deltaPosition, 1);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                bool applyRootMotion = true;
+                foreach (RaycastHit hit in allHits)
+                {
+                    if (GetComponentsInChildren<Collider>().Contains(hit.collider)) { continue; }
+
+                    applyRootMotion = false;
+                    break;
+                }
+
+                if (applyRootMotion)
+                    transform.parent.position += animator.deltaPosition;
+
+                return;
+            }
 
             Vector3 newVelocity = Vector3.MoveTowards(rb.velocity * Time.timeScale, animator.velocity, drag);
             newVelocity.y = rb.velocity.y * Time.timeScale;

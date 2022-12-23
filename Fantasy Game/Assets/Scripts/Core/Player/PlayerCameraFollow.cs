@@ -24,18 +24,43 @@ namespace LightPat.Core.Player
         Animator playerAnimator;
         WeaponLoadout playerWeaponLoadout;
         AnimatorLayerWeightManager layerWeightManager;
+        Transform aimTarget;
+
+        public void RefreshCameraParent()
+        {
+            if (updateRotationWithTarget)
+            {
+                transform.SetParent(BoneRotParent, true);
+            }
+            else
+            {
+                if (!playerController.rotateBodyWithCamera)
+                {
+                    transform.SetParent(playerController.transform.parent, true);
+                }
+                else
+                {
+                    playerController.transform.rotation = Quaternion.Euler(playerController.bodyRotation);
+                    transform.SetParent(CamParent, true);
+                    transform.localPosition = Vector3.zero;
+                }
+            }
+        }
 
         private void Start()
         {
             playerAnimator = playerController.GetComponentInChildren<Animator>();
             playerWeaponLoadout = playerController.GetComponent<WeaponLoadout>();
             layerWeightManager = playerController.GetComponentInChildren<AnimatorLayerWeightManager>();
+            aimTarget = playerController.GetComponentInChildren<AimTargetIKSolver>().transform;
         }
 
-        private void Update()
+        private void LateUpdate()
         {
-            //if (!playerController.rotateBodyWithCamera)
             transform.position = followTarget.position;
+
+            // If we are not the owner of this player, look at the aim target and do nothing else
+            if (!playerController.IsOwner) { transform.LookAt(aimTarget); return; }
 
             if (updateRotationWithTarget & !previousRotationState) // if we just activated updateRotationWithTarget
             {
@@ -44,7 +69,7 @@ namespace LightPat.Core.Player
                 neckAimRig.GetComponentInChildren<MultiRotationConstraint>().weight = 1;
                 playerController.disableLookInput = true;
                 playerController.SetLean(0);
-                transform.SetParent(BoneRotParent, true);
+                RefreshCameraParent();
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
                 if (playerWeaponLoadout.equippedWeapon != null & deactivateWeaponLayers)
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponLoadout.equippedWeapon.animationClass), 0);
@@ -55,10 +80,7 @@ namespace LightPat.Core.Player
                 neckAimRig.GetComponentInChildren<MultiRotationConstraint>().weight = 0;
                 neckAimRig.GetComponentInChildren<MultiAimConstraint>().weight = 1;
                 playerController.disableLookInput = false;
-                if (playerController.rotateBodyWithCamera)
-                    transform.SetParent(CamParent, true);
-                else
-                    transform.SetParent(null, true);
+                RefreshCameraParent();
                 // Fixes coming out of a breakfall roll and turning 90 degrees for no reason cause the animation is bad
                 if (playerWeaponLoadout.equippedWeapon != null)
                     layerWeightManager.SetLayerWeight(playerAnimator.GetLayerIndex(playerWeaponLoadout.equippedWeapon.animationClass), 1);

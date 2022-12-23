@@ -285,17 +285,4 @@ namespace LightPat.Core
             serializer.SerializeValue(ref initialWeapons);
         }
     }
-
-    public enum Team
-    {
-        Red,
-        Blue
-    }
-
-    public enum GameMode
-    {
-        CaptureTheFlag,
-        HordeMode,
-        GhostInTheGraveyard
-    }
 }

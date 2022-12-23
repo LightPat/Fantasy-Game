@@ -429,7 +429,7 @@ namespace LightPat.Core.Player
         [ServerRpc]
         void OnReloadServerRpc()
         {
-            StartCoroutine(weaponLoadout.equippedWeapon.Reload(false));
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload(IsClient));
             OnReloadClientRpc();
         }
 
@@ -460,11 +460,11 @@ namespace LightPat.Core.Player
             if (!IsHost)
             {
                 if (actionType == "stow")
-                    StartCoroutine(StowWeapon(false));
+                    StartCoroutine(StowWeapon(IsClient));
                 else if (actionType == "switch")
-                    StartCoroutine(SwitchWeapon(slot, false));
+                    StartCoroutine(SwitchWeapon(slot, IsClient));
                 else if (actionType == "draw")
-                    StartCoroutine(DrawWeapon(slot, false));
+                    StartCoroutine(DrawWeapon(slot, IsClient));
             }
             OnQueryWeaponSlotClientRpc(slot, actionType);
         }

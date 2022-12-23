@@ -66,8 +66,6 @@ namespace LightPat.ProceduralAnimations
         [ServerRpc]
         void SendConstraintServerRpc(Vector3 newOffset, ConstraintType offsetType, ulong clientId)
         {
-            Debug.Log("Sync IK Constraint " + this);
-
             if (!IsHost)
             {
                 if (offsetType == ConstraintType.aim)

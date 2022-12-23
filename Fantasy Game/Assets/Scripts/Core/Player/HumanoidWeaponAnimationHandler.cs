@@ -300,7 +300,7 @@ namespace LightPat.Core.Player
         bool attack1;
         void OnAttack1(InputValue value)
         {
-            //attack1 = value.isPressed;
+            attack1 = value.isPressed;
             OnAttack1ServerRpc(value.isPressed);
         }
 

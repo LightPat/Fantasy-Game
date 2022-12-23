@@ -75,7 +75,7 @@ namespace LightPat.Core.Player
         private NetworkObject Shoot()
         {
             if (reloading) { return null; }
-            float time = Time.time;
+            float time = NetworkManager.Singleton.LocalTime.TimeAsFloat;
             timeSinceLastShot = time - lastShotTime;
             if (timeSinceLastShot < minTimeBetweenShots) { return null; }
             if (currentBullets < 1) { return null; }

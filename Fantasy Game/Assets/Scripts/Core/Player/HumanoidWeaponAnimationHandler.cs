@@ -877,7 +877,7 @@ namespace LightPat.Core.Player
 
         void OnDeath()
         {
-            Attack1(false);
+            //Attack1(false);
             OnDrop();
         }
 

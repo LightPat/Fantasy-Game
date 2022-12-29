@@ -32,7 +32,7 @@ namespace LightPat.Core
 
         public override void OnNetworkSpawn()
         {
-            HP.OnValueChanged = UpdateHPDisplay;
+            HP.OnValueChanged = OnHPChanged;
             HP.Value = maxHealth;
             team = ClientManager.Singleton.GetClient(OwnerClientId).team;
             StartCoroutine(SpawnProtection());
@@ -147,7 +147,7 @@ namespace LightPat.Core
             }
         }
 
-        private void UpdateHPDisplay(float previous, float current)
+        private void OnHPChanged(float previous, float current)
         {
             // If we are a NPC, we edit the renderer's material instance
             if (healthRenderer != null)

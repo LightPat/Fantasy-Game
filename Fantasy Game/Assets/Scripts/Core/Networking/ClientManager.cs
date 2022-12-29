@@ -217,6 +217,17 @@ namespace LightPat.Core
         void SpawnPlayerServerRpc(ulong clientId)
         {
             GameObject g = Instantiate(playerPrefabOptions[clientDataDictionary[clientId].playerPrefabOptionIndex]);
+            if (clientDataDictionary[clientId].team == Team.Red)
+            {
+                g.transform.position = new Vector3(0, 0, -575);
+                g.transform.eulerAngles = new Vector3(0, 0, 0);
+            }
+            else if (clientDataDictionary[clientId].team == Team.Blue)
+            {
+                g.transform.position = new Vector3(0, 0, 575);
+                g.transform.eulerAngles = new Vector3(0, 180, 0);
+            }
+            
             g.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
     }

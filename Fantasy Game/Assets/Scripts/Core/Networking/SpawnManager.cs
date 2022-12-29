@@ -19,6 +19,15 @@ namespace LightPat.Core
                 networkObject.Spawn(true);
             }
         }
+
+        private void OnDrawGizmos()
+        {
+            foreach (SpawnData spawnData in spawnArray)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawSphere(spawnData.spawnPosition, 1);
+            }
+        }
     }
 
     [System.Serializable]

@@ -10,6 +10,7 @@ namespace LightPat.Core
     public class Attributes : NetworkBehaviour
     {
         public bool invincible;
+        public Team team;
         //[Header("Affinity Scores")]
         [HideInInspector] public sbyte[] personalityValues;
         [HideInInspector] public sbyte[] physicalValues;
@@ -33,6 +34,7 @@ namespace LightPat.Core
         {
             HP.OnValueChanged = UpdateHPDisplay;
             HP.Value = maxHealth;
+            team = ClientManager.Singleton.GetClient(OwnerClientId).team;
         }
 
         private void Start()
@@ -55,6 +57,11 @@ namespace LightPat.Core
         public void InflictDamage(float damage, GameObject inflicter)
         {
             if (invincible) { return; }
+            Attributes inflicterAttributes;
+            if (inflicter.TryGetComponent(out inflicterAttributes))
+            {
+                if (inflicterAttributes.team == team) { return; }
+            }
 
             float damageAngle = Vector3.Angle(inflicter.transform.forward, transform.forward);
 

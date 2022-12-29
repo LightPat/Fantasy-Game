@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
-    public class CaptureTheFlagBase : MonoBehaviour
+    public class CaptureTheFlagBase : NetworkBehaviour
     {
         public Team team;
         public Flag flagPrefab;
@@ -21,6 +22,21 @@ namespace LightPat.Core.Player
             currentFlag.SetBase(this);
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        public void PickUpFlagServerRpc(ulong networkObjectId)
+        {
+            Destroy(currentFlag.GetComponent<Rigidbody>());
+            currentFlag.transform.SetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].GetComponent<HumanoidWeaponAnimationHandler>().spineStow, true);
+            PickUpFlagClientRpc(networkObjectId);
+        }
+
+        [ClientRpc]
+        void PickUpFlagClientRpc(ulong networkObjectId)
+        {
+            Destroy(currentFlag.GetComponent<Rigidbody>());
+            currentFlag.transform.SetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].GetComponent<HumanoidWeaponAnimationHandler>().spineStow, true);
+        }
+
         private void Start()
         {
             RefreshFlag();
@@ -28,6 +44,8 @@ namespace LightPat.Core.Player
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!IsServer) { return; }
+
             if (other.attachedRigidbody)
             {
                 Flag carryingFlag = other.attachedRigidbody.GetComponentInChildren<Flag>();
@@ -36,10 +54,17 @@ namespace LightPat.Core.Player
                     if (carryingFlag.team != team)
                     {
                         gameManager.IncrementScore(team);
+                        DestroyFlagClientRpc(carryingFlag.GetComponentInParent<NetworkObject>().NetworkObjectId);
                         Destroy(carryingFlag.gameObject);
                     }
                 }
             }
+        }
+
+        [ClientRpc]
+        void DestroyFlagClientRpc(ulong networkObjectId)
+        {
+            Destroy(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].GetComponentInChildren<Flag>().gameObject);
         }
     }
 }

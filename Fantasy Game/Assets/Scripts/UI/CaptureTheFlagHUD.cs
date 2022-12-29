@@ -3,26 +3,30 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using LightPat.Core;
+using System.Linq;
 
 namespace LightPat.UI
 {
     public class CaptureTheFlagHUD : MonoBehaviour
     {
-        public TextMeshProUGUI redTeamScore;
-        public TextMeshProUGUI blueTeamScore;
+        private TextMeshProUGUI[] teamScoreDisplays;
+        private List<Team> teams = new List<Team>();
 
-        public void OnIncrementScore(KeyValuePair<Team, int> teamScore)
+        public void OnIncrementScore(KeyValuePair<int, int> teamScore)
         {
-            if (teamScore.Key == Team.Red)
-                redTeamScore.SetText(teamScore.Key + ": " + teamScore.Value);
-            else if (teamScore.Key == Team.Blue)
-                blueTeamScore.SetText(teamScore.Key + ": " + teamScore.Value);
+            teamScoreDisplays[teamScore.Key].SetText(teams[teamScore.Key] + ": " + teamScore.Value);
         }
 
-        private void Start()
+        private void Awake()
         {
-            redTeamScore.color = Color.red;
-            blueTeamScore.color = Color.blue;
+            teamScoreDisplays = GetComponentsInChildren<TextMeshProUGUI>();
+            int i = 0;
+            foreach (Team team in System.Enum.GetValues(typeof(Team)).Cast<Team>())
+            {
+                teams.Add(team);
+                teamScoreDisplays[i].SetText(team + ": " + 0);
+                i++;
+            }
         }
     }
 }

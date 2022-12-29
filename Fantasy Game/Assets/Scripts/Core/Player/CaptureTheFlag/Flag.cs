@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
@@ -18,9 +19,12 @@ namespace LightPat.Core.Player
 
         public override void Invoke(GameObject invoker)
         {
-            Destroy(GetComponent<Rigidbody>());
-            carryingParent = invoker.GetComponent<HumanoidWeaponAnimationHandler>();
-            transform.SetParent(carryingParent.spineStow, true);
+            captureTheFlagBase.PickUpFlagServerRpc(invoker.GetComponent<NetworkObject>().NetworkObjectId);
+        }
+
+        private void OnTransformParentChanged()
+        {
+            carryingParent = GetComponentInParent<HumanoidWeaponAnimationHandler>();
         }
 
         public void SetBase(CaptureTheFlagBase newCaptureTheFlagBase)

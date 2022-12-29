@@ -8,6 +8,7 @@ namespace LightPat.Core.Player
     public class Flag : Interactable
     {
         [HideInInspector] public CaptureTheFlagBase captureTheFlagBase;
+        [HideInInspector] public bool scored;
 
         public Team team { get; private set; }
 
@@ -19,7 +20,8 @@ namespace LightPat.Core.Player
 
         public override void Invoke(GameObject invoker)
         {
-            captureTheFlagBase.PickUpFlagServerRpc(invoker.GetComponent<NetworkObject>().NetworkObjectId);
+            if (invoker.GetComponent<Attributes>().team != team)
+                captureTheFlagBase.PickUpFlagServerRpc(invoker.GetComponent<NetworkObject>().NetworkObjectId);
         }
 
         private void OnTransformParentChanged()

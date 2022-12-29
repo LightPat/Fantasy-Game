@@ -8,6 +8,7 @@ namespace LightPat.Core
 {
     public class CaptureTheFlagManager : NetworkBehaviour
     {
+        public TeamSpawnPoint[] spawnPoints;
         public GameObject HUDPrefab;
         public int winningScore = 3;
 
@@ -59,6 +60,14 @@ namespace LightPat.Core
         {
             scores.OnListChanged -= OnListChanged;
         }
+    }
+
+    [System.Serializable]
+    public class TeamSpawnPoint
+    {
+        public Team team;
+        public Vector3 spawnPosition;
+        public Vector3 spawnRotation;
     }
 
     public enum Team

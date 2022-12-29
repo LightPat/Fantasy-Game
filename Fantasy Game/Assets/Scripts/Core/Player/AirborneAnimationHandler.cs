@@ -47,9 +47,13 @@ namespace LightPat.Core.Player
             // Wall running logic
             if (animator.GetBool("wallRun"))
             {
+                PlayerController playerController;
+                if (TryGetComponent(out playerController))
+                    playerController.rotateBodyWithCamera = false;
+                
                 rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
                 handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
-                //animator.SetFloat("moveInputX", 0);
+                animator.SetFloat("moveInputX", 0);
                 //animator.SetFloat("moveInputY", 0);
 
                 RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.right * rightLeftMultiplier, 3);
@@ -281,6 +285,7 @@ namespace LightPat.Core.Player
             if (TryGetComponent(out playerController))
             {
                 playerController.disableLeanInput = false;
+                playerController.rotateBodyWithCamera = weaponLoadout.equippedWeapon;
             }
             rightLeftMultiplier = 0;
         }

@@ -48,14 +48,16 @@ namespace LightPat.Core.Player
 
             if (other.attachedRigidbody)
             {
-                Flag carryingFlag = other.attachedRigidbody.GetComponentInChildren<Flag>();
-                if (carryingFlag)
+                Flag scoringFlag = other.attachedRigidbody.GetComponentInChildren<Flag>();
+                if (scoringFlag)
                 {
-                    if (carryingFlag.team != team)
+                    if (scoringFlag.team != team)
                     {
+                        if (scoringFlag.scored) { return; }
+                        scoringFlag.scored = true;
                         gameManager.IncrementScore(team);
-                        DestroyFlagClientRpc(carryingFlag.GetComponentInParent<NetworkObject>().NetworkObjectId);
-                        Destroy(carryingFlag.gameObject);
+                        DestroyFlagClientRpc(scoringFlag.GetComponentInParent<NetworkObject>().NetworkObjectId);
+                        Destroy(scoringFlag.gameObject);
                     }
                 }
             }

@@ -66,5 +66,11 @@ namespace LightPat.Core.Player
         {
             Destroy(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].GetComponentInChildren<Flag>().gameObject);
         }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.black;
+            Gizmos.DrawCube(transform.position + flagLocalPosition, Vector3.one);
+        }
     }
 }

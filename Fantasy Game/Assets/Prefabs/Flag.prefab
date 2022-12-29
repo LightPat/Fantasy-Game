@@ -256,4 +256,4 @@ MonoBehaviour:
   captureTheFlagBase: {fileID: 0}
   flagRenderer: {fileID: 2156517891019109339}
   carryingLocalPos: {x: 1.09, y: -1.32, z: -0.37}
-  carryingLocalRot: {x: 0, y: 0, z: 38.94}
+  carryingLocalRot: {x: 19.523, y: -152.932, z: -33.182}

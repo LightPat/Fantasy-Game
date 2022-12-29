@@ -7,7 +7,7 @@ namespace LightPat.Core.Player
 {
     public class Flag : Interactable
     {
-        public CaptureTheFlagBase captureTheFlagBase;
+        [HideInInspector] public CaptureTheFlagBase captureTheFlagBase;
 
         public Team team { get; private set; }
 

@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 1480ff46035dd674686b464023aa3f0f, type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -1746,7 +1746,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 841315153}
-  - component: {fileID: 841315152}
   - component: {fileID: 841315151}
   - component: {fileID: 841315150}
   - component: {fileID: 841315149}
@@ -1820,23 +1819,6 @@ MonoBehaviour:
   initialVolume: 0.1
   networkAudioClips:
   - {fileID: 8300000, guid: 3cf53b7d782708b409bcd1a45eb1ec9f, type: 3}
---- !u!114 &841315152
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 841315147}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c356bc95e7e3cee48bc773d5d8ed0c99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DirectionalLight: {fileID: 146978006}
-  Preset: {fileID: 11400000, guid: 2f36dd5cb1dfa0f4f86e3e18e214a6bd, type: 2}
-  TimeOfDay: 12
-  timeScale: 0
-  enableFog: 0
 --- !u!4 &841315153
 Transform:
   m_ObjectHideFlags: 0

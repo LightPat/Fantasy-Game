@@ -36,7 +36,7 @@ namespace LightPat.Core
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!IsServer) { return; }
+            if (!IsServer | !IsSpawned) { return; }
 
             if (other.GetComponent<Projectile>()) { return; }
 

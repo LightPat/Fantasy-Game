@@ -9,7 +9,6 @@ namespace LightPat.Core
 {
     public class Attributes : NetworkBehaviour
     {
-        public bool invincible;
         public Team team;
         //[Header("Affinity Scores")]
         [HideInInspector] public sbyte[] personalityValues;
@@ -29,12 +28,21 @@ namespace LightPat.Core
 
         public NetworkVariable<float> HP { get; private set; } = new NetworkVariable<float>();
         Animator animator;
+        bool invincible;
 
         public override void OnNetworkSpawn()
         {
             HP.OnValueChanged = UpdateHPDisplay;
             HP.Value = maxHealth;
             team = ClientManager.Singleton.GetClient(OwnerClientId).team;
+            StartCoroutine(SpawnProtection());
+        }
+
+        private IEnumerator SpawnProtection()
+        {
+            invincible = true;
+            yield return new WaitForSeconds(5);
+            invincible = false;
         }
 
         private void Start()

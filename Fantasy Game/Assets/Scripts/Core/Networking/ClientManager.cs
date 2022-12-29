@@ -216,19 +216,23 @@ namespace LightPat.Core
         [ServerRpc(RequireOwnership = false)]
         void SpawnPlayerServerRpc(ulong clientId)
         {
-            GameObject g = Instantiate(playerPrefabOptions[clientDataDictionary[clientId].playerPrefabOptionIndex]);
+            Vector3 spawnPosition = Vector3.zero;
+            Quaternion spawnRotation = Quaternion.identity;
+
             if (gameMode.Value == GameMode.CaptureTheFlag)
             {
                 foreach (TeamSpawnPoint teamSpawnPoint in FindObjectOfType<CaptureTheFlagManager>().spawnPoints)
                 {
                     if (teamSpawnPoint.team == clientDataDictionary[clientId].team)
                     {
-                        g.transform.position = teamSpawnPoint.spawnPosition;
-                        g.transform.eulerAngles = teamSpawnPoint.spawnRotation;
+                        spawnPosition = teamSpawnPoint.spawnPosition;
+                        spawnRotation = Quaternion.Euler(teamSpawnPoint.spawnRotation);
                         break;
                     }
                 }
             }
+            GameObject g = Instantiate(playerPrefabOptions[clientDataDictionary[clientId].playerPrefabOptionIndex], spawnPosition, spawnRotation);
+            
             g.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
     }

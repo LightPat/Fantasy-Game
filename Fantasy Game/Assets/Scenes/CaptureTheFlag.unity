@@ -1123,7 +1123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 1
   flagPrefab: {fileID: 2156517891860764129, guid: 99b2eb2f73c80da4aaa942c27ee8f992, type: 3}
-  flagLocalPosition: {x: 0, y: 0.3, z: 0}
+  flagLocalPosition: {x: 0, y: 0.5, z: 0}
   gameManager: {fileID: 841315149}
 --- !u!65 &435047704
 BoxCollider:
@@ -1266,7 +1266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   team: 0
   flagPrefab: {fileID: 2156517891860764129, guid: 99b2eb2f73c80da4aaa942c27ee8f992, type: 3}
-  flagLocalPosition: {x: 0, y: 0.3, z: 0}
+  flagLocalPosition: {x: 0, y: 0.5, z: 0}
   gameManager: {fileID: 841315149}
 --- !u!65 &453402387
 BoxCollider:

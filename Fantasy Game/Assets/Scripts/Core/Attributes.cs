@@ -64,7 +64,9 @@ namespace LightPat.Core
 
         public void InflictDamage(float damage, GameObject inflicter)
         {
+            if (!IsServer) { return; }
             if (invincible) { return; }
+
             Attributes inflicterAttributes;
             if (inflicter.TryGetComponent(out inflicterAttributes))
             {
@@ -88,28 +90,22 @@ namespace LightPat.Core
             if (HP.Value < 0)
                 HP.Value = 0;
 
-            SendMessage("OnAttacked", inflicter);
+            SendMessage("OnAttacked", new OnAttackedData(inflicter, damageAngle));
 
-            if (animator != null)
-            {
-                animator.SetFloat("damageAngle", damageAngle);
-                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
-
-                if (HP.Value <= 0)
-                {
-                    animator.SetBool("dead", true);
-                    SendMessage("OnDeath");
-                }
-            }
-            else
-            {
-                if (HP.Value <= 0) { gameObject.SetActive(false); }
-            }
+            if (HP.Value <= 0)
+                SendMessage("OnDeath");
         }
 
-        public void InflictDamage(float damage, GameObject inflicter, Projectile projectile)
+        public bool InflictDamage(float damage, GameObject inflicter, Projectile projectile)
         {
-            if (invincible) { return; }
+            if (!IsServer) { return false; }
+            if (invincible) { return false; }
+
+            Attributes inflicterAttributes;
+            if (inflicter.TryGetComponent(out inflicterAttributes))
+            {
+                if (inflicterAttributes.team == team) { return false; }
+            }
 
             float damageAngle = Vector3.Angle(projectile.transform.forward, transform.forward);
 
@@ -128,23 +124,12 @@ namespace LightPat.Core
             if (HP.Value < 0)
                 HP.Value = 0;
 
-            SendMessage("OnAttacked", inflicter);
+            SendMessage("OnAttacked", new OnAttackedData(inflicter, damageAngle));
 
-            if (animator != null)
-            {
-                animator.SetFloat("damageAngle", damageAngle);
-                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
+            if (HP.Value <= 0)
+                SendMessage("OnDeath");
 
-                if (HP.Value <= 0)
-                {
-                    animator.SetBool("dead", true);
-                    SendMessage("OnDeath");
-                }
-            }
-            else
-            {
-                if (HP.Value <= 0) { gameObject.SetActive(false); }
-            }
+            return true;
         }
 
         private void OnHPChanged(float previous, float current)
@@ -160,6 +145,18 @@ namespace LightPat.Core
                 imageMaterial.SetFloat("healthPercentage", HP.Value / maxHealth);
                 healthPointsUIText.SetText(HP.Value + " / " + maxHealth);
             }
+        }
+    }
+
+    public struct OnAttackedData
+    {
+        public GameObject inflicter;
+        public float damageAngle;
+
+        public OnAttackedData(GameObject inflicter, float damageAngle)
+        {
+            this.inflicter = inflicter;
+            this.damageAngle = damageAngle;
         }
     }
 }

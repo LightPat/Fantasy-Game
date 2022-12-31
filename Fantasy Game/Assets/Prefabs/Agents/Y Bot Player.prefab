@@ -6018,6 +6018,7 @@ MonoBehaviour:
   leftLean: 45
   leanSpeed: 5
   disableLeanInput: 0
+  deathScreenPrefab: {fileID: 2831454819737080861, guid: 72f14c4f76ff3c649b8b802c10d14301, type: 3}
 --- !u!114 &7284513826171149810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6112,7 +6113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97b494da67310674387fd7696b2df54d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invincible: 0
+  team: 0
   personalityValues: 
   physicalValues: 
   magicalValues: 

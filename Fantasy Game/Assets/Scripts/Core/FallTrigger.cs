@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
@@ -15,15 +16,9 @@ namespace LightPat.Core
 
         private void OnTriggerEnter(Collider other)
         {
-            foreach (TeamSpawnPoint teamSpawnPoint in gameManager.spawnPoints)
-            {
-                if (teamSpawnPoint.team == other.GetComponentInParent<Attributes>().team)
-                {
-                    other.attachedRigidbody.transform.position = teamSpawnPoint.spawnPosition;
-                    other.attachedRigidbody.transform.rotation = Quaternion.Euler(teamSpawnPoint.spawnRotation);
-                    break;
-                }
-            }
+            Attributes objectAttributes = other.GetComponentInParent<Attributes>();
+            if (objectAttributes)
+                objectAttributes.InflictDamage(100000000000000, gameObject);
         }
     }
 }

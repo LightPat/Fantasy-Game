@@ -242,6 +242,7 @@ namespace LightPat.Core.Player
                     if (weaponLoadout.equippedWeapon.weaponName == ClientManager.Singleton.weaponPrefabOptions[i].weaponName)
                     {
                         DropWeaponServerRpc(i);
+                        break;
                     }
                 }
             }
@@ -265,6 +266,8 @@ namespace LightPat.Core.Player
         [ClientRpc]
         void DropWeaponClientRpc()
         {
+            if (IsHost) { return; }
+
             animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
             Destroy(weaponLoadout.equippedWeapon.gameObject);
             weaponLoadout.RemoveEquippedWeapon();
@@ -877,13 +880,22 @@ namespace LightPat.Core.Player
 
         void OnDeath()
         {
-            //Attack1(false);
+            if (animator.GetBool("dead")) { return; }
+            animator.SetBool("dead", true);
             OnDrop();
+            DeathClientRpc();
         }
 
-        void OnAttacked(GameObject attacker)
+        [ClientRpc]
+        void DeathClientRpc()
         {
-            //Debug.Log(name + " is being attacked by: " + attacker);
+            animator.SetBool("dead", true);
+        }
+
+        void OnAttacked(OnAttackedData data)
+        {
+            animator.SetFloat("damageAngle", data.damageAngle);
+            StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
         }
     }
 }

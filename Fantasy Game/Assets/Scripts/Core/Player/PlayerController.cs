@@ -694,5 +694,62 @@ namespace LightPat.Core.Player
             AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[hitmarkerSoundIndex], transform.position, hitmarkerVolume);
             StartCoroutine(playerHUD.ToggleHitMarker(hitmarkerTime));
         }
+
+        public GameObject deathScreenPrefab;
+        GameObject deathScreenInstance;
+        bool respawning;
+        void OnDeath()
+        {
+            if (!respawning)
+            {
+                respawning = true;
+                ClientRpcParams clientRpcParams = new ClientRpcParams
+                {
+                    Send = new ClientRpcSendParams
+                    {
+                        TargetClientIds = new ulong[] { OwnerClientId }
+                    }
+                };
+                RespawnClientRpc(clientRpcParams);
+            }
+        }
+
+        [ClientRpc]
+        void RespawnClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            deathScreenInstance = Instantiate(deathScreenPrefab);
+            StartCoroutine(WaitForRespawnCountdown());
+        }
+
+        private IEnumerator WaitForRespawnCountdown()
+        {
+            yield return new WaitUntil(() => deathScreenInstance == null);
+
+            foreach (TeamSpawnPoint teamSpawnPoint in FindObjectOfType<CaptureTheFlagManager>().spawnPoints)
+            {
+                if (teamSpawnPoint.team == GetComponent<Attributes>().team)
+                {
+                    transform.position = teamSpawnPoint.spawnPosition;
+                    transform.rotation = Quaternion.Euler(teamSpawnPoint.spawnRotation);
+                    break;
+                }
+            }
+            RespawnServerRpc(transform.position);
+        }
+
+        [ServerRpc]
+        void RespawnServerRpc(Vector3 spawnPosition)
+        {
+            animator.SetBool("dead", false);
+            GetComponent<Attributes>().OnNetworkSpawn();
+            respawning = false;
+            RespawnClientRpc();
+        }
+
+        [ClientRpc]
+        void RespawnClientRpc()
+        {
+            animator.SetBool("dead", false);
+        }
     }
 }

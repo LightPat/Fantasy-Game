@@ -50,12 +50,10 @@ namespace LightPat.Core
                 Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
                 if (hit)
                 {
-                    hit.InflictDamage(damage, inflicter, this);
-                    // Change this to be a damage inflicted sound that happens on the target
-                    //AudioManager.Instance.PlayClipAtPoint(hitmarkerData.hitmarkerSound, transform.position, hitmarkerData.hitmarkerVolume);
+                    bool damageSuccess = hit.InflictDamage(damage, inflicter, this);
 
                     NetworkObject playerNetObj;
-                    if (inflicter.TryGetComponent(out playerNetObj))
+                    if (inflicter.TryGetComponent(out playerNetObj) & damageSuccess)
                     {
                         if (playerNetObj.IsPlayerObject)
                             inflicter.SendMessage("PlayHitmarker", new HitmarkerData(System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, playerNetObj.OwnerClientId));

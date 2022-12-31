@@ -248,7 +248,7 @@ namespace LightPat.Core.Player
             }
         }
 
-        [ServerRpc]
+        [ServerRpc(RequireOwnership = false)]
         void DropWeaponServerRpc(int weaponIndex)
         {
             GameObject droppedWeapon = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject, weaponLoadout.equippedWeapon.transform.position + transform.forward, weaponLoadout.equippedWeapon.transform.rotation);

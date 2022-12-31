@@ -10,8 +10,8 @@ namespace LightPat.Core.Player
         public Team team;
         public Flag flagPrefab;
         [SerializeField] private Vector3 flagLocalPosition;
-        [SerializeField] private CaptureTheFlagManager gameManager;
 
+        private CaptureTheFlagManager gameManager;
         private Flag currentFlag;
 
         public void RefreshFlag()
@@ -52,6 +52,7 @@ namespace LightPat.Core.Player
 
         private void Start()
         {
+            gameManager = FindObjectOfType<CaptureTheFlagManager>();
             RefreshFlag();
         }
 

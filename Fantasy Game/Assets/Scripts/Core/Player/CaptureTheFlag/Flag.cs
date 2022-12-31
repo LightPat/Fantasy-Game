@@ -123,7 +123,7 @@ namespace LightPat.Core.Player
                 }
                 else // no parent
                 {
-                    flagText.SetText("Return");
+                    flagText.SetText("Recover");
                 }
             }
             else // If the local player and flag are not on the same team

@@ -104,7 +104,7 @@ namespace LightPat.Core
             Attributes inflicterAttributes;
             if (inflicter.TryGetComponent(out inflicterAttributes))
             {
-                if (inflicterAttributes.team == team) { return false; }
+                //if (inflicterAttributes.team == team) { return false; }
             }
 
             float damageAngle = Vector3.Angle(projectile.transform.forward, transform.forward);

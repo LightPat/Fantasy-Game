@@ -17,16 +17,22 @@ namespace LightPat.Core.Player
         [SerializeField] private Vector3 carryingLocalRot;
 
         HumanoidWeaponAnimationHandler carryingParent;
+        Vector3 flagRestingPosition;
 
         public override void Invoke(GameObject invoker)
         {
-            if (invoker.GetComponent<Attributes>().team != team)
-                captureTheFlagBase.PickUpFlagServerRpc(invoker.GetComponent<NetworkObject>().NetworkObjectId);
+            //if (invoker.GetComponent<Attributes>().team != team)
+            captureTheFlagBase.PickUpFlagServerRpc(invoker.GetComponent<NetworkObject>().NetworkObjectId);
+            // TODO Add if teams are the same return flag to base
         }
 
         private void OnTransformParentChanged()
         {
             carryingParent = GetComponentInParent<HumanoidWeaponAnimationHandler>();
+            RaycastHit hit;
+            flagRestingPosition = Vector3.zero;
+            if (Physics.Raycast(transform.position, Vector3.down, out hit, 3, Physics.AllLayers, QueryTriggerInteraction.Ignore))
+                flagRestingPosition = hit.point;
         }
 
         public void SetBase(CaptureTheFlagBase newCaptureTheFlagBase)
@@ -47,6 +53,12 @@ namespace LightPat.Core.Player
             {
                 transform.localPosition = Vector3.Lerp(transform.localPosition, carryingLocalPos, Time.deltaTime * 8);
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(carryingLocalRot), Time.deltaTime * 8);
+            }
+            else if (!transform.parent)
+            {
+                if (flagRestingPosition != Vector3.zero)
+                    transform.position = Vector3.Lerp(transform.position, flagRestingPosition, Time.deltaTime * 8);
+                transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, Time.deltaTime * 8);
             }
         }
 

@@ -734,11 +734,11 @@ namespace LightPat.Core.Player
                     break;
                 }
             }
-            RespawnServerRpc(transform.position);
+            RespawnServerRpc();
         }
 
         [ServerRpc]
-        void RespawnServerRpc(Vector3 spawnPosition)
+        void RespawnServerRpc()
         {
             animator.SetBool("dead", false);
             GetComponent<Attributes>().OnNetworkSpawn();

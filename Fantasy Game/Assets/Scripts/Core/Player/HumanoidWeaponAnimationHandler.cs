@@ -883,13 +883,33 @@ namespace LightPat.Core.Player
             if (animator.GetBool("dead")) { return; }
             animator.SetBool("dead", true);
             OnDrop();
-            DeathClientRpc();
+
+            Flag flag = GetComponentInChildren<Flag>();
+            Vector3 flagPosition = Vector3.zero;
+            if (flag)
+            {
+                flagPosition = flag.transform.position;
+                flag.transform.SetParent(null, true);
+                Rigidbody rb = flag.gameObject.AddComponent<Rigidbody>();
+                rb.isKinematic = true;
+            }
+
+            DeathClientRpc(flagPosition);
         }
 
         [ClientRpc]
-        void DeathClientRpc()
+        void DeathClientRpc(Vector3 flagPosition)
         {
             animator.SetBool("dead", true);
+
+            Flag flag = GetComponentInChildren<Flag>();
+            if (flag)
+            {
+                flag.transform.position = flagPosition;
+                flag.transform.SetParent(null, true);
+                Rigidbody rb = flag.gameObject.AddComponent<Rigidbody>();
+                rb.isKinematic = true;
+            }
         }
 
         void OnAttacked(OnAttackedData data)

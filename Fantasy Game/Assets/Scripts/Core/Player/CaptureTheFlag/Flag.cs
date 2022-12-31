@@ -30,9 +30,14 @@ namespace LightPat.Core.Player
         {
             carryingParent = GetComponentInParent<HumanoidWeaponAnimationHandler>();
             RaycastHit hit;
-            flagRestingPosition = Vector3.zero;
-            if (Physics.Raycast(transform.position, Vector3.down, out hit, 3, Physics.AllLayers, QueryTriggerInteraction.Ignore))
-                flagRestingPosition = hit.point;
+            if (!transform.parent)
+            {
+                flagRestingPosition = Vector3.zero;
+                if (Physics.Raycast(transform.position, Vector3.down, out hit, 3, Physics.AllLayers, QueryTriggerInteraction.Ignore))
+                    flagRestingPosition = hit.point;
+                else
+                    Destroy(gameObject);
+            }
         }
 
         public void SetBase(CaptureTheFlagBase newCaptureTheFlagBase)

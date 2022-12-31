@@ -27,7 +27,6 @@ namespace LightPat.Core
         public Collider headCollider;
 
         public NetworkVariable<float> HP { get; private set; } = new NetworkVariable<float>();
-        Animator animator;
         bool invincible;
 
         public override void OnNetworkSpawn()
@@ -47,8 +46,6 @@ namespace LightPat.Core
 
         private void Start()
         {
-            animator = GetComponentInChildren<Animator>();
-
             // If we are a NPC, we edit the renderer's material instance
             if (healthRenderer != null)
             {

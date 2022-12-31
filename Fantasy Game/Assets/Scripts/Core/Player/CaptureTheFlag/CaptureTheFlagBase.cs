@@ -30,18 +30,18 @@ namespace LightPat.Core.Player
             PickUpFlagClientRpc(networkObjectId);
         }
 
-        [ClientRpc]
-        void PickUpFlagClientRpc(ulong networkObjectId)
-        {
-            Destroy(currentFlag.GetComponent<Rigidbody>());
-            currentFlag.transform.SetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].GetComponent<HumanoidWeaponAnimationHandler>().spineStow, true);
-        }
-
         [ServerRpc]
         public void ReturnFlagServerRpc()
         {
             Destroy(currentFlag.gameObject);
             ReturnFlagClientRpc();
+        }
+
+        [ClientRpc]
+        void PickUpFlagClientRpc(ulong networkObjectId)
+        {
+            Destroy(currentFlag.GetComponent<Rigidbody>());
+            currentFlag.transform.SetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].GetComponent<HumanoidWeaponAnimationHandler>().spineStow, true);
         }
 
         [ClientRpc]

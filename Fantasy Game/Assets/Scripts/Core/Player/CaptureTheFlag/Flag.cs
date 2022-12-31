@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using TMPro;
 
 namespace LightPat.Core.Player
 {
@@ -12,6 +13,7 @@ namespace LightPat.Core.Player
 
         public Team team { get; private set; }
 
+        [SerializeField] TextMeshPro flagText;
         [SerializeField] private Renderer flagRenderer;
         [SerializeField] private Vector3 carryingLocalPos;
         [SerializeField] private Vector3 carryingLocalRot;
@@ -25,13 +27,14 @@ namespace LightPat.Core.Player
 
             if (invoker.GetComponent<Attributes>().team != team)
                 captureTheFlagBase.PickUpFlagServerRpc(invoker.GetComponent<NetworkObject>().NetworkObjectId);
-            else
+            else if (!transform.parent)
                 Destroy(gameObject);
         }
 
         private void OnTransformParentChanged()
         {
             carryingParent = GetComponentInParent<HumanoidWeaponAnimationHandler>();
+            RefreshText();
             if (!transform.parent)
             {
                 RaycastHit hit;
@@ -48,11 +51,22 @@ namespace LightPat.Core.Player
             team = newCaptureTheFlagBase.team;
 
             if (team == Team.Red)
+            {
                 flagRenderer.material.color = Color.red;
+                flagText.color = Color.red;
+            }
             else if (team == Team.Blue)
+            {
                 flagRenderer.material.color = Color.blue;
-
+                flagText.color = Color.blue;
+            }
+            
             captureTheFlagBase = newCaptureTheFlagBase;
+        }
+
+        private void Start()
+        {
+            RefreshText();
         }
 
         private void Update()
@@ -68,11 +82,68 @@ namespace LightPat.Core.Player
                     transform.position = Vector3.Lerp(transform.position, flagRestingPosition, Time.deltaTime * 8);
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, Time.deltaTime * 8);
             }
+
+            if (Camera.main)
+            {
+                flagText.transform.rotation = Quaternion.LookRotation(Camera.main.transform.position - flagText.transform.position) * Quaternion.Euler(0, 180, 0);
+
+                float minDistance = 1;
+                float maxDistance = 500;
+                float minScale = 1;
+                float maxScale = 7;
+                float scale = Mathf.Lerp(minScale, maxScale, Mathf.InverseLerp(minDistance, maxDistance, Vector3.Distance(flagText.transform.position, Camera.main.transform.position)));
+
+                flagText.transform.localScale = new Vector3(scale, scale, scale);
+            }
         }
 
         private void OnDestroy()
         {
             captureTheFlagBase.RefreshFlag();
+        }
+
+        private void RefreshText()
+        {
+            if (NetworkManager.Singleton.IsServer)
+                flagText.SetText(team.ToString());
+
+            // If the local player and flag are on the same team
+            if (ClientManager.Singleton.GetClient(NetworkManager.Singleton.LocalClientId).team == team)
+            {
+                if (carryingParent) // parent is a player
+                {
+                    if (carryingParent.IsLocalPlayer)
+                        flagText.SetText("");
+                    else
+                        flagText.SetText("Kill");
+                }
+                else if (transform.parent) // parent is the base
+                {
+                    flagText.SetText("Defend");
+                }
+                else // no parent
+                {
+                    flagText.SetText("Return");
+                }
+            }
+            else // If the local player and flag are not on the same team
+            {
+                if (carryingParent) // parent is a player
+                {
+                    if (carryingParent.IsLocalPlayer)
+                        flagText.SetText("");
+                    else
+                        flagText.SetText("Protect");
+                }
+                else if (transform.parent) // parent is the base
+                {
+                    flagText.SetText("Capture");
+                }
+                else // no parent
+                {
+                    flagText.SetText("Capture");
+                }
+            }
         }
     }
 }

@@ -21,17 +21,20 @@ namespace LightPat.Core.Player
 
         public override void Invoke(GameObject invoker)
         {
-            //if (invoker.GetComponent<Attributes>().team != team)
-            captureTheFlagBase.PickUpFlagServerRpc(invoker.GetComponent<NetworkObject>().NetworkObjectId);
-            // TODO Add if teams are the same return flag to base
+            if (carryingParent) { return; }
+
+            if (invoker.GetComponent<Attributes>().team != team)
+                captureTheFlagBase.PickUpFlagServerRpc(invoker.GetComponent<NetworkObject>().NetworkObjectId);
+            else
+                Destroy(gameObject);
         }
 
         private void OnTransformParentChanged()
         {
             carryingParent = GetComponentInParent<HumanoidWeaponAnimationHandler>();
-            RaycastHit hit;
             if (!transform.parent)
             {
+                RaycastHit hit;
                 flagRestingPosition = Vector3.zero;
                 if (Physics.Raycast(transform.position, Vector3.down, out hit, 3, Physics.AllLayers, QueryTriggerInteraction.Ignore))
                     flagRestingPosition = hit.point;

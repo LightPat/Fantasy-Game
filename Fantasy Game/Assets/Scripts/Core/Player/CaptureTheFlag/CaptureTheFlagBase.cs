@@ -37,6 +37,19 @@ namespace LightPat.Core.Player
             currentFlag.transform.SetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].GetComponent<HumanoidWeaponAnimationHandler>().spineStow, true);
         }
 
+        [ServerRpc]
+        public void ReturnFlagServerRpc()
+        {
+            Destroy(currentFlag.gameObject);
+            ReturnFlagClientRpc();
+        }
+
+        [ClientRpc]
+        void ReturnFlagClientRpc()
+        {
+            Destroy(currentFlag.gameObject);
+        }
+
         private void Start()
         {
             RefreshFlag();

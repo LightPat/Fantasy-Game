@@ -5467,7 +5467,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7284513825001385109}
   - component: {fileID: 7284513825001385108}
-  - component: {fileID: 905626887392925703}
+  - component: {fileID: 2517149950776374082}
   m_Layer: 0
   m_Name: AimTarget
   m_TagString: Untagged
@@ -5504,7 +5504,7 @@ MonoBehaviour:
   mainCamera: {fileID: 1097985365}
   disableUpdate: 0
   offset: {x: 0, y: 0, z: 0}
---- !u!114 &905626887392925703
+--- !u!114 &2517149950776374082
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5513,23 +5513,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7284513825001385110}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 1
-  Interpolate: 1
 --- !u!1 &7284513825018453866
 GameObject:
   m_ObjectHideFlags: 0
@@ -5911,7 +5897,7 @@ GameObject:
   - component: {fileID: 1163105829}
   - component: {fileID: 3945321872001441854}
   - component: {fileID: 7454362340183627948}
-  - component: {fileID: 7723486562512198324}
+  - component: {fileID: 3625703686578287370}
   m_Layer: 0
   m_Name: Y Bot Player
   m_TagString: Untagged
@@ -6154,7 +6140,7 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &7723486562512198324
+--- !u!114 &3625703686578287370
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6163,23 +6149,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 7284513826171149821}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
 --- !u!1 &7284513826573182686
 GameObject:
   m_ObjectHideFlags: 0

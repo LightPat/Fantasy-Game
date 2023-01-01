@@ -5,7 +5,6 @@ using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 using System.Linq;
 
 namespace LightPat.Core.Player
@@ -56,14 +55,6 @@ namespace LightPat.Core.Player
                 playerHUD.gameObject.SetActive(false);
             }
 
-            if (IsServer)
-            {
-                foreach (NetworkTransform netTransform in GetComponentsInChildren<NetworkTransform>())
-                {
-                    netTransform.Interpolate = false;
-                }
-            }
-
             MaterialColorChange colors = gameObject.AddComponent<MaterialColorChange>();
             colors.materialColors = ClientManager.Singleton.GetClient(OwnerClientId).colors;
             colors.Apply();
@@ -89,9 +80,6 @@ namespace LightPat.Core.Player
             transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
             bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             animator.SetBool("sitting", true);
-
-            if (!IsOwner)
-                GetComponent<OwnerNetworkTransform>().Interpolate = false;
         }
 
         void OnChairExit()
@@ -107,9 +95,6 @@ namespace LightPat.Core.Player
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
             chair = null;
-
-            if (!IsOwner)
-                GetComponent<OwnerNetworkTransform>().Interpolate = true;
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -142,7 +127,7 @@ namespace LightPat.Core.Player
         public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
         {
             base.OnNetworkObjectParentChanged(parentNetworkObject);
-            GetComponent<OwnerNetworkTransform>().InLocalSpace = parentNetworkObject != null;
+            //GetComponent<OwnerNetworkTransform>().InLocalSpace = parentNetworkObject != null;
         }
 
         private void OnTransformParentChanged()

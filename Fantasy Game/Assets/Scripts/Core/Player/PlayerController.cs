@@ -89,10 +89,7 @@ namespace LightPat.Core.Player
             bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             animator.SetBool("sitting", false);
 
-            rb = gameObject.AddComponent<Rigidbody>();
-            rb.constraints = RigidbodyConstraints.FreezeRotation;
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
-            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            StartCoroutine(AddRigidbody());
 
             chair = null;
         }

@@ -8,6 +8,10 @@ namespace LightPat.Core
     public class CustomNetworkTransform : NetworkBehaviour
     {
         public bool interpolate;
+        [Range(0.001f, 1)]
+        public float positionThreshold = 0.001f;
+        [Range(0.001f, 360)]
+        public float rotAngleThreshold = 0.001f;
 
         private NetworkVariable<Vector3> currentPosition = new NetworkVariable<Vector3>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<Quaternion> currentRotation = new NetworkVariable<Quaternion>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -40,8 +44,10 @@ namespace LightPat.Core
         {
             if (IsOwner)
             {
-                currentPosition.Value = transform.localPosition;
-                currentRotation.Value = transform.localRotation;
+                if (Vector3.Distance(transform.localPosition, currentPosition.Value) > positionThreshold)
+                    currentPosition.Value = transform.localPosition;
+                if (Quaternion.Angle(transform.localRotation, currentRotation.Value) > rotAngleThreshold)
+                    currentRotation.Value = transform.localRotation;
             }
             else
             {
@@ -49,6 +55,11 @@ namespace LightPat.Core
                 {
                     transform.localPosition = Vector3.Lerp(transform.localPosition, currentPosition.Value, Time.deltaTime * 8);
                     transform.localRotation = Quaternion.Slerp(transform.localRotation, currentRotation.Value, Time.deltaTime * 8);
+                }
+                else
+                {
+                    transform.localPosition = currentPosition.Value;
+                    transform.localRotation = currentRotation.Value;
                 }
             }
         }

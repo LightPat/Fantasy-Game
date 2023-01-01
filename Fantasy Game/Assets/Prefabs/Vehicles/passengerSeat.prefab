@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7039673023580145249}
   - component: {fileID: -2743788151110421413}
   - component: {fileID: 3985783708041814389}
-  - component: {fileID: -8839486694860512774}
+  - component: {fileID: 6115461639438988879}
   m_Layer: 0
   m_Name: passengerSeat
   m_TagString: Untagged
@@ -112,7 +112,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   driverChair: 0
-  jointAnchorPosition: {x: 1.02, y: 2.6, z: 12.74}
   occupantPosition: {x: 0, y: -0.27, z: -0.44}
   occupantRotation: {x: -90, y: 180, z: 0}
   exitPosOffset: {x: 0, y: 0.1, z: 0}
@@ -145,7 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nestedNetworkObjectPrefab: []
---- !u!114 &-8839486694860512774
+--- !u!114 &6115461639438988879
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,20 +153,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 8689061824071078441}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 1
-  Interpolate: 1
+  interpolate: 0
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001

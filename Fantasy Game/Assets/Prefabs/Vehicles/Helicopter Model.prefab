@@ -4318,7 +4318,7 @@ GameObject:
   - component: {fileID: 7901537269606958420}
   - component: {fileID: 6346652961685510075}
   - component: {fileID: 7339025583892872717}
-  - component: {fileID: 4270139208719424829}
+  - component: {fileID: 4756509740611891977}
   m_Layer: 0
   m_Name: Helicopter Model
   m_TagString: Untagged
@@ -4439,7 +4439,7 @@ MonoBehaviour:
   - {fileID: 6031484511048734477, guid: 610a9e49a2c98054b94c4f6e33789b91, type: 3}
   - {fileID: 313961713868122228, guid: 452e85233d7f9ac46ae50bcf2d827f2f, type: 3}
   - {fileID: 4298200030186657395, guid: 3b405518b2af47647b3c5a8673d74426, type: 3}
---- !u!114 &4270139208719424829
+--- !u!114 &4756509740611891977
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4448,20 +4448,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 9193954989730624563}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 1
-  Interpolate: 1
+  interpolate: 0
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001

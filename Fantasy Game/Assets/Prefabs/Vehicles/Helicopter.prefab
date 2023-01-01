@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7632085764736268833}
   - component: {fileID: 3591444384845649937}
   - component: {fileID: 4738155926965007352}
-  - component: {fileID: 7431050703702058504}
+  - component: {fileID: -733304841874353276}
   m_Layer: 0
   m_Name: Helicopter
   m_TagString: Untagged
@@ -104,7 +104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nestedNetworkObjectPrefab:
   - {fileID: 9193954989730624563, guid: ab33e91a44f449142a5b867cf190b91e, type: 3}
---- !u!114 &7431050703702058504
+--- !u!114 &-733304841874353276
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,23 +113,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7632085764736268835}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
+  interpolate: 0
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001
 --- !u!1 &8854979421646720379
 GameObject:
   m_ObjectHideFlags: 0

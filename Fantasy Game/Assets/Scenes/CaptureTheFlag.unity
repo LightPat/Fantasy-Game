@@ -6777,7 +6777,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f568749d77a0a04892457a5e54a907e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
+  team: 1
   flagPrefab: {fileID: 2156517891860764129, guid: 99b2eb2f73c80da4aaa942c27ee8f992, type: 3}
   flagLocalPosition: {x: 0, y: 0.5, z: 0}
 --- !u!1 &7031411514338835355

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
@@ -8,15 +9,10 @@ namespace LightPat.Core
     {
         public static IEnumerator ResetAnimatorBoolAfter1Frame(Animator animator, string parameterName)
         {
+            //NetworkManager.Singleton.NetworkTickSystem.Tick
             animator.SetBool(parameterName, true);
             yield return null;
             animator.SetBool(parameterName, false);
-        }
-
-        public static IEnumerator DestroyAfterParticleSystemStops(ParticleSystem particleSystem)
-        {
-            yield return new WaitUntil(() => !particleSystem.isPlaying);
-            Object.Destroy(particleSystem.gameObject);
         }
 
         //Draws just the box at where it is currently hitting.

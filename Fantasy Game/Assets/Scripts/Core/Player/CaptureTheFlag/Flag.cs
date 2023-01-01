@@ -105,8 +105,11 @@ namespace LightPat.Core.Player
         private void RefreshText()
         {
             if (NetworkManager.Singleton.IsServer)
+            {
                 flagText.SetText(team.ToString());
-
+                return;
+            }
+            
             // If the local player and flag are on the same team
             if (ClientManager.Singleton.GetClient(NetworkManager.Singleton.LocalClientId).team == team)
             {

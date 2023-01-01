@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
@@ -114,6 +115,8 @@ namespace LightPat.Core.Player
                 }
             }
 
+            animator.SetBool("fallingLoopReached", IsAirborne());
+
             prevGrounded = isGrounded;
         }
 
@@ -185,6 +188,13 @@ namespace LightPat.Core.Player
                 landingCollisionRunning = true;
                 StartCoroutine(ResetLandingBool());
             }
+        }
+
+        private IEnumerator ResetLandingBool()
+        {
+            yield return new WaitUntil(() => !(IsAirborne() | IsJumping()) & !IsLanding());
+            landingCollisionRunning = false;
+            animator.SetBool("breakfallRoll", false);
         }
 
         [Header("Wall Run Settings")]
@@ -288,13 +298,6 @@ namespace LightPat.Core.Player
                 playerController.rotateBodyWithCamera = weaponLoadout.equippedWeapon;
             }
             rightLeftMultiplier = 0;
-        }
-
-        private IEnumerator ResetLandingBool()
-        {
-            yield return new WaitUntil(() => !(IsAirborne() | IsJumping()) & !IsLanding());
-            landingCollisionRunning = false;
-            animator.SetBool("breakfallRoll", false);
         }
 
         bool IsAirborne()

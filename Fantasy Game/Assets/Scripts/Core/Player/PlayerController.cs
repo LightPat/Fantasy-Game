@@ -51,7 +51,7 @@ namespace LightPat.Core.Player
             {
                 GetComponent<PlayerInput>().enabled = false;
                 GetComponent<ActionMapHandler>().enabled = false;
-                playerCamera.GetComponent<AudioListener>().enabled = false;
+                Destroy(playerCamera.GetComponent<AudioListener>());
                 playerCamera.GetComponent<Camera>().depth = -1;
                 playerHUD.gameObject.SetActive(false);
             }
@@ -434,34 +434,23 @@ namespace LightPat.Core.Player
 
         void OnAbility()
         {
-            if (Time.timeScale == 1)
+            if (animatorSpeed == 4)
             {
-                Time.timeScale = 0.1f;
+                animatorSpeed = 1;
             }
-            else
+            else if (animatorSpeed == 1)
             {
-                Time.timeScale = 1;
+                animatorSpeed = 4;
             }
 
             //if (Time.timeScale == 1)
             //{
-            //    StartCoroutine(TimeScaleAbility());
+            //    Time.timeScale = 0.1f;
             //}
-        }
-
-        private IEnumerator TimeScaleAbility()
-        {
-            for (float i = 0.9f; i >= 0.1; i -= 0.05f)
-            {
-                yield return new WaitForSeconds(0.2f * Time.timeScale);
-                Time.timeScale = Mathf.Round(i * 100) / 100;
-            }
-
-            for (float i = 0.2f; i <= 1.05; i+=0.05f)
-            {
-                yield return new WaitForSeconds(0.3f * Time.timeScale);
-                Time.timeScale = Mathf.Round(i * 100) / 100;
-            }
+            //else
+            //{
+            //    Time.timeScale = 1;
+            //}
         }
 
         [Header("Misc Settings")]
@@ -534,13 +523,10 @@ namespace LightPat.Core.Player
         {
             if (vehicle) { vehicle.SendMessage("OnVehicleCrouch", value.isPressed); }
 
-            if (value.isPressed)
+            if (running)
             {
-                if (running)
-                {
-                    StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "crouching"));
-                    return;
-                }
+                animator.SetBool("crouching", value.isPressed);
+                return;
             }
 
             if (toggleCrouch)

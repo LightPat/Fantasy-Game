@@ -90,7 +90,7 @@ namespace LightPat.Core.Player
             // Display muzzle flash
             muzzleFlash.Play();
             GameObject smoke = Instantiate(smokePrefab, smokeSpawnPoint);
-            StartCoroutine(Utilities.DestroyAfterParticleSystemStops(smoke.GetComponent<ParticleSystem>()));
+            StartCoroutine(DestroyAfterParticleSystemStops(smoke.GetComponent<ParticleSystem>()));
 
             // Play gunshot sound
             gunshotSource.PlayOneShot(gunshotClip, gunshotVolume);
@@ -254,6 +254,12 @@ namespace LightPat.Core.Player
                 curveTime += 0.1f;
                 yield return null;
             }
+        }
+
+        private IEnumerator DestroyAfterParticleSystemStops(ParticleSystem particleSystem)
+        {
+            yield return new WaitUntil(() => !particleSystem.isPlaying);
+            Destroy(particleSystem.gameObject);
         }
 
         protected new void Start()

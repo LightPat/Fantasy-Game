@@ -8970,20 +8970,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionSpeed: 5
---- !u!114 &3115109798818536167
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7626462701074999911}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7dc9f20cf92676449b8ed35faf8cc48a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TransitionStateInfoList: []
-  m_Animator: {fileID: 3782283798907644583}
 --- !u!114 &4199552101985882351
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9002,6 +8988,20 @@ MonoBehaviour:
   leftArmRig: {fileID: 7284513825998588540}
   disableRightHand: 0
   disableLeftHand: 0
+--- !u!114 &7814282539402248486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7626462701074999911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dc9f20cf92676449b8ed35faf8cc48a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionStateInfoList: []
+  m_Animator: {fileID: 3782283798907644583}
 --- !u!136 &6721924885171941239
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -97,6 +97,8 @@ namespace LightPat.Core.Player
             chair = null;
         }
 
+        float noPhysicsTimeThreshold = 0.2f;
+        float lastNoPhysicsTime;
         private void OnCollisionEnter(Collision collision)
         {
             if (!IsOwner) { return; }
@@ -105,6 +107,9 @@ namespace LightPat.Core.Player
             {
                 if (rb)
                 {
+                    if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
+                    lastNoPhysicsTime = Time.time;
+
                     Destroy(rb);
                     TrySetParentServerRpc(collision.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
                     rotateBodyWithCamera = true;
@@ -122,12 +127,6 @@ namespace LightPat.Core.Player
         private void TrySetParentServerRpc(ulong networkObjectId)
         {
             NetworkObject.TrySetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId], true);
-        }
-
-        public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
-        {
-            base.OnNetworkObjectParentChanged(parentNetworkObject);
-            //GetComponent<OwnerNetworkTransform>().InLocalSpace = parentNetworkObject != null;
         }
 
         private void OnTransformParentChanged()
@@ -385,17 +384,16 @@ namespace LightPat.Core.Player
                     }
                     else
                     {
+                        if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
+                        lastNoPhysicsTime = Time.time;
+
                         if (GetComponent<WeaponLoadout>().equippedWeapon)
                             rotateBodyWithCamera = true;
                         else
                             rotateBodyWithCamera = false;
 
-                        rotateBodyWithCamera = false;
-                        rb = gameObject.AddComponent<Rigidbody>();
-                        rb.constraints = RigidbodyConstraints.FreezeRotation;
-                        rb.interpolation = RigidbodyInterpolation.Interpolate;
-                        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
                         RemoveParentServerRpc();
+                        StartCoroutine(AddRigidbody());
                     }
                     break;
                 }
@@ -403,18 +401,36 @@ namespace LightPat.Core.Player
                 // If we have no hits
                 if (allHits.Length == 0)
                 {
+                    if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
+                    lastNoPhysicsTime = Time.time;
+
                     if (GetComponent<WeaponLoadout>().equippedWeapon)
                         rotateBodyWithCamera = true;
                     else
                         rotateBodyWithCamera = false;
 
-                    rb = gameObject.AddComponent<Rigidbody>();
-                    rb.constraints = RigidbodyConstraints.FreezeRotation;
-                    rb.interpolation = RigidbodyInterpolation.Interpolate;
-                    rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
                     RemoveParentServerRpc();
+                    StartCoroutine(AddRigidbody());
                 }
             }
+        }
+
+        bool addRigidbodyRunning;
+        private IEnumerator AddRigidbody()
+        {
+            if (addRigidbodyRunning) { yield break; }
+            addRigidbodyRunning = true;
+            yield return new WaitUntil(() => transform.parent == null);
+
+            if (!rb)
+            {
+                rb = gameObject.AddComponent<Rigidbody>();
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+                rb.interpolation = RigidbodyInterpolation.Interpolate;
+                rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+            }
+            
+            addRigidbodyRunning = false;
         }
 
         void OnAbility()

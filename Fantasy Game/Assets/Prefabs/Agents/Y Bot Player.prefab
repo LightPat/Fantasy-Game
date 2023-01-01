@@ -5516,6 +5516,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interpolate: 0
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001
 --- !u!1 &7284513825018453866
 GameObject:
   m_ObjectHideFlags: 0
@@ -6152,6 +6155,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interpolate: 0
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001
 --- !u!1 &7284513826573182686
 GameObject:
   m_ObjectHideFlags: 0
@@ -7103,6 +7109,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: WorldSpaceLabel
       objectReference: {fileID: 0}
+    - target: {fileID: 4604779478868071990, guid: e018d1a779ce1bc40b3750b8f44545c1, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e018d1a779ce1bc40b3750b8f44545c1, type: 3}
 --- !u!1 &3160872407774451981 stripped

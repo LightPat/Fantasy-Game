@@ -31,7 +31,7 @@ namespace LightPat.Core.Player
             {
                 rb = transform.parent.GetComponent<Rigidbody>();
 
-                RaycastHit[] allHits = Physics.RaycastAll(transform.parent.position, animator.deltaPosition, 1);
+                RaycastHit[] allHits = Physics.RaycastAll(transform.parent.position, animator.deltaPosition, 1, Physics.AllLayers, QueryTriggerInteraction.Ignore);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 bool applyRootMotion = true;
                 foreach (RaycastHit hit in allHits)

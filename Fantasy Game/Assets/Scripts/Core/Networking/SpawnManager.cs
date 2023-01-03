@@ -24,8 +24,15 @@ namespace LightPat.Core
         {
             foreach (SpawnData spawnData in spawnArray)
             {
+                Gizmos.color = Color.black;
+                Gizmos.DrawWireSphere(spawnData.spawnPosition, 1);
+                Gizmos.color = Color.blue;
+                Gizmos.DrawRay(spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation) * Vector3.forward * 2);
                 Gizmos.color = Color.red;
-                Gizmos.DrawSphere(spawnData.spawnPosition, 1);
+                Gizmos.DrawRay(spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation) * Vector3.right * 2);
+                Gizmos.color = Color.green;
+                Gizmos.DrawRay(spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation) * Vector3.up * 2);
+                UnityEditor.Handles.Label(spawnData.spawnPosition, spawnData.gameObject.name, new GUIStyle());
             }
         }
     }

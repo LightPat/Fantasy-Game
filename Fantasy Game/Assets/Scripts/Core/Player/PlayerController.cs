@@ -89,41 +89,7 @@ namespace LightPat.Core.Player
             bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             animator.SetBool("sitting", false);
 
-            StartCoroutine(AddRigidbody());
-
             chair = null;
-        }
-
-        float noPhysicsTimeThreshold = 0.2f;
-        float lastNoPhysicsTime;
-        private void OnCollisionEnter(Collision collision)
-        {
-            if (!IsOwner) { return; }
-
-            if (collision.collider.CompareTag("NoPhysics") & transform.position.y > collision.GetContact(0).point.y)
-            {
-                if (rb)
-                {
-                    if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
-                    lastNoPhysicsTime = Time.time;
-
-                    Destroy(rb);
-                    TrySetParentServerRpc(collision.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
-                    rotateBodyWithCamera = true;
-                }
-            }
-        }
-
-        [ServerRpc]
-        private void RemoveParentServerRpc()
-        {
-            NetworkObject.TryRemoveParent();
-        }
-
-        [ServerRpc]
-        private void TrySetParentServerRpc(ulong networkObjectId)
-        {
-            NetworkObject.TrySetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId], true);
         }
 
         private void OnTransformParentChanged()
@@ -334,9 +300,7 @@ namespace LightPat.Core.Player
             animator.speed = animatorSpeed;
 
             if (rotateBodyWithCamera != prevCamRotState)
-            {
                 playerCamera.RefreshCameraParent();
-            }
 
             if (!rotateBodyWithCamera)
             {
@@ -369,17 +333,13 @@ namespace LightPat.Core.Player
             if (!rb & !chair)
             {
                 Vector3 startPos = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
-                RaycastHit[] allHits = Physics.RaycastAll(startPos, transform.up * -1, 2);
+                RaycastHit[] allHits = Physics.RaycastAll(startPos, transform.up * -1, 2, Physics.AllLayers, QueryTriggerInteraction.Ignore);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
                     if (GetComponentsInChildren<Collider>().Contains(hit.collider)) { continue; }
 
-                    if (hit.collider.CompareTag("NoPhysics"))
-                    {
-                        transform.position = new Vector3(hit.point.x, hit.point.y, hit.point.z);
-                    }
-                    else
+                    if (!hit.collider.CompareTag("NoPhysics"))
                     {
                         if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
                         lastNoPhysicsTime = Time.time;
@@ -408,6 +368,26 @@ namespace LightPat.Core.Player
 
                     RemoveParentServerRpc();
                     StartCoroutine(AddRigidbody());
+                }
+            }
+        }
+
+        float noPhysicsTimeThreshold = 0.2f;
+        float lastNoPhysicsTime;
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (!IsOwner) { return; }
+
+            if (collision.collider.CompareTag("NoPhysics") & transform.position.y > collision.GetContact(0).point.y)
+            {
+                if (rb)
+                {
+                    if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
+                    lastNoPhysicsTime = Time.time;
+
+                    Destroy(rb);
+                    TrySetParentServerRpc(collision.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
+                    rotateBodyWithCamera = true;
                 }
             }
         }
@@ -553,25 +533,25 @@ namespace LightPat.Core.Player
                 return;
             }
 
-            RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, playerCamera.transform.forward, reach);
+            RaycastHit[] allHits = Physics.RaycastAll(playerCamera.transform.position, playerCamera.transform.forward, reach, Physics.AllLayers, QueryTriggerInteraction.Ignore);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
             foreach (RaycastHit hit in allHits)
             {
                 if (hit.transform == transform) { continue; }
 
-                if (hit.transform.GetComponent<Interactable>())
+                if (hit.transform.TryGetComponent(out Interactable interactable))
                 {
-                    hit.transform.GetComponent<Interactable>().Invoke(gameObject);
+                    interactable.Invoke(gameObject);
                 }
-                else if (hit.collider.GetComponent<Door>())
+                else if (hit.collider.TryGetComponent(out Door door))
                 {
-                    hit.collider.GetComponent<Door>().ToggleDoor();
+                    door.ToggleDoor();
                 }
-                else if (hit.collider.GetComponent<VehicleChair>())
+                else if (hit.collider.TryGetComponent(out VehicleChair chair))
                 {
                     if (animator.GetBool("falling")) { return; }
-                    hit.collider.GetComponent<VehicleChair>().TrySittingServerRpc(NetworkObjectId);
+                    chair.TrySittingServerRpc(NetworkObjectId);
                 }
                 break;
             }
@@ -735,5 +715,10 @@ namespace LightPat.Core.Player
         {
             animator.SetBool("dead", false);
         }
+
+        [ServerRpc] private void RemoveParentServerRpc() { NetworkObject.TryRemoveParent(); }
+
+        [ServerRpc] private void TrySetParentServerRpc(ulong networkObjectId) { NetworkObject.TrySetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId], true); }
+
     }
 }

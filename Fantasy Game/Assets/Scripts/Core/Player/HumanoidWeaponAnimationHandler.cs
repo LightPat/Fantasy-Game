@@ -153,7 +153,7 @@ namespace LightPat.Core.Player
         {
             if (weaponLoadout.GetWeaponListLength() >= maxWeapons) { return; }
 
-            RaycastHit[] allHits = Physics.RaycastAll(playerController.playerCamera.transform.position, playerController.playerCamera.transform.forward, weaponReachDistance);
+            RaycastHit[] allHits = Physics.RaycastAll(playerController.playerCamera.transform.position, playerController.playerCamera.transform.forward, weaponReachDistance, Physics.AllLayers, QueryTriggerInteraction.Ignore);
             Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
             foreach (RaycastHit hit in allHits)
             {
@@ -281,8 +281,7 @@ namespace LightPat.Core.Player
 
             if (attack1 != prevAttack1State)
             {
-                Gun gun;
-                if (weaponLoadout.equippedWeapon.TryGetComponent(out gun))
+                if (weaponLoadout.equippedWeapon.TryGetComponent(out Gun gun))
                 {
                     if (gun.fullAuto)
                     {
@@ -784,7 +783,7 @@ namespace LightPat.Core.Player
             if (playerController)
                 playerController.rotateBodyWithCamera = true;
 
-            if (weaponLoadout.equippedWeapon.GetComponent<Rifle>())
+            if (weaponLoadout.equippedWeapon.TryGetComponent(out Rifle rifleComponent))
             {
                 leftHandTarget.target = weaponLoadout.equippedWeapon.leftHandGrip;
                 rightHandTarget.target = weaponLoadout.equippedWeapon.rightHandGrip;
@@ -792,7 +791,6 @@ namespace LightPat.Core.Player
                 rightArmRig.weightTarget = 1;
                 spineAimRig.weightTarget = 1;
 
-                Rifle rifleComponent = weaponLoadout.equippedWeapon.GetComponent<Rifle>();
                 Transform rightFingers = rifleComponent.rightFingersGrips;
                 Transform leftFingers = rifleComponent.leftFingersGrips;
                 for (int i = 0; i < rightFingerIKs.Length; i++)
@@ -809,12 +807,12 @@ namespace LightPat.Core.Player
                     playerController.playerHUD.SetAmmoText(rifleComponent.currentBullets + " / " + rifleComponent.magazineSize);
                 }
             }
-            else if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
+            else if (weaponLoadout.equippedWeapon.TryGetComponent(out GreatSword greatSword))
             {
                 leftHandHint.offset = new Vector3(-1, -1, 0);
                 leftArmRig.weightTarget = 1;
                 leftHandTarget.target = weaponLoadout.equippedWeapon.leftHandGrip;
-                Transform leftFingers = weaponLoadout.equippedWeapon.GetComponent<GreatSword>().leftFingersGrips;
+                Transform leftFingers = greatSword.leftFingersGrips;
                 for (int i = 0; i < rightFingerIKs.Length; i++)
                 {
                     leftFingerIKs[i].target = leftFingers.GetChild(i);
@@ -824,7 +822,7 @@ namespace LightPat.Core.Player
                 if (playerController)
                     playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(true);
             }
-            else if (weaponLoadout.equippedWeapon.GetComponent<Pistol>())
+            else if (weaponLoadout.equippedWeapon.TryGetComponent(out Pistol pistolComponent))
             {
                 leftHandTarget.target = weaponLoadout.equippedWeapon.leftHandGrip;
                 rightHandTarget.target = weaponLoadout.equippedWeapon.rightHandGrip;
@@ -832,7 +830,6 @@ namespace LightPat.Core.Player
                 rightArmRig.weightTarget = 1;
                 spineAimRig.weightTarget = 1;
 
-                Pistol pistolComponent = weaponLoadout.equippedWeapon.GetComponent<Pistol>();
                 pistolGrip.parent.GetComponentInChildren<PistolPositionSolver>().UpdateMultipliers(pistolComponent.constraintPositionMultipliers);
 
                 Transform rightFingers = pistolComponent.rightFingersGrips;

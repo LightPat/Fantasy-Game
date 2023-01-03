@@ -70,23 +70,17 @@ namespace LightPat.Core
             vehicleCamera.transform.position += transform.position - prevPosition;
             prevPosition = transform.position;
 
-            // TODO Move to fixedUpdate
-            if (IsGrounded())
+            if (driver)
             {
-                //transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(new Vector3(0, 180, 0)), Time.deltaTime * rotationSpeed);
-            }
-            else
-            {
-                if (driver)
+                if (!IsGrounded())
                 {
-                    Vector3 targetRotation = new Vector3(0, 180, 0);
-                    targetRotation.z = moveInput.x * currentVelocityLimits.z;
-                    targetRotation.x = -moveInput.y * currentVelocityLimits.x;
-                    //transform.GetChild(0).localRotation = Quaternion.Slerp(transform.GetChild(0).localRotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationSpeed);
+                    rotationOffset.z = moveInput.x * currentVelocityLimits.z;
+                    rotationOffset.x = -moveInput.y * currentVelocityLimits.x;
                 }
             }
         }
 
+        Vector3 rotationOffset;
         float verticalForceAmount;
         private void FixedUpdate()
         {
@@ -104,7 +98,7 @@ namespace LightPat.Core
             }
             else
             {
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation, Time.fixedDeltaTime * 2));
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation * Quaternion.Inverse(Quaternion.Euler(rotationOffset)), Time.fixedDeltaTime * 2));
 
                 // Move vehicle horizontally
                 if (localVelocity.x > currentVelocityLimits.x)

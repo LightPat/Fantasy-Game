@@ -41,14 +41,19 @@ namespace LightPat.Core
         [ServerRpc(RequireOwnership = false)]
         public void ExitSittingServerRpc()
         {
-            occupant.TryRemoveParent(true);
+            Vehicle vehicle = GetComponentInParent<Vehicle>();
+            if (vehicle)
+                occupant.TrySetParent(GetComponentInParent<Vehicle>().transform, true);
+            else
+                occupant.TryRemoveParent(true);
+
             if (!IsHost)
                 ExitSitting();
 
             ExitSittingClientRpc();
 
             if (driverChair)
-                GetComponentInParent<Vehicle>().OnDriverExit();
+                vehicle.OnDriverExit();
         }
 
         [ClientRpc] void ExitSittingClientRpc() { ExitSitting(); }

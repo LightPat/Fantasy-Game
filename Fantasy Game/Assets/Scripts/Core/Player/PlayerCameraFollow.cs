@@ -57,6 +57,8 @@ namespace LightPat.Core.Player
 
         private void LateUpdate()
         {
+            if (!followTarget) { Destroy(gameObject); }
+
             transform.position = followTarget.position;
 
             // If we are not the owner of this player, look at the aim target and do nothing else

@@ -33,7 +33,23 @@ namespace LightPat.Core.Player
 
         public void RemoveWeaponSlot()
         {
-            Destroy(weaponSlots.GetChild(0).gameObject);
+            foreach (Transform child in weaponSlots)
+            {
+                Destroy(child.gameObject);
+            }
+
+            for (int i = 0; i < weaponLoadout.GetWeaponListLength(); i++)
+            {
+                GameObject slot = Instantiate(weaponSlotPrefab, weaponSlots);
+                slot.GetComponent<TextMeshProUGUI>().SetText(weaponLoadout.GetWeapon(i).weaponName);
+            }
+
+            for (int i = 0; i < weaponSlots.childCount; i++)
+            {
+                weaponSlots.GetChild(i).localPosition = new Vector3(slotSpacing.x, (weaponSlots.childCount - 1 - i) * slotSpacing.y, 0);
+            }
+
+            ammoDisplay.localPosition = new Vector3(slotSpacing.x, weaponLoadout.GetWeaponListLength() * slotSpacing.y, 0);
         }
 
         public void UpdateSlotText(int slotIndex)

@@ -63,11 +63,7 @@ namespace LightPat.Core.Player
             weapons.RemoveAt(slot);
             equippedWeapon = null;
             if (playerHUD)
-            {
-                playerHUD.UpdateSlotText(slot);
-                playerHUD.ChangeSlotStyle(slot, TMPro.FontStyles.Normal);
                 playerHUD.RemoveWeaponSlot();
-            }
             ClientManager.Singleton.ChangeSpawnWeaponsServerRpc(OwnerClientId, ConvertWeaponListToPrefabIndexes());
         }
 

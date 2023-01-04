@@ -14,7 +14,7 @@ namespace LightPat.Core
 
         int currentPickups;
 
-        public Weapon GenerateLocalInstance(bool despawnSelf)
+        public Weapon GenerateLocalInstance()
         {
             if (currentPickups >= maxPickups) { return null; }
             currentPickups++;
@@ -24,17 +24,7 @@ namespace LightPat.Core
             Destroy(g.GetComponent<NetworkObject>());
             g.transform.position = transform.position;
             g.transform.rotation = transform.rotation;
-            if (despawnSelf & maxPickups == currentPickups)
-                DestroySelfServerRpc();
-            else if (!IsSpawned)
-                Destroy(gameObject);
             return g.GetComponent<Weapon>();
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        void DestroySelfServerRpc()
-        {
-            NetworkObject.Despawn();
         }
     }
 }

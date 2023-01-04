@@ -172,13 +172,12 @@ namespace LightPat.Core.Player
 
         public void EquipWeapon(NetworkedWeapon networkedWeapon)
         {
-            Weapon weapon = networkedWeapon.GetComponent<NetworkedWeapon>().GenerateLocalInstance(true);
-            if (weapon == null) { return; }
+            Weapon weapon = networkedWeapon.GetComponent<Weapon>();
             for (int i = 0; i < ClientManager.Singleton.weaponPrefabOptions.Length; i++)
             {
                 if (ClientManager.Singleton.weaponPrefabOptions[i].weaponName == weapon.weaponName)
                 {
-                    EquipWeaponServerRpc(i);
+                    EquipWeaponServerRpc(i, networkedWeapon.NetworkObjectId);
                     break;
                 }
             }
@@ -187,10 +186,10 @@ namespace LightPat.Core.Player
         IEnumerator EquipAfter1Frame(Weapon weapon)
         {
             yield return null;
-            // If we already have a weapon equipped just put the weapon we click in our reserves
+            // If we already have a weapon equipped just put the weapon in our reserves
             if (weaponLoadout.equippedWeapon == null)
             {
-                animatorLayerWeightManager.SetLayerWeight(weapon.GetComponent<Weapon>().animationClass, 1);
+                animatorLayerWeightManager.SetLayerWeight(weapon.animationClass, 1);
                 Destroy(weapon.GetComponent<Rigidbody>());
                 ReparentWeapon(weapon, "player");
                 weaponLoadout.DrawWeapon(weaponLoadout.AddWeapon(weapon));
@@ -208,21 +207,22 @@ namespace LightPat.Core.Player
                     sheath.transform.SetParent(GetStowPoint(weapon), true);
                     sheath.hasPlayer = true;
                 }
-                weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
+                weaponLoadout.AddWeapon(weapon);
             }
         }
 
         [ServerRpc]
-        void EquipWeaponServerRpc(int weaponIndex)
+        void EquipWeaponServerRpc(int weaponIndex, ulong networkObjectId)
         {
             if (!IsHost)
             {
                 GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
-                Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
+                Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance();
                 weapon.transform.position = transform.position + transform.forward + transform.up;
                 StartCoroutine(EquipAfter1Frame(weapon));
             }
-
+            
+            NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].Despawn(true);
             EquipWeaponClientRpc(weaponIndex);
         }
 
@@ -230,7 +230,7 @@ namespace LightPat.Core.Player
         void EquipWeaponClientRpc(int weaponIndex)
         {
             GameObject weaponGO = Instantiate(ClientManager.Singleton.weaponPrefabOptions[weaponIndex].gameObject);
-            Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance(false);
+            Weapon weapon = weaponGO.GetComponent<NetworkedWeapon>().GenerateLocalInstance();
             weapon.transform.position = transform.position + transform.forward + transform.up;
             StartCoroutine(EquipAfter1Frame(weapon));
         }

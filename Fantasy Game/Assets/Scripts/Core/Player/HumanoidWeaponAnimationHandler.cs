@@ -60,9 +60,14 @@ namespace LightPat.Core.Player
         public override void OnNetworkSpawn()
         {
             weaponLoadout.startingWeapons.Clear();
-            foreach (int i in ClientManager.Singleton.GetClient(OwnerClientId).initialWeapons)
+            int i = 0;
+            foreach (int weaponPrefabIndex in ClientManager.Singleton.GetClient(OwnerClientId).spawnWeapons)
             {
-                weaponLoadout.startingWeapons.Add(ClientManager.Singleton.weaponPrefabOptions[i]);
+                if (i == 0)
+                    weaponLoadout.equippedWeapon = ClientManager.Singleton.weaponPrefabOptions[weaponPrefabIndex];
+                else
+                    weaponLoadout.startingWeapons.Add(ClientManager.Singleton.weaponPrefabOptions[weaponPrefabIndex]);
+                i += 1;
             }
             StartCoroutine(EquipInitialWeapons());
         }
@@ -74,40 +79,6 @@ namespace LightPat.Core.Player
             weaponLoadout.equippedWeapon = null;
             // Wait 1 frame to prevent burst job errors from occuring from the rigbuilder
             yield return null;
-
-            foreach (Weapon startingWeapon in weaponLoadout.startingWeapons)
-            {
-                Weapon weapon = startingWeapon;
-                // If this is a prefab that hasn't been instantiated
-                if (startingWeapon.gameObject.scene.name == null)
-                {
-                    GameObject g = Instantiate(startingWeapon.gameObject);
-                    Destroy(g.GetComponent<NetworkedWeapon>());
-                    Destroy(g.GetComponent<NetworkTransform>());
-                    Destroy(g.GetComponent<NetworkObject>());
-                    yield return new WaitUntil(() => !g.GetComponent<NetworkObject>());
-                    weapon = g.GetComponent<Weapon>();
-                    ReparentWeapon(weapon, "stowed");
-                    g.transform.localPosition = weapon.stowedPositionOffset;
-                    g.transform.localRotation = Quaternion.Euler(weapon.stowedRotationOffset);
-                    g.name = startingWeapon.name;
-                    // Wait 1 frame so that the change offset call will not interfere with the weapon's Start() method
-                    yield return null;
-                }
-
-                Destroy(weapon.GetComponent<Rigidbody>());
-                ReparentWeapon(weapon, "stowed");
-
-                Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
-                if (sheath)
-                {
-                    sheath.gameObject.SetActive(true);
-                    sheath.transform.SetParent(GetStowPoint(weapon), true);
-                    sheath.hasPlayer = true;
-                }
-
-                weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
-            }
 
             if (equippedWeapon)
             {
@@ -142,8 +113,41 @@ namespace LightPat.Core.Player
                     sheath.hasPlayer = true;
                 }
 
-                yield return DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()), true);
-                weaponLoadout.ChangeLoadoutPositions(0, weaponLoadout.GetEquippedWeaponIndex());
+                StartCoroutine(DrawWeapon(weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>()), true));
+            }
+
+            foreach (Weapon startingWeapon in weaponLoadout.startingWeapons)
+            {
+                Weapon weapon = startingWeapon;
+                // If this is a prefab that hasn't been instantiated
+                if (startingWeapon.gameObject.scene.name == null)
+                {
+                    GameObject g = Instantiate(startingWeapon.gameObject);
+                    Destroy(g.GetComponent<NetworkedWeapon>());
+                    Destroy(g.GetComponent<NetworkTransform>());
+                    Destroy(g.GetComponent<NetworkObject>());
+                    yield return new WaitUntil(() => !g.GetComponent<NetworkObject>());
+                    weapon = g.GetComponent<Weapon>();
+                    ReparentWeapon(weapon, "stowed");
+                    g.transform.localPosition = weapon.stowedPositionOffset;
+                    g.transform.localRotation = Quaternion.Euler(weapon.stowedRotationOffset);
+                    g.name = startingWeapon.name;
+                    // Wait 1 frame so that the change offset call will not interfere with the weapon's Start() method
+                    yield return null;
+                }
+
+                Destroy(weapon.GetComponent<Rigidbody>());
+                ReparentWeapon(weapon, "stowed");
+
+                Sheath sheath = weapon.GetComponentInChildren<Sheath>(true);
+                if (sheath)
+                {
+                    sheath.gameObject.SetActive(true);
+                    sheath.transform.SetParent(GetStowPoint(weapon), true);
+                    sheath.hasPlayer = true;
+                }
+
+                weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
             }
         }
 

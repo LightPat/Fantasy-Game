@@ -60,7 +60,7 @@ namespace LightPat.UI
         public void UpdateWeaponLoadout()
         {
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
-            ClientManager.Singleton.ChangeInitialWeaponsServerRpc(localClientId, new int[] { primaryWeaponDropdown.value, secondaryWeaponDropdown.value, tertiaryWeaponDropdown.value });
+            ClientManager.Singleton.ChangeSpawnWeaponsServerRpc(localClientId, new int[] { primaryWeaponDropdown.value, secondaryWeaponDropdown.value, tertiaryWeaponDropdown.value });
         }
 
         public void UpdatePlayerDisplay()

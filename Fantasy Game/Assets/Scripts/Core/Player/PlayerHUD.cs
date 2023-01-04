@@ -31,6 +31,11 @@ namespace LightPat.Core.Player
             ammoDisplay.localPosition = new Vector3(slotSpacing.x, weaponSlots.childCount * slotSpacing.y, 0);
         }
 
+        public void RemoveWeaponSlot()
+        {
+            Destroy(weaponSlots.GetChild(0).gameObject);
+        }
+
         public void UpdateSlotText(int slotIndex)
         {
             if (weaponLoadout.GetWeapon(slotIndex))
@@ -72,11 +77,6 @@ namespace LightPat.Core.Player
         {
             weaponLoadout = GetComponentInParent<WeaponLoadout>();
             hitMarker.SetActive(false);
-            //for (int i = 0; i < weaponSlots.childCount; i++)
-            //{
-            //    if (weaponManager.GetWeapon(i) != null)
-            //        weaponSlots.GetChild(i).GetComponent<TextMeshProUGUI>().SetText(weaponManager.GetWeapon(i).name);
-            //}
         }
 
         private void Update()

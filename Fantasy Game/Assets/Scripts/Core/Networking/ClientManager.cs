@@ -195,9 +195,9 @@ namespace LightPat.Core
         }
 
         [ServerRpc(RequireOwnership = false)]
-        public void ChangeInitialWeaponsServerRpc(ulong clientId, int[] newInitialWeaponIndexes)
+        public void ChangeSpawnWeaponsServerRpc(ulong clientId, int[] newSpawnWeaponIndexes)
         {
-            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeInitialWeapons(newInitialWeaponIndexes);
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeSpawnWeapons(newSpawnWeaponIndexes);
             SynchronizeClientDictionaries();
         }
 
@@ -244,7 +244,7 @@ namespace LightPat.Core
         public int playerPrefabOptionIndex;
         public Team team;
         public Color[] colors;
-        public int[] initialWeapons;
+        public int[] spawnWeapons;
 
         public ClientData(string clientName)
         {
@@ -253,7 +253,7 @@ namespace LightPat.Core
             playerPrefabOptionIndex = 0;
             team = Team.Red;
             colors = new Color[1];
-            initialWeapons = new int[0];
+            spawnWeapons = new int[0];
         }
 
         public ClientData ToggleReady()
@@ -284,10 +284,10 @@ namespace LightPat.Core
             return copy;
         }
 
-        public ClientData ChangeInitialWeapons(int[] newWeapons)
+        public ClientData ChangeSpawnWeapons(int[] newWeapons)
         {
             ClientData copy = this;
-            copy.initialWeapons = newWeapons;
+            copy.spawnWeapons = newWeapons;
             return copy;
         }
 
@@ -298,7 +298,7 @@ namespace LightPat.Core
             serializer.SerializeValue(ref playerPrefabOptionIndex);
             serializer.SerializeValue(ref team);
             serializer.SerializeValue(ref colors);
-            serializer.SerializeValue(ref initialWeapons);
+            serializer.SerializeValue(ref spawnWeapons);
         }
     }
 }

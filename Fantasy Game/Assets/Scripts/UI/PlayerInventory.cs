@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace LightPat.UI
 {
-    public class PlayerInventoryNEW : Menu
+    public class PlayerInventory : Menu
     {
         public GameObject weaponSlotButton;
         public Vector3 buttonStartingPosition;

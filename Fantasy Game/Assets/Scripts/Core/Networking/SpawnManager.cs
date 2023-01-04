@@ -32,7 +32,6 @@ namespace LightPat.Core
                 Gizmos.DrawRay(spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation) * Vector3.right * 2);
                 Gizmos.color = Color.green;
                 Gizmos.DrawRay(spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation) * Vector3.up * 2);
-                UnityEditor.Handles.Label(spawnData.spawnPosition, spawnData.gameObject.name, new GUIStyle());
             }
         }
     }

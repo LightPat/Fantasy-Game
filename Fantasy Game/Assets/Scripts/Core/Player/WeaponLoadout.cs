@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
-    public class WeaponLoadout : MonoBehaviour
+    public class WeaponLoadout : NetworkBehaviour
     {
         public Weapon equippedWeapon;
         public List<Weapon> startingWeapons;
@@ -52,6 +53,7 @@ namespace LightPat.Core.Player
                 playerHUD.AddWeaponSlot();
                 playerHUD.UpdateSlotText(slot);
             }
+            ClientManager.Singleton.ChangeSpawnWeaponsServerRpc(OwnerClientId, ConvertWeaponListToPrefabIndexes());
             return slot;
         }
 
@@ -64,7 +66,9 @@ namespace LightPat.Core.Player
             {
                 playerHUD.UpdateSlotText(slot);
                 playerHUD.ChangeSlotStyle(slot, TMPro.FontStyles.Normal);
+                playerHUD.RemoveWeaponSlot();
             }
+            ClientManager.Singleton.ChangeSpawnWeaponsServerRpc(OwnerClientId, ConvertWeaponListToPrefabIndexes());
         }
 
         public void ChangeLoadoutPositions(int fromIndex, int toIndex)
@@ -89,6 +93,7 @@ namespace LightPat.Core.Player
                     playerHUD.ChangeSlotStyle(fromIndex, TMPro.FontStyles.Bold);
                 }
             }
+            ClientManager.Singleton.ChangeSpawnWeaponsServerRpc(OwnerClientId, ConvertWeaponListToPrefabIndexes());
         }
 
         public int GetEquippedWeaponIndex()
@@ -112,6 +117,23 @@ namespace LightPat.Core.Player
         private void Start()
         {
             playerHUD = GetComponentInChildren<PlayerHUD>();
+        }
+
+        private int[] ConvertWeaponListToPrefabIndexes()
+        {
+            List<int> prefabIndexList = new List<int>();
+            foreach (Weapon weapon in weapons)
+            {
+                for (int i = 0; i < ClientManager.Singleton.weaponPrefabOptions.Length; i++)
+                {
+                    if (weapon.weaponName == ClientManager.Singleton.weaponPrefabOptions[i].weaponName)
+                    {
+                        prefabIndexList.Add(i);
+                        break;
+                    }
+                }
+            }
+            return prefabIndexList.ToArray();
         }
     }
 }

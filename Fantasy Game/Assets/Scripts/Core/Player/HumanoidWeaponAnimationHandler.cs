@@ -281,6 +281,7 @@ namespace LightPat.Core.Player
         bool prevAttack1State;
         private void Update()
         {
+            //Debug.Log(attack1 + " " + reloading.Value);
             if (!weaponLoadout.equippedWeapon) { return; }
 
             if (attack1 != prevAttack1State)
@@ -302,9 +303,6 @@ namespace LightPat.Core.Player
 
         public void Attack1(bool pressed)
         {
-            attack1 = pressed;
-            if (IsOwner)
-                animator.SetBool("attack1", pressed);
             if (weaponLoadout.equippedWeapon == null) { return; }
             NetworkObject netObj = weaponLoadout.equippedWeapon.Attack1(pressed);
             if (netObj)
@@ -320,12 +318,23 @@ namespace LightPat.Core.Player
         void OnAttack1ServerRpc(bool pressed)
         {
             if (!IsHost)
+            {
+                if (IsOwner)
+                    animator.SetBool("attack1", pressed);
+                attack1 = pressed;
                 Attack1(pressed);
-
+            }
+            
             OnAttack1ClientRpc(pressed);
         }
 
-        [ClientRpc] void OnAttack1ClientRpc(bool pressed) { Attack1(pressed); }
+        [ClientRpc] void OnAttack1ClientRpc(bool pressed)
+        {
+            if (IsOwner)
+                animator.SetBool("attack1", pressed);
+            attack1 = pressed;
+            Attack1(pressed);
+        }
 
         [Header("Sword blocking")]
         public Transform blockConstraints;

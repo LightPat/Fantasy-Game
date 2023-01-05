@@ -73,6 +73,7 @@ namespace LightPat.Core.Player
 
         private NetworkObject Shoot()
         {
+            if (playerWeaponAnimationHandler.reloading.Value) { return null; }
             if (reloading) { return null; }
             float time = NetworkManager.Singleton.LocalTime.TimeAsFloat;
             timeSinceLastShot = time - lastShotTime;
@@ -161,6 +162,7 @@ namespace LightPat.Core.Player
             }
 
             reloading = true;
+            playerWeaponAnimationHandler.reloading.Value = reloading;
             gunAnimator.SetFloat("reloadSpeed", reloadSpeed);
             gunAnimator.SetBool("fire", false);
 
@@ -229,6 +231,7 @@ namespace LightPat.Core.Player
             if (playerController)
                 playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             reloading = false;
+            playerWeaponAnimationHandler.reloading.Value = reloading;
 
             if (fullAuto)
                 gunAnimator.SetBool("fire", firing);

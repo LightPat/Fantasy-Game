@@ -295,11 +295,11 @@ namespace LightPat.Core.Player
             }
 
             prevAttack1State = attack1;
-
-            Debug.Log(targetWeaponSlot);
         }
 
+        public NetworkVariable<bool> reloading = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         bool attack1;
+
         public void Attack1(bool pressed)
         {
             attack1 = pressed;

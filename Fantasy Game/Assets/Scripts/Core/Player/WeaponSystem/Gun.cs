@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LightPat.ProceduralAnimations;
-using TMPro;
 using Unity.Netcode;
 
 namespace LightPat.Core.Player

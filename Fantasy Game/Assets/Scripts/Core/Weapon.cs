@@ -24,6 +24,7 @@ namespace LightPat.Core
         public Vector3 transitionRotationOffset;
         public Vector3 stowedPositionOffset;
         public Vector3 stowedRotationOffset;
+        public string currentOffsetType { get; private set; }
 
         Vector3 targetLocalPosition;
         Vector3 targetLocalRotation;
@@ -69,6 +70,7 @@ namespace LightPat.Core
                 targetLocalPosition = transitionPositionOffset;
                 targetLocalRotation = transitionRotationOffset;
             }
+            currentOffsetType = offsetType;
         }
 
         protected void Start()

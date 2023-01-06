@@ -75,7 +75,6 @@ namespace LightPat.Core.Player
         private NetworkObject Shoot()
         {
             if (playerWeaponAnimationHandler.reloading.Value) { return null; }
-            if (!playerWeaponAnimationHandler.attack1) { return null; }
             if (reloading) { return null; }
             float time = NetworkManager.Singleton.LocalTime.TimeAsFloat;
             timeSinceLastShot = time - lastShotTime;

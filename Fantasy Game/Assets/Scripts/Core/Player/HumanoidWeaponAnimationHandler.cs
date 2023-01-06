@@ -279,7 +279,7 @@ namespace LightPat.Core.Player
         }
 
         public NetworkVariable<bool> reloading = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        public bool attack1 { get; private set; }
+        bool attack1;
 
         public void Attack1(bool pressed)
         {

@@ -278,31 +278,12 @@ namespace LightPat.Core.Player
             DisableCombatIKs();
         }
 
-        bool prevAttack1State;
-        private void Update()
-        {
-            //Debug.Log(attack1 + " " + reloading.Value);
-            if (!weaponLoadout.equippedWeapon) { return; }
-
-            if (attack1 != prevAttack1State)
-            {
-                if (weaponLoadout.equippedWeapon.TryGetComponent(out Gun gun))
-                {
-                    if (gun.fullAuto)
-                    {
-                        Attack1(attack1);
-                    }
-                }
-            }
-
-            prevAttack1State = attack1;
-        }
-
         public NetworkVariable<bool> reloading = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        bool attack1;
+        public bool attack1 { get; private set; }
 
         public void Attack1(bool pressed)
         {
+            Debug.Log("test");
             if (weaponLoadout.equippedWeapon == null) { return; }
             NetworkObject netObj = weaponLoadout.equippedWeapon.Attack1(pressed);
             if (netObj)
@@ -592,6 +573,7 @@ namespace LightPat.Core.Player
             animatorLayerWeightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
             ReparentWeapon(chosenWeapon, "player");
             weaponLoadout.DrawWeapon(slotIndex);
+            weaponLoadout.equippedWeapon.Attack1(attack1);
             EnableCombatIKs();
 
             if (animate)
@@ -665,6 +647,7 @@ namespace LightPat.Core.Player
             Transform gripPoint = GetGripPoint(chosenWeapon);
             ReparentWeapon(chosenWeapon, "player");
             weaponLoadout.DrawWeapon(slotIndex);
+            weaponLoadout.equippedWeapon.Attack1(attack1);
             EnableCombatIKs();
 
             if (animate)

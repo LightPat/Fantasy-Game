@@ -87,6 +87,7 @@ namespace LightPat.Core.Player
                 // If this is a prefab that hasn't been spawned in yet
                 if (startingWeapon.gameObject.scene.name == null)
                 {
+                    yield return null;
                     GameObject g = Instantiate(startingWeapon.gameObject);
                     Destroy(g.GetComponent<NetworkedWeapon>());
                     Destroy(g.GetComponent<NetworkTransform>());
@@ -283,7 +284,6 @@ namespace LightPat.Core.Player
 
         public void Attack1(bool pressed)
         {
-            Debug.Log("test");
             if (weaponLoadout.equippedWeapon == null) { return; }
             NetworkObject netObj = weaponLoadout.equippedWeapon.Attack1(pressed);
             if (netObj)

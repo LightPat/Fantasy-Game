@@ -98,13 +98,13 @@ namespace LightPat.Core
             if (!IsServer) { return false; }
             if (invincible) { return false; }
 
-            Attributes inflicterAttributes;
-            if (inflicter.TryGetComponent(out inflicterAttributes))
-            {
-                if (inflicterAttributes.team == team) { return false; }
-            }
-
             float damageAngle = Vector3.Angle(projectile.transform.forward, transform.forward);
+            SendMessage("OnAttacked", new OnAttackedData(inflicter, damageAngle));
+
+            if (inflicter.TryGetComponent(out Attributes inflicterAttributes))
+            {
+                if (inflicterAttributes.team == team) { return true; }
+            }
 
             if (blocking)
             {
@@ -121,7 +121,6 @@ namespace LightPat.Core
             if (HP.Value < 0)
                 HP.Value = 0;
 
-            SendMessage("OnAttacked", new OnAttackedData(inflicter, damageAngle));
 
             if (HP.Value <= 0)
                 SendMessage("OnDeath");

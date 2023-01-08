@@ -78,6 +78,12 @@ namespace LightPat.Core
             name = weaponName;
             targetLocalPosition = playerPositionOffset;
             targetLocalRotation = playerRotationOffset;
+            StartCoroutine(WaitForAudioManager());
+        }
+
+        private IEnumerator WaitForAudioManager()
+        {
+            yield return new WaitUntil(() => AudioManager.Singleton);
 
             AudioSource[] audioSources = GetComponentsInChildren<AudioSource>();
             foreach (AudioSource audioSource in audioSources)

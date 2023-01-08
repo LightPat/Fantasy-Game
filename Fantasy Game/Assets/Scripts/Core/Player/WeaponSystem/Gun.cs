@@ -113,7 +113,7 @@ namespace LightPat.Core.Player
             currentBullets -= 1;
             if (playerController)
                 playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
-            if (currentBullets == 0) { StartCoroutine(Reload(NetworkManager.Singleton.IsClient)); }
+            if (currentBullets == 0 & playerWeaponAnimationHandler.IsOwner) { playerWeaponAnimationHandler.SendMessage("OnReload"); }
 
             // Spawn the bullet
             if (NetworkManager.Singleton.IsServer)
@@ -163,7 +163,8 @@ namespace LightPat.Core.Player
             }
 
             reloading = true;
-            playerWeaponAnimationHandler.reloading.Value = reloading;
+            if (playerWeaponAnimationHandler.IsOwner)
+                playerWeaponAnimationHandler.reloading.Value = reloading;
             gunAnimator.SetFloat("reloadSpeed", reloadSpeed);
             gunAnimator.SetBool("fire", false);
 
@@ -232,7 +233,8 @@ namespace LightPat.Core.Player
             if (playerController)
                 playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
             reloading = false;
-            playerWeaponAnimationHandler.reloading.Value = reloading;
+            if (playerWeaponAnimationHandler.IsOwner)
+                playerWeaponAnimationHandler.reloading.Value = reloading;
 
             if (fullAuto)
                 gunAnimator.SetBool("fire", firing);

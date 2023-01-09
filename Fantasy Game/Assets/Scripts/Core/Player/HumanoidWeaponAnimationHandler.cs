@@ -441,6 +441,7 @@ namespace LightPat.Core.Player
         bool rpcSending;
         void OnQueryWeaponSlot(InputValue value)
         {
+            if (reloading.Value) { return; }
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             if (animator.IsInTransition(animator.GetLayerIndex("Draw/Stow Weapon"))) { return; }
             if (rpcSending) { return; }

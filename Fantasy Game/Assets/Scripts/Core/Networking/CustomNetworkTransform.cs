@@ -16,8 +16,12 @@ namespace LightPat.Core
         private NetworkVariable<Vector3> currentPosition = new NetworkVariable<Vector3>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<Quaternion> currentRotation = new NetworkVariable<Quaternion>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+        float positionSpeed;
+        float rotationSpeed;
+
         public override void OnNetworkSpawn()
         {
+            interpolate = IsClient;
             currentPosition.OnValueChanged += OnPositionChanged;
             currentRotation.OnValueChanged += OnRotationChanged;
         }
@@ -31,11 +35,20 @@ namespace LightPat.Core
         void OnPositionChanged(Vector3 prevPosition, Vector3 newPosition)
         {
             if (!interpolate)
+            {
                 transform.localPosition = currentPosition.Value;
+            }
+            else
+            {
+                positionSpeed = Vector3.Distance(transform.localPosition, currentPosition.Value);
+                if (positionSpeed < 8)
+                    positionSpeed = 8;
+            }
         }
 
         void OnRotationChanged(Quaternion prevRotation, Quaternion newRotation)
         {
+            rotationSpeed = Quaternion.Angle(transform.localRotation, newRotation);
             if (!interpolate)
                 transform.localRotation = currentRotation.Value;
         }
@@ -53,8 +66,11 @@ namespace LightPat.Core
             {
                 if (interpolate)
                 {
-                    transform.localPosition = Vector3.Lerp(transform.localPosition, currentPosition.Value, Time.deltaTime * 8);
-                    transform.localRotation = Quaternion.Slerp(transform.localRotation, currentRotation.Value, Time.deltaTime * 8);
+                    transform.localPosition = Vector3.Lerp(transform.localPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+                    //if (Vector3.Distance(transform.localPosition, currentPosition.Value) < 1)
+                    //    transform.localPosition = Vector3.MoveTowards(transform.localPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+
+                    transform.localRotation = Quaternion.Slerp(transform.localRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
                 }
                 else
                 {

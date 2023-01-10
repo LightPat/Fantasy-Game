@@ -87,7 +87,7 @@ namespace LightPat.Core
             if (HP.Value < 0)
                 HP.Value = 0;
 
-            SendMessage("OnAttacked", new OnAttackedData(inflicter, damageAngle));
+            SendMessage("OnAttacked", new OnAttackedData(inflicter.name, damageAngle));
 
             if (HP.Value <= 0)
                 SendMessage("OnDeath");
@@ -99,7 +99,7 @@ namespace LightPat.Core
             if (invincible) { return false; }
 
             float damageAngle = Vector3.Angle(projectile.transform.forward, transform.forward);
-            SendMessage("OnAttacked", new OnAttackedData(inflicter, damageAngle));
+            SendMessage("OnAttacked", new OnAttackedData(inflicter.name, damageAngle));
 
             if (inflicter.TryGetComponent(out Attributes inflicterAttributes))
             {
@@ -144,15 +144,21 @@ namespace LightPat.Core
         }
     }
 
-    public struct OnAttackedData
+    public struct OnAttackedData : INetworkSerializable
     {
-        public GameObject inflicter;
+        public string inflicterName;
         public float damageAngle;
 
-        public OnAttackedData(GameObject inflicter, float damageAngle)
+        public OnAttackedData(string inflicterName, float damageAngle)
         {
-            this.inflicter = inflicter;
+            this.inflicterName = inflicterName;
             this.damageAngle = damageAngle;
+        }
+
+        void INetworkSerializable.NetworkSerialize<T>(BufferSerializer<T> serializer)
+        {
+            serializer.SerializeValue(ref inflicterName);
+            serializer.SerializeValue(ref damageAngle);
         }
     }
 }

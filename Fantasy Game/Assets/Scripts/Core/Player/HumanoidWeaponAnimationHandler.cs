@@ -59,8 +59,6 @@ namespace LightPat.Core.Player
 
         public override void OnNetworkSpawn()
         {
-            targetWeaponSlot.OnValueChanged += OnTargetWeaponSlotChange;
-
             weaponLoadout.startingWeapons.Clear();
             int i = 0;
             foreach (int weaponPrefabIndex in ClientManager.Singleton.GetClient(OwnerClientId).spawnWeapons)
@@ -72,11 +70,6 @@ namespace LightPat.Core.Player
                 i += 1;
             }
             StartCoroutine(EquipInitialWeapons());
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            targetWeaponSlot.OnValueChanged -= OnTargetWeaponSlotChange;
         }
 
         bool equipInitialWeaponsRunning = true;
@@ -479,11 +472,6 @@ namespace LightPat.Core.Player
             {
                 targetWeaponSlot.Value = slot;
             }
-        }
-
-        void OnTargetWeaponSlotChange(int oldSlot, int newSlot)
-        {
-            Debug.Log(weaponLoadout.GetEquippedWeaponIndex() + " " + targetWeaponSlot.Value);
         }
 
         private void Update()
@@ -929,6 +917,14 @@ namespace LightPat.Core.Player
         }
 
         void OnAttacked(OnAttackedData data)
+        {
+            animator.SetFloat("damageAngle", data.damageAngle);
+            StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));
+            OnAttackedClientRpc(data);
+        }
+
+        [ClientRpc]
+        void OnAttackedClientRpc(OnAttackedData data)
         {
             animator.SetFloat("damageAngle", data.damageAngle);
             StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "reactDamage"));

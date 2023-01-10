@@ -202,6 +202,27 @@ namespace LightPat.Core
         }
 
         [ServerRpc(RequireOwnership = false)]
+        public void AddKillsServerRpc(ulong clientId, int killsToAdd)
+        {
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeKills(clientDataDictionary[clientId].kills + killsToAdd);
+            SynchronizeClientDictionaries();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void AddDeathsServerRpc(ulong clientId, int deathsToAdd)
+        {
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeDeaths(clientDataDictionary[clientId].deaths + deathsToAdd);
+            SynchronizeClientDictionaries();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void AddDamageServerRpc(ulong clientId, float damageToAdd)
+        {
+            clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeDamageDone(clientDataDictionary[clientId].damageDone + damageToAdd);
+            SynchronizeClientDictionaries();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
         public void ChangeSceneServerRpc(ulong clientId, string sceneName, bool spawnPlayers)
         {
             if (clientId != lobbyLeaderId.Value) { Debug.LogError("You can only change the scene if you are the lobby leader!"); return; }
@@ -245,6 +266,9 @@ namespace LightPat.Core
         public Team team;
         public Color[] colors;
         public int[] spawnWeapons;
+        public int kills;
+        public int deaths;
+        public float damageDone;
 
         public ClientData(string clientName)
         {
@@ -254,6 +278,9 @@ namespace LightPat.Core
             team = Team.Red;
             colors = new Color[1];
             spawnWeapons = new int[0];
+            kills = 0;
+            deaths = 0;
+            damageDone = 0;
         }
 
         public ClientData ToggleReady()
@@ -288,6 +315,27 @@ namespace LightPat.Core
         {
             ClientData copy = this;
             copy.spawnWeapons = newWeapons;
+            return copy;
+        }
+
+        public ClientData ChangeKills(int newKills)
+        {
+            ClientData copy = this;
+            copy.kills = newKills;
+            return copy;
+        }
+
+        public ClientData ChangeDeaths(int newDeaths)
+        {
+            ClientData copy = this;
+            copy.deaths = newDeaths;
+            return copy;
+        }
+
+        public ClientData ChangeDamageDone(float newDamageDone)
+        {
+            ClientData copy = this;
+            copy.damageDone = newDamageDone;
             return copy;
         }
 

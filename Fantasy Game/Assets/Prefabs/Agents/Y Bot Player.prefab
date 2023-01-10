@@ -5516,7 +5516,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interpolate: 0
+  interpolate: 1
   positionThreshold: 0.001
   rotAngleThreshold: 0.001
 --- !u!1 &7284513825018453866

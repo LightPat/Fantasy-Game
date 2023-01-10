@@ -59,6 +59,8 @@ namespace LightPat.Core.Player
 
         public override void OnNetworkSpawn()
         {
+            targetWeaponSlot.OnValueChanged += OnTargetWeaponSlotChange;
+
             weaponLoadout.startingWeapons.Clear();
             int i = 0;
             foreach (int weaponPrefabIndex in ClientManager.Singleton.GetClient(OwnerClientId).spawnWeapons)
@@ -72,6 +74,12 @@ namespace LightPat.Core.Player
             StartCoroutine(EquipInitialWeapons());
         }
 
+        public override void OnNetworkDespawn()
+        {
+            targetWeaponSlot.OnValueChanged -= OnTargetWeaponSlotChange;
+        }
+
+        bool equipInitialWeaponsRunning = true;
         private IEnumerator EquipInitialWeapons()
         {
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
@@ -150,6 +158,7 @@ namespace LightPat.Core.Player
 
                 weaponLoadout.AddWeapon(weapon.GetComponent<Weapon>());
             }
+            equipInitialWeaponsRunning = false;
         }
 
         [Header("Interact Setings")]
@@ -438,13 +447,11 @@ namespace LightPat.Core.Player
             StartCoroutine(weaponLoadout.equippedWeapon.Reload(true));
         }
 
-        bool rpcSending;
         void OnQueryWeaponSlot(InputValue value)
         {
             if (reloading.Value) { return; }
             if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
             if (animator.IsInTransition(animator.GetLayerIndex("Draw/Stow Weapon"))) { return; }
-            if (rpcSending) { return; }
             int slot = Convert.ToInt32(value.Get()) - 1;
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slot);
             if (chosenWeapon == null) { return; }
@@ -455,57 +462,62 @@ namespace LightPat.Core.Player
                 OnQueryWeaponSlotServerRpc(slot, "switch");
             else
                 OnQueryWeaponSlotServerRpc(slot, "draw");
-
-            if (!IsHost) // For some reason the host doesn't work with the rpc sending bool
-                rpcSending = true;
         }
 
         [ServerRpc]
         void OnQueryWeaponSlotServerRpc(int slot, string actionType)
         {
-            if (!IsHost)
+            if (actionType == "stow")
             {
-                if (actionType == "stow")
-                    targetWeaponSlot = -1;
-                else
-                    targetWeaponSlot = slot;
-
-                if (actionType == "stow")
-                    StartCoroutine(StowWeapon(false));
-                else if (actionType == "switch")
-                    StartCoroutine(SwitchWeapon(slot, false));
-                else if (actionType == "draw")
-                    StartCoroutine(DrawWeapon(slot, false));
+                targetWeaponSlot.Value = -1;
             }
-            OnQueryWeaponSlotClientRpc(slot, actionType);
-        }
-
-        [ClientRpc]
-        void OnQueryWeaponSlotClientRpc(int slot, string actionType)
-        {
-            if (actionType == "stow")
-                targetWeaponSlot = -1;
-            else
-                targetWeaponSlot = slot;
-
-            if (actionType == "stow")
-                StartCoroutine(StowWeapon(true));
             else if (actionType == "switch")
-                StartCoroutine(SwitchWeapon(slot, true));
+            {
+                targetWeaponSlot.Value = slot;
+            }
             else if (actionType == "draw")
-                StartCoroutine(DrawWeapon(slot, true));
-            if (IsOwner)
-                rpcSending = false;
+            {
+                targetWeaponSlot.Value = slot;
+            }
         }
 
-        int targetWeaponSlot;
+        void OnTargetWeaponSlotChange(int oldSlot, int newSlot)
+        {
+            Debug.Log(weaponLoadout.GetEquippedWeaponIndex() + " " + targetWeaponSlot.Value);
+        }
+
+        private void Update()
+        {
+            if (equipInitialWeaponsRunning) { return; }
+            if (weaponChangeRunning) { return; }
+            if (reloading.Value) { return; }
+            if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Draw/Stow Weapon")).IsName("Empty")) { return; }
+            if (animator.IsInTransition(animator.GetLayerIndex("Draw/Stow Weapon"))) { return; }
+
+            if (weaponLoadout.GetEquippedWeaponIndex() != targetWeaponSlot.Value)
+            {
+                if (weaponLoadout.equippedWeapon & targetWeaponSlot.Value == -1)
+                {
+                    weaponChangeRunning = true;
+                    StartCoroutine(StowWeapon(IsClient));
+                }
+                else if (!weaponLoadout.equippedWeapon & targetWeaponSlot.Value != -1)
+                {
+                    weaponChangeRunning = true;
+                    StartCoroutine(DrawWeapon(targetWeaponSlot.Value, IsClient));
+                }
+                else if (weaponLoadout.equippedWeapon & targetWeaponSlot.Value != -1)
+                {
+                    weaponChangeRunning = true;
+                    StartCoroutine(SwitchWeapon(targetWeaponSlot.Value, IsClient));
+                }
+            }
+        }
+
+        private NetworkVariable<int> targetWeaponSlot = new NetworkVariable<int>();
         bool weaponChangeRunning;
         private IEnumerator StowWeapon(bool animate)
         {
-            yield return new WaitUntil(() => !weaponChangeRunning);
-            if (targetWeaponSlot != -1) { yield break; }
-
-            weaponChangeRunning = true;
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
             equippedWeapon.disableAttack = true;
             if (animate)
@@ -546,11 +558,6 @@ namespace LightPat.Core.Player
 
         private IEnumerator DrawWeapon(int slotIndex, bool animate)
         {
-            yield return new WaitUntil(() => !weaponChangeRunning);
-            if (targetWeaponSlot != slotIndex) { yield break; }
-
-            weaponChangeRunning = true;
-
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
             if (animate)
             {
@@ -587,10 +594,6 @@ namespace LightPat.Core.Player
 
         private IEnumerator SwitchWeapon(int slotIndex, bool animate)
         {
-            yield return new WaitUntil(() => !weaponChangeRunning);
-            if (targetWeaponSlot != slotIndex) { yield break; }
-
-            weaponChangeRunning = true;
             // Stow equipped weapon
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
             equippedWeapon.disableAttack = true;

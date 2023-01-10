@@ -21,7 +21,8 @@ namespace LightPat.Core
 
         public override void OnNetworkSpawn()
         {
-            interpolate = IsClient;
+            if (interpolate)
+                interpolate = IsClient;
             currentPosition.OnValueChanged += OnPositionChanged;
             currentRotation.OnValueChanged += OnRotationChanged;
         }
@@ -41,8 +42,8 @@ namespace LightPat.Core
             else
             {
                 positionSpeed = Vector3.Distance(transform.localPosition, currentPosition.Value);
-                if (positionSpeed < 8)
-                    positionSpeed = 8;
+                if (positionSpeed < 10)
+                    positionSpeed = 10;
             }
         }
 

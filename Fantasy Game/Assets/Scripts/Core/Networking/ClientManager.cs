@@ -201,22 +201,21 @@ namespace LightPat.Core
             SynchronizeClientDictionaries();
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void AddKillsServerRpc(ulong clientId, int killsToAdd)
+        public void AddKills(ulong clientId, int killsToAdd)
         {
             clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeKills(clientDataDictionary[clientId].kills + killsToAdd);
             SynchronizeClientDictionaries();
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void AddDeathsServerRpc(ulong clientId, int deathsToAdd)
+        public void AddDeaths(ulong clientId, int deathsToAdd)
         {
+            if (!IsServer) { Debug.LogError("This should only be modified on the server"); return; }
+
             clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeDeaths(clientDataDictionary[clientId].deaths + deathsToAdd);
             SynchronizeClientDictionaries();
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        public void AddDamageServerRpc(ulong clientId, float damageToAdd)
+        public void AddDamage(ulong clientId, float damageToAdd)
         {
             clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeDamageDone(clientDataDictionary[clientId].damageDone + damageToAdd);
             SynchronizeClientDictionaries();
@@ -347,6 +346,9 @@ namespace LightPat.Core
             serializer.SerializeValue(ref team);
             serializer.SerializeValue(ref colors);
             serializer.SerializeValue(ref spawnWeapons);
+            serializer.SerializeValue(ref kills);
+            serializer.SerializeValue(ref deaths);
+            serializer.SerializeValue(ref damageDone);
         }
     }
 }

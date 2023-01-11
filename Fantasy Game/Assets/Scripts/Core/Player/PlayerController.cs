@@ -632,6 +632,20 @@ namespace LightPat.Core.Player
             }
         }
 
+        [SerializeField] private GameObject scoreboardPrefab;
+        GameObject scoreboardInstance;
+        void OnScoreboard(InputValue value)
+        {
+            if (value.isPressed)
+            {
+                scoreboardInstance = Instantiate(scoreboardPrefab);
+            }
+            else
+            {
+                Destroy(scoreboardInstance);
+            }
+        }
+
         void PlayHitmarker(HitmarkerData hitmarkerData)
         {
             if (IsLocalPlayer)

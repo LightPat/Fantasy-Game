@@ -21,8 +21,6 @@ namespace LightPat.Core
 
         public override void OnNetworkSpawn()
         {
-            if (interpolate)
-                interpolate = IsClient;
             currentPosition.OnValueChanged += OnPositionChanged;
             currentRotation.OnValueChanged += OnRotationChanged;
         }

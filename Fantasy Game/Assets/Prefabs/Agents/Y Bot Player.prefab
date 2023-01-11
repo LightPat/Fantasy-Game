@@ -6007,6 +6007,7 @@ MonoBehaviour:
   leftLean: 45
   leanSpeed: 5
   disableLeanInput: 0
+  scoreboardPrefab: {fileID: 4823834695451015320, guid: 1a16794dccb6bba4985b380362ac3ef0, type: 3}
   deathScreenPrefab: {fileID: 2831454819737080861, guid: 72f14c4f76ff3c649b8b802c10d14301, type: 3}
 --- !u!114 &7284513826171149810
 MonoBehaviour:

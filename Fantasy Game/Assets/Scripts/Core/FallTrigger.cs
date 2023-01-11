@@ -19,6 +19,8 @@ namespace LightPat.Core
             Attributes objectAttributes = other.GetComponentInParent<Attributes>();
             if (objectAttributes)
                 objectAttributes.InflictDamage(100000000000000, gameObject);
+            else
+                Destroy(other.gameObject);
         }
     }
 }

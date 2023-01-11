@@ -886,7 +886,8 @@ namespace LightPat.Core.Player
         {
             if (animator.GetBool("dead")) { return; }
             animator.SetBool("dead", true);
-            OnDrop();
+            targetWeaponSlot.Value = -1;
+            //OnDrop();
 
             Flag flag = GetComponentInChildren<Flag>();
             Vector3 flagPosition = Vector3.zero;

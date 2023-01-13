@@ -25,8 +25,9 @@ namespace LightPat.Core.Player
         public void TurnOnDisplayModelMode()
         {
             GetComponent<PlayerInput>().enabled = false;
-            GetComponent<ActionMapHandler>().enabled = false;
-            playerCamera.updateRotationWithTarget = true;
+            Destroy(playerCamera.GetComponent<AudioListener>());
+            playerCamera.neckAimRig.instantWeight = true;
+            playerCamera.neckAimRig.weightTarget = 0;
             playerCamera.gameObject.SetActive(false);
             playerHUD.gameObject.SetActive(false);
             Cursor.lockState = CursorLockMode.None;

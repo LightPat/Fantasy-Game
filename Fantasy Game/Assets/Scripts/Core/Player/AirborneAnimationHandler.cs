@@ -8,7 +8,7 @@ using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
-    public class AirborneAnimationHandler : MonoBehaviour
+    public class AirborneAnimationHandler : NetworkBehaviour
     {
         [Header("Jump Settings")]
         public float jumpHeight;
@@ -24,7 +24,7 @@ namespace LightPat.Core.Player
         RootMotionManager rootMotionManager;
         WeaponLoadout weaponLoadout;
 
-        private void Start()
+        private void Awake()
         {
             animator = GetComponentInChildren<Animator>();
             rb = GetComponent<Rigidbody>();
@@ -32,6 +32,22 @@ namespace LightPat.Core.Player
             weaponLoadout = GetComponent<WeaponLoadout>();
         }
 
+        public override void OnNetworkSpawn()
+        {
+            jumping.OnValueChanged += OnJumpChange;
+            breakfallRoll.OnValueChanged += OnBreakfallRollChange;
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            jumping.OnValueChanged -= OnJumpChange;
+            breakfallRoll.OnValueChanged -= OnBreakfallRollChange;
+        }
+
+        void OnBreakfallRollChange(bool previous, bool current) { animator.SetBool("breakfallRoll", current); }
+
+        private NetworkVariable<Vector3> rbVelocity = new NetworkVariable<Vector3>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private NetworkVariable<bool> breakfallRoll = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         bool prevGrounded;
         private void Update()
         {
@@ -43,7 +59,7 @@ namespace LightPat.Core.Player
 
             bool isGrounded = IsGrounded();
 
-            animator.SetFloat("yVelocity", rb.velocity.y);
+            animator.SetFloat("yVelocity", rbVelocity.Value.y);
 
             // Wall running logic
             if (animator.GetBool("wallRun"))
@@ -108,9 +124,10 @@ namespace LightPat.Core.Player
             // If we were falling on the last frame and we are not on this one
             if (!prevGrounded & isGrounded)
             {
-                if (rb.velocity.magnitude > breakfallRollThreshold)
+                if (rbVelocity.Value.magnitude > breakfallRollThreshold)
                 {
-                    animator.SetBool("breakfallRoll", true);
+                    if (IsOwner)
+                        breakfallRoll.Value = true;
                     animator.SetFloat("landingAngle", Vector2.SignedAngle(new Vector2(rb.velocity.x, rb.velocity.z), new Vector2(transform.forward.x, transform.forward.z)));
                 }
             }
@@ -134,6 +151,9 @@ namespace LightPat.Core.Player
 
                 rb.AddForce(moveForce, ForceMode.VelocityChange);
             }
+
+            if (IsOwner)
+                rbVelocity.Value = rb.velocity;
         }
 
         void OnJump(InputValue value)
@@ -146,9 +166,14 @@ namespace LightPat.Core.Player
             EndWallRun();
         }
 
+        private NetworkVariable<bool> jumping = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+        void OnJumpChange(bool previous, bool current) { animator.SetBool("jumping", current); }
+
         private IEnumerator Jump()
         {
-            animator.SetBool("jumping", true);
+            jumping.Value = true;
+            int startTick = NetworkManager.LocalTime.Tick;
 
             yield return new WaitForSeconds(jumpForceDelay);
             if (!animator.GetBool("running"))
@@ -163,8 +188,9 @@ namespace LightPat.Core.Player
                 rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.VelocityChange);
             }
 
-            yield return null;
-            animator.SetBool("jumping", false);
+            // Wait for 1 tick or more to pass before setting jump to false again
+            yield return new WaitUntil(() => NetworkManager.LocalTime.Tick >= startTick + 1);
+            jumping.Value = false;
         }
         
         Vector2 moveInput;
@@ -194,7 +220,7 @@ namespace LightPat.Core.Player
         {
             yield return new WaitUntil(() => !(IsAirborne() | IsJumping()) & !IsLanding());
             landingCollisionRunning = false;
-            animator.SetBool("breakfallRoll", false);
+            breakfallRoll.Value = false;
         }
 
         [Header("Wall Run Settings")]

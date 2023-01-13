@@ -43,6 +43,7 @@ namespace LightPat.Core.Player
             targetLean.OnValueChanged += OnTargetLeanChange;
 
             name = ClientManager.Singleton.GetClient(OwnerClientId).clientName;
+            rb.isKinematic = !IsLocalPlayer;
 
             if (IsOwner)
             {

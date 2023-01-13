@@ -408,8 +408,14 @@ namespace LightPat.Core.Player
             if (!current) { return; }
             if (weaponLoadout.equippedWeapon == null) { return; }
             if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
+            {
                 blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
-            StartCoroutine(weaponLoadout.equippedWeapon.Reload(IsClient));
+                reloading.Value = false;
+            }
+            else
+            {
+                StartCoroutine(weaponLoadout.equippedWeapon.Reload(IsClient));
+            }
         }
 
         void OnReload()

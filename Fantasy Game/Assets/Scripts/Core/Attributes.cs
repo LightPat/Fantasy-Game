@@ -79,7 +79,7 @@ namespace LightPat.Core
 
             if (inflicter.TryGetComponent(out Attributes inflicterAttributes))
             {
-                if (inflicterAttributes.team == team) { return true; }
+                if (inflicterAttributes.team == team) { return false; }
             }
 
             if (blocking)
@@ -144,7 +144,7 @@ namespace LightPat.Core
 
             if (inflicter.TryGetComponent(out Attributes inflicterAttributes))
             {
-                if (inflicterAttributes.team == team) { return true; }
+                if (inflicterAttributes.team == team) { return false; }
             }
 
             if (blocking)

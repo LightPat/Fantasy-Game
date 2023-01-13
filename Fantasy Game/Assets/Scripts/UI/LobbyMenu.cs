@@ -68,7 +68,6 @@ namespace LightPat.UI
             if (playerModel)
                 Destroy(playerModel);
             playerModel = Instantiate(ClientManager.Singleton.playerPrefabOptions[playerModelDropdown.value]);
-            playerModel.SendMessage("TurnOnDisplayModelMode");
             colors = playerModel.AddComponent<MaterialColorChange>();
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
             ClientManager.Singleton.ChangePlayerPrefabOptionServerRpc(localClientId, playerModelDropdown.value);
@@ -79,6 +78,7 @@ namespace LightPat.UI
         {
             yield return null;
             ColorCycle(true);
+            playerModel.SendMessage("TurnOnDisplayModelMode");
         }
 
         int colorIndex;

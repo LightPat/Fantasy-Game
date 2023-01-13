@@ -600,10 +600,8 @@ namespace LightPat.Core.Player
                 animator.SetBool("stow" + equippedWeapon.animationClass, true);
                 yield return null;
                 animator.SetBool("stow" + equippedWeapon.animationClass, false);
-
                 // Parent weapon to move with right hand
                 ReparentWeapon(equippedWeapon, "transition");
-
                 // Wait until stow animation has started playing
                 yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("StowWeapon"));
             }
@@ -628,10 +626,8 @@ namespace LightPat.Core.Player
             if (animate)
             {
                 yield return new WaitUntil(() => animator.GetCurrentAnimatorStateInfo(animLayerIndex).IsTag("ToCombat"));
-
                 // Parent weapon to move with right hand
                 ReparentWeapon(chosenWeapon, "transition");
-
                 yield return new WaitUntil(() => animator.IsInTransition(animLayerIndex));
             }
 

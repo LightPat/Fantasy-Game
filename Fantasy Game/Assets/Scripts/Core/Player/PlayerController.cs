@@ -15,7 +15,6 @@ namespace LightPat.Core.Player
         public PlayerCameraFollow playerCamera { get; private set; }
         [Header("Animation Settings")]
         public float moveTransitionSpeed;
-        public float animatorSpeed = 1;
 
         [HideInInspector] public PlayerHUD playerHUD;
 
@@ -36,6 +35,10 @@ namespace LightPat.Core.Player
 
         public override void OnNetworkSpawn()
         {
+            running.OnValueChanged += OnRunningChange;
+            sprinting.OnValueChanged += OnSprintingChange;
+            crouching.OnValueChanged += OnCrouchingChange;
+
             name = ClientManager.Singleton.GetClient(OwnerClientId).clientName;
 
             if (IsOwner)
@@ -58,6 +61,13 @@ namespace LightPat.Core.Player
             MaterialColorChange colors = gameObject.AddComponent<MaterialColorChange>();
             colors.materialColors = ClientManager.Singleton.GetClient(OwnerClientId).colors;
             colors.Apply();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            running.OnValueChanged -= OnRunningChange;
+            sprinting.OnValueChanged -= OnSprintingChange;
+            crouching.OnValueChanged -= OnCrouchingChange;
         }
 
         void OnDriverEnter(Vehicle newVehicle)
@@ -110,12 +120,12 @@ namespace LightPat.Core.Player
             camConstraint = playerCamera.neckAimRig.GetComponentInChildren<MultiRotationConstraint>();
         }
 
-        Vector2 moveInput;
+        private NetworkVariable<Vector2> moveInput = new NetworkVariable<Vector2>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         void OnMove(InputValue value)
         {
-            moveInput = value.Get<Vector2>();
+            moveInput.Value = value.Get<Vector2>();
             if (vehicle) { vehicle.SendMessage("OnVehicleMove", moveInput); }
-            if (moveInput.y <= 0 & running) { runTarget = 2; }
+            if (moveInput.Value.y <= 0 & running.Value) { runTarget.Value = 2; }
         }
 
         [Header("Mouse Look Settings")]
@@ -174,7 +184,7 @@ namespace LightPat.Core.Player
             }
 
             lookInput *= sensitivity * timeScale;
-            
+
             if (vehicle)
             {
                 vehicle.SendMessage("OnVehicleLook", lookInput);
@@ -260,8 +270,6 @@ namespace LightPat.Core.Player
         bool prevCamRotState;
         private void Update()
         {
-            if (!IsOwner) { return; }
-
             if (chair)
             {
                 transform.localPosition = chair.occupantPosition;
@@ -271,33 +279,31 @@ namespace LightPat.Core.Player
 
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
-            float xTarget = moveInput.x;
+            float xTarget = moveInput.Value.x;
             if (animator.GetBool("mirrorIdle"))
                 xTarget *= -1;
-            if (running) { xTarget *= runTarget; }
+            if (running.Value) { xTarget *= runTarget.Value; }
             float x = Mathf.Lerp(animator.GetFloat("moveInputX"), xTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("moveInputX", x);
 
-            float yTarget = moveInput.y;
-            if (running) { yTarget *= runTarget; }
+            float yTarget = moveInput.Value.y;
+            if (running.Value) { yTarget *= runTarget.Value; }
             float y = Mathf.Lerp(animator.GetFloat("moveInputY"), yTarget, Time.deltaTime * moveTransitionSpeed);
             animator.SetFloat("moveInputY", y);
 
-            if (moveInput == Vector2.zero)
+            if (moveInput.Value == Vector2.zero)
                 if (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) // Only change idle time if we are at rest
                     // This is used so that some states that don't have exit transitions can "remember" that the user moved during their playtime, also so that crouching and jumping is not considered "idle"
                     if (!animator.GetCurrentAnimatorStateInfo(animator.GetLayerIndex("Idle Loop")).IsTag("PauseIdleTime"))
                         animator.SetFloat("idleTime", animator.GetFloat("idleTime") + Time.deltaTime);
-            else // If moveInput is not Vector2.zero
-                animator.SetFloat("idleTime", 0);
+                    else // If moveInput is not Vector2.zero
+                        animator.SetFloat("idleTime", 0);
             // Don't want to enter idle loop while crouching
-            if (crouching)
+            if (crouching.Value)
                 animator.SetFloat("idleTime", 0);
             // If we jump set idleTime to 0
             if (animator.GetBool("jumping"))
                 animator.SetFloat("idleTime", 0);
-
-            animator.speed = animatorSpeed;
 
             if (rotateBodyWithCamera != prevCamRotState)
                 playerCamera.RefreshCameraParent();
@@ -311,7 +317,7 @@ namespace LightPat.Core.Player
                 else if (transform.parent)
                     transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
             }
-            
+
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
             {
@@ -406,35 +412,26 @@ namespace LightPat.Core.Player
                 rb.interpolation = RigidbodyInterpolation.Interpolate;
                 rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
             }
-            
+
             addRigidbodyRunning = false;
         }
 
         void OnAbility()
         {
-            if (animatorSpeed == 4)
+            if (Time.timeScale == 1)
             {
-                animatorSpeed = 1;
+                Time.timeScale = 0.1f;
             }
-            else if (animatorSpeed == 1)
+            else
             {
-                animatorSpeed = 4;
+                Time.timeScale = 1;
             }
-
-            //if (Time.timeScale == 1)
-            //{
-            //    Time.timeScale = 0.1f;
-            //}
-            //else
-            //{
-            //    Time.timeScale = 1;
-            //}
         }
 
         [Header("Misc Settings")]
         public bool toggleSprint;
-        bool running;
-        float runTarget;
+        private NetworkVariable<bool> running = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private NetworkVariable<float> runTarget = new NetworkVariable<float>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         void OnSprint(InputValue value)
         {
             if (vehicle) { vehicle.SendMessage("OnVehicleSprint", value.isPressed); }
@@ -443,20 +440,18 @@ namespace LightPat.Core.Player
             {
                 if (value.isPressed)
                 {
-                    running = !running;
-                    animator.SetBool("running", running);
-                    runTarget = 2;
+                    running.Value = !running.Value;
+                    runTarget.Value = 2;
                     ascending = true;
 
-                    if (!running)
+                    if (!running.Value)
                         animator.SetBool("sprinting", false);
                 }
             }
             else
             {
-                running = value.isPressed;
-                animator.SetBool("running", running);
-                runTarget = 2;
+                running.Value = value.isPressed;
+                runTarget.Value = 2;
                 ascending = true;
 
                 if (!value.isPressed)
@@ -464,46 +459,50 @@ namespace LightPat.Core.Player
             }
         }
 
+        void OnRunningChange(bool previous, bool current) { animator.SetBool("running", current); }
+        void OnSprintingChange(bool previous, bool current) { animator.SetBool("sprinting", current); }
+
+        private NetworkVariable<bool> sprinting = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         bool ascending = true;
         void OnScaleSprint()
         {
-            if (running & !crouching & moveInput.y > 0)
+            if (running.Value & !crouching.Value & moveInput.Value.y > 0)
             {
                 if (ascending)
                 {
-                    runTarget += 1;
+                    runTarget.Value += 1;
 
-                    if (runTarget == 4)
-                        animator.SetBool("sprinting", true);
+                    if (runTarget.Value == 4)
+                        sprinting.Value = true;
                     else
-                        animator.SetBool("sprinting", false);
+                        sprinting.Value = false;
 
-                    if (runTarget == 4)
+                    if (runTarget.Value == 4)
                         ascending = false;
                 }
                 else
                 {
-                    runTarget -= 1;
-                    if (runTarget == 2)
+                    runTarget.Value -= 1;
+                    if (runTarget.Value == 2)
                         ascending = true;
 
-                    if (runTarget == 4)
-                        animator.SetBool("sprinting", true);
+                    if (runTarget.Value == 4)
+                        sprinting.Value = true;
                     else
-                        animator.SetBool("sprinting", false);
+                        sprinting.Value = false;
                 }
             }
         }
 
         public bool toggleCrouch;
-        bool crouching;
+        private NetworkVariable<bool> crouching = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         void OnCrouch(InputValue value)
         {
             if (vehicle) { vehicle.SendMessage("OnVehicleCrouch", value.isPressed); }
 
-            if (running)
+            if (running.Value)
             {
-                animator.SetBool("crouching", value.isPressed);
+                crouching.Value = value.isPressed;
                 return;
             }
 
@@ -511,16 +510,16 @@ namespace LightPat.Core.Player
             {
                 if (value.isPressed)
                 {
-                    crouching = !crouching;
-                    animator.SetBool("crouching", crouching);
+                    crouching.Value = !crouching.Value;
                 }
             }
             else
             {
-                crouching = value.isPressed;
-                animator.SetBool("crouching", crouching);
+                crouching.Value = value.isPressed;
             }
         }
+
+        void OnCrouchingChange(bool previous, bool current) { animator.SetBool("crouching", current); }
 
         [Header("Interact Settings")]
         public float reach;
@@ -733,6 +732,5 @@ namespace LightPat.Core.Player
         [ServerRpc] private void RemoveParentServerRpc() { NetworkObject.TryRemoveParent(); }
 
         [ServerRpc] private void TrySetParentServerRpc(ulong networkObjectId) { NetworkObject.TrySetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId], true); }
-
     }
 }

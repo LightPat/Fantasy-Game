@@ -319,10 +319,10 @@ namespace LightPat.Core.Player
                     transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
             }
 
-            spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean / spineAim.weight), leanSpeed * Time.deltaTime);
+            spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean.Value / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
             {
-                aimConstraint.data.offset = Vector3.Lerp(aimConstraint.data.offset, new Vector3(0, 0, targetLean), leanSpeed * Time.deltaTime);
+                aimConstraint.data.offset = Vector3.Lerp(aimConstraint.data.offset, new Vector3(0, 0, targetLean.Value), leanSpeed * Time.deltaTime);
             }
 
             if (playerCamera.updateRotationWithTarget)
@@ -571,11 +571,11 @@ namespace LightPat.Core.Player
         public float leftLean;
         public float leanSpeed;
         public bool disableLeanInput;
-        float targetLean;
+        private NetworkVariable<float> targetLean = new NetworkVariable<float>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public void SetLean(float newTilt)
         {
-            targetLean = newTilt;
-            playerCamera.targetZRot = targetLean * spineAim.weight;
+            targetLean.Value = newTilt;
+            playerCamera.targetZRot = targetLean.Value * spineAim.weight;
         }
 
         void OnLeanRight()
@@ -584,7 +584,7 @@ namespace LightPat.Core.Player
             if (spineRig.weightTarget != 1) { return; }
             else if (playerCamera.updateRotationWithTarget) { return; }
 
-            if (targetLean != rightLean)
+            if (targetLean.Value != rightLean)
             {
                 // Check if we are aiming too low or too high to lean
                 float xAngle = Vector3.Angle(transform.forward, playerCamera.transform.forward) + Mathf.Abs(rightLean);
@@ -596,11 +596,11 @@ namespace LightPat.Core.Player
                     return;
 
                 playerCamera.targetZRot = rightLean;
-                targetLean = rightLean;
+                targetLean.Value = rightLean;
             }
             else
             {
-                targetLean = 0;
+                targetLean.Value = 0;
                 playerCamera.targetZRot = 0;
             }
         }
@@ -611,7 +611,7 @@ namespace LightPat.Core.Player
             if (spineRig.weightTarget != 1) { return; }
             else if (playerCamera.updateRotationWithTarget) { return; }
 
-            if (targetLean != leftLean)
+            if (targetLean.Value != leftLean)
             {
                 // Check if we are aiming too low or too high to lean
                 float xAngle = Vector3.Angle(transform.forward, playerCamera.transform.forward) + Mathf.Abs(leftLean);
@@ -622,12 +622,12 @@ namespace LightPat.Core.Player
                 else if (xAngle < mouseUpXRotLimit)
                     return;
 
-                targetLean = leftLean;
+                targetLean.Value = leftLean;
                 playerCamera.targetZRot = leftLean;
             }
             else
             {
-                targetLean = 0;
+                targetLean.Value = 0;
                 playerCamera.targetZRot = 0;
             }
         }

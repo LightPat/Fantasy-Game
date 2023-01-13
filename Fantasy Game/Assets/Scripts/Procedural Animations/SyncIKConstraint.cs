@@ -24,6 +24,7 @@ namespace LightPat.ProceduralAnimations
 
         public override void OnNetworkSpawn()
         {
+            Debug.Log("I Still exist please kill me");
             if (IsOwner)
                 NetworkManager.NetworkTickSystem.Tick += UpdateConstraint;
         }

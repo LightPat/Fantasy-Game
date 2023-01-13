@@ -48,13 +48,22 @@ namespace LightPat.Core.Player
         Animator gunAnimator;
         PlayerController playerController;
         HumanoidWeaponAnimationHandler playerWeaponAnimationHandler;
-        WeaponLoadout playerWeaponLoadout;
         RootMotionManager playerRootMotionManager;
         AudioSource gunshotSource;
         float minTimeBetweenShots;
 
         public override NetworkObject Attack1(bool pressed)
         {
+            // If semi-automatic, return if we had previously fired and need to release the attack1 key
+            if (!fullAuto)
+            {
+                if (firing)
+                {
+                    firing = pressed;
+                    return null;
+                }
+            }
+
             firing = pressed;
             if (firing)
                 return Shoot();
@@ -68,7 +77,6 @@ namespace LightPat.Core.Player
                 playerWeaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
                 playerController = playerWeaponAnimationHandler.GetComponent<PlayerController>();
                 playerRootMotionManager = playerWeaponAnimationHandler.GetComponentInChildren<RootMotionManager>();
-                playerWeaponLoadout = playerWeaponAnimationHandler.GetComponent<WeaponLoadout>();
             }
         }
 
@@ -280,11 +288,8 @@ namespace LightPat.Core.Player
         private new void Update()
         {
             base.Update();
-            if (!playerWeaponAnimationHandler) { return; }
             if (fullAuto)
             {
-                if (playerWeaponLoadout.equippedWeapon != this) { return; }
-                playerWeaponAnimationHandler.Attack1(firing);
                 if (!reloading)
                     gunAnimator.SetBool("fire", firing);
             }

@@ -59,6 +59,8 @@ namespace LightPat.Core.Player
 
         public override void OnNetworkSpawn()
         {
+            attack1.OnValueChanged += OnAttack1Change;
+
             weaponLoadout.startingWeapons.Clear();
             int i = 0;
             foreach (int weaponPrefabIndex in ClientManager.Singleton.GetClient(OwnerClientId).spawnWeapons)
@@ -70,6 +72,11 @@ namespace LightPat.Core.Player
                 i += 1;
             }
             StartCoroutine(EquipInitialWeapons());
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            attack1.OnValueChanged -= OnAttack1Change;
         }
 
         bool equipInitialWeaponsRunning = true;
@@ -281,8 +288,10 @@ namespace LightPat.Core.Player
             DisableCombatIKs();
         }
 
-        public NetworkVariable<bool> reloading = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-        bool attack1;
+        public NetworkVariable<bool> reloading { get; private set; } = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private NetworkVariable<bool> attack1 = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+        void OnAttack1Change(bool previous, bool current) { animator.SetBool("attack1", current); }
 
         public void Attack1(bool pressed)
         {
@@ -294,29 +303,7 @@ namespace LightPat.Core.Player
 
         void OnAttack1(InputValue value)
         {
-            OnAttack1ServerRpc(value.isPressed);
-        }
-
-        [ServerRpc]
-        void OnAttack1ServerRpc(bool pressed)
-        {
-            if (!IsHost)
-            {
-                if (IsOwner)
-                    animator.SetBool("attack1", pressed);
-                attack1 = pressed;
-                Attack1(pressed);
-            }
-            
-            OnAttack1ClientRpc(pressed);
-        }
-
-        [ClientRpc] void OnAttack1ClientRpc(bool pressed)
-        {
-            if (IsOwner)
-                animator.SetBool("attack1", pressed);
-            attack1 = pressed;
-            Attack1(pressed);
+            attack1.Value = value.isPressed;
         }
 
         [Header("Sword blocking")]
@@ -476,6 +463,8 @@ namespace LightPat.Core.Player
 
         private void Update()
         {
+            Attack1(attack1.Value);
+
             if (equipInitialWeaponsRunning) { return; }
             if (weaponChangeRunning) { return; }
             if (reloading.Value) { return; }
@@ -570,7 +559,7 @@ namespace LightPat.Core.Player
             animatorLayerWeightManager.SetLayerWeight(chosenWeapon.animationClass, 1);
             ReparentWeapon(chosenWeapon, "player");
             weaponLoadout.DrawWeapon(slotIndex);
-            weaponLoadout.equippedWeapon.Attack1(attack1);
+            weaponLoadout.equippedWeapon.Attack1(attack1.Value);
             EnableCombatIKs();
 
             if (animate)
@@ -636,7 +625,7 @@ namespace LightPat.Core.Player
             Transform gripPoint = GetGripPoint(chosenWeapon);
             ReparentWeapon(chosenWeapon, "player");
             weaponLoadout.DrawWeapon(slotIndex);
-            weaponLoadout.equippedWeapon.Attack1(attack1);
+            weaponLoadout.equippedWeapon.Attack1(attack1.Value);
             EnableCombatIKs();
 
             if (animate)

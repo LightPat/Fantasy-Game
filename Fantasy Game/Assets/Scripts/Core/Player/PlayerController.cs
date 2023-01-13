@@ -418,6 +418,7 @@ namespace LightPat.Core.Player
                 rb.constraints = RigidbodyConstraints.FreezeRotation;
                 rb.interpolation = RigidbodyInterpolation.Interpolate;
                 rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+                rb.isKinematic = !IsLocalPlayer;
             }
 
             addRigidbodyRunning = false;

@@ -410,7 +410,8 @@ namespace LightPat.Core.Player
             if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
             {
                 blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
-                reloading.Value = false;
+                if (IsOwner)
+                    reloading.Value = false;
             }
             else
             {

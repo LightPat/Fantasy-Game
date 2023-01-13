@@ -60,6 +60,8 @@ namespace LightPat.Core.Player
         public override void OnNetworkSpawn()
         {
             attack1.OnValueChanged += OnAttack1Change;
+            attack2.OnValueChanged += OnAttack2Change;
+            reloading.OnValueChanged += OnReloadChange;
 
             weaponLoadout.startingWeapons.Clear();
             int i = 0;
@@ -77,6 +79,8 @@ namespace LightPat.Core.Player
         public override void OnNetworkDespawn()
         {
             attack1.OnValueChanged -= OnAttack1Change;
+            attack2.OnValueChanged -= OnAttack2Change;
+            reloading.OnValueChanged -= OnReloadChange;
         }
 
         bool equipInitialWeaponsRunning = true;
@@ -288,7 +292,6 @@ namespace LightPat.Core.Player
             DisableCombatIKs();
         }
 
-        public NetworkVariable<bool> reloading { get; private set; } = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<bool> attack1 = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
         void OnAttack1Change(bool previous, bool current) { animator.SetBool("attack1", current); }
@@ -369,21 +372,14 @@ namespace LightPat.Core.Player
             }
         }
 
+        private NetworkVariable<bool> attack2 = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+        void OnAttack2Change(bool previous, bool current) { Attack2(current); }
+
         void OnAttack2(InputValue value)
         {
-            Attack2(value.isPressed);
+            attack2.Value = value.isPressed;
         }
-
-        [ServerRpc]
-        void OnAttack2ServerRpc(bool pressed)
-        {
-            if (!IsHost)
-                Attack2(pressed);
-
-            OnAttack2ClientRpc(pressed);
-        }
-
-        [ClientRpc] void OnAttack2ClientRpc(bool pressed) { Attack2(pressed); }
 
         private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, RigWeightTarget rig, float originalSpeed)
         {
@@ -405,26 +401,20 @@ namespace LightPat.Core.Player
             StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(animator, "melee"));
         }
 
-        void OnReload()
+        public NetworkVariable<bool> reloading { get; private set; } = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+        void OnReloadChange(bool previous, bool current)
         {
+            if (!current) { return; }
             if (weaponLoadout.equippedWeapon == null) { return; }
             if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
-            OnReloadServerRpc();
+            StartCoroutine(weaponLoadout.equippedWeapon.Reload(IsClient));
         }
 
-        [ServerRpc]
-        void OnReloadServerRpc()
+        void OnReload()
         {
-            if (!IsHost)
-                StartCoroutine(weaponLoadout.equippedWeapon.Reload(false));
-            OnReloadClientRpc();
-        }
-
-        [ClientRpc]
-        void OnReloadClientRpc()
-        {
-            StartCoroutine(weaponLoadout.equippedWeapon.Reload(true));
+            reloading.Value = true;
         }
 
         void OnQueryWeaponSlot(InputValue value)
@@ -486,7 +476,7 @@ namespace LightPat.Core.Player
                 else if (weaponLoadout.equippedWeapon & targetWeaponSlot.Value != -1)
                 {
                     weaponChangeRunning = true;
-                    StartCoroutine(SwitchWeapon(targetWeaponSlot.Value, IsClient));
+                    StartCoroutine(SwitchWeapon(IsClient));
                 }
             }
         }
@@ -569,7 +559,7 @@ namespace LightPat.Core.Player
             weaponChangeRunning = false;
         }
 
-        private IEnumerator SwitchWeapon(int slotIndex, bool animate)
+        private IEnumerator SwitchWeapon(bool animate)
         {
             // Stow equipped weapon
             Weapon equippedWeapon = weaponLoadout.equippedWeapon;
@@ -596,6 +586,7 @@ namespace LightPat.Core.Player
             }
 
             // Start drawing next weapon once stow animation has finished playing
+            int slotIndex = targetWeaponSlot.Value;
             Weapon chosenWeapon = weaponLoadout.GetWeapon(slotIndex);
 
             if (animate)

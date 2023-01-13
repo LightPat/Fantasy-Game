@@ -36,9 +36,11 @@ namespace LightPat.Core.Player
 
         public override void OnNetworkSpawn()
         {
+            lookAngle.OnValueChanged += OnLookAngleChange;
             running.OnValueChanged += OnRunningChange;
             sprinting.OnValueChanged += OnSprintingChange;
             crouching.OnValueChanged += OnCrouchingChange;
+            targetLean.OnValueChanged += OnTargetLeanChange;
 
             name = ClientManager.Singleton.GetClient(OwnerClientId).clientName;
 
@@ -66,9 +68,11 @@ namespace LightPat.Core.Player
 
         public override void OnNetworkDespawn()
         {
+            lookAngle.OnValueChanged -= OnLookAngleChange;
             running.OnValueChanged -= OnRunningChange;
             sprinting.OnValueChanged -= OnSprintingChange;
             crouching.OnValueChanged -= OnCrouchingChange;
+            targetLean.OnValueChanged -= OnTargetLeanChange;
         }
 
         void OnDriverEnter(Vehicle newVehicle)
@@ -140,7 +144,7 @@ namespace LightPat.Core.Player
         public float attemptedXAngle { get; private set; }
         public Vector3 bodyRotation { get; private set; }
         Vector2 lookInput;
-        float lookAngle;
+        private NetworkVariable<float> lookAngle = new NetworkVariable<float>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         float prevLookAngle;
         float currentBodyRotSpeed;
         Vector3 rotateWithBoneRotOffset;
@@ -149,6 +153,8 @@ namespace LightPat.Core.Player
         {
             Look(value.Get<Vector2>(), sensitivity, Time.timeScale);
         }
+
+        void OnLookAngleChange(float previous, float current) { animator.SetFloat("lookAngle", lookAngle.Value); }
 
         public void Look(Vector2 lookValue, float sensitivity = 1, float timeScale = 1, bool instantBoneRot = false)
         {
@@ -160,28 +166,27 @@ namespace LightPat.Core.Player
                 //if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
                 if (!animator.GetBool("attack2"))
                 {
-                    lookAngle = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
+                    lookAngle.Value = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
                 }
 
-                if (lookAngle == 0)
+                if (lookAngle.Value == 0)
                 {
                     if (prevLookAngle > 0)
                     {
-                        lookAngle = 1;
+                        lookAngle.Value = 1;
                     }
                     else if (prevLookAngle < 0)
                     {
-                        lookAngle = -1;
+                        lookAngle.Value = -1;
                     }
                 }
 
-                if (prevLookAngle < 0 & lookAngle == 180)
+                if (prevLookAngle < 0 & lookAngle.Value == 180)
                 {
-                    lookAngle *= -1;
+                    lookAngle.Value *= -1;
                 }
 
-                animator.SetFloat("lookAngle", lookAngle);
-                prevLookAngle = lookAngle;
+                prevLookAngle = lookAngle.Value;
             }
 
             lookInput *= sensitivity * timeScale;
@@ -278,7 +283,7 @@ namespace LightPat.Core.Player
                 bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             }
 
-            playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
+            playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle.Value)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
 
             float xTarget = moveInput.Value.x;
             if (animator.GetBool("mirrorIdle"))
@@ -574,9 +579,11 @@ namespace LightPat.Core.Player
         private NetworkVariable<float> targetLean = new NetworkVariable<float>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         public void SetLean(float newTilt)
         {
-            targetLean.Value = newTilt;
-            playerCamera.targetZRot = targetLean.Value * spineAim.weight;
+            if (IsOwner)
+                targetLean.Value = newTilt;
         }
+
+        void OnTargetLeanChange(float previous, float current) { playerCamera.targetZRot = targetLean.Value * spineAim.weight; }
 
         void OnLeanRight()
         {

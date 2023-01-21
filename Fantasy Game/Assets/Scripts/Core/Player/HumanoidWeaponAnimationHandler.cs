@@ -657,21 +657,18 @@ namespace LightPat.Core.Player
 
         private void OnCollisionStay(Collision collision)
         {
-            if (collision.collider.CompareTag("Stairs") & (Mathf.Abs(animator.GetFloat("moveInputX")) > 0.5f | Mathf.Abs(animator.GetFloat("moveInputY")) > 0.5f))
+            if (Mathf.Abs(animator.GetFloat("moveInputX")) > 0.5f | Mathf.Abs(animator.GetFloat("moveInputY")) > 0.5f)
             {
                 float[] yPos = new float[collision.contactCount];
                 for (int i = 0; i < collision.contactCount; i++)
                 {
                     yPos[i] = collision.GetContact(i).point.y;
                 }
-
                 float translateDistance = yPos.Max() - transform.position.y;
-
-                // TODO Change it so that we can't go up stairs that are too high for us
-                //if (collision.collider.bounds.size.y - translateDistance > maxStairStepDistance) { return; }
-
-                if (translateDistance < 0) { return; }
+                if (translateDistance < 0.2f) { return; } // If the wall is beneath us
+                if (collision.collider.bounds.max.y - transform.position.y > 2) { return; } // If the wall is too high to mantle
                 transform.Translate(new Vector3(0, translateDistance, 0));
+                Debug.Log(collision.collider.bounds.max.y - transform.position.y);
             }
         }
 

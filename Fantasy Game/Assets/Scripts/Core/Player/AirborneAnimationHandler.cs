@@ -139,7 +139,13 @@ namespace LightPat.Core.Player
 
         private void FixedUpdate()
         {
-            if (IsAirborne() & rb)
+            if (!rb)
+            {
+                rb = GetComponent<Rigidbody>();
+                return;
+            }
+
+            if (IsAirborne())
             {
                 Vector3 moveForce = rb.rotation * new Vector3(moveInput.x, 0, moveInput.y) * airborneMoveSpeed;
 

@@ -655,8 +655,13 @@ namespace LightPat.Core.Player
                 weaponLoadout.equippedWeapon.GetComponent<GreatSword>().SliceEnd(other);
         }
 
+        public float maxMantleHeight = 1;
+        public float minTranslateDistance = 0.13f;
         private void OnCollisionStay(Collision collision)
         {
+            if (collision.collider.isTrigger) { return; }
+            if (collision.collider.bounds.size.magnitude < 0.2f) { return; } // If the collider we are hitting is too small, this is used to filter out shells from guns
+
             if (Mathf.Abs(animator.GetFloat("moveInputX")) > 0.5f | Mathf.Abs(animator.GetFloat("moveInputY")) > 0.5f)
             {
                 float[] yPos = new float[collision.contactCount];
@@ -665,10 +670,9 @@ namespace LightPat.Core.Player
                     yPos[i] = collision.GetContact(i).point.y;
                 }
                 float translateDistance = yPos.Max() - transform.position.y;
-                if (translateDistance < 0.2f) { return; } // If the wall is beneath us
-                if (collision.collider.bounds.max.y - transform.position.y > 2) { return; } // If the wall is too high to mantle
+                if (translateDistance < minTranslateDistance) { return; } // If the wall is beneath us
+                if (collision.collider.bounds.max.y - transform.position.y > maxMantleHeight) { return; } // If the wall is too high to mantle
                 transform.Translate(new Vector3(0, translateDistance, 0));
-                Debug.Log(collision.collider.bounds.max.y - transform.position.y);
             }
         }
 

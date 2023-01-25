@@ -16,6 +16,8 @@ namespace LightPat.Core
 
         private void OnTriggerEnter(Collider other)
         {
+            if (!NetworkManager.Singleton.IsServer) { return; }
+
             Attributes objectAttributes = other.GetComponentInParent<Attributes>();
             if (objectAttributes)
                 objectAttributes.InflictDamage(100000000000000, gameObject);

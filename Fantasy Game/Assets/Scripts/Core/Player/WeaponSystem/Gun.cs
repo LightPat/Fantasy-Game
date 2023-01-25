@@ -128,7 +128,7 @@ namespace LightPat.Core.Player
             {
                 GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
                 Projectile projectile = b.GetComponent<Projectile>();
-                projectile.inflicter = playerWeaponAnimationHandler.gameObject;
+                projectile.inflicter = playerWeaponAnimationHandler.NetworkObject;
                 projectile.originWeapon = this;
                 projectile.damage = baseDamage;
                 projectile.hitmarkerTime = minTimeBetweenShots;

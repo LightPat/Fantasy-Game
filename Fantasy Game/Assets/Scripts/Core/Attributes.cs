@@ -132,7 +132,7 @@ namespace LightPat.Core
             return true;
         }
 
-        public bool InflictDamage(Projectile projectile, GameObject inflicter)
+        public bool InflictDamage(float damage, GameObject projectile, GameObject inflicter)
         {
             if (!IsServer) { Debug.LogError("Calling InflictDamage() from a client, use a ServerRpc"); return false; }
             if (invincible) { return false; }
@@ -153,14 +153,14 @@ namespace LightPat.Core
                 float nearest = array.OrderBy(x => Mathf.Abs((long)x - damageAngle)).First();
                 if (nearest != 180)
                 {
-                    HP.Value -= projectile.damage;
-                    damageInflicted = projectile.damage;
+                    HP.Value -= damage;
+                    damageInflicted = damage;
                 }
             }
             else
             {
-                HP.Value -= projectile.damage;
-                damageInflicted = projectile.damage;
+                HP.Value -= damage;
+                damageInflicted = damage;
             }
 
             if (HP.Value < 0)

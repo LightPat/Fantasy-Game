@@ -29,8 +29,8 @@ namespace LightPat.EnemyAI
             {
                 GameObject g = Instantiate(projectile, projectileSpawn.position, projectileSpawn.rotation);
                 g.transform.localScale = g.transform.localScale * scaleBulletSize;
-                g.GetComponent<Projectile>().inflicter = null;
-                g.GetComponent<Projectile>().damage = baseDamage;
+                //g.GetComponent<Projectile>().inflicter = null;
+                //g.GetComponent<Projectile>().damage = baseDamage;
                 g.GetComponent<Rigidbody>().AddForce(transform.forward * projectileForce, ForceMode.VelocityChange);
 
                 allowAttack = false;

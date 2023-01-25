@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 
-namespace LightPat.Core
+namespace LightPat.Core.Player
 {
     public class Projectile : NetworkBehaviour
     {
-        public GameObject inflicter;
+        public NetworkObject inflicter;
         public Weapon originWeapon;
         public float damage;
         public float maxDestroyDistance = 300;
@@ -16,7 +16,9 @@ namespace LightPat.Core
         public float hitmarkerTime;
 
         [HideInInspector] public Vector3 startForce;
+
         private NetworkVariable<Vector3> startForceNetworked = new NetworkVariable<Vector3>();
+        private NetworkVariable<ulong> inflicterNetworkId = new NetworkVariable<ulong>();
 
         bool damageRunning;
         Vector3 startPos; // Despawn bullet after a certain distance traveled
@@ -26,15 +28,42 @@ namespace LightPat.Core
         {
             // Propogate startForce variable change to clients since it is changed before network spawn
             if (IsServer)
+            {
+                inflicterNetworkId.Value = inflicter.NetworkObjectId;
                 startForceNetworked.Value = startForce;
+            }
+            
             if (IsOwner)
                 StartCoroutine(WaitToAddForce());
+
             startPos = transform.position;
         }
 
         private IEnumerator WaitToAddForce()
         {
             yield return new WaitUntil(() => startForceNetworked.Value != Vector3.zero);
+
+            inflicter = NetworkManager.SpawnManager.SpawnedObjects[inflicterNetworkId.Value];
+
+            // Make projectile follow spawn point until the spawn logic has been completed
+            Transform projectileSpawnPoint = null;
+            if (inflicter.TryGetComponent(out WeaponLoadout weaponLoadout))
+            {
+                if (weaponLoadout.equippedWeapon)
+                {
+                    if (weaponLoadout.equippedWeapon.TryGetComponent(out Gun gun))
+                    {
+                        projectileSpawnPoint = gun.projectileSpawnPoint;
+                    }
+                }
+            }
+            
+            if (projectileSpawnPoint)
+            {
+                transform.position = projectileSpawnPoint.position;
+                transform.rotation = projectileSpawnPoint.rotation;
+            }
+
             GetComponent<Rigidbody>().AddForce(startForceNetworked.Value, ForceMode.VelocityChange);
         }
 
@@ -75,13 +104,14 @@ namespace LightPat.Core
 
             if (other.attachedRigidbody)
             {
-                if (other.attachedRigidbody.gameObject == inflicter) { return; }
+                if (other.attachedRigidbody.gameObject == inflicter.gameObject) { return; }
                 if (damageRunning) { return; }
                 damageRunning = true;
 
                 Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
                 if (hit)
                 {
+                    Debug.Log(hit);
                     InflictDamageServerRpc(hit.NetworkObject.NetworkObjectId);
                 }
             }
@@ -92,7 +122,7 @@ namespace LightPat.Core
         [ServerRpc]
         private void InflictDamageServerRpc(ulong inflictedNetworkObjectId)
         {
-            bool damageSuccess = NetworkManager.SpawnManager.SpawnedObjects[inflictedNetworkObjectId].GetComponent<Attributes>().InflictDamage(this, inflicter);
+            bool damageSuccess = NetworkManager.SpawnManager.SpawnedObjects[inflictedNetworkObjectId].GetComponent<Attributes>().InflictDamage(damage, gameObject, inflicter.gameObject);
 
             if (inflicter.TryGetComponent(out NetworkObject playerNetObj) & damageSuccess)
             {

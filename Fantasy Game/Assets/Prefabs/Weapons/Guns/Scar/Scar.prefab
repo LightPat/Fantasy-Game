@@ -5557,7 +5557,7 @@ GameObject:
   - component: {fileID: 8340945284047069963}
   - component: {fileID: 1483155860483530432}
   - component: {fileID: 4761783230577947010}
-  - component: {fileID: 3162933958300352835}
+  - component: {fileID: 3719123679822518226}
   m_Layer: 0
   m_Name: Scar
   m_TagString: Untagged
@@ -5789,7 +5789,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabReference: {fileID: 1649158069515847000}
   maxPickups: 1
---- !u!114 &3162933958300352835
+--- !u!114 &3719123679822518226
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5798,23 +5798,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1649158069515847000}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
+  interpolate: 1
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001
 --- !u!1 &1649158069711076072
 GameObject:
   m_ObjectHideFlags: 0

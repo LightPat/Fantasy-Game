@@ -7,7 +7,7 @@ namespace LightPat.Core
 {
     public class CustomNetworkTransform : NetworkBehaviour
     {
-        public bool interpolate;
+        public bool interpolate = true;
         [Range(0.001f, 1)]
         public float positionThreshold = 0.001f;
         [Range(0.001f, 360)]

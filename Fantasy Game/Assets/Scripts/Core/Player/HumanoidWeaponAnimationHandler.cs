@@ -62,6 +62,7 @@ namespace LightPat.Core.Player
             attack1.OnValueChanged += OnAttack1Change;
             attack2.OnValueChanged += OnAttack2Change;
             reloading.OnValueChanged += OnReloadChange;
+            targetWeaponSlot.OnValueChanged += OnTargetWeaponSlotChange;
 
             weaponLoadout.startingWeapons.Clear();
             int i = 0;
@@ -81,6 +82,7 @@ namespace LightPat.Core.Player
             attack1.OnValueChanged -= OnAttack1Change;
             attack2.OnValueChanged -= OnAttack2Change;
             reloading.OnValueChanged -= OnReloadChange;
+            targetWeaponSlot.OnValueChanged -= OnTargetWeaponSlotChange;
         }
 
         bool equipInitialWeaponsRunning = true;
@@ -102,7 +104,7 @@ namespace LightPat.Core.Player
                     yield return new WaitForEndOfFrame();
                     GameObject g = Instantiate(startingWeapon.gameObject);
                     Destroy(g.GetComponent<NetworkedWeapon>());
-                    Destroy(g.GetComponent<NetworkTransform>());
+                    Destroy(g.GetComponent<CustomNetworkTransform>());
                     Destroy(g.GetComponent<NetworkObject>());
                     yield return new WaitUntil(() => !g.GetComponent<NetworkObject>());
                     weapon = g.GetComponent<Weapon>();
@@ -137,7 +139,7 @@ namespace LightPat.Core.Player
                 {
                     GameObject g = Instantiate(startingWeapon.gameObject);
                     Destroy(g.GetComponent<NetworkedWeapon>());
-                    Destroy(g.GetComponent<NetworkTransform>());
+                    Destroy(g.GetComponent<CustomNetworkTransform>());
                     Destroy(g.GetComponent<NetworkObject>());
                     yield return new WaitUntil(() => !g.GetComponent<NetworkObject>());
                     weapon = g.GetComponent<Weapon>();
@@ -197,16 +199,23 @@ namespace LightPat.Core.Player
             }
         }
 
+        void OnTargetWeaponSlotChange(int previous, int current) { waitForWeaponSlotChange = false; }
+
+        bool waitForWeaponSlotChange;
         IEnumerator EquipAfter1Frame(Weapon weapon)
         {
             yield return null;
             // If we already have a weapon equipped just put the weapon in our reserves
             if (weaponLoadout.equippedWeapon == null)
             {
+                waitForWeaponSlotChange = true;
                 animatorLayerWeightManager.SetLayerWeight(weapon.animationClass, 1);
                 Destroy(weapon.GetComponent<Rigidbody>());
                 ReparentWeapon(weapon, "player");
-                weaponLoadout.DrawWeapon(weaponLoadout.AddWeapon(weapon));
+                int slot = weaponLoadout.AddWeapon(weapon);
+                if (IsServer)
+                    targetWeaponSlot.Value = slot;
+                weaponLoadout.DrawWeapon(slot);
                 EnableCombatIKs();
             }
             else
@@ -276,6 +285,7 @@ namespace LightPat.Core.Player
             animatorLayerWeightManager.SetLayerWeight(weaponLoadout.equippedWeapon.animationClass, 0);
             Destroy(weaponLoadout.equippedWeapon.gameObject);
             weaponLoadout.RemoveEquippedWeapon();
+            targetWeaponSlot.Value = -1;
             DisableCombatIKs();
 
             DropWeaponClientRpc();
@@ -462,6 +472,7 @@ namespace LightPat.Core.Player
         {
             Attack1(attack1.Value);
 
+            if (waitForWeaponSlotChange) { return; }
             if (equipInitialWeaponsRunning) { return; }
             if (weaponChangeRunning) { return; }
             if (reloading.Value) { return; }

@@ -614,7 +614,7 @@ GameObject:
   - component: {fileID: 783794268}
   - component: {fileID: 4649750196090059808}
   - component: {fileID: 1367142150174053179}
-  - component: {fileID: 1651849753993966751}
+  - component: {fileID: 1872038108661923849}
   m_Layer: 0
   m_Name: Excalibur
   m_TagString: Untagged
@@ -727,7 +727,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabReference: {fileID: 7871640728394659331}
   maxPickups: 1
---- !u!114 &1651849753993966751
+--- !u!114 &1872038108661923849
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -736,23 +736,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 7871640728394659331}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 244e1df70479ca748a9c9d2bdf12750d, type: 3}
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0.001
-  RotAngleThreshold: 0.01
-  ScaleThreshold: 0.01
-  InLocalSpace: 0
-  Interpolate: 1
+  interpolate: 1
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001
 --- !u!1 &8245050262849270391
 GameObject:
   m_ObjectHideFlags: 0

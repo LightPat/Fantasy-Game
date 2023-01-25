@@ -69,7 +69,7 @@ namespace LightPat.Core
 
         public bool InflictDamage(float damage, GameObject inflicter)
         {
-            if (!IsServer) { return false; }
+            if (!IsServer) { Debug.LogError("Calling InflictDamage() from a client, use a ServerRpc"); return false; }
             if (invincible) { return false; }
 
             bool alreadyDead = HP.Value <= 0;
@@ -132,9 +132,9 @@ namespace LightPat.Core
             return true;
         }
 
-        public bool InflictDamage(float damage, GameObject inflicter, Projectile projectile)
+        public bool InflictDamage(Projectile projectile, GameObject inflicter)
         {
-            if (!IsServer) { return false; }
+            if (!IsServer) { Debug.LogError("Calling InflictDamage() from a client, use a ServerRpc"); return false; }
             if (invincible) { return false; }
 
             bool alreadyDead = HP.Value <= 0;
@@ -153,14 +153,14 @@ namespace LightPat.Core
                 float nearest = array.OrderBy(x => Mathf.Abs((long)x - damageAngle)).First();
                 if (nearest != 180)
                 {
-                    HP.Value -= damage;
-                    damageInflicted = damage;
+                    HP.Value -= projectile.damage;
+                    damageInflicted = projectile.damage;
                 }
             }
             else
             {
-                HP.Value -= damage;
-                damageInflicted = damage;
+                HP.Value -= projectile.damage;
+                damageInflicted = projectile.damage;
             }
 
             if (HP.Value < 0)

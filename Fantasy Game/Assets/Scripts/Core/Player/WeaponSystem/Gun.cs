@@ -84,7 +84,7 @@ namespace LightPat.Core.Player
         {
             if (playerWeaponAnimationHandler.reloading.Value) { return null; }
             if (reloading) { return null; }
-            float time = NetworkManager.Singleton.LocalTime.TimeAsFloat;
+            float time = Time.time;
             timeSinceLastShot = time - lastShotTime;
             if (timeSinceLastShot < minTimeBetweenShots) { return null; }
             if (currentBullets < 1) { return null; }

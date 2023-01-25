@@ -54,6 +54,8 @@ namespace LightPat.Core
 
         private void LateUpdate()
         {
+            if (!IsSpawned) { return; }
+
             if (IsOwner)
             {
                 if (Vector3.Distance(transform.localPosition, currentPosition.Value) > positionThreshold)

@@ -203,8 +203,8 @@ namespace LightPat.UI
             yield return new WaitUntil(() => ClientManager.Singleton.GetClientDataDictionary().ContainsKey(NetworkManager.Singleton.LocalClientId));
             UpdatePlayerDisplay();
             UpdateGameModeValue();
-            primaryWeaponDropdown.value = 0;
-            secondaryWeaponDropdown.value = 1;
+            primaryWeaponDropdown.value = 1;
+            secondaryWeaponDropdown.value = 0;
             tertiaryWeaponDropdown.value = 2;
         }
 

@@ -301,7 +301,7 @@ namespace LightPat.Core.Player
             if (weaponLoadout.equippedWeapon == null) { return; }
             NetworkObject netObj = weaponLoadout.equippedWeapon.Attack1(pressed);
             if (netObj)
-                netObj.Spawn(true);
+                netObj.SpawnWithOwnership(OwnerClientId, true);
         }
 
         void OnAttack1(InputValue value)

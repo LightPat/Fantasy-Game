@@ -16,29 +16,61 @@ namespace LightPat.Core
         public float hitmarkerTime;
 
         [HideInInspector] public Vector3 startForce;
+        private NetworkVariable<Vector3> startForceNetworked = new NetworkVariable<Vector3>();
 
         bool damageRunning;
         Vector3 startPos; // Despawn bullet after a certain distance traveled
 
+        // Start gets called after spawn
         public override void OnNetworkSpawn()
         {
-            GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
+            // Propogate startForce variable change to clients since it is changed before network spawn
+            if (IsServer)
+                startForceNetworked.Value = startForce;
+            if (IsOwner)
+                StartCoroutine(WaitToAddForce());
             startPos = transform.position;
         }
 
-        private void FixedUpdate()
+        private IEnumerator WaitToAddForce()
         {
-            if (!IsServer) { return; }
+            yield return new WaitUntil(() => startForceNetworked.Value != Vector3.zero);
+            GetComponent<Rigidbody>().AddForce(startForceNetworked.Value, ForceMode.VelocityChange);
+        }
+
+        Vector3 originalScale;
+        private void Awake()
+        {
+            originalScale = transform.localScale;
+            transform.localScale = Vector3.zero;
+            StartCoroutine(WaitToChangeScale());
+        }
+
+        private IEnumerator WaitToChangeScale()
+        {
+            yield return new WaitUntil(() => GetComponent<Rigidbody>().velocity.magnitude > 0);
+            transform.localScale = originalScale;
+        }
+
+        bool despawnSent;
+        private void Update()
+        {
+            if (despawnSent) { return; }
+            if (!IsOwner) { return; }
 
             if (Vector3.Distance(startPos, transform.position) > maxDestroyDistance)
-                NetworkObject.Despawn(true);
+            {
+                despawnSent = true;
+                DespawnSelfServerRpc();
+            }
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!IsServer | !IsSpawned) { return; }
+            if (despawnSent) { return; }
+            if (!IsOwner) { return; }
+            if (!IsSpawned) { return; }
             if (other.isTrigger) { return; }
-
             if (other.GetComponent<Projectile>()) { return; }
 
             if (other.attachedRigidbody)
@@ -50,16 +82,28 @@ namespace LightPat.Core
                 Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
                 if (hit)
                 {
-                    bool damageSuccess = hit.InflictDamage(damage, inflicter, this);
-
-                    NetworkObject playerNetObj;
-                    if (inflicter.TryGetComponent(out playerNetObj) & damageSuccess)
-                    {
-                        if (playerNetObj.IsPlayerObject)
-                            inflicter.SendMessage("PlayHitmarker", new HitmarkerData(System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, playerNetObj.OwnerClientId));
-                    }
+                    InflictDamageServerRpc(hit.NetworkObject.NetworkObjectId);
                 }
             }
+            despawnSent = true;
+            DespawnSelfServerRpc();
+        }
+
+        [ServerRpc]
+        private void InflictDamageServerRpc(ulong inflictedNetworkObjectId)
+        {
+            bool damageSuccess = NetworkManager.SpawnManager.SpawnedObjects[inflictedNetworkObjectId].GetComponent<Attributes>().InflictDamage(this, inflicter);
+
+            if (inflicter.TryGetComponent(out NetworkObject playerNetObj) & damageSuccess)
+            {
+                if (playerNetObj.IsPlayerObject)
+                    inflicter.SendMessage("PlayHitmarker", new HitmarkerData(System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, playerNetObj.OwnerClientId));
+            }
+        }
+
+        [ServerRpc]
+        private void DespawnSelfServerRpc()
+        {
             NetworkObject.Despawn(true);
         }
     }

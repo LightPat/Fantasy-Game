@@ -21,18 +21,25 @@ namespace LightPat.Core
         {
             if (occupant) { return; }
 
-            NetworkManager.SpawnManager.SpawnedObjects[networkObjectId].TrySetParent(transform, true);
-            TrySitting(networkObjectId);
+            occupant = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
+            
+            
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { occupant.OwnerClientId }
+                }
+            };
 
-            TrySittingClientRpc(networkObjectId);
+            TrySittingClientRpc(networkObjectId, clientRpcParams);
 
-            if (driverChair)
-                GetComponentInParent<Vehicle>().OnDriverEnter(networkObjectId);
+            //if (driverChair)
+            //    GetComponentInParent<Vehicle>().OnDriverEnter(networkObjectId);
         }
 
-        [ClientRpc] void TrySittingClientRpc(ulong networkObjectId) { TrySitting(networkObjectId); }
-
-        private void TrySitting(ulong networkObjectId)
+        [ClientRpc]
+        void TrySittingClientRpc(ulong networkObjectId, ClientRpcParams clientRpcParams = default)
         {
             occupant = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
             occupant.SendMessage("OnChairEnter", this);
@@ -41,24 +48,30 @@ namespace LightPat.Core
         [ServerRpc(RequireOwnership = false)]
         public void ExitSittingServerRpc()
         {
-            Vehicle vehicle = GetComponentInParent<Vehicle>();
-            if (vehicle)
-                occupant.TrySetParent(GetComponentInParent<Vehicle>().transform, true);
-            else
-                occupant.TryRemoveParent(true);
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { occupant.OwnerClientId }
+                }
+            };
 
-            if (!IsHost)
-                ExitSitting();
+            ExitSittingClientRpc(clientRpcParams);
 
-            ExitSittingClientRpc();
+            occupant = null;
 
-            if (driverChair)
-                vehicle.OnDriverExit();
+
+            //Vehicle vehicle = GetComponentInParent<Vehicle>();
+            //if (vehicle)
+            //    occupant.TrySetParent(GetComponentInParent<Vehicle>().transform, true);
+            //else
+            //    occupant.TryRemoveParent(true);
+
+            //if (driverChair)
+            //    vehicle.OnDriverExit();
         }
 
-        [ClientRpc] void ExitSittingClientRpc() { ExitSitting(); }
-
-        private void ExitSitting()
+        [ClientRpc] void ExitSittingClientRpc(ClientRpcParams clientRpcParams = default)
         {
             occupant.SendMessage("OnChairExit");
             occupant = null;

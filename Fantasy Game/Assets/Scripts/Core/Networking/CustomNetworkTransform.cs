@@ -7,34 +7,98 @@ namespace LightPat.Core
 {
     public class CustomNetworkTransform : NetworkBehaviour
     {
+        public bool syncParent;
         public bool interpolate = true;
         [Range(0.001f, 1)]
         public float positionThreshold = 0.001f;
         [Range(0.001f, 360)]
         public float rotAngleThreshold = 0.001f;
 
-        public NetworkVariable<int> transformParentId = new NetworkVariable<int>(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-
+        private NetworkVariable<int> transformParentId = new NetworkVariable<int>(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<Vector3> currentPosition = new NetworkVariable<Vector3>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<Quaternion> currentRotation = new NetworkVariable<Quaternion>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
         float positionSpeed;
         float rotationSpeed;
 
+        public void SetParent(NetworkObject newParent)
+        {
+            if (newParent == null)
+                transformParentId.Value = -1;
+            else
+                transformParentId.Value = (int) newParent.NetworkObjectId;
+        }
+
         public override void OnNetworkSpawn()
         {
+            interpolate = false;
+
+            transformParentId.OnValueChanged += OnTransformParentIdChange;
             currentPosition.OnValueChanged += OnPositionChanged;
             currentRotation.OnValueChanged += OnRotationChanged;
-            //if (TryGetComponent(out Rigidbody rb))
-            //{
-            //    rb.isKinematic = IsOwner;
-            //}
         }
 
         public override void OnNetworkDespawn()
         {
+            transformParentId.OnValueChanged -= OnTransformParentIdChange;
             currentPosition.OnValueChanged -= OnPositionChanged;
             currentRotation.OnValueChanged -= OnRotationChanged;
+        }
+
+        private void OnTransformParentChanged()
+        {
+            if (!syncParent) { return; }
+
+            if (IsOwner)
+            {
+                if (transform.parent)
+                {
+                    transformParentId.Value = (int)transform.parent.GetComponent<NetworkObject>().NetworkObjectId;
+                }
+                else
+                {
+                    transformParentId.Value = -1;
+                }
+            }
+            else
+            {
+                Debug.LogError(this + " transform parent changed on a non-owner instance, only change the parent on the owner instance");
+            }
+        }
+
+        void OnTransformParentIdChange(int previous, int current)
+        {
+            if (previous != -1)
+            {
+                NetworkObject oldParent = NetworkManager.SpawnManager.SpawnedObjects[(ulong)previous];
+                foreach (Collider c in oldParent.GetComponentsInChildren<Collider>())
+                {
+                    foreach (Collider thisCol in GetComponentsInChildren<Collider>())
+                    {
+                        Physics.IgnoreCollision(c, thisCol, false);
+                    }
+                }
+            }
+            
+            if (current != -1)
+            {
+                NetworkObject newParent = NetworkManager.SpawnManager.SpawnedObjects[(ulong)current];
+                foreach (Collider c in newParent.GetComponentsInChildren<Collider>())
+                {
+                    foreach (Collider thisCol in GetComponentsInChildren<Collider>())
+                    {
+                        Physics.IgnoreCollision(c, thisCol, true);
+                    }
+                }
+
+                if (IsOwner)
+                    transform.SetParent(newParent.transform, true);
+            }
+            else
+            {
+                if (IsOwner)
+                    transform.SetParent(null, true);
+            }
         }
 
         void OnPositionChanged(Vector3 prevPosition, Vector3 newPosition)
@@ -58,6 +122,8 @@ namespace LightPat.Core
                 transform.localRotation = currentRotation.Value;
         }
 
+        Vector3 lastPosition;
+        Quaternion lastRotation;
         private void LateUpdate()
         {
             if (!IsSpawned) { return; }
@@ -75,15 +141,15 @@ namespace LightPat.Core
                 {
                     if (transformParentId.Value == -1)
                     {
-                        transform.localPosition = Vector3.Lerp(transform.localPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
-                        transform.localRotation = Quaternion.Slerp(transform.localRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
+                        transform.localPosition = Vector3.Lerp(lastPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+                        transform.localRotation = Quaternion.Slerp(lastRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
                     }
                     else
                     {
                         Transform parent = NetworkManager.SpawnManager.SpawnedObjects[(ulong) transformParentId.Value].transform;
 
-                        transform.localPosition = parent.position + Vector3.Lerp(transform.localPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
-                        transform.localRotation = parent.rotation * Quaternion.Slerp(transform.localRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
+                        transform.localPosition = parent.position + Vector3.Lerp(lastPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+                        transform.localRotation = parent.rotation * Quaternion.Slerp(lastRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
                     }
                 }
                 else
@@ -102,6 +168,9 @@ namespace LightPat.Core
                     }
                 }
             }
+
+            lastPosition = transform.localPosition;
+            lastRotation = transform.localRotation;
         }
     }
 }

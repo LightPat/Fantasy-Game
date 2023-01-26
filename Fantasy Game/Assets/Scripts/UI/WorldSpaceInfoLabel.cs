@@ -24,7 +24,7 @@ namespace LightPat.UI
             name = name + " (" + target.name + ")";
         }
 
-        private void Update()
+        private void LateUpdate()
         {
             if (!Camera.main) { return; }
 

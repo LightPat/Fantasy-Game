@@ -41,7 +41,6 @@ namespace LightPat.Core
         private void Start()
         {
             animator = GetComponentInParent<Animator>();
-
         }
 
         private void Update()

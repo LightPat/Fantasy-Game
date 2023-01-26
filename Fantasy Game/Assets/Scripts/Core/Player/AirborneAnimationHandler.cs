@@ -38,6 +38,7 @@ namespace LightPat.Core.Player
             breakfallRoll.OnValueChanged += OnBreakfallRollChange;
             wallRunning.OnValueChanged += OnWallRunChange;
             rightLeftMultiplier.OnValueChanged += OnRightLeftMultiplierChange;
+            falling.OnValueChanged += OnFallingChange;
         }
 
         public override void OnNetworkDespawn()
@@ -46,12 +47,16 @@ namespace LightPat.Core.Player
             breakfallRoll.OnValueChanged -= OnBreakfallRollChange;
             wallRunning.OnValueChanged -= OnWallRunChange;
             rightLeftMultiplier.OnValueChanged -= OnRightLeftMultiplierChange;
+            falling.OnValueChanged -= OnFallingChange;
         }
 
         void OnBreakfallRollChange(bool previous, bool current) { animator.SetBool("breakfallRoll", current); }
 
+        void OnFallingChange(bool previous, bool current) { animator.SetBool("falling", current); }
+
         private NetworkVariable<Vector3> rbVelocity = new NetworkVariable<Vector3>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<bool> breakfallRoll = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private NetworkVariable<bool> falling = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         bool prevGrounded;
         private void Update()
         {
@@ -117,7 +122,8 @@ namespace LightPat.Core.Player
             }
             else if (!transform.parent)
             {
-                animator.SetBool("falling", !isGrounded);
+                if (IsOwner)
+                    falling.Value = !isGrounded;
             }
 
             if (IsAirborne() | IsJumping())
@@ -272,7 +278,8 @@ namespace LightPat.Core.Player
                 GetComponentInChildren<RootMotionManager>().disableRightHand = true;
 
                 rb.useGravity = false;
-                animator.SetBool("falling", false);
+                if (IsOwner)
+                    falling.Value = false;
                 ConstantForce wallForce = gameObject.AddComponent<ConstantForce>();
                 wallForce.relativeForce = new Vector3(50 * current, 0, 0);
                 wallRunRig.weightTarget = 1;
@@ -297,7 +304,8 @@ namespace LightPat.Core.Player
                 GetComponentInChildren<RootMotionManager>().disableLeftHand = true;
 
                 rb.useGravity = false;
-                animator.SetBool("falling", false);
+                if (IsOwner)
+                    falling.Value = false;
                 ConstantForce wallForce = gameObject.AddComponent<ConstantForce>();
                 wallForce.relativeForce = new Vector3(50 * current, 0, 0);
                 wallRunRig.weightTarget = 1;

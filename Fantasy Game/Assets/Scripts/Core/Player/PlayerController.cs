@@ -41,6 +41,7 @@ namespace LightPat.Core.Player
             sprinting.OnValueChanged += OnSprintingChange;
             crouching.OnValueChanged += OnCrouchingChange;
             targetLean.OnValueChanged += OnTargetLeanChange;
+            sitting.OnValueChanged += OnSittingChange;
 
             name = ClientManager.Singleton.GetClient(OwnerClientId).clientName;
 
@@ -73,6 +74,7 @@ namespace LightPat.Core.Player
             sprinting.OnValueChanged -= OnSprintingChange;
             crouching.OnValueChanged -= OnCrouchingChange;
             targetLean.OnValueChanged -= OnTargetLeanChange;
+            sitting.OnValueChanged -= OnSittingChange;
         }
 
         void OnDriverEnter(Vehicle newVehicle)
@@ -85,8 +87,16 @@ namespace LightPat.Core.Player
             vehicle = null;
         }
 
+        private NetworkVariable<bool> sitting = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+        void OnSittingChange(bool previous, bool current) { animator.SetBool("sitting", current); }
+
+        bool disableNoPhysics;
         void OnChairEnter(VehicleChair newChair)
         {
+            disableNoPhysics = true;
+            StartCoroutine(WaitForParent());
+            GetComponent<CustomNetworkTransform>().SetParent(newChair.NetworkObject);
             chair = newChair;
 
             if (rb)
@@ -94,15 +104,28 @@ namespace LightPat.Core.Player
             transform.localPosition = chair.occupantPosition;
             transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
             bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
-            animator.SetBool("sitting", true);
+            sitting.Value = true;
+        }
+
+        private IEnumerator WaitForParent()
+        {
+            yield return new WaitUntil(() => chair != null);
+            yield return new WaitUntil(() => transform.parent == chair.transform);
+            disableNoPhysics = false;
         }
 
         void OnChairExit()
         {
+            GetComponent<CustomNetworkTransform>().SetParent(null);
             transform.Translate(transform.rotation * chair.exitPosOffset, Space.World);
 
             bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
-            animator.SetBool("sitting", false);
+            sitting.Value = false;
+
+            rb = gameObject.AddComponent<Rigidbody>();
+            rb.constraints = RigidbodyConstraints.FreezeRotation;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
 
             chair = null;
         }
@@ -110,13 +133,6 @@ namespace LightPat.Core.Player
         private void OnTransformParentChanged()
         {
             playerCamera.RefreshCameraParent();
-            if (IsOwner)
-            {
-                if (transform.parent)
-                    GetComponent<CustomNetworkTransform>().transformParentId.Value = (int)transform.parent.GetComponent<NetworkObject>().NetworkObjectId;
-                else
-                    GetComponent<CustomNetworkTransform>().transformParentId.Value = -1;
-            }
         }
 
         private void Awake()
@@ -284,8 +300,12 @@ namespace LightPat.Core.Player
         {
             if (chair)
             {
-                transform.localPosition = chair.occupantPosition;
-                transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
+                if (IsOwner)
+                {
+                    transform.localPosition = chair.occupantPosition;
+                    transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
+                }
+
                 bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             }
 
@@ -367,7 +387,7 @@ namespace LightPat.Core.Player
                         else
                             rotateBodyWithCamera = false;
 
-                        transform.SetParent(null, true);
+                        GetComponent<CustomNetworkTransform>().SetParent(null);
                         rb = gameObject.AddComponent<Rigidbody>();
                         rb.constraints = RigidbodyConstraints.FreezeRotation;
                         rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -387,7 +407,7 @@ namespace LightPat.Core.Player
                     else
                         rotateBodyWithCamera = false;
 
-                    transform.SetParent(null, true);
+                    GetComponent<CustomNetworkTransform>().SetParent(null);
                     rb = gameObject.AddComponent<Rigidbody>();
                     rb.constraints = RigidbodyConstraints.FreezeRotation;
                     rb.interpolation = RigidbodyInterpolation.Interpolate;
@@ -401,6 +421,7 @@ namespace LightPat.Core.Player
         private void OnCollisionEnter(Collision collision)
         {
             if (!IsOwner) { return; }
+            if (disableNoPhysics) { return; }
 
             if (collision.collider.CompareTag("NoPhysics") & transform.position.y > collision.GetContact(0).point.y)
             {
@@ -409,7 +430,7 @@ namespace LightPat.Core.Player
                     if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
                     lastNoPhysicsTime = Time.time;
 
-                    transform.SetParent(collision.transform);
+                    GetComponent<CustomNetworkTransform>().SetParent(collision.transform.GetComponent<NetworkObject>());
                     Destroy(rb);
                     rotateBodyWithCamera = true;
                 }

@@ -5477,11 +5477,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncParent: 0
   interpolate: 1
   positionThreshold: 0.001
   rotAngleThreshold: 0.001
-  transformParentId:
-    m_InternalValue: -1
 --- !u!1 &7284513825018453866
 GameObject:
   m_ObjectHideFlags: 0
@@ -6120,11 +6119,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncParent: 1
   interpolate: 1
   positionThreshold: 0.001
   rotAngleThreshold: 0.001
-  transformParentId:
-    m_InternalValue: -1
 --- !u!1 &7284513826573182686
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,12 +26,12 @@ namespace LightPat.Core
 
             if (!mode)
             {
-                if (Vector3.Distance(transform.position, moveTo) < 5)
+                if (Vector3.Distance(transform.position, moveTo) < 1)
                     mode = !mode;
             }
             else
             {
-                if (Vector3.Distance(transform.position, moveFrom) < 5)
+                if (Vector3.Distance(transform.position, moveFrom) < 1)
                     mode = !mode;
             }
         }

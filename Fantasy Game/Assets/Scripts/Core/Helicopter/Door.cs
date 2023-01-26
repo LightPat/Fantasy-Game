@@ -1,34 +1,56 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
-    public class Door : MonoBehaviour
+    public class Door : NetworkBehaviour
     {
         public string parameterName;
         public float automaticDoorCloseDelay = 5;
 
+        private NetworkVariable<bool> doorOpen = new NetworkVariable<bool>();
+
         Animator animator;
         float lastDoorOpenTime;
 
-        public void ToggleDoor()
+        [ServerRpc(RequireOwnership = false)]
+        public void ToggleDoorServerRpc()
         {
-            animator.SetBool(parameterName, !animator.GetBool(parameterName));
-            if (animator.GetBool(parameterName))
+            doorOpen.Value = !doorOpen.Value;
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            doorOpen.OnValueChanged += OnDoorOpenChange;
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            doorOpen.OnValueChanged -= OnDoorOpenChange;
+        }
+
+        void OnDoorOpenChange(bool previous, bool current)
+        {
+            animator.SetBool(parameterName, current);
+            if (current)
                 lastDoorOpenTime = Time.time;
         }
 
         private void Start()
         {
             animator = GetComponentInParent<Animator>();
+
         }
 
         private void Update()
         {
-            if (animator.GetBool(parameterName))
+            if (!IsServer) { return; }
+
+            if (doorOpen.Value)
                 if (Time.time - lastDoorOpenTime > automaticDoorCloseDelay)
-                    animator.SetBool(parameterName, !animator.GetBool(parameterName));
+                    doorOpen.Value = false;
         }
     }
 }

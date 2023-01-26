@@ -13,6 +13,8 @@ namespace LightPat.Core
         [Range(0.001f, 360)]
         public float rotAngleThreshold = 0.001f;
 
+        public NetworkVariable<int> transformParentId = new NetworkVariable<int>(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
         private NetworkVariable<Vector3> currentPosition = new NetworkVariable<Vector3>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<Quaternion> currentRotation = new NetworkVariable<Quaternion>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
@@ -23,6 +25,10 @@ namespace LightPat.Core
         {
             currentPosition.OnValueChanged += OnPositionChanged;
             currentRotation.OnValueChanged += OnRotationChanged;
+            //if (TryGetComponent(out Rigidbody rb))
+            //{
+            //    rb.isKinematic = IsOwner;
+            //}
         }
 
         public override void OnNetworkDespawn()
@@ -67,16 +73,33 @@ namespace LightPat.Core
             {
                 if (interpolate)
                 {
-                    transform.localPosition = Vector3.Lerp(transform.localPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
-                    //if (Vector3.Distance(transform.localPosition, currentPosition.Value) < 1)
-                    //    transform.localPosition = Vector3.MoveTowards(transform.localPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+                    if (transformParentId.Value == -1)
+                    {
+                        transform.localPosition = Vector3.Lerp(transform.localPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+                        transform.localRotation = Quaternion.Slerp(transform.localRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
+                    }
+                    else
+                    {
+                        Transform parent = NetworkManager.SpawnManager.SpawnedObjects[(ulong) transformParentId.Value].transform;
 
-                    transform.localRotation = Quaternion.Slerp(transform.localRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
+                        transform.localPosition = parent.position + Vector3.Lerp(transform.localPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+                        transform.localRotation = parent.rotation * Quaternion.Slerp(transform.localRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
+                    }
                 }
                 else
                 {
-                    transform.localPosition = currentPosition.Value;
-                    transform.localRotation = currentRotation.Value;
+                    if (transformParentId.Value == -1)
+                    {
+                        transform.localPosition = currentPosition.Value;
+                        transform.localRotation = currentRotation.Value;
+                    }
+                    else
+                    {
+                        Transform parent = NetworkManager.SpawnManager.SpawnedObjects[(ulong)transformParentId.Value].transform;
+
+                        transform.localPosition = parent.position + currentPosition.Value;
+                        transform.localRotation = parent.rotation * currentRotation.Value;
+                    }
                 }
             }
         }

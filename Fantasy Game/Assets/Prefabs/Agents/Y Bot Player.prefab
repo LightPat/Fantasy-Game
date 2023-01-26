@@ -5480,6 +5480,8 @@ MonoBehaviour:
   interpolate: 1
   positionThreshold: 0.001
   rotAngleThreshold: 0.001
+  transformParentId:
+    m_InternalValue: -1
 --- !u!1 &7284513825018453866
 GameObject:
   m_ObjectHideFlags: 0
@@ -5861,7 +5863,7 @@ GameObject:
   - component: {fileID: 1163105829}
   - component: {fileID: 3945321872001441854}
   - component: {fileID: 7454362340183627948}
-  - component: {fileID: 3625703686578287370}
+  - component: {fileID: 2200536893118268727}
   m_Layer: 0
   m_Name: Y Bot Player
   m_TagString: Untagged
@@ -6105,8 +6107,8 @@ MonoBehaviour:
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
---- !u!114 &3625703686578287370
+  AutoObjectParentSync: 0
+--- !u!114 &2200536893118268727
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6121,6 +6123,8 @@ MonoBehaviour:
   interpolate: 1
   positionThreshold: 0.001
   rotAngleThreshold: 0.001
+  transformParentId:
+    m_InternalValue: -1
 --- !u!1 &7284513826573182686
 GameObject:
   m_ObjectHideFlags: 0

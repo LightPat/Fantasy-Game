@@ -43,7 +43,6 @@ namespace LightPat.Core.Player
             targetLean.OnValueChanged += OnTargetLeanChange;
 
             name = ClientManager.Singleton.GetClient(OwnerClientId).clientName;
-            rb.isKinematic = !IsLocalPlayer;
 
             if (IsOwner)
             {
@@ -111,6 +110,13 @@ namespace LightPat.Core.Player
         private void OnTransformParentChanged()
         {
             playerCamera.RefreshCameraParent();
+            if (IsOwner)
+            {
+                if (transform.parent)
+                    GetComponent<CustomNetworkTransform>().transformParentId.Value = (int)transform.parent.GetComponent<NetworkObject>().NetworkObjectId;
+                else
+                    GetComponent<CustomNetworkTransform>().transformParentId.Value = -1;
+            }
         }
 
         private void Awake()
@@ -164,7 +170,6 @@ namespace LightPat.Core.Player
             // Look angle animator logic for sword swings
             if (lookInput != Vector2.zero)
             {
-                //if (!animator.GetBool("attack1") & !animator.GetBool("attack2"))
                 if (!animator.GetBool("attack2"))
                 {
                     lookAngle.Value = Mathf.Atan2(lookInput.x, lookInput.y) * Mathf.Rad2Deg;
@@ -362,8 +367,11 @@ namespace LightPat.Core.Player
                         else
                             rotateBodyWithCamera = false;
 
-                        RemoveParentServerRpc();
-                        StartCoroutine(AddRigidbody());
+                        transform.SetParent(null, true);
+                        rb = gameObject.AddComponent<Rigidbody>();
+                        rb.constraints = RigidbodyConstraints.FreezeRotation;
+                        rb.interpolation = RigidbodyInterpolation.Interpolate;
+                        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
                     }
                     break;
                 }
@@ -379,8 +387,11 @@ namespace LightPat.Core.Player
                     else
                         rotateBodyWithCamera = false;
 
-                    RemoveParentServerRpc();
-                    StartCoroutine(AddRigidbody());
+                    transform.SetParent(null, true);
+                    rb = gameObject.AddComponent<Rigidbody>();
+                    rb.constraints = RigidbodyConstraints.FreezeRotation;
+                    rb.interpolation = RigidbodyInterpolation.Interpolate;
+                    rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
                 }
             }
         }
@@ -398,30 +409,11 @@ namespace LightPat.Core.Player
                     if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
                     lastNoPhysicsTime = Time.time;
 
+                    transform.SetParent(collision.transform);
                     Destroy(rb);
-                    TrySetParentServerRpc(collision.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
                     rotateBodyWithCamera = true;
                 }
             }
-        }
-
-        bool addRigidbodyRunning;
-        private IEnumerator AddRigidbody()
-        {
-            if (addRigidbodyRunning) { yield break; }
-            addRigidbodyRunning = true;
-            yield return new WaitUntil(() => transform.parent == null);
-
-            if (!rb)
-            {
-                rb = gameObject.AddComponent<Rigidbody>();
-                rb.constraints = RigidbodyConstraints.FreezeRotation;
-                rb.interpolation = RigidbodyInterpolation.Interpolate;
-                rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-                rb.isKinematic = !IsLocalPlayer;
-            }
-
-            addRigidbodyRunning = false;
         }
 
         void OnAbility()
@@ -553,7 +545,7 @@ namespace LightPat.Core.Player
                 }
                 else if (hit.collider.TryGetComponent(out Door door))
                 {
-                    door.ToggleDoor();
+                    door.ToggleDoorServerRpc();
                 }
                 else if (hit.collider.TryGetComponent(out VehicleChair chair))
                 {
@@ -738,9 +730,5 @@ namespace LightPat.Core.Player
         {
             animator.SetBool("dead", false);
         }
-
-        [ServerRpc] private void RemoveParentServerRpc() { NetworkObject.TryRemoveParent(); }
-
-        [ServerRpc] private void TrySetParentServerRpc(ulong networkObjectId) { NetworkObject.TrySetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId], true); }
     }
 }

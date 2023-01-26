@@ -76,6 +76,7 @@ namespace LightPat.Core
                 {
                     rotationOffset.z = moveInput.x * currentVelocityLimits.z;
                     rotationOffset.x = -moveInput.y * currentVelocityLimits.x;
+                    rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation * Quaternion.Inverse(Quaternion.Euler(rotationOffset)), Time.deltaTime * 2));
                 }
             }
         }
@@ -98,8 +99,6 @@ namespace LightPat.Core
             }
             else
             {
-                rb.MoveRotation(Quaternion.Slerp(transform.rotation, bodyRotation * Quaternion.Inverse(Quaternion.Euler(rotationOffset)), Time.fixedDeltaTime * 2));
-
                 // Move vehicle horizontally
                 if (localVelocity.x > currentVelocityLimits.x)
                     moveForce.x -= localVelocity.x - currentVelocityLimits.x;

@@ -1987,6 +1987,7 @@ GameObject:
   - component: {fileID: 574850246}
   - component: {fileID: 574850250}
   - component: {fileID: 574850251}
+  - component: {fileID: 574850252}
   m_Layer: 0
   m_Name: NoPhysics
   m_TagString: NoPhysics
@@ -2064,7 +2065,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 574850245}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -15.9, y: 43.8, z: -207}
+  m_LocalPosition: {x: -49.46, y: 45.93, z: -217.15}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2083,7 +2084,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 7
-  moveTo: {x: -47.33, y: 45.18, z: -216.53}
+  moveTo: {x: -14.74, y: 43.8, z: -205.61}
 --- !u!114 &574850251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2100,6 +2101,21 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &574850252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 574850245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interpolate: 1
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001
 --- !u!1 &615474619
 GameObject:
   m_ObjectHideFlags: 0

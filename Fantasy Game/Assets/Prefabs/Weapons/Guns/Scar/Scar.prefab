@@ -5660,7 +5660,7 @@ MonoBehaviour:
   muzzleFlash: {fileID: 1873134418}
   smokeSpawnPoint: {fileID: 8747871323649240528}
   smokePrefab: {fileID: 6964667040308945079, guid: 9d067a4f23b2ee547ac1d117229f04fc, type: 3}
-  disableRecoil: 1
+  disableRecoil: 0
   xRecoilCurve:
     serializedVersion: 2
     m_Curve:

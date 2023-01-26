@@ -34,8 +34,8 @@ namespace LightPat.Core
 
             TrySittingClientRpc(networkObjectId, clientRpcParams);
 
-            //if (driverChair)
-            //    GetComponentInParent<Vehicle>().OnDriverEnter(networkObjectId);
+            if (driverChair)
+                GetComponentInParent<Vehicle>().OnDriverEnter(networkObjectId);
         }
 
         [ClientRpc]
@@ -60,15 +60,14 @@ namespace LightPat.Core
 
             occupant = null;
 
-
             //Vehicle vehicle = GetComponentInParent<Vehicle>();
             //if (vehicle)
             //    occupant.TrySetParent(GetComponentInParent<Vehicle>().transform, true);
             //else
             //    occupant.TryRemoveParent(true);
 
-            //if (driverChair)
-            //    vehicle.OnDriverExit();
+            if (driverChair)
+                GetComponentInParent<Vehicle>().OnDriverExit();
         }
 
         [ClientRpc] void ExitSittingClientRpc(ClientRpcParams clientRpcParams = default)

@@ -7,7 +7,6 @@ namespace LightPat.Core
 {
     public class CustomNetworkTransform : NetworkBehaviour
     {
-        public bool syncParent;
         public bool interpolate = true;
         [Range(0.001f, 1)]
         public float positionThreshold = 0.001f;
@@ -45,27 +44,6 @@ namespace LightPat.Core
             currentRotation.OnValueChanged -= OnRotationChanged;
         }
 
-        private void OnTransformParentChanged()
-        {
-            if (!syncParent) { return; }
-
-            if (IsOwner)
-            {
-                if (transform.parent)
-                {
-                    transformParentId.Value = (int)transform.parent.GetComponent<NetworkObject>().NetworkObjectId;
-                }
-                else
-                {
-                    transformParentId.Value = -1;
-                }
-            }
-            else
-            {
-                Debug.LogError(this + " transform parent changed on a non-owner instance, only change the parent on the owner instance");
-            }
-        }
-
         void OnTransformParentIdChange(int previous, int current)
         {
             if (previous != -1)
@@ -91,13 +69,11 @@ namespace LightPat.Core
                     }
                 }
 
-                if (IsOwner)
-                    transform.SetParent(newParent.transform, true);
+                transform.SetParent(newParent.transform, true);
             }
             else
             {
-                if (IsOwner)
-                    transform.SetParent(null, true);
+                transform.SetParent(null, true);
             }
         }
 
@@ -148,8 +124,10 @@ namespace LightPat.Core
                     {
                         Transform parent = NetworkManager.SpawnManager.SpawnedObjects[(ulong) transformParentId.Value].transform;
 
-                        transform.localPosition = parent.position + Vector3.Lerp(lastPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
-                        transform.localRotation = parent.rotation * Quaternion.Slerp(lastRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
+                        //transform.localPosition = parent.position + Vector3.Lerp(lastPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+                        //transform.localRotation = parent.rotation * Quaternion.Slerp(lastRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
+                        transform.localPosition = Vector3.Lerp(lastPosition, currentPosition.Value, Time.deltaTime * positionSpeed);
+                        transform.localRotation = Quaternion.Slerp(lastRotation, currentRotation.Value, Time.deltaTime * rotationSpeed);
                     }
                 }
                 else
@@ -163,8 +141,10 @@ namespace LightPat.Core
                     {
                         Transform parent = NetworkManager.SpawnManager.SpawnedObjects[(ulong)transformParentId.Value].transform;
 
-                        transform.localPosition = parent.position + currentPosition.Value;
-                        transform.localRotation = parent.rotation * currentRotation.Value;
+                        //transform.localPosition = parent.position + currentPosition.Value;
+                        //transform.localRotation = parent.rotation * currentRotation.Value;
+                        transform.localPosition = currentPosition.Value;
+                        transform.localRotation = currentRotation.Value;
                     }
                 }
             }

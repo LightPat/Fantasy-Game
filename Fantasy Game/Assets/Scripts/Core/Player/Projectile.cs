@@ -104,6 +104,7 @@ namespace LightPat.Core.Player
 
             if (other.attachedRigidbody)
             {
+                if (!inflicter) { return; }
                 if (other.attachedRigidbody.gameObject == inflicter.gameObject) { return; }
                 if (damageRunning) { return; }
                 damageRunning = true;
@@ -111,7 +112,6 @@ namespace LightPat.Core.Player
                 Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
                 if (hit)
                 {
-                    Debug.Log(hit);
                     InflictDamageServerRpc(hit.NetworkObject.NetworkObjectId);
                 }
             }

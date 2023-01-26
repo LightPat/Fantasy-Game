@@ -130,7 +130,7 @@ namespace LightPat.Core.Player
         void OnMove(InputValue value)
         {
             moveInput.Value = value.Get<Vector2>();
-            if (vehicle) { vehicle.SendMessage("OnVehicleMove", moveInput); }
+            if (vehicle) { vehicle.SendMessage("OnVehicleMove", moveInput.Value); }
             if (moveInput.Value.y <= 0 & running.Value) { runTarget.Value = 2; }
         }
 

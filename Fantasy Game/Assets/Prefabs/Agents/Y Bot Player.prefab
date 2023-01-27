@@ -5477,7 +5477,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncParent: 0
   interpolate: 1
   positionThreshold: 0.001
   rotAngleThreshold: 0.001
@@ -6119,7 +6118,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncParent: 1
   interpolate: 1
   positionThreshold: 0.001
   rotAngleThreshold: 0.001
@@ -8925,6 +8923,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   disableRootMotion: 0
+  characterHeight: 2.5
   drag: 1
   rightArmRig: {fileID: 2513949398972815566}
   leftArmRig: {fileID: 7284513825998588540}

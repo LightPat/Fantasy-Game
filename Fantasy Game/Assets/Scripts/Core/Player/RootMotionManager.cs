@@ -23,6 +23,7 @@ namespace LightPat.Core.Player
 
         [Header("OnAnimatorMove")]
         public bool disableRootMotion;
+        public float characterHeight;
         public float drag;
         private void OnAnimatorMove()
         {
@@ -40,6 +41,21 @@ namespace LightPat.Core.Player
 
                     applyRootMotion = false;
                     break;
+                }
+
+                if (!applyRootMotion)
+                {
+                    Vector3 position = new Vector3(transform.parent.position.x, transform.parent.position.y + characterHeight, transform.parent.position.z);
+                    //Debug.DrawRay(position, animator.deltaPosition * 20, Color.black, 1);
+                    allHits = Physics.RaycastAll(position, animator.deltaPosition, 1, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+                    System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+                    foreach (RaycastHit hit in allHits)
+                    {
+                        if (GetComponentsInChildren<Collider>().Contains(hit.collider)) { continue; }
+
+                        applyRootMotion = false;
+                        break;
+                    }
                 }
 
                 if (applyRootMotion)

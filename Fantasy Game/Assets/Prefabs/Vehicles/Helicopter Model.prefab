@@ -497,6 +497,8 @@ GameObject:
   - component: {fileID: 6853524672602835584}
   - component: {fileID: 1763824954470925121}
   - component: {fileID: 1964165109921508489}
+  - component: {fileID: 1080098583668735935}
+  - component: {fileID: 6929608768460537743}
   m_Layer: 0
   m_Name: polySurface188
   m_TagString: Untagged
@@ -567,6 +569,32 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1080098583668735935
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3095413077286982323}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.365484, y: 16.566074, z: 0.42952162}
+  m_Center: {x: -0.0120818615, y: 4.20394, z: 6.43241}
+--- !u!65 &6929608768460537743
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3095413077286982323}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.1196566, y: 2.0763285, z: 1.9590044}
+  m_Center: {x: -0.059146404, y: 13.806895, z: 3.2472246}
 --- !u!1 &3337027142029352454
 GameObject:
   m_ObjectHideFlags: 0
@@ -755,6 +783,7 @@ GameObject:
   - component: {fileID: 3800128708122910275}
   - component: {fileID: 4787625113192421958}
   - component: {fileID: 3846101172529410592}
+  - component: {fileID: 3682956263343161583}
   m_Layer: 0
   m_Name: polySurface188.003
   m_TagString: Untagged
@@ -825,6 +854,19 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3682956263343161583
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3576348751218688684}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 5.3580427, y: 1.2221166, z: 3.6371922}
+  m_Center: {x: -0.081288695, y: 12.270332, z: 4.5848513}
 --- !u!1 &3605435276078970102
 GameObject:
   m_ObjectHideFlags: 0

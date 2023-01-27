@@ -60,12 +60,6 @@ namespace LightPat.Core
 
             occupant = null;
 
-            //Vehicle vehicle = GetComponentInParent<Vehicle>();
-            //if (vehicle)
-            //    occupant.TrySetParent(GetComponentInParent<Vehicle>().transform, true);
-            //else
-            //    occupant.TryRemoveParent(true);
-
             if (driverChair)
                 GetComponentInParent<Vehicle>().OnDriverExit();
         }

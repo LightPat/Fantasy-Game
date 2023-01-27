@@ -127,7 +127,7 @@ namespace LightPat.Core.Player
             if (NetworkManager.Singleton.IsServer)
             {
                 GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
-                Projectile projectile = b.GetComponent<Projectile>();
+                ClientProjectile projectile = b.GetComponent<ClientProjectile>();
                 projectile.inflicter = playerWeaponAnimationHandler.NetworkObject;
                 projectile.originWeapon = this;
                 projectile.damage = baseDamage;

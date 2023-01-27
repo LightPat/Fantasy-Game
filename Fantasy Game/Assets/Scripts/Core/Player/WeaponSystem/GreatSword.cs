@@ -12,12 +12,13 @@ namespace LightPat.Core.Player
         public float swingSpeed = 1;
         public bool swinging;
 
+        public Collider normalCollider;
+        public Collider trigger;
+
+        HumanoidWeaponAnimationHandler playerWeaponAnimationHandler;
         Animator playerAnimator;
         Coroutine swingRoutine;
         bool attack1;
-
-        public Collider normalCollider;
-        public Collider trigger;
 
         public void StopSwing()
         {
@@ -27,6 +28,8 @@ namespace LightPat.Core.Player
 
         public override NetworkObject Attack1(bool pressed)
         {
+            if (pressed == attack1) { return null; }
+
             attack1 = pressed;
             if (swingRoutine != null)
                 StopCoroutine(swingRoutine);
@@ -58,6 +61,7 @@ namespace LightPat.Core.Player
                 c.enabled = true;
             }
             trigger.enabled = false;
+            playerWeaponAnimationHandler.ClearSwingHits();
         }
 
         private IEnumerator Swing()
@@ -70,6 +74,10 @@ namespace LightPat.Core.Player
                 c.enabled = false;
             }
             trigger.enabled = true;
+            yield return new WaitUntil(() => playerAnimator.GetCurrentAnimatorStateInfo(playerAnimator.GetLayerIndex("Great Sword")).IsName("Idle"));
+            playerWeaponAnimationHandler.ClearSwingHits();
+            if (attack1)
+                swingRoutine = StartCoroutine(Swing());
         }
 
         private new void Start()
@@ -80,9 +88,10 @@ namespace LightPat.Core.Player
 
         private void OnTransformParentChanged()
         {
-            if (GetComponentInParent<HumanoidWeaponAnimationHandler>())
+            playerWeaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
+            if (playerWeaponAnimationHandler)
             {
-                playerAnimator = GetComponentInParent<Animator>();
+                playerAnimator = playerWeaponAnimationHandler.GetComponentInChildren<Animator>();
                 playerAnimator.SetFloat("swingSpeed", swingSpeed);
             }
         }

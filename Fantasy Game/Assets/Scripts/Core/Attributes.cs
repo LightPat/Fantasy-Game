@@ -48,7 +48,7 @@ namespace LightPat.Core
         private IEnumerator SpawnProtection()
         {
             invincible = true;
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(0.1f);
             invincible = false;
         }
 
@@ -117,7 +117,8 @@ namespace LightPat.Core
                         ClientManager.Singleton.AddDamage(inflicterNetworkObject.OwnerClientId, damageInflicted);
                         if (HP.Value == 0)
                         {
-                            ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
+                            if (team != Team.Environment)
+                                ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
                             ClientManager.Singleton.AddKills(inflicterNetworkObject.OwnerClientId, 1);
                         }
                     }
@@ -182,7 +183,8 @@ namespace LightPat.Core
                         ClientManager.Singleton.AddDamage(inflicterNetworkObject.OwnerClientId, damageInflicted);
                         if (HP.Value == 0)
                         {
-                            ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
+                            if (team != Team.Environment)
+                                ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
                             ClientManager.Singleton.AddKills(inflicterNetworkObject.OwnerClientId, 1);
                         }
                     }   
@@ -211,6 +213,9 @@ namespace LightPat.Core
                 healthPointsUIText.SetText(HP.Value + " / " + maxHealth);
             }
         }
+
+        private void OnAttacked(OnAttackedData data) { }
+        private void OnDeath() { }
     }
 
     public struct OnAttackedData : INetworkSerializable

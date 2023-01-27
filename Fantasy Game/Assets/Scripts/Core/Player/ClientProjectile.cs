@@ -5,23 +5,10 @@ using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
-    public class Projectile : NetworkBehaviour
+    public class ClientProjectile : Projectile
     {
-        public NetworkObject inflicter;
-        public Weapon originWeapon;
-        public float damage;
-        public float maxDestroyDistance = 300;
-        public AudioClip hitmarkerSound;
-        public float hitmarkerVolume = 1;
-        public float hitmarkerTime;
-
-        [HideInInspector] public Vector3 startForce;
-
         private NetworkVariable<Vector3> startForceNetworked = new NetworkVariable<Vector3>();
         private NetworkVariable<ulong> inflicterNetworkId = new NetworkVariable<ulong>();
-
-        bool damageRunning;
-        Vector3 startPos; // Despawn bullet after a certain distance traveled
 
         // Start gets called after spawn
         public override void OnNetworkSpawn()
@@ -67,7 +54,6 @@ namespace LightPat.Core.Player
             GetComponent<Rigidbody>().AddForce(startForceNetworked.Value, ForceMode.VelocityChange);
         }
 
-        Vector3 originalScale;
         private void Awake()
         {
             originalScale = transform.localScale;
@@ -100,21 +86,20 @@ namespace LightPat.Core.Player
             if (!IsOwner) { return; }
             if (!IsSpawned) { return; }
             if (other.isTrigger) { return; }
-            if (other.GetComponent<Projectile>()) { return; }
+            if (other.GetComponent<ClientProjectile>()) { return; }
 
-            if (other.attachedRigidbody)
+            // Use rigidbody in case object is parented to another rigidbody
+            Attributes hit = other.GetComponentInParent<Attributes>();
+            if (hit)
             {
-                if (!inflicter) { return; }
-                if (other.attachedRigidbody.gameObject == inflicter.gameObject) { return; }
+                if (!inflicter) { return; } // If we haven't added force (network variables haven't been synced)
+                if (hit.gameObject == inflicter.gameObject) { return; }
                 if (damageRunning) { return; }
                 damageRunning = true;
 
-                Attributes hit = other.attachedRigidbody.transform.GetComponent<Attributes>();
-                if (hit)
-                {
-                    InflictDamageServerRpc(hit.NetworkObject.NetworkObjectId);
-                }
+                InflictDamageServerRpc(hit.NetworkObjectId);
             }
+
             despawnSent = true;
             DespawnSelfServerRpc();
         }

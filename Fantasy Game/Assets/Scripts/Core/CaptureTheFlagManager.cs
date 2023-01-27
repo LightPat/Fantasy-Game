@@ -82,6 +82,7 @@ namespace LightPat.Core
 
     public enum Team
     {
+        Environment,
         Red,
         Blue
     }

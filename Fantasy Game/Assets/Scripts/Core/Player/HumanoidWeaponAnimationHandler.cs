@@ -644,6 +644,12 @@ namespace LightPat.Core.Player
             weaponChangeRunning = false;
         }
 
+        private List<Attributes> swingHits = new List<Attributes>();
+        public void ClearSwingHits()
+        {
+            swingHits.Clear();
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             // For inflicting damage using collision weapons (swords)
@@ -652,12 +658,32 @@ namespace LightPat.Core.Player
             if (!sword) { return; }
             if (!sword.swinging) { return; }
 
+            Attributes hit = other.GetComponentInParent<Attributes>();
+
             if (other.GetComponentInParent<Sliceable>())
                 sword.SliceStart();
-            else if(other.gameObject.GetComponentInParent<Attributes>())
-                other.gameObject.GetComponentInParent<Attributes>().InflictDamage(weaponLoadout.equippedWeapon.baseDamage, gameObject);
+            else if (hit)
+            {
+                if (!swingHits.Contains(hit))
+                {
+                    swingHits.Add(other.GetComponentInParent<Attributes>());
+                    InflictDamageServerRpc(other.GetComponentInParent<Attributes>().NetworkObjectId, weaponLoadout.equippedWeapon.baseDamage);
+                }
+            }
             else
                 sword.StopSwing();
+        }
+
+        [ServerRpc]
+        private void InflictDamageServerRpc(ulong inflictedNetworkObjectId, float damage)
+        {
+            bool damageSuccess = NetworkManager.SpawnManager.SpawnedObjects[inflictedNetworkObjectId].GetComponent<Attributes>().InflictDamage(damage, gameObject);
+
+            //if (inflicter.TryGetComponent(out NetworkObject playerNetObj) & damageSuccess)
+            //{
+            //    if (playerNetObj.IsPlayerObject)
+            //        inflicter.SendMessage("PlayHitmarker", new HitmarkerData(Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, playerNetObj.OwnerClientId));
+            //}
         }
 
         private void OnTriggerExit(Collider other)

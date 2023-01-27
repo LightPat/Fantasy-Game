@@ -14,7 +14,8 @@ namespace LightPat.UI
 
         public void OnIncrementScore(KeyValuePair<int, int> teamScore)
         {
-            teamScoreDisplays[teamScore.Key].SetText(teams[teamScore.Key] + ": " + teamScore.Value);
+            if (teamScore.Key < teams.Count)
+                teamScoreDisplays[teamScore.Key].SetText(teams[teamScore.Key] + ": " + teamScore.Value);
         }
 
         private void Awake()
@@ -23,6 +24,7 @@ namespace LightPat.UI
             int i = 0;
             foreach (Team team in System.Enum.GetValues(typeof(Team)).Cast<Team>())
             {
+                if (team == Team.Environment) { continue; }
                 teams.Add(team);
                 teamScoreDisplays[i].SetText(team + ": " + 0);
                 i++;

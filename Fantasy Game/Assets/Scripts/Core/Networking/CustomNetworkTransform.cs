@@ -16,6 +16,7 @@ namespace LightPat.Core
         private NetworkVariable<int> transformParentId = new NetworkVariable<int>(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<Vector3> currentPosition = new NetworkVariable<Vector3>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
         private NetworkVariable<Quaternion> currentRotation = new NetworkVariable<Quaternion>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private NetworkVariable<Vector3> currentScale = new NetworkVariable<Vector3>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
         float positionSpeed;
         float rotationSpeed;
@@ -110,6 +111,8 @@ namespace LightPat.Core
                     currentPosition.Value = transform.localPosition;
                 if (Quaternion.Angle(transform.localRotation, currentRotation.Value) > rotAngleThreshold)
                     currentRotation.Value = transform.localRotation;
+                if (transform.localScale != currentScale.Value)
+                    currentScale.Value = transform.localScale;
             }
             else
             {
@@ -147,10 +150,12 @@ namespace LightPat.Core
                         transform.localRotation = currentRotation.Value;
                     }
                 }
-            }
+                // If we are not the owner
+                lastPosition = transform.localPosition;
+                lastRotation = transform.localRotation;
 
-            lastPosition = transform.localPosition;
-            lastRotation = transform.localRotation;
+                transform.localScale = currentScale.Value;
+            }
         }
     }
 }

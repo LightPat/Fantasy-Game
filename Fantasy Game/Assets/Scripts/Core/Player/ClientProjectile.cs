@@ -7,6 +7,10 @@ namespace LightPat.Core.Player
 {
     public class ClientProjectile : Projectile
     {
+        public AudioClip hitmarkerSound;
+        public float hitmarkerVolume = 1;
+        public float hitmarkerTime;
+
         private NetworkVariable<Vector3> startForceNetworked = new NetworkVariable<Vector3>();
         private NetworkVariable<ulong> inflicterNetworkId = new NetworkVariable<ulong>();
 
@@ -21,12 +25,12 @@ namespace LightPat.Core.Player
             }
             
             if (IsOwner)
-                StartCoroutine(WaitToAddForce());
+                StartCoroutine(WaitForInstantiation());
 
             startPos = transform.position;
         }
 
-        private IEnumerator WaitToAddForce()
+        protected override IEnumerator WaitForInstantiation()
         {
             yield return new WaitUntil(() => startForceNetworked.Value != Vector3.zero);
 
@@ -52,18 +56,6 @@ namespace LightPat.Core.Player
             }
 
             GetComponent<Rigidbody>().AddForce(startForceNetworked.Value, ForceMode.VelocityChange);
-        }
-
-        private void Awake()
-        {
-            originalScale = transform.localScale;
-            transform.localScale = Vector3.zero;
-            StartCoroutine(WaitToChangeScale());
-        }
-
-        private IEnumerator WaitToChangeScale()
-        {
-            yield return new WaitUntil(() => GetComponent<Rigidbody>().velocity.magnitude > 0);
             transform.localScale = originalScale;
         }
 

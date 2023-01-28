@@ -128,9 +128,6 @@ namespace LightPat.Core.Player
             {
                 GameObject b = Instantiate(bullet, projectileSpawnPoint.position, projectileSpawnPoint.rotation);
                 ClientProjectile projectile = b.GetComponent<ClientProjectile>();
-                projectile.inflicter = playerWeaponAnimationHandler.NetworkObject;
-                projectile.originWeapon = this;
-                projectile.damage = baseDamage;
                 projectile.hitmarkerTime = minTimeBetweenShots;
                 NetworkObject projectileNetObj = b.GetComponent<NetworkObject>();
 
@@ -138,17 +135,19 @@ namespace LightPat.Core.Player
                 RaycastHit[] allHits = Physics.RaycastAll(playerWeaponAnimationHandler.mainCamera.position, playerWeaponAnimationHandler.mainCamera.forward, maxRange);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 bool bHit = false;
+                Vector3 startForce = Vector3.zero;
                 foreach (RaycastHit hit in allHits)
                 {
                     if (hit.transform == playerWeaponAnimationHandler.transform) { continue; }
-                    projectile.startForce = (hit.point - b.transform.position).normalized * bulletForce;
+                    startForce = (hit.point - b.transform.position).normalized * bulletForce;
                     bHit = true;
                     break;
                 }
 
                 if (!bHit)
-                    projectile.startForce = playerWeaponAnimationHandler.mainCamera.forward * bulletForce;
+                    startForce = playerWeaponAnimationHandler.mainCamera.forward * bulletForce;
 
+                projectile.InstantiateProjectile(playerWeaponAnimationHandler.NetworkObject, this, startForce, baseDamage);
                 return projectileNetObj;
             }
             else

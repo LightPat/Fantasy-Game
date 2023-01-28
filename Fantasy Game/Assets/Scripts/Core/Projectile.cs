@@ -8,39 +8,46 @@ namespace LightPat.Core
     public class Projectile : NetworkBehaviour
     {
         public float maxDestroyDistance = 300;
-        public AudioClip hitmarkerSound;
-        public float hitmarkerVolume = 1;
-        public float hitmarkerTime;
 
-        [HideInInspector] public NetworkObject inflicter;
-        [HideInInspector] public Weapon originWeapon;
-        [HideInInspector] public Vector3 startForce;
-        [HideInInspector] public float damage;
+        [HideInInspector] public NetworkObject inflicter { get; protected set; }
+        [HideInInspector] public Weapon originWeapon { get; protected set; }
+        [HideInInspector] public Vector3 startForce { get; protected set; }
+        [HideInInspector] public float damage { get; protected set; }
 
         protected bool damageRunning;
         protected Vector3 startPos; // Despawn bullet after a certain distance traveled
+        protected bool projectileInstantiated;
+
+        public void InstantiateProjectile(NetworkObject inflicter, Weapon originWeapon, Vector3 startForce, float damage)
+        {
+            this.inflicter = inflicter;
+            this.originWeapon = originWeapon;
+            this.startForce = startForce;
+            this.damage = damage;
+            projectileInstantiated = true;
+        }
 
         // Start gets called after spawn
         public override void OnNetworkSpawn()
         {
             // Propogate startForce variable change to clients since it is changed before network spawn
             if (IsServer)
-                GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
+                StartCoroutine(WaitForInstantiation());
 
             startPos = transform.position;
         }
 
         protected Vector3 originalScale;
-        private void Awake()
+        protected void Awake()
         {
             originalScale = transform.localScale;
             transform.localScale = Vector3.zero;
-            StartCoroutine(WaitToChangeScale());
         }
 
-        private IEnumerator WaitToChangeScale()
+        protected virtual IEnumerator WaitForInstantiation()
         {
-            yield return new WaitUntil(() => GetComponent<Rigidbody>().velocity.magnitude > 0);
+            yield return new WaitUntil(() => projectileInstantiated);
+            GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
             transform.localScale = originalScale;
         }
 

@@ -5,34 +5,39 @@ using LightPat.Core;
 
 namespace LightPat.EnemyAI
 {
-    public class CubeShoot : Enemy
+    public class Turret : Enemy
     {
         public Transform projectileSpawn;
         public GameObject projectile;
         public float shootDelay;
         public float baseDamage;
         public float projectileForce;
-        bool allowAttack;
         public float scaleBulletSize = 1;
 
         float lastTime;
+        bool allowAttack;
 
-        private void Start()
+        public override void OnNetworkSpawn()
         {
-            lastTime = Time.time;
-            allowAttack = true;
+            if (IsServer)
+            {
+                lastTime = Time.time;
+                allowAttack = true;
+            }
         }
 
-        public void Update()
+        private void Update()
         {
+            if (!IsServer) { return; }
+            if (!IsSpawned) { return; }
+
             if (allowAttack)
             {
                 GameObject g = Instantiate(projectile, projectileSpawn.position, projectileSpawn.rotation);
                 g.transform.localScale = g.transform.localScale * scaleBulletSize;
-                //g.GetComponent<Projectile>().inflicter = null;
-                //g.GetComponent<Projectile>().damage = baseDamage;
-                g.GetComponent<Rigidbody>().AddForce(transform.forward * projectileForce, ForceMode.VelocityChange);
-
+                Projectile p = g.GetComponent<Projectile>();
+                p.NetworkObject.Spawn(true);
+                p.InstantiateProjectile(NetworkObject, null, transform.forward * projectileForce, baseDamage);
                 allowAttack = false;
             }
 

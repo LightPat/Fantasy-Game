@@ -203,6 +203,8 @@ namespace LightPat.Core
 
         public void AddKills(ulong clientId, int killsToAdd)
         {
+            if (!IsServer) { Debug.LogError("This should only be modified on the server"); return; }
+            if (!clientDataDictionary.ContainsKey(clientId)) { return; }
             clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeKills(clientDataDictionary[clientId].kills + killsToAdd);
             SynchronizeClientDictionaries();
         }
@@ -210,13 +212,15 @@ namespace LightPat.Core
         public void AddDeaths(ulong clientId, int deathsToAdd)
         {
             if (!IsServer) { Debug.LogError("This should only be modified on the server"); return; }
-
+            if (!clientDataDictionary.ContainsKey(clientId)) { return; }
             clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeDeaths(clientDataDictionary[clientId].deaths + deathsToAdd);
             SynchronizeClientDictionaries();
         }
 
         public void AddDamage(ulong clientId, float damageToAdd)
         {
+            if (!IsServer) { Debug.LogError("This should only be modified on the server"); return; }
+            if (!clientDataDictionary.ContainsKey(clientId)) { return; }
             clientDataDictionary[clientId] = clientDataDictionary[clientId].ChangeDamageDone(clientDataDictionary[clientId].damageDone + damageToAdd);
             SynchronizeClientDictionaries();
         }

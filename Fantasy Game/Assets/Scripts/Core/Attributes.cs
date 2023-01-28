@@ -117,8 +117,7 @@ namespace LightPat.Core
                         ClientManager.Singleton.AddDamage(inflicterNetworkObject.OwnerClientId, damageInflicted);
                         if (HP.Value == 0)
                         {
-                            if (team != Team.Environment)
-                                ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
+                            ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
                             ClientManager.Singleton.AddKills(inflicterNetworkObject.OwnerClientId, 1);
                         }
                     }
@@ -183,8 +182,7 @@ namespace LightPat.Core
                         ClientManager.Singleton.AddDamage(inflicterNetworkObject.OwnerClientId, damageInflicted);
                         if (HP.Value == 0)
                         {
-                            if (team != Team.Environment)
-                                ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
+                            ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
                             ClientManager.Singleton.AddKills(inflicterNetworkObject.OwnerClientId, 1);
                         }
                     }   

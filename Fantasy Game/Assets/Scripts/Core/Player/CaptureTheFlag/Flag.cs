@@ -50,17 +50,16 @@ namespace LightPat.Core.Player
         {
             team = newCaptureTheFlagBase.team;
 
-            if (team == Team.Red)
+            Color flagColor = Color.black;
+            System.Reflection.PropertyInfo propertyInfo = typeof(Color).GetProperty(team.ToString().ToLowerInvariant());
+            if (propertyInfo != null)
             {
-                flagRenderer.material.color = Color.red;
-                flagText.color = Color.red;
-            }
-            else if (team == Team.Blue)
-            {
-                flagRenderer.material.color = Color.blue;
-                flagText.color = Color.blue;
+                flagColor = (Color)propertyInfo.GetValue(null, null);
             }
             
+            flagRenderer.material.color = flagColor;
+            flagText.color = flagColor;
+
             captureTheFlagBase = newCaptureTheFlagBase;
         }
 

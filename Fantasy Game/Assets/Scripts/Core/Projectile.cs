@@ -17,14 +17,24 @@ namespace LightPat.Core
         protected bool damageRunning;
         protected Vector3 startPos; // Despawn bullet after a certain distance traveled
         protected bool projectileInstantiated;
+        protected NetworkVariable<bool> projectileInstantiatedNetworked = new NetworkVariable<bool>();
 
         public void InstantiateProjectile(NetworkObject inflicter, Weapon originWeapon, Vector3 startForce, float damage)
         {
+            //if (!IsServer) { Debug.LogError("Instantiating a projectile from somewhere other than the server"); }
+
             this.inflicter = inflicter;
             this.originWeapon = originWeapon;
             this.startForce = startForce;
             this.damage = damage;
             projectileInstantiated = true;
+            StartCoroutine(WaitForSpawn());
+        }
+
+        private IEnumerator WaitForSpawn()
+        {
+            yield return new WaitUntil(() => IsSpawned);
+            projectileInstantiatedNetworked.Value = projectileInstantiated;
         }
 
         // Start gets called after spawn
@@ -46,7 +56,7 @@ namespace LightPat.Core
 
         protected virtual IEnumerator WaitForInstantiation()
         {
-            yield return new WaitUntil(() => projectileInstantiated);
+            yield return new WaitUntil(() => projectileInstantiatedNetworked.Value);
             GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
             transform.localScale = originalScale;
         }

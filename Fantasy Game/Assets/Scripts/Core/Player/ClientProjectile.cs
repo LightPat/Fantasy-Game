@@ -24,14 +24,15 @@ namespace LightPat.Core.Player
                 startForceNetworked.Value = startForce;
             }
             
-            if (IsOwner)
-                StartCoroutine(WaitForInstantiation());
+            StartCoroutine(WaitForInstantiation());
 
             startPos = transform.position;
         }
 
         protected override IEnumerator WaitForInstantiation()
         {
+            yield return new WaitUntil(() => projectileInstantiatedNetworked.Value);
+            // Wait for network variable changes to hit this client
             yield return new WaitUntil(() => startForceNetworked.Value != Vector3.zero);
 
             inflicter = NetworkManager.SpawnManager.SpawnedObjects[inflicterNetworkId.Value];
@@ -45,18 +46,22 @@ namespace LightPat.Core.Player
                     if (weaponLoadout.equippedWeapon.TryGetComponent(out Gun gun))
                     {
                         projectileSpawnPoint = gun.projectileSpawnPoint;
+                        originWeapon = gun.OnProjectileSpawn(this);
                     }
                 }
             }
             
-            if (projectileSpawnPoint)
+            if (IsOwner)
             {
-                transform.position = projectileSpawnPoint.position;
-                transform.rotation = projectileSpawnPoint.rotation;
-            }
+                if (projectileSpawnPoint)
+                {
+                    transform.position = projectileSpawnPoint.position;
+                    transform.rotation = projectileSpawnPoint.rotation;
+                }
 
-            GetComponent<Rigidbody>().AddForce(startForceNetworked.Value, ForceMode.VelocityChange);
-            transform.localScale = originalScale;
+                GetComponent<Rigidbody>().AddForce(startForceNetworked.Value, ForceMode.VelocityChange);
+                transform.localScale = originalScale;
+            }
         }
 
         bool despawnSent;

@@ -302,7 +302,7 @@ namespace LightPat.Core.Player
             DisableCombatIKs();
         }
 
-        private NetworkVariable<bool> attack1 = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        private NetworkVariable<bool> attack1 = new NetworkVariable<bool>();
 
         void OnAttack1Change(bool previous, bool current) { animator.SetBool("attack1", current); }
 
@@ -316,7 +316,13 @@ namespace LightPat.Core.Player
 
         void OnAttack1(InputValue value)
         {
-            attack1.Value = value.isPressed;
+            Attack1ServerRpc(value.isPressed);
+        }
+
+        [ServerRpc]
+        void Attack1ServerRpc(bool pressed)
+        {
+            attack1.Value = pressed;
         }
 
         [Header("Sword blocking")]

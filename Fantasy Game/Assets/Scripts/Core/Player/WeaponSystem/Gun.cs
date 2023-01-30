@@ -91,38 +91,6 @@ namespace LightPat.Core.Player
             if (disableAttack) { return null; }
             lastShotTime = time;
 
-            // Play 2 animation clips that are x seconds long combined, within the time that a next shot can be fired
-            gunAnimator.SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
-            if (!fullAuto)
-                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(gunAnimator, "fire"));
-
-            // Display muzzle flash
-            muzzleFlash.Play();
-            GameObject smoke = Instantiate(smokePrefab, smokeSpawnPoint);
-            StartCoroutine(DestroyAfterParticleSystemStops(smoke.GetComponent<ParticleSystem>()));
-
-            // Play gunshot sound
-            gunshotSource.PlayOneShot(gunshotClip, gunshotVolume);
-
-            // Eject shell from side of gun
-            GameObject s = Instantiate(shell, shellSpawnPoint.position, shellSpawnPoint.rotation);
-            Rigidbody rb = s.GetComponent<Rigidbody>();
-            rb.AddRelativeTorque(shellTorque * Random.Range(1, 2), ForceMode.VelocityChange);
-            rb.AddRelativeForce(shellForce * Random.Range(0.7f, 1.3f), ForceMode.VelocityChange);
-            Destroy(s, 5);
-
-            if (playerWeaponAnimationHandler.IsOwner)
-            {
-                // Apply recoil
-                if (!disableRecoil)
-                    StartCoroutine(Recoil());
-            }
-
-            currentBullets -= 1;
-            if (playerController)
-                playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
-            if (currentBullets == 0 & playerWeaponAnimationHandler.IsOwner) { playerWeaponAnimationHandler.SendMessage("OnReload"); }
-
             // Spawn the bullet
             if (NetworkManager.Singleton.IsServer)
             {
@@ -292,6 +260,47 @@ namespace LightPat.Core.Player
                 if (!reloading)
                     gunAnimator.SetBool("fire", firing);
             }
+        }
+
+        int projectileCount = 0;
+        public Weapon OnProjectileSpawn(ClientProjectile projectile)
+        {
+            projectileCount++;
+            Debug.Log(projectileCount);
+
+            // Play 2 animation clips that are x seconds long combined, within the time that a next shot can be fired
+            gunAnimator.SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
+            if (!fullAuto)
+                StartCoroutine(Utilities.ResetAnimatorBoolAfter1Frame(gunAnimator, "fire"));
+
+            // Display muzzle flash
+            muzzleFlash.Play();
+            GameObject smoke = Instantiate(smokePrefab, smokeSpawnPoint);
+            StartCoroutine(DestroyAfterParticleSystemStops(smoke.GetComponent<ParticleSystem>()));
+
+            // Play gunshot sound
+            gunshotSource.PlayOneShot(gunshotClip, gunshotVolume);
+
+            // Eject shell from side of gun
+            GameObject s = Instantiate(shell, shellSpawnPoint.position, shellSpawnPoint.rotation);
+            Rigidbody rb = s.GetComponent<Rigidbody>();
+            rb.AddRelativeTorque(shellTorque * Random.Range(1, 2), ForceMode.VelocityChange);
+            rb.AddRelativeForce(shellForce * Random.Range(0.7f, 1.3f), ForceMode.VelocityChange);
+            Destroy(s, 5);
+
+            if (playerWeaponAnimationHandler.IsOwner)
+            {
+                // Apply recoil
+                if (!disableRecoil)
+                    StartCoroutine(Recoil());
+            }
+
+            currentBullets -= 1;
+            if (playerController)
+                playerController.playerHUD.SetAmmoText(currentBullets + " / " + magazineSize);
+            if (currentBullets == 0 & playerWeaponAnimationHandler.IsOwner) { playerWeaponAnimationHandler.SendMessage("OnReload"); }
+
+            return this;
         }
     }
 }

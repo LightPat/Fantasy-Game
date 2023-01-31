@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using LightPat.ProceduralAnimations;
 using Unity.Netcode;
+using UnityEngine.Animations.Rigging;
 
 namespace LightPat.Core.Player
 {
     public class Gun : Weapon
     {
         [Header("Gun Specific")]
+        public Camera ADSCamera;
         public Transform rightFingersGrips;
         public Transform leftFingersGrips;
         [Header("Firing Settings")]
@@ -51,6 +53,7 @@ namespace LightPat.Core.Player
         RootMotionManager playerRootMotionManager;
         AudioSource gunshotSource;
         float minTimeBetweenShots;
+        MultiAimConstraint neckAimConstraint;
 
         public override NetworkObject Attack1(bool pressed)
         {
@@ -77,6 +80,7 @@ namespace LightPat.Core.Player
                 playerWeaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
                 playerController = playerWeaponAnimationHandler.GetComponent<PlayerController>();
                 playerRootMotionManager = playerWeaponAnimationHandler.GetComponentInChildren<RootMotionManager>();
+                neckAimConstraint = playerController.playerCamera.neckAimRig.GetComponentInChildren<MultiAimConstraint>();
             }
         }
 
@@ -100,7 +104,13 @@ namespace LightPat.Core.Player
                 NetworkObject projectileNetObj = b.GetComponent<NetworkObject>();
 
                 // Add force so that the bullet flies through the air
-                RaycastHit[] allHits = Physics.RaycastAll(playerWeaponAnimationHandler.mainCamera.position, playerWeaponAnimationHandler.mainCamera.forward, maxRange);
+                Vector3 pos = playerWeaponAnimationHandler.mainCamera.position;
+                if (aimDownSights)
+                    pos = ADSCamera.transform.position;
+                Vector3 dir = playerWeaponAnimationHandler.mainCamera.forward;
+                if (aimDownSights)
+                    dir = ADSCamera.transform.forward;
+                RaycastHit[] allHits = Physics.RaycastAll(pos, dir, maxRange);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 bool bHit = false;
                 Vector3 startForce = Vector3.zero;
@@ -217,57 +227,8 @@ namespace LightPat.Core.Player
             Destroy(oldMagazine, 3);
         }
 
-        private IEnumerator Recoil()
-        {
-            // Set curveLength to the longer curve
-            float curveLength = yRecoilCurve.keys[yRecoilCurve.length - 1].time;
-            if (xRecoilCurve.keys[xRecoilCurve.length - 1].time > yRecoilCurve.keys[yRecoilCurve.length - 1].time)
-            {
-                curveLength = xRecoilCurve.keys[xRecoilCurve.length - 1].time;
-            }
-
-            float curveTime = 0;
-            while (curveTime < curveLength)
-            {
-                if (playerController)
-                    playerController.Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)), 1, Time.timeScale, true);
-                curveTime += 0.1f;
-                yield return null;
-            }
-        }
-
-        private IEnumerator DestroyAfterParticleSystemStops(ParticleSystem particleSystem)
-        {
-            yield return new WaitUntil(() => !particleSystem.isPlaying);
-            Destroy(particleSystem.gameObject);
-        }
-
-        protected new void Start()
-        {
-            base.Start();
-            lastShotTime = Time.time;
-            currentBullets = magazineSize;
-            gunAnimator = GetComponent<Animator>();
-            gunshotSource = projectileSpawnPoint.GetComponent<AudioSource>();
-            minTimeBetweenShots = 1 / (fireRate / 60);
-        }
-
-        private new void Update()
-        {
-            base.Update();
-            if (fullAuto)
-            {
-                if (!reloading)
-                    gunAnimator.SetBool("fire", firing);
-            }
-        }
-
-        int projectileCount = 0;
         public Weapon OnProjectileSpawn(ClientProjectile projectile)
         {
-            projectileCount++;
-            Debug.Log(projectileCount);
-
             // Play 2 animation clips that are x seconds long combined, within the time that a next shot can be fired
             gunAnimator.SetFloat("fireSpeed", sumTimeOfFireAnimationClips / minTimeBetweenShots + 0.2f);
             if (!fullAuto)
@@ -301,6 +262,95 @@ namespace LightPat.Core.Player
             if (currentBullets == 0 & playerWeaponAnimationHandler.IsOwner) { playerWeaponAnimationHandler.SendMessage("OnReload"); }
 
             return this;
+        }
+
+        private IEnumerator Recoil()
+        {
+            // Set curveLength to the longer curve
+            float curveLength = yRecoilCurve.keys[yRecoilCurve.length - 1].time;
+            if (xRecoilCurve.keys[xRecoilCurve.length - 1].time > yRecoilCurve.keys[yRecoilCurve.length - 1].time)
+            {
+                curveLength = xRecoilCurve.keys[xRecoilCurve.length - 1].time;
+            }
+
+            float curveTime = 0;
+            while (curveTime < curveLength)
+            {
+                if (playerController)
+                    playerController.Look(new Vector2(yRecoilCurve.Evaluate(curveTime), xRecoilCurve.Evaluate(curveTime)), 1, Time.timeScale, true);
+                curveTime += 0.1f;
+                yield return null;
+            }
+        }
+
+        private IEnumerator DestroyAfterParticleSystemStops(ParticleSystem particleSystem)
+        {
+            yield return new WaitUntil(() => !particleSystem.isPlaying);
+            Destroy(particleSystem.gameObject);
+        }
+
+        protected new void Start()
+        {
+            base.Start();
+            lastShotTime = Time.time;
+            currentBullets = magazineSize;
+            gunAnimator = GetComponent<Animator>();
+            gunshotSource = projectileSpawnPoint.GetComponent<AudioSource>();
+            minTimeBetweenShots = 1 / (fireRate / 60);
+            if (ADSCamera)
+            {
+                adsCameraLocPos = ADSCamera.transform.localPosition;
+                adsCameraLocRot = ADSCamera.transform.localRotation;
+            }
+        }
+
+        bool aimDownSights;
+        Vector3 adsCameraLocPos;
+        Quaternion adsCameraLocRot;
+        private new void Update()
+        {
+            if (aimDownSights & !reloading)
+            {
+                ADSCamera.transform.localPosition = Vector3.Lerp(ADSCamera.transform.localPosition, adsCameraLocPos, Time.deltaTime * 10);
+                ADSCamera.transform.localRotation = Quaternion.Slerp(ADSCamera.transform.localRotation, adsCameraLocRot, Time.deltaTime * 12);
+
+                if (playerWeaponAnimationHandler.IsLocalPlayer)
+                    ADSCamera.depth = 1;
+
+                transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * 8);
+                transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, Time.deltaTime * 8);
+
+                neckAimConstraint.data.offset = Vector3.Lerp(neckAimConstraint.data.offset, new Vector3(0, 0, -40), Time.deltaTime * 8);
+            }
+            else if (playerWeaponAnimationHandler)
+            {
+                ADSCamera.transform.position = Vector3.Lerp(ADSCamera.transform.position, playerWeaponAnimationHandler.mainCamera.position, Time.deltaTime * 10);
+                ADSCamera.transform.rotation = Quaternion.Slerp(ADSCamera.transform.rotation, playerWeaponAnimationHandler.mainCamera.rotation, Time.deltaTime * 12);
+
+                if (Vector3.Distance(ADSCamera.transform.position, playerWeaponAnimationHandler.mainCamera.position) < 0.001f)
+                    ADSCamera.depth = -1;
+
+                neckAimConstraint.data.offset = Vector3.Lerp(neckAimConstraint.data.offset, Vector3.zero, Time.deltaTime * 8);
+            }
+
+            if (!aimDownSights)
+                base.Update();
+
+            if (fullAuto)
+            {
+                if (!reloading)
+                    gunAnimator.SetBool("fire", firing);
+            }
+        }
+
+        public void AimDownSights(bool pressed)
+        {
+            aimDownSights = pressed;
+            if (pressed)
+            {
+                ADSCamera.transform.position = playerWeaponAnimationHandler.mainCamera.position;
+                ADSCamera.transform.rotation = playerWeaponAnimationHandler.mainCamera.rotation;
+            }
         }
     }
 }

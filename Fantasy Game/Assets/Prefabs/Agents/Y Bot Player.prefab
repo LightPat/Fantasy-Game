@@ -441,6 +441,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parentBone: {fileID: 516619163063119531}
   positionMults: {x: -0.1, y: 0.18, z: -0.12}
+  aimDownSightsBone: {fileID: 1097985365}
+  aimDownSights: 0
+  adsMults: {x: 0, y: -0.16, z: 0.12}
 --- !u!1 &1097985360
 GameObject:
   m_ObjectHideFlags: 0

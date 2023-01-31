@@ -328,9 +328,9 @@ namespace LightPat.Core.Player
         [Header("Sword blocking")]
         public Transform blockConstraints;
         public float blockSpeed = 1;
-        bool blocking;
         float oldRigSpeed;
         int oldCullingMask;
+        bool attack2Local;
         public void Attack2(bool pressed)
         {
             if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
@@ -347,12 +347,13 @@ namespace LightPat.Core.Player
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                blocking = pressed;
-                animator.SetBool("attack2", blocking);
+                if (!pressed) { return; }
+                attack2Local = !attack2Local;
+                animator.SetBool("attack2", attack2Local);
                 if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
                 {
-                    GetComponent<Attributes>().blocking = blocking;
-                    if (blocking)
+                    GetComponent<Attributes>().blocking = attack2Local;
+                    if (attack2Local)
                     {
                         rightHandTarget.target = blockConstraints;
                         rightArmRig.weightTarget = 1;
@@ -385,6 +386,13 @@ namespace LightPat.Core.Player
                             playerController.playerCamera.GetComponent<Camera>().cullingMask = oldCullingMask;
                     }
                 }
+                else if (weaponLoadout.equippedWeapon.TryGetComponent(out Gun gun))
+                {
+                    // Aim down sights
+                    gun.AimDownSights(attack2Local);
+                    if (playerController)
+                        playerController.playerHUD.crosshair.gameObject.SetActive(!attack2Local);
+                }
             }
         }
 
@@ -406,7 +414,7 @@ namespace LightPat.Core.Player
 
         void OnScroll(InputValue value)
         {
-            if (blocking)
+            if (attack2.Value)
             {
                 blockConstraints.GetComponent<SwordBlockingIKSolver>().ScrollInput(value.Get<Vector2>());
             }

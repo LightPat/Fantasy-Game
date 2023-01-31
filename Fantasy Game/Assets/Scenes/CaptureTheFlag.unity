@@ -5544,9 +5544,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpawn: {fileID: 1349922101}
   projectile: {fileID: 8783793137523742586, guid: f1e14184793f7fa40bdc89dc1cd2a3cf, type: 3}
-  shootDelay: 1
+  shootDelay: 10
   baseDamage: 5
-  projectileForce: 2
+  projectileForce: 100
   scaleBulletSize: 3
 --- !u!1 &1722310542
 GameObject:

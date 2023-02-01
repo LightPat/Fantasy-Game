@@ -43,7 +43,7 @@ namespace LightPat.Core.Player
             if (!enableDisplay) { return; }
             //if (!Application.isEditor) //Do not display in editor ( or you can use the UNITY_EDITOR macro to also disable the rest)
             {
-                myLog = GUI.TextArea(new Rect(10, 10, Screen.width/4 - 10, Screen.height/4 - 10), myLog);
+                GUI.TextArea(new Rect(10, 10, Screen.width/4 - 10, Screen.height/4 - 10), myLog);
             }
         }
 

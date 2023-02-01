@@ -317,7 +317,7 @@ namespace LightPat.Core.Player
             }
         }
 
-        bool aimDownSights;
+        public bool aimDownSights { get; protected set; }
         Vector3 adsCameraLocPos;
         Quaternion adsCameraLocRot;
         private new void Update()

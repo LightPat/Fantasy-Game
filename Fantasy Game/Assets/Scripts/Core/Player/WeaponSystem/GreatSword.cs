@@ -47,13 +47,13 @@ namespace LightPat.Core.Player
             return null;
         }
 
+        public bool blocking { get; protected set; }
         float oldRigSpeed;
         int oldCullingMask;
-        bool attack2;
         public override void Attack2(bool pressed)
         {
-            if (pressed == attack2) { return; }
-            attack2 = pressed;
+            if (pressed == blocking) { return; }
+            blocking = pressed;
 
             playerAttributes.blocking = pressed;
 

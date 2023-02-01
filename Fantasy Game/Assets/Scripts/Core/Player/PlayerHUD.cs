@@ -98,6 +98,18 @@ namespace LightPat.Core.Player
         private void Update()
         {
             fpsCounter.SetText(Mathf.RoundToInt((float)1.0 / Time.deltaTime).ToString());
+
+            if (weaponLoadout.equippedWeapon)
+            {
+                if (weaponLoadout.equippedWeapon.TryGetComponent(out Gun gun))
+                    crosshair.gameObject.SetActive(!gun.aimDownSights);
+                else
+                    crosshair.gameObject.SetActive(true);
+            }
+            else
+            {
+                crosshair.gameObject.SetActive(true);
+            }
         }
     }
 }

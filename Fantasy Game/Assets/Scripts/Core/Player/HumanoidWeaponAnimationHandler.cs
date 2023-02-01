@@ -344,9 +344,6 @@ namespace LightPat.Core.Player
             else // If we have an equipped weapon do the secondary attack
             {
                 weaponLoadout.equippedWeapon.Attack2(pressed);
-
-                if (playerController)
-                    playerController.playerHUD.crosshair.gameObject.SetActive(!pressed);
             }
         }
 

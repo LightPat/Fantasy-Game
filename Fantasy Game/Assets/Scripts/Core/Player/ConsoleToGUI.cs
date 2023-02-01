@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-namespace LightPat.Core
+namespace LightPat.Core.Player
 {
     public class ConsoleToGUI : MonoBehaviour
     {
         static string myLog = "";
         private string output;
         private string stack;
+        private bool enableDisplay;
 
         private void Start()
         {
@@ -38,10 +40,17 @@ namespace LightPat.Core
 
         void OnGUI()
         {
+            if (!enableDisplay) { return; }
             //if (!Application.isEditor) //Do not display in editor ( or you can use the UNITY_EDITOR macro to also disable the rest)
             {
                 myLog = GUI.TextArea(new Rect(10, 10, Screen.width/4 - 10, Screen.height/4 - 10), myLog);
             }
+        }
+
+        private void Update()
+        {
+            if (Keyboard.current[Key.Backquote].wasPressedThisFrame)
+                enableDisplay = !enableDisplay;
         }
     }
 }

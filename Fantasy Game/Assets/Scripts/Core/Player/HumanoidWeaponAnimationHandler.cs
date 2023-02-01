@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using LightPat.ProceduralAnimations;
 using Unity.Netcode;
-using Unity.Netcode.Components;
 
 namespace LightPat.Core.Player
 {

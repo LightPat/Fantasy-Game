@@ -104,12 +104,12 @@ namespace LightPat.Core.Player
         [ServerRpc]
         private void InflictDamageServerRpc(ulong inflictedNetworkObjectId)
         {
-            bool damageSuccess = NetworkManager.SpawnManager.SpawnedObjects[inflictedNetworkObjectId].GetComponent<Attributes>().InflictDamage(damage, gameObject, inflicter.gameObject);
+            bool damageSuccess = NetworkManager.SpawnManager.SpawnedObjects[inflictedNetworkObjectId].GetComponent<Attributes>().InflictDamage(this);
 
-            if (inflicter.TryGetComponent(out NetworkObject playerNetObj) & damageSuccess)
+            if (damageSuccess)
             {
-                if (playerNetObj.IsPlayerObject)
-                    inflicter.SendMessage("PlayHitmarker", new HitmarkerData(System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, playerNetObj.OwnerClientId));
+                if (inflicter.IsPlayerObject)
+                    inflicter.SendMessage("PlayHitmarker", new HitmarkerData(System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, inflicter.OwnerClientId));
             }
         }
 

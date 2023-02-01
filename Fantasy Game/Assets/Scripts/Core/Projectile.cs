@@ -85,7 +85,7 @@ namespace LightPat.Core
                 if (damageRunning) { return; }
                 damageRunning = true;
 
-                bool damageSuccess = hit.InflictDamage(damage, gameObject, inflicter.gameObject);
+                bool damageSuccess = hit.InflictDamage(this);
             }
 
             NetworkObject.Despawn(true);

@@ -132,7 +132,7 @@ namespace LightPat.Core
             return true;
         }
 
-        public bool InflictDamage(float damage, GameObject projectile, GameObject inflicter)
+        public bool InflictDamage(Projectile projectile)
         {
             if (!IsServer) { Debug.LogError("Calling InflictDamage() from a client, use a ServerRpc"); return false; }
             if (invincible) { return false; }
@@ -140,9 +140,9 @@ namespace LightPat.Core
             bool alreadyDead = HP.Value <= 0;
             float damageInflicted = 0;
             float damageAngle = Vector3.Angle(projectile.transform.forward, transform.forward);
-            SendMessage("OnAttacked", new OnAttackedData(inflicter.name, damageAngle));
+            SendMessage("OnAttacked", new OnAttackedData(projectile.inflicter.name, damageAngle));
 
-            if (inflicter.TryGetComponent(out Attributes inflicterAttributes))
+            if (projectile.inflicter.TryGetComponent(out Attributes inflicterAttributes))
             {
                 if (inflicterAttributes.team == team) { return false; }
             }
@@ -153,14 +153,14 @@ namespace LightPat.Core
                 float nearest = array.OrderBy(x => Mathf.Abs((long)x - damageAngle)).First();
                 if (nearest != 180)
                 {
-                    HP.Value -= damage;
-                    damageInflicted = damage;
+                    HP.Value -= projectile.damage;
+                    damageInflicted = projectile.damage;
                 }
             }
             else
             {
-                HP.Value -= damage;
-                damageInflicted = damage;
+                HP.Value -= projectile.damage;
+                damageInflicted = projectile.damage;
             }
 
             if (HP.Value < 0)
@@ -173,25 +173,17 @@ namespace LightPat.Core
             if (HP.Value <= 0)
                 SendMessage("OnDeath");
 
-            if (inflicter.TryGetComponent(out NetworkObject inflicterNetworkObject))
+            if (projectile.inflicter.IsPlayerObject)
             {
-                if (inflicterNetworkObject.IsPlayerObject)
+                if (damageInflicted > 0)
                 {
-                    if (damageInflicted > 0)
+                    ClientManager.Singleton.AddDamage(projectile.inflicter.OwnerClientId, damageInflicted);
+                    if (HP.Value == 0)
                     {
-                        ClientManager.Singleton.AddDamage(inflicterNetworkObject.OwnerClientId, damageInflicted);
-                        if (HP.Value == 0)
-                        {
-                            ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
-                            ClientManager.Singleton.AddKills(inflicterNetworkObject.OwnerClientId, 1);
-                        }
-                    }   
+                        ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
+                        ClientManager.Singleton.AddKills(projectile.inflicter.OwnerClientId, 1);
+                    }
                 }
-            }
-            else
-            {
-                if (HP.Value == 0 & damageInflicted > 0)
-                    ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
             }
 
             return true;

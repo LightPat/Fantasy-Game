@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using LightPat.ProceduralAnimations;
 
 namespace LightPat.Core.Player
 {
@@ -11,12 +12,15 @@ namespace LightPat.Core.Player
         public Transform leftFingersGrips;
         public float swingSpeed = 1;
         public bool swinging;
+        public float blockSpeed = 10;
 
         public Collider normalCollider;
         public Collider trigger;
 
         HumanoidWeaponAnimationHandler playerWeaponAnimationHandler;
         Animator playerAnimator;
+        Attributes playerAttributes;
+        PlayerController playerController;
         Coroutine swingRoutine;
         bool attack1;
 
@@ -41,6 +45,58 @@ namespace LightPat.Core.Player
                 swinging = false;
             }
             return null;
+        }
+
+        float oldRigSpeed;
+        int oldCullingMask;
+        bool attack2;
+        public override void Attack2(bool pressed)
+        {
+            if (pressed == attack2) { return; }
+            attack2 = pressed;
+
+            playerAttributes.blocking = pressed;
+
+            if (pressed)
+            {
+                playerWeaponAnimationHandler.rightHandTarget.target = playerWeaponAnimationHandler.blockConstraints;
+                playerWeaponAnimationHandler.rightArmRig.weightTarget = 1;
+                playerWeaponAnimationHandler.spineAimRig.weightTarget = 1;
+                oldRigSpeed = playerWeaponAnimationHandler.rightArmRig.weightSpeed;
+                playerWeaponAnimationHandler.rightArmRig.weightSpeed = blockSpeed;
+                playerWeaponAnimationHandler.spineAimRig.weightSpeed = blockSpeed;
+                playerWeaponAnimationHandler.blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
+
+                if (playerAnimator.GetFloat("lookAngle") < 0)
+                    playerAnimator.SetBool("mirrorIdle", true);
+                else
+                    playerAnimator.SetBool("mirrorIdle", false);
+
+                if (playerController)
+                {
+                    Camera playerCamera = playerController.playerCamera.GetComponent<Camera>();
+                    oldCullingMask = playerCamera.cullingMask;
+                    playerCamera.cullingMask = -1;
+                }
+            }
+            else
+            {
+                playerWeaponAnimationHandler.spineAimRig.weightTarget = 0;
+                playerWeaponAnimationHandler.rightArmRig.weightTarget = 0;
+                playerWeaponAnimationHandler.spineAimRig.weightSpeed = oldRigSpeed;
+                StartCoroutine(ChangeFollowTargetAfterWeightTargetReached(playerWeaponAnimationHandler.rightHandTarget, playerWeaponAnimationHandler.rightHandIK.data.tip, playerWeaponAnimationHandler.rightArmRig, oldRigSpeed));
+                
+                playerWeaponAnimationHandler.blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
+                if (playerController)
+                    playerController.playerCamera.GetComponent<Camera>().cullingMask = oldCullingMask;
+            }
+        }
+
+        private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, RigWeightTarget rig, float originalSpeed)
+        {
+            yield return new WaitUntil(() => rig.GetRig().weight == 0);
+            followTarget.target = newTarget;
+            rig.weightSpeed = originalSpeed;
         }
 
         private IEnumerator ResetSwing()
@@ -91,6 +147,8 @@ namespace LightPat.Core.Player
             playerWeaponAnimationHandler = GetComponentInParent<HumanoidWeaponAnimationHandler>();
             if (playerWeaponAnimationHandler)
             {
+                playerController = playerWeaponAnimationHandler.GetComponent<PlayerController>();
+                playerAttributes = playerWeaponAnimationHandler.GetComponent<Attributes>();
                 playerAnimator = playerWeaponAnimationHandler.GetComponentInChildren<Animator>();
                 playerAnimator.SetFloat("swingSpeed", swingSpeed);
             }

@@ -73,6 +73,19 @@ namespace LightPat.Core.Player
             return null;
         }
 
+        public override void Attack2(bool pressed)
+        {
+            if (pressed == aimDownSights) { return; }
+
+            // Aim down sights
+            aimDownSights = pressed;
+            if (pressed)
+            {
+                ADSCamera.transform.position = playerWeaponAnimationHandler.mainCamera.position;
+                ADSCamera.transform.rotation = playerWeaponAnimationHandler.mainCamera.rotation;
+            }
+        }
+
         private void OnTransformParentChanged()
         {
             if (GetComponentInParent<HumanoidWeaponAnimationHandler>())
@@ -309,7 +322,7 @@ namespace LightPat.Core.Player
         Quaternion adsCameraLocRot;
         private new void Update()
         {
-            if (aimDownSights & !reloading)
+            if (aimDownSights & !reloading & currentOffsetType == "player")
             {
                 ADSCamera.transform.localPosition = Vector3.Lerp(ADSCamera.transform.localPosition, adsCameraLocPos, Time.deltaTime * 10);
                 ADSCamera.transform.localRotation = Quaternion.Slerp(ADSCamera.transform.localRotation, adsCameraLocRot, Time.deltaTime * 12);
@@ -327,29 +340,19 @@ namespace LightPat.Core.Player
                 ADSCamera.transform.position = Vector3.Lerp(ADSCamera.transform.position, playerWeaponAnimationHandler.mainCamera.position, Time.deltaTime * 10);
                 ADSCamera.transform.rotation = Quaternion.Slerp(ADSCamera.transform.rotation, playerWeaponAnimationHandler.mainCamera.rotation, Time.deltaTime * 12);
 
-                if (Vector3.Distance(ADSCamera.transform.position, playerWeaponAnimationHandler.mainCamera.position) < 0.001f)
+                if (Vector3.Distance(ADSCamera.transform.position, playerWeaponAnimationHandler.mainCamera.position) < 0.1f)
                     ADSCamera.depth = -1;
 
                 neckAimConstraint.data.offset = Vector3.Lerp(neckAimConstraint.data.offset, Vector3.zero, Time.deltaTime * 8);
             }
 
-            if (!aimDownSights)
+            if (!aimDownSights | currentOffsetType != "player")
                 base.Update();
 
             if (fullAuto)
             {
                 if (!reloading)
                     gunAnimator.SetBool("fire", firing);
-            }
-        }
-
-        public void AimDownSights(bool pressed)
-        {
-            aimDownSights = pressed;
-            if (pressed)
-            {
-                ADSCamera.transform.position = playerWeaponAnimationHandler.mainCamera.position;
-                ADSCamera.transform.rotation = playerWeaponAnimationHandler.mainCamera.rotation;
             }
         }
     }

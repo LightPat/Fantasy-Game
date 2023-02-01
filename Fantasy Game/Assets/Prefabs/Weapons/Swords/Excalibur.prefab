@@ -674,7 +674,7 @@ MonoBehaviour:
   rightHandGrip: {fileID: 4476186}
   leftHandGrip: {fileID: 1072240811}
   weaponName: Excalibur
-  baseDamage: 10
+  baseDamage: 20
   stowPoint: Spine
   drawSpeed: 1
   animationClass: 
@@ -691,6 +691,7 @@ MonoBehaviour:
   leftFingersGrips: {fileID: 1894001789773210230}
   swingSpeed: 1
   swinging: 0
+  blockSpeed: 10
   normalCollider: {fileID: 1321937135}
   trigger: {fileID: 1079040044}
   _tip: {fileID: 4187333899771341574}

@@ -327,89 +327,36 @@ namespace LightPat.Core.Player
 
         [Header("Sword blocking")]
         public Transform blockConstraints;
-        public float blockSpeed = 1;
-        float oldRigSpeed;
-        int oldCullingMask;
-        bool attack2Local;
         public void Attack2(bool pressed)
         {
             if (weaponLoadout.equippedWeapon == null) // If we have no weapon active in our hands, activate fist combat
             {
-                if (pressed) { return; }
-                if (!animator.GetBool("fistCombat"))
-                {
-                    animator.SetBool("fistCombat", true);
-                }
-                else
-                {
-                    animator.SetBool("fistCombat", false);
-                }
+                //if (pressed) { return; }
+                //if (!animator.GetBool("fistCombat"))
+                //{
+                //    animator.SetBool("fistCombat", true);
+                //}
+                //else
+                //{
+                //    animator.SetBool("fistCombat", false);
+                //}
             }
             else // If we have an equipped weapon do the secondary attack
             {
-                if (!pressed) { return; }
-                attack2Local = !attack2Local;
-                animator.SetBool("attack2", attack2Local);
-                if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
-                {
-                    GetComponent<Attributes>().blocking = attack2Local;
-                    if (attack2Local)
-                    {
-                        rightHandTarget.target = blockConstraints;
-                        rightArmRig.weightTarget = 1;
-                        spineAimRig.weightTarget = 1;
-                        oldRigSpeed = rightArmRig.weightSpeed;
-                        rightArmRig.weightSpeed = blockSpeed;
-                        spineAimRig.weightSpeed = blockSpeed;
-                        blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
+                weaponLoadout.equippedWeapon.Attack2(pressed);
 
-                        if (animator.GetFloat("lookAngle") < 0)
-                            animator.SetBool("mirrorIdle", true);
-                        else
-                            animator.SetBool("mirrorIdle", false);
-
-                        if (playerController)
-                        {
-                            Camera playerCamera = playerController.playerCamera.GetComponent<Camera>();
-                            oldCullingMask = playerCamera.cullingMask;
-                            playerCamera.cullingMask = -1;
-                        }
-                    }
-                    else
-                    {
-                        spineAimRig.weightTarget = 0;
-                        rightArmRig.weightTarget = 0;
-                        spineAimRig.weightSpeed = oldRigSpeed;
-                        StartCoroutine(ChangeFollowTargetAfterWeightTargetReached(rightHandTarget, rightHandIK.data.tip, rightArmRig, oldRigSpeed));
-                        blockConstraints.GetComponent<SwordBlockingIKSolver>().ResetRotation();
-                        if (playerController)
-                            playerController.playerCamera.GetComponent<Camera>().cullingMask = oldCullingMask;
-                    }
-                }
-                else if (weaponLoadout.equippedWeapon.TryGetComponent(out Gun gun))
-                {
-                    // Aim down sights
-                    gun.AimDownSights(attack2Local);
-                    if (playerController)
-                        playerController.playerHUD.crosshair.gameObject.SetActive(!attack2Local);
-                }
+                if (playerController)
+                    playerController.playerHUD.crosshair.gameObject.SetActive(!pressed);
             }
         }
 
         private NetworkVariable<bool> attack2 = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-        void OnAttack2Change(bool previous, bool current) { Attack2(current); }
+        void OnAttack2Change(bool previous, bool current) { animator.SetBool("attack2", current); }
 
         void OnAttack2(InputValue value)
         {
             attack2.Value = value.isPressed;
-        }
-
-        private IEnumerator ChangeFollowTargetAfterWeightTargetReached(FollowTarget followTarget, Transform newTarget, RigWeightTarget rig, float originalSpeed)
-        {
-            yield return new WaitUntil(() => rig.GetRig().weight == 0);
-            followTarget.target = newTarget;
-            rig.weightSpeed = originalSpeed;
         }
 
         void OnScroll(InputValue value)
@@ -485,6 +432,7 @@ namespace LightPat.Core.Player
         private void Update()
         {
             Attack1(attack1.Value);
+            Attack2(attack2.Value);
 
             if (waitForWeaponSlotChange) { return; }
             if (equipInitialWeaponsRunning) { return; }

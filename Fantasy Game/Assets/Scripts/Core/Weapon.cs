@@ -42,7 +42,7 @@ namespace LightPat.Core
             return null;
         }
 
-        public virtual void Attack2()
+        public virtual void Attack2(bool pressed)
         {
             Debug.LogWarning("Attack2() hasn't been implemented yet on this weapon");
         }

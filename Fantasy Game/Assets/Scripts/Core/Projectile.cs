@@ -7,6 +7,8 @@ namespace LightPat.Core
 {
     public class Projectile : NetworkBehaviour
     {
+        public AudioClip impactSound;
+        public AudioClip flyBySound;
         public float maxDestroyDistance = 300;
 
         [HideInInspector] public NetworkObject inflicter { get; protected set; }
@@ -18,6 +20,7 @@ namespace LightPat.Core
         protected Vector3 startPos; // Despawn bullet after a certain distance traveled
         protected bool projectileInstantiated;
         protected NetworkVariable<bool> projectileInstantiatedNetworked = new NetworkVariable<bool>();
+        protected NetworkVariable<int> impactSoundAudioClipIndex = new NetworkVariable<int>(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
         public void InstantiateProjectile(NetworkObject inflicter, Weapon originWeapon, Vector3 startForce, float damage)
         {
@@ -40,6 +43,7 @@ namespace LightPat.Core
         // Start gets called after spawn
         public override void OnNetworkSpawn()
         {
+            impactSoundAudioClipIndex.OnValueChanged += OnSoundAudioClipIndexChage;
             // Propogate startForce variable change to clients since it is changed before network spawn
             if (IsServer)
                 StartCoroutine(WaitForInstantiation());
@@ -47,7 +51,12 @@ namespace LightPat.Core
             startPos = transform.position;
         }
 
-        protected Vector3 originalScale;
+        public override void OnNetworkDespawn()
+        {
+            impactSoundAudioClipIndex.OnValueChanged -= OnSoundAudioClipIndexChage;
+        }
+
+        [HideInInspector] public Vector3 originalScale;
         protected void Awake()
         {
             originalScale = transform.localScale;
@@ -61,12 +70,41 @@ namespace LightPat.Core
             transform.localScale = originalScale;
         }
 
+        protected bool flyByClipPlayed;
         private void Update()
         {
-            if (!IsOwner) { return; }
+            // Play bullet whizz sound if the local player is near it
+            if (!flyByClipPlayed)
+            {
+                Collider[] allHits = Physics.OverlapSphere(transform.position, 0.5f, -1, QueryTriggerInteraction.Ignore);
+                foreach (Collider c in allHits)
+                {
+                    NetworkObject colliderObj = c.GetComponentInParent<NetworkObject>();
+                    if (colliderObj)
+                    {
+                        if (colliderObj.IsLocalPlayer)
+                        {
+                            if (!flyByClipPlayed)
+                            {
+                                AudioManager.Singleton.PlayClipAtPoint(flyBySound, transform.position, 0.5f);
+                                flyByClipPlayed = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!IsSpawned) { return; }
+            if (!IsServer) { return; }
 
             if (Vector3.Distance(startPos, transform.position) > maxDestroyDistance)
-                NetworkObject.Despawn(true);
+            {
+                if (IsSpawned)
+                    NetworkObject.Despawn(true);
+                else
+                    Destroy(gameObject);
+            }
         }
 
         private void OnTriggerEnter(Collider other)
@@ -78,6 +116,7 @@ namespace LightPat.Core
 
             // Use rigidbody in case object is parented to another rigidbody
             Attributes hit = other.GetComponentInParent<Attributes>();
+            bool damageSuccess = false;
             if (hit)
             {
                 if (!inflicter) { return; } // If we haven't added force (network variables haven't been synced)
@@ -85,9 +124,31 @@ namespace LightPat.Core
                 if (damageRunning) { return; }
                 damageRunning = true;
 
-                bool damageSuccess = hit.InflictDamage(this);
+                damageSuccess = hit.InflictDamage(this);
             }
 
+            if (!damageSuccess)
+            {
+                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, impactSound);
+            }
+            else
+            {
+                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, impactSound);
+                NetworkObject.Despawn(true); // If we hit a player despawn TODO replace this with another audioclip
+            }
+        }
+
+        protected void OnSoundAudioClipIndexChage(int prev, int current)
+        {
+            AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[current], transform.position, 0.8f);
+            Debug.Log(current);
+            if (IsServer)
+                StartCoroutine(DespawnAfterSound());
+        }
+
+        private IEnumerator DespawnAfterSound()
+        {
+            yield return null;
             NetworkObject.Despawn(true);
         }
     }

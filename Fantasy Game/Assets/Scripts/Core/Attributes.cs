@@ -23,6 +23,8 @@ namespace LightPat.Core
         [Header("ScreenSpaceOverlay : Only assign for player/allies/bosses")]
         public Material imageMaterial;
         public TextMeshProUGUI healthPointsUIText;
+        public AudioClip damageTakenSound;
+        public AudioClip lowHealthSound;
         [Header("Collider Damage Multipliers")]
         public Collider headCollider;
 
@@ -194,14 +196,18 @@ namespace LightPat.Core
             // If we are a NPC, we edit the renderer's material instance
             if (healthRenderer != null)
             {
-                healthRenderer.material.SetFloat("healthPercentage", HP.Value / maxHealth);
-                healthPointsWorldText.SetText(HP.Value + " / " + maxHealth);
+                healthRenderer.material.SetFloat("healthPercentage", current / maxHealth);
+                healthPointsWorldText.SetText(current + " / " + maxHealth);
             }
             else // If we are the player, we have to edit the material directly (limitation of unity's canvas renderer)
             {
-                imageMaterial.SetFloat("healthPercentage", HP.Value / maxHealth);
-                healthPointsUIText.SetText(HP.Value + " / " + maxHealth);
+                imageMaterial.SetFloat("healthPercentage", current / maxHealth);
+                healthPointsUIText.SetText(current + " / " + maxHealth);
             }
+
+            AudioManager.Singleton.PlayClipAtPoint(damageTakenSound, transform.position, 1);
+            if (previous / maxHealth > 0.2f & current / maxHealth <= 0.2f)
+                AudioManager.Singleton.PlayClipAtPoint(lowHealthSound, transform.position, 1);
         }
 
         private void OnAttacked(OnAttackedData data) { }

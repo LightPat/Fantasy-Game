@@ -153,7 +153,6 @@ GameObject:
   - component: {fileID: 8783793137523742589}
   - component: {fileID: 8783793137523742588}
   - component: {fileID: 6735074288099303180}
-  - component: {fileID: 8978800706497499643}
   - component: {fileID: -5155256173992820553}
   m_Layer: 0
   m_Name: 9mm Bullet
@@ -210,21 +209,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &8978800706497499643
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8783793137523742586}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interpolate: 1
-  positionThreshold: 0.001
-  rotAngleThreshold: 0.001
 --- !u!114 &-5155256173992820553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -237,10 +221,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 502960533443d414a89b94e7ffe65a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  impactSound: {fileID: 8300000, guid: 09a8ee7010a430446b582cd94731a18a, type: 3}
+  flyBySound: {fileID: 8300000, guid: cdfa4cc4ce9a6aa4d96d3fcbbde95cb1, type: 3}
   maxDestroyDistance: 300
-  hitmarkerSound: {fileID: 8300000, guid: 3cf53b7d782708b409bcd1a45eb1ec9f, type: 3}
-  hitmarkerVolume: 1
-  hitmarkerTime: 1
+  originalScale: {x: 0, y: 0, z: 0}
 --- !u!1001 &173089248244857447
 PrefabInstance:
   m_ObjectHideFlags: 0

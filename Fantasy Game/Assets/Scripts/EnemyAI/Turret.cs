@@ -30,12 +30,14 @@ namespace LightPat.EnemyAI
         {
             if (!IsServer) { return; }
             if (!IsSpawned) { return; }
+            return;
 
             if (allowAttack)
             {
                 GameObject g = Instantiate(projectile, projectileSpawn.position, projectileSpawn.rotation);
                 g.transform.localScale = g.transform.localScale * scaleBulletSize;
                 Projectile p = g.GetComponent<Projectile>();
+                p.originalScale = Vector3.one * scaleBulletSize;
                 p.NetworkObject.Spawn(true);
                 p.InstantiateProjectile(NetworkObject, null, transform.forward * projectileForce, baseDamage);
                 allowAttack = false;
@@ -46,6 +48,16 @@ namespace LightPat.EnemyAI
                 lastTime = Time.time;
                 allowAttack = true;
             }
+        }
+
+        void OnAttacked(OnAttackedData data)
+        {
+            GameObject g = Instantiate(projectile, projectileSpawn.position, projectileSpawn.rotation);
+            g.transform.localScale = g.transform.localScale * scaleBulletSize;
+            Projectile p = g.GetComponent<Projectile>();
+            p.originalScale = Vector3.one * scaleBulletSize;
+            p.NetworkObject.Spawn(true);
+            p.InstantiateProjectile(NetworkObject, null, transform.forward * projectileForce, baseDamage);
         }
     }
 }

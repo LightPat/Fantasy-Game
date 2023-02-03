@@ -237,14 +237,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25e29badfa7a9fb45a6dd5be8b9eba20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 0
+  impactSound: {fileID: 8300000, guid: 09a8ee7010a430446b582cd94731a18a, type: 3}
+  flyBySound: {fileID: 8300000, guid: cdfa4cc4ce9a6aa4d96d3fcbbde95cb1, type: 3}
   maxDestroyDistance: 300
+  originalScale: {x: 0, y: 0, z: 0}
   hitmarkerSound: {fileID: 8300000, guid: 3cf53b7d782708b409bcd1a45eb1ec9f, type: 3}
   hitmarkerVolume: 1
   hitmarkerTime: 1
-  inflicter: {fileID: 0}
-  originWeapon: {fileID: 0}
-  startForce: {x: 0, y: 0, z: 0}
 --- !u!1001 &3779237845723392370
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.Core
 {
@@ -61,7 +62,10 @@ namespace LightPat.Core
             {
                 RegisterAudioSource(audioSouce);
             }
-            AudioListener.volume = initialVolume;
+            if (!NetworkManager.Singleton.IsClient)
+                AudioListener.volume = 0;
+            else
+                AudioListener.volume = initialVolume;
         }
 
         private void Update()

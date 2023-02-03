@@ -3,7 +3,14 @@ guid: 97b494da67310674387fd7696b2df54d
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - healthRenderer: {instanceID: 0}
+  - healthPointsWorldText: {instanceID: 0}
+  - imageMaterial: {instanceID: 0}
+  - healthPointsUIText: {instanceID: 0}
+  - damageTakenSound: {fileID: 8300000, guid: 5fd3b75367e0adf43a4b321bb32593e2, type: 3}
+  - lowHealthSound: {fileID: 8300000, guid: 8cbad3158c843e148a496d23e69aef9d, type: 3}
+  - headCollider: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

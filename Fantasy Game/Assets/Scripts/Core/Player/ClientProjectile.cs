@@ -7,44 +7,21 @@ namespace LightPat.Core.Player
 {
     public class ClientProjectile : Projectile
     {
+        [Header("Hitmarker Data")]
         public AudioClip hitmarkerSound;
         public float hitmarkerVolume = 1;
         public float hitmarkerTime = 1;
 
-        private NetworkVariable<Vector3> startForceNetworked = new NetworkVariable<Vector3>();
-        private NetworkVariable<ulong> inflicterNetworkId = new NetworkVariable<ulong>();
-
-        // Start gets called after spawn
         public override void OnNetworkSpawn()
         {
-            impactSoundAudioClipIndex.OnValueChanged += OnSoundAudioClipIndexChage;
-
-            // Propogate startForce variable change to clients since it is changed before network spawn
-            if (IsServer)
-            {
-                inflicterNetworkId.Value = inflicter.NetworkObjectId;
-                startForceNetworked.Value = startForce;
-            }
-            
+            impactSoundAudioClipIndex.OnValueChanged += OnImpactSoundAudioClipIndexChange;
             StartCoroutine(WaitForInstantiation());
-
             startPos = transform.position;
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            impactSoundAudioClipIndex.OnValueChanged -= OnSoundAudioClipIndexChage;
-
-            if (impactSoundAudioClipIndex.Value == -1) { return; }
-
-            AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[impactSoundAudioClipIndex.Value], transform.position, 0.8f);
         }
 
         protected override IEnumerator WaitForInstantiation()
         {
-            yield return new WaitUntil(() => projectileInstantiatedNetworked.Value);
-            // Wait for network variable changes to hit this client
-            yield return new WaitUntil(() => startForceNetworked.Value != Vector3.zero);
+            yield return new WaitUntil(() => projectileInstantiated.Value);
 
             inflicter = NetworkManager.SpawnManager.SpawnedObjects[inflicterNetworkId.Value];
 
@@ -75,44 +52,6 @@ namespace LightPat.Core.Player
             }
         }
 
-        bool despawnSent;
-        private void Update()
-        {
-            if (!inflicter) { return; }
-
-            // Play bullet whizz sound if the local player is near it
-            if (!flyByClipPlayed)
-            {
-                Collider[] allHits = Physics.OverlapSphere(transform.position, 10, -1, QueryTriggerInteraction.Ignore);
-                foreach (Collider c in allHits)
-                {
-                    NetworkObject colliderObj = c.GetComponentInParent<NetworkObject>();
-                    if (colliderObj)
-                    {
-                        if (colliderObj.IsLocalPlayer)
-                        {
-                            if (!flyByClipPlayed)
-                            {
-                                if (colliderObj == inflicter) { continue; }
-                                AudioManager.Singleton.PlayClipAtPoint(flyBySound, transform.position, 0.5f);
-                                flyByClipPlayed = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (despawnSent) { return; }
-            if (!IsOwner) { return; }
-
-            if (Vector3.Distance(startPos, transform.position) > maxDestroyDistance)
-            {
-                despawnSent = true;
-                DespawnSelfServerRpc();
-            }
-        }
-
         private void OnTriggerEnter(Collider other)
         {
             if (despawnSent) { return; }
@@ -133,11 +72,8 @@ namespace LightPat.Core.Player
                 InflictDamageServerRpc(hit.NetworkObjectId);
             }
 
-            if (!hit)
-                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, impactSound);
-
             despawnSent = true;
-            DespawnSelfServerRpc();
+            impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, impactSound);
         }
 
         [ServerRpc]
@@ -150,12 +86,6 @@ namespace LightPat.Core.Player
                 if (inflicter.IsPlayerObject)
                     inflicter.SendMessage("PlayHitmarker", new HitmarkerData(System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, hitmarkerSound), hitmarkerVolume, hitmarkerTime, inflicter.OwnerClientId));
             }
-        }
-
-        [ServerRpc]
-        private void DespawnSelfServerRpc()
-        {
-            NetworkObject.Despawn(true);
         }
     }
 

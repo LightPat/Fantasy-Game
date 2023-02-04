@@ -62,7 +62,7 @@ namespace LightPat.Core
             {
                 RegisterAudioSource(audioSouce);
             }
-            if (!NetworkManager.Singleton.IsClient)
+            if (NetworkManager.Singleton.IsClient)
                 AudioListener.volume = 0;
             else
                 AudioListener.volume = initialVolume;

@@ -181,33 +181,39 @@ namespace LightPat.Core
                 {
                     ClientManager.Singleton.AddDamage(projectile.inflicter.OwnerClientId, damageInflicted);
                     if (HP.Value == 0)
-                    {
-                        ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
                         ClientManager.Singleton.AddKills(projectile.inflicter.OwnerClientId, 1);
-                    }
                 }
             }
+
+            if (NetworkObject.IsPlayerObject & damageInflicted > 0 & HP.Value == 0)
+                ClientManager.Singleton.AddDeaths(OwnerClientId, 1);
 
             return true;
         }
 
         private void OnHPChanged(float previous, float current)
         {
+            float healthPercent = current / maxHealth;
+
             // If we are a NPC, we edit the renderer's material instance
             if (healthRenderer != null)
             {
-                healthRenderer.material.SetFloat("healthPercentage", current / maxHealth);
+                healthRenderer.material.SetFloat("healthPercentage", healthPercent);
                 healthPointsWorldText.SetText(current + " / " + maxHealth);
             }
             else // If we are the player, we have to edit the material directly (limitation of unity's canvas renderer)
             {
-                imageMaterial.SetFloat("healthPercentage", current / maxHealth);
+                imageMaterial.SetFloat("healthPercentage", healthPercent);
                 healthPointsUIText.SetText(current + " / " + maxHealth);
             }
 
-            AudioManager.Singleton.PlayClipAtPoint(damageTakenSound, transform.position, 1);
-            if (previous / maxHealth > 0.2f & current / maxHealth <= 0.2f)
-                AudioManager.Singleton.PlayClipAtPoint(lowHealthSound, transform.position, 1);
+            // If our health percentage is less than 1, play a damage taken sound
+            if (healthPercent < 1)
+            {
+                AudioManager.Singleton.PlayClipAtPoint(damageTakenSound, transform.position, 1);
+                if (previous / maxHealth > 0.2f & current / maxHealth <= 0.2f)
+                    AudioManager.Singleton.PlayClipAtPoint(lowHealthSound, transform.position, 1);
+            }
         }
 
         private void OnAttacked(OnAttackedData data) { }

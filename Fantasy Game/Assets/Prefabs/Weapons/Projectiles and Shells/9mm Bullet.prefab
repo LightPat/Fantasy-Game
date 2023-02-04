@@ -154,6 +154,7 @@ GameObject:
   - component: {fileID: 8783793137523742588}
   - component: {fileID: 6735074288099303180}
   - component: {fileID: -5155256173992820553}
+  - component: {fileID: 5052729177904751726}
   m_Layer: 0
   m_Name: 9mm Bullet
   m_TagString: Untagged
@@ -225,6 +226,21 @@ MonoBehaviour:
   flyBySound: {fileID: 8300000, guid: cdfa4cc4ce9a6aa4d96d3fcbbde95cb1, type: 3}
   maxDestroyDistance: 300
   originalScale: {x: 0, y: 0, z: 0}
+--- !u!114 &5052729177904751726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8783793137523742586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c82f570497546143a79e62554b2cca5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interpolate: 1
+  positionThreshold: 0.001
+  rotAngleThreshold: 0.001
 --- !u!1001 &173089248244857447
 PrefabInstance:
   m_ObjectHideFlags: 0

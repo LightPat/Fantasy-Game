@@ -18,42 +18,77 @@ namespace LightPat.Core
 
         protected bool damageRunning;
         protected Vector3 startPos; // Despawn bullet after a certain distance traveled
-        protected bool projectileInstantiated;
-        protected NetworkVariable<bool> projectileInstantiatedNetworked = new NetworkVariable<bool>();
+        protected NetworkVariable<bool> projectileInstantiated = new NetworkVariable<bool>();
         protected NetworkVariable<int> impactSoundAudioClipIndex = new NetworkVariable<int>(-1, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        protected NetworkVariable<Vector3> startForceNetworked = new NetworkVariable<Vector3>();
+        protected NetworkVariable<ulong> inflicterNetworkId = new NetworkVariable<ulong>();
 
+        // This is called when the projectile hits a wall
+        protected bool impactSoundPlayed;
+        protected void OnImpactSoundAudioClipIndexChange(int prev, int current)
+        {
+            if (impactSoundPlayed) { return; }
+            impactSoundPlayed = true;
+            AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[current], transform.position, 0.8f);
+            if (IsServer)
+            {
+                soundEventCalled = true;
+                StartCoroutine(DespawnAfterSound());
+            }
+        }
+
+        // Despawn after 1 frame to allow change() method to be called
+        protected bool soundEventCalled;
+        private IEnumerator DespawnAfterSound()
+        {
+            yield return null;
+            NetworkObject.Despawn(true);
+        }
+
+        // Used to instantiate a projectile (supply data). Once this is done we will execute more code after the projectile is spawned
         public void InstantiateProjectile(NetworkObject inflicter, Weapon originWeapon, Vector3 startForce, float damage)
         {
-            //if (!IsServer) { Debug.LogError("Instantiating a projectile from somewhere other than the server"); }
+            // Access through singleton because this object may not be spawned yet
+            if (!NetworkManager.Singleton.IsServer) { Debug.LogError("Instantiating a projectile from somewhere other than the server"); return; }
 
             this.inflicter = inflicter;
             this.originWeapon = originWeapon;
             this.startForce = startForce;
             this.damage = damage;
-            projectileInstantiated = true;
             StartCoroutine(WaitForSpawn());
         }
 
         private IEnumerator WaitForSpawn()
         {
             yield return new WaitUntil(() => IsSpawned);
-            projectileInstantiatedNetworked.Value = projectileInstantiated;
+            startForceNetworked.Value = startForce;
+            inflicterNetworkId.Value = inflicter.NetworkObjectId;
+            projectileInstantiated.Value = true;
         }
 
-        // Start gets called after spawn
+        // Once this is done we will execute more code after the projectile is instantiated
         public override void OnNetworkSpawn()
         {
-            impactSoundAudioClipIndex.OnValueChanged += OnSoundAudioClipIndexChage;
+            impactSoundAudioClipIndex.OnValueChanged += OnImpactSoundAudioClipIndexChange;
             // Propogate startForce variable change to clients since it is changed before network spawn
             if (IsServer)
                 StartCoroutine(WaitForInstantiation());
 
             startPos = transform.position;
+
+            if (!IsOwnedByServer) { Debug.LogError("Projectiles should only belong to the server. Use ClientProjectile instead."); }
+        }
+
+        protected virtual IEnumerator WaitForInstantiation()
+        {
+            yield return new WaitUntil(() => projectileInstantiated.Value);
+            GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
+            transform.localScale = originalScale;
         }
 
         public override void OnNetworkDespawn()
         {
-            impactSoundAudioClipIndex.OnValueChanged -= OnSoundAudioClipIndexChage;
+            impactSoundAudioClipIndex.OnValueChanged -= OnImpactSoundAudioClipIndexChange;
         }
 
         [HideInInspector] public Vector3 originalScale;
@@ -63,20 +98,16 @@ namespace LightPat.Core
             transform.localScale = Vector3.zero;
         }
 
-        protected virtual IEnumerator WaitForInstantiation()
-        {
-            yield return new WaitUntil(() => projectileInstantiatedNetworked.Value);
-            GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
-            transform.localScale = originalScale;
-        }
-
         protected bool flyByClipPlayed;
-        private void Update()
+        protected bool despawnSent;
+        protected void Update()
         {
+            if (!inflicter) { return; }
+
             // Play bullet whizz sound if the local player is near it
             if (!flyByClipPlayed)
             {
-                Collider[] allHits = Physics.OverlapSphere(transform.position, 0.5f, -1, QueryTriggerInteraction.Ignore);
+                Collider[] allHits = Physics.OverlapSphere(transform.position, 1, -1, QueryTriggerInteraction.Ignore);
                 foreach (Collider c in allHits)
                 {
                     NetworkObject colliderObj = c.GetComponentInParent<NetworkObject>();
@@ -86,6 +117,7 @@ namespace LightPat.Core
                         {
                             if (!flyByClipPlayed)
                             {
+                                if (colliderObj == inflicter) { continue; }
                                 AudioManager.Singleton.PlayClipAtPoint(flyBySound, transform.position, 0.5f);
                                 flyByClipPlayed = true;
                                 break;
@@ -96,21 +128,20 @@ namespace LightPat.Core
             }
 
             if (!IsSpawned) { return; }
-            if (!IsServer) { return; }
+            if (!IsOwner) { return; }
+            if (despawnSent) { return; }
 
             if (Vector3.Distance(startPos, transform.position) > maxDestroyDistance)
             {
-                if (IsSpawned)
-                    NetworkObject.Despawn(true);
-                else
-                    Destroy(gameObject);
+                despawnSent = true;
+                DespawnSelfServerRpc();
             }
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!IsServer) { return; }
             if (!IsSpawned) { return; }
+            if (!IsServer) { return; }
             if (other.isTrigger) { return; }
             if (other.GetComponent<Projectile>()) { return; }
 
@@ -134,22 +165,10 @@ namespace LightPat.Core
             else
             {
                 impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, impactSound);
-                NetworkObject.Despawn(true); // If we hit a player despawn TODO replace this with another audioclip
+                //NetworkObject.Despawn(true); // If we hit a player despawn TODO replace this with another audioclip
             }
         }
 
-        protected void OnSoundAudioClipIndexChage(int prev, int current)
-        {
-            AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[current], transform.position, 0.8f);
-            Debug.Log(current);
-            if (IsServer)
-                StartCoroutine(DespawnAfterSound());
-        }
-
-        private IEnumerator DespawnAfterSound()
-        {
-            yield return null;
-            NetworkObject.Despawn(true);
-        }
+        [ServerRpc] protected void DespawnSelfServerRpc() { NetworkObject.Despawn(true); }
     }
 }

@@ -11,10 +11,12 @@ namespace LightPat.Core
         public AudioClip flyBySound;
         public float maxDestroyDistance = 300;
 
-        [HideInInspector] public NetworkObject inflicter { get; protected set; }
-        [HideInInspector] public Weapon originWeapon { get; protected set; }
-        [HideInInspector] public Vector3 startForce { get; protected set; }
-        [HideInInspector] public float damage { get; protected set; }
+        [HideInInspector] public bool frontTarget;
+
+        public NetworkObject inflicter { get; protected set; }
+        public Weapon originWeapon { get; protected set; }
+        public Vector3 startForce { get; protected set; }
+        public float damage { get; protected set; }
 
         protected bool damageRunning;
         protected Vector3 startPos; // Despawn bullet after a certain distance traveled
@@ -29,7 +31,7 @@ namespace LightPat.Core
         {
             if (impactSoundPlayed) { return; }
             impactSoundPlayed = true;
-            AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[current], transform.position, 0.8f);
+            AudioManager.Singleton.PlayClipAtPoint(AudioManager.Singleton.networkAudioClips[current], transform.position, 1);
             if (IsServer)
             {
                 soundEventCalled = true;
@@ -98,31 +100,26 @@ namespace LightPat.Core
             transform.localScale = Vector3.zero;
         }
 
-        protected bool flyByClipPlayed;
         protected bool despawnSent;
+        protected NetworkObject flyByPlayer;
         protected void Update()
         {
             if (!inflicter) { return; }
 
             // Play bullet whizz sound if the local player is near it
-            if (!flyByClipPlayed)
+            Collider[] allHits = Physics.OverlapSphere(transform.position, 1, -1, QueryTriggerInteraction.Ignore);
+            foreach (Collider c in allHits)
             {
-                Collider[] allHits = Physics.OverlapSphere(transform.position, 1, -1, QueryTriggerInteraction.Ignore);
-                foreach (Collider c in allHits)
+                NetworkObject colliderObj = c.GetComponentInParent<NetworkObject>();
+                if (colliderObj)
                 {
-                    NetworkObject colliderObj = c.GetComponentInParent<NetworkObject>();
-                    if (colliderObj)
+                    if (colliderObj == inflicter) { continue; }
+                    if (!flyByPlayer & colliderObj.IsLocalPlayer & !frontTarget)
                     {
-                        if (colliderObj.IsLocalPlayer)
-                        {
-                            if (!flyByClipPlayed)
-                            {
-                                if (colliderObj == inflicter) { continue; }
-                                AudioManager.Singleton.PlayClipAtPoint(flyBySound, transform.position, 0.5f);
-                                flyByClipPlayed = true;
-                                break;
-                            }
-                        }
+                        AudioManager.Singleton.PlayClipAtPoint(flyBySound, transform.position, 0.5f);
+                        flyByPlayer = colliderObj;
+                        flyByPlayer.SendMessage("OnProjectileNear", this);
+                        break;
                     }
                 }
             }

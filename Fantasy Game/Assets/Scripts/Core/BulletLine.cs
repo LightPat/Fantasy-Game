@@ -7,10 +7,12 @@ namespace LightPat.Core
     public class BulletLine : MonoBehaviour
     {
         LineRenderer lineRenderer;
+        Projectile projectile;
 
         private void Start()
         {
             lineRenderer = GetComponent<LineRenderer>();
+            projectile = GetComponentInParent<Projectile>();
         }
 
         private void Update()
@@ -23,6 +25,7 @@ namespace LightPat.Core
                     lineRenderer.material.color = new Color(255, 0, 0);
                     lineRenderer.SetPosition(0, transform.position);
                     lineRenderer.SetPosition(1, hit.point);
+                    projectile.frontTarget = true;
                 }
                 else
                 {

@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
+using System.Linq;
+using Unity.Netcode;
 
 namespace LightPat.Core.Player
 {
@@ -16,6 +19,7 @@ namespace LightPat.Core.Player
         public Transform crosshair;
         public GameObject hitMarker;
         public TextMeshProUGUI fpsCounter;
+        public Image projectileWarning;
 
         WeaponLoadout weaponLoadout;
 
@@ -95,10 +99,14 @@ namespace LightPat.Core.Player
             hitMarker.SetActive(false);
         }
 
+        List<Projectile> nearbyProjectiles = new List<Projectile>();
+        float projectileWarningTargetAlpha;
+        float currentAlpha;
         private void Update()
         {
             fpsCounter.SetText(Mathf.RoundToInt((float)1.0 / Time.deltaTime).ToString());
 
+            // Enable/disable crosshair
             if (weaponLoadout.equippedWeapon)
             {
                 if (weaponLoadout.equippedWeapon.TryGetComponent(out Gun gun))
@@ -110,6 +118,48 @@ namespace LightPat.Core.Player
             {
                 crosshair.gameObject.SetActive(true);
             }
+
+            nearbyProjectiles.RemoveAll(item => item == null);
+            List<Projectile> projectilesToRemove = new List<Projectile>();
+            List<float> distances = new List<float>();
+            foreach (Projectile projectile in nearbyProjectiles)
+            {
+                RaycastHit[] allHits = Physics.SphereCastAll(projectile.transform.position, 1, projectile.transform.forward, 1, -1, QueryTriggerInteraction.Ignore);
+                System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+
+                int hitCount = 0;
+                foreach (RaycastHit hit in allHits)
+                {
+                    // If this collider does not belong to the player
+                    if (!GetComponentInParent<NetworkObject>().GetComponentsInChildren<Collider>().Contains(hit.collider)) { continue; }
+
+                    distances.Add(Vector3.Distance(hit.collider.transform.position, projectile.transform.position));
+                    hitCount += 1;
+                }
+                if (hitCount == 0) { projectilesToRemove.Add(projectile); }
+            }
+            nearbyProjectiles.RemoveAll(item => projectilesToRemove.Contains(item));
+
+            if (distances.Count > 0)
+            {
+                // range of 0, 2
+                // take percentage between the 2 values
+                // so if distance is 0, 0%, if it is 1 50%, if it is 2 100%
+                // then take that percentage of 255 and assign the alpha
+                projectileWarningTargetAlpha = Mathf.Clamp(distances.Max(), 0, 1);
+            }
+            else
+            {
+                projectileWarningTargetAlpha = 0;
+            }
+
+            currentAlpha = Mathf.Lerp(currentAlpha, projectileWarningTargetAlpha, Time.deltaTime * 10);
+            projectileWarning.color = new Color(0, 0, 0, Mathf.Clamp(currentAlpha, 0, 0.5f));
+        }
+
+        public void OnProjectileNear(Projectile projectile)
+        {
+            nearbyProjectiles.Add(projectile);
         }
     }
 }

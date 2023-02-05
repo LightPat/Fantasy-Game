@@ -751,5 +751,10 @@ namespace LightPat.Core.Player
         {
             animator.SetBool("dead", false);
         }
+
+        void OnProjectileNear(Projectile projectile)
+        {
+            playerHUD.OnProjectileNear(projectile);
+        }
     }
 }

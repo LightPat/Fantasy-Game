@@ -5550,7 +5550,7 @@ MonoBehaviour:
   projectile: {fileID: 8783793137523742586, guid: f1e14184793f7fa40bdc89dc1cd2a3cf, type: 3}
   shootDelay: 1
   baseDamage: 5
-  projectileForce: 5
+  projectileForce: 50
   scaleBulletSize: 5
 --- !u!1 &1722310542
 GameObject:

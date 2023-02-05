@@ -108,8 +108,6 @@ namespace LightPat.Core
         protected NetworkObject flyByPlayer;
         protected void Update()
         {
-            Debug.Log(inflicter);
-
             if (!inflicter) { return; }
 
             // Play bullet whizz sound if the local player is near it
@@ -150,7 +148,6 @@ namespace LightPat.Core
 
             // Use rigidbody in case object is parented to another rigidbody
             Attributes hit = other.GetComponentInParent<Attributes>();
-            bool damageSuccess = false;
             if (hit)
             {
                 if (!inflicter) { return; } // If we haven't added force (network variables haven't been synced)
@@ -158,7 +155,7 @@ namespace LightPat.Core
                 if (damageRunning) { return; }
                 damageRunning = true;
 
-                damageSuccess = hit.InflictDamage(this);
+                hit.InflictDamage(this);
             }
 
             if (!hit)

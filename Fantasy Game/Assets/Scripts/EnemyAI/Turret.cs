@@ -30,6 +30,7 @@ namespace LightPat.EnemyAI
         {
             if (!IsServer) { return; }
             if (!IsSpawned) { return; }
+            if (GetComponent<Attributes>().HP.Value <= 0) { return; }
 
             if (allowAttack)
             {

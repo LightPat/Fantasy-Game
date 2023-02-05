@@ -40,12 +40,28 @@ namespace LightPat.Core
             if (!audioClip) { Debug.LogWarning("No audio clip, have you registered it in networkAudioClips?"); return; }
 
             GameObject g = Instantiate(audioSourcePrefab, position, Quaternion.identity);
-            StartCoroutine(PlayPrefab(g.GetComponent<AudioSource>(), audioClip, volume));
+            StartCoroutine(Play3DSoundPrefab(g.GetComponent<AudioSource>(), audioClip, volume));
         }
 
-        private IEnumerator PlayPrefab(AudioSource audioSouce, AudioClip audioClip, float volume = 1)
+        private IEnumerator Play3DSoundPrefab(AudioSource audioSouce, AudioClip audioClip, float volume = 1)
         {
             RegisterAudioSource(audioSouce);
+            audioSouce.PlayOneShot(audioClip, volume);
+            yield return new WaitUntil(() => !audioSouce.isPlaying);
+            Destroy(audioSouce.gameObject);
+        }
+
+        public void Play2DClip(AudioClip audioClip, float volume = 1)
+        {
+            if (!audioClip) { Debug.LogWarning("No audio clip, have you registered it in networkAudioClips?"); return; }
+
+            GameObject g = Instantiate(audioSourcePrefab);
+            StartCoroutine(Play2DSoundPrefab(g.GetComponent<AudioSource>(), audioClip, volume));
+        }
+
+        private IEnumerator Play2DSoundPrefab(AudioSource audioSouce, AudioClip audioClip, float volume = 1)
+        {
+            audioSouce.spatialBlend = 0;
             audioSouce.PlayOneShot(audioClip, volume);
             yield return new WaitUntil(() => !audioSouce.isPlaying);
             Destroy(audioSouce.gameObject);

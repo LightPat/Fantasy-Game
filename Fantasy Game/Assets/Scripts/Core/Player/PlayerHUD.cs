@@ -157,6 +157,22 @@ namespace LightPat.Core.Player
             projectileWarning.color = new Color(0, 0, 0, Mathf.Clamp(currentAlpha, 0, 0.5f));
         }
 
+        public AudioClip openSound;
+        public AudioClip closeSound;
+        private void OnEnable()
+        {
+            //AudioManager.Singleton.PlayClipAtPoint(closeSound, weaponLoadout.transform.position);
+            if (GetComponentInParent<NetworkObject>().IsSpawned)
+                AudioManager.Singleton.Play2DClip(closeSound);
+        }
+
+        private void OnDisable()
+        {
+            //AudioManager.Singleton.PlayClipAtPoint(openSound, weaponLoadout.transform.position);
+            if (GetComponentInParent<NetworkObject>().IsSpawned)
+                AudioManager.Singleton.Play2DClip(openSound);
+        }
+
         public void OnProjectileNear(Projectile projectile)
         {
             nearbyProjectiles.Add(projectile);

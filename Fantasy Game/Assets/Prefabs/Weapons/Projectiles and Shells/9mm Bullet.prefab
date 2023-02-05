@@ -222,9 +222,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 502960533443d414a89b94e7ffe65a1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  impactSound: {fileID: 8300000, guid: 09a8ee7010a430446b582cd94731a18a, type: 3}
-  flyBySound: {fileID: 8300000, guid: cdfa4cc4ce9a6aa4d96d3fcbbde95cb1, type: 3}
+  playerImpactSound: {fileID: 8300000, guid: d9283ad08b23b2b46b1282e14cfe48cc, type: 3}
+  metalImpactSound: {fileID: 8300000, guid: 09a8ee7010a430446b582cd94731a18a, type: 3}
+  flyBySound: {fileID: 8300000, guid: cdf6328dc14582e4695eb7cf42d78ffd, type: 3}
   maxDestroyDistance: 300
+  frontTarget: 0
   originalScale: {x: 0, y: 0, z: 0}
 --- !u!114 &5052729177904751726
 MonoBehaviour:

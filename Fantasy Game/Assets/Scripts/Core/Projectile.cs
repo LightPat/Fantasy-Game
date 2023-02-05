@@ -7,7 +7,8 @@ namespace LightPat.Core
 {
     public class Projectile : NetworkBehaviour
     {
-        public AudioClip impactSound;
+        public AudioClip playerImpactSound;
+        public AudioClip metalImpactSound;
         public AudioClip flyBySound;
         public float maxDestroyDistance = 300;
 
@@ -73,8 +74,7 @@ namespace LightPat.Core
         {
             impactSoundAudioClipIndex.OnValueChanged += OnImpactSoundAudioClipIndexChange;
             // Propogate startForce variable change to clients since it is changed before network spawn
-            if (IsServer)
-                StartCoroutine(WaitForInstantiation());
+            StartCoroutine(WaitForInstantiation());
 
             startPos = transform.position;
 
@@ -84,8 +84,12 @@ namespace LightPat.Core
         protected virtual IEnumerator WaitForInstantiation()
         {
             yield return new WaitUntil(() => projectileInstantiated.Value);
-            GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
-            transform.localScale = originalScale;
+            inflicter = NetworkManager.SpawnManager.SpawnedObjects[inflicterNetworkId.Value];
+            if (IsServer)
+            {
+                GetComponent<Rigidbody>().AddForce(startForce, ForceMode.VelocityChange);
+                transform.localScale = originalScale;
+            }
         }
 
         public override void OnNetworkDespawn()
@@ -104,6 +108,8 @@ namespace LightPat.Core
         protected NetworkObject flyByPlayer;
         protected void Update()
         {
+            Debug.Log(inflicter);
+
             if (!inflicter) { return; }
 
             // Play bullet whizz sound if the local player is near it
@@ -155,15 +161,10 @@ namespace LightPat.Core
                 damageSuccess = hit.InflictDamage(this);
             }
 
-            if (!damageSuccess)
-            {
-                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, impactSound);
-            }
+            if (!hit)
+                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, metalImpactSound);
             else
-            {
-                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, impactSound);
-                //NetworkObject.Despawn(true); // If we hit a player despawn TODO replace this with another audioclip
-            }
+                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, playerImpactSound);
         }
 
         [ServerRpc] protected void DespawnSelfServerRpc() { NetworkObject.Despawn(true); }

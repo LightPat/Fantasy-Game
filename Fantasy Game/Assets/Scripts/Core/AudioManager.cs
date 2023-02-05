@@ -37,7 +37,7 @@ namespace LightPat.Core
 
         public void PlayClipAtPoint(AudioClip audioClip, Vector3 position, float volume = 1)
         {
-            if (!audioClip) { return; }
+            if (!audioClip) { Debug.LogWarning("No audio clip, have you registered it in networkAudioClips?"); return; }
 
             GameObject g = Instantiate(audioSourcePrefab, position, Quaternion.identity);
             StartCoroutine(PlayPrefab(g.GetComponent<AudioSource>(), audioClip, volume));

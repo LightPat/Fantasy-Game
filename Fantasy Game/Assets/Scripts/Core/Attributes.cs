@@ -207,12 +207,15 @@ namespace LightPat.Core
                 healthPointsUIText.SetText(current + " / " + maxHealth);
             }
 
-            // If our health percentage is less than 1, play a damage taken sound
-            if (healthPercent < 1)
+            if (IsLocalPlayer)
             {
-                AudioManager.Singleton.PlayClipAtPoint(damageTakenSound, transform.position, 1);
-                if (previous / maxHealth > 0.2f & current / maxHealth <= 0.2f)
-                    AudioManager.Singleton.PlayClipAtPoint(lowHealthSound, transform.position, 1);
+                // If our health percentage is less than 1, play a damage taken sound
+                if (healthPercent < 1 & previous > 0)
+                {
+                    AudioManager.Singleton.PlayClipAtPoint(damageTakenSound, transform.position, 1);
+                    if (previous / maxHealth > 0.2f & current / maxHealth <= 0.2f)
+                        AudioManager.Singleton.PlayClipAtPoint(lowHealthSound, transform.position, 1);
+                }
             }
         }
 

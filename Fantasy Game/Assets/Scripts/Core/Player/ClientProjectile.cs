@@ -73,7 +73,10 @@ namespace LightPat.Core.Player
             }
 
             despawnSent = true;
-            impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, impactSound);
+            if (!hit)
+                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, metalImpactSound);
+            else
+                impactSoundAudioClipIndex.Value = System.Array.IndexOf(AudioManager.Singleton.networkAudioClips, playerImpactSound);
         }
 
         [ServerRpc]

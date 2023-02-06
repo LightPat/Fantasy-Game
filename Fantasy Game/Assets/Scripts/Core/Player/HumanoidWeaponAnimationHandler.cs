@@ -650,6 +650,23 @@ namespace LightPat.Core.Player
                 weaponLoadout.equippedWeapon.GetComponent<GreatSword>().SliceEnd(other);
         }
 
+        [Header("OnCollisionEnter")]
+        public AudioClip[] footStepSounds;
+        public TwoBoneIKConstraint leftLegIK;
+        public TwoBoneIKConstraint rightLegIK;
+        Vector3 lastFootstepPosition;
+        private void OnCollisionEnter(Collision collision)
+        {
+            if (!IsSpawned) { return; }
+            if (animator.GetBool("falling")) { return; }
+            if (collision.relativeVelocity.magnitude < 1) { return; }
+            if (Vector3.Distance(collision.GetContact(0).point, lastFootstepPosition) < 1) { return; }
+
+            lastFootstepPosition = collision.GetContact(0).point;
+            AudioManager.Singleton.PlayClipAtPoint(footStepSounds[UnityEngine.Random.Range(0, footStepSounds.Length)], collision.GetContact(0).point);
+        }
+
+        [Header("OnCollisionStay")]
         public float maxMantleHeight = 1;
         public float minTranslateDistance = 0.13f;
         private void OnCollisionStay(Collision collision)

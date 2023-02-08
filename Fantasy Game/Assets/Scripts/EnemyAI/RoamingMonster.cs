@@ -69,7 +69,7 @@ namespace LightPat.EnemyAI
         private void FixedUpdate()
         {
             if (!IsOwner) { return; }
-            if (animator.GetBool("airborne") | animator.GetBool("landing")) { return; }
+            if (animator.GetBool("landing")) { return; }
 
             // If we don't have a target yet, roam
             if (target == null)
@@ -235,7 +235,6 @@ namespace LightPat.EnemyAI
 
         void OnDeath()
         {
-            Debug.Log("Death");
             NetworkObject.Despawn(true);
         }
     }

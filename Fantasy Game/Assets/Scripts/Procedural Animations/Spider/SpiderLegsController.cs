@@ -21,9 +21,10 @@ namespace LightPat.ProceduralAnimations.Spider
         public float angularLerpSpeedMultiplier;
         public float minimumLerpSpeed;
 
+        public SpiderLegIKSolver[] legSet1 { get; private set; }
+        public SpiderLegIKSolver[] legSet2 { get; private set; }
+
         private RigBuilder rigBuilder;
-        private SpiderLegIKSolver[] legSet1;
-        private SpiderLegIKSolver[] legSet2;
         private float[] previousHeights;
         private float[] heightDifferences;
 

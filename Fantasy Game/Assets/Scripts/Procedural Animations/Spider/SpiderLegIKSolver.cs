@@ -23,10 +23,8 @@ namespace LightPat.ProceduralAnimations.Spider
 
         private void Start()
         {
-            if (transform.parent.parent.parent == null | !transform.parent.parent.parent.GetComponent<SpiderLegsController>())
-            {
+            if (!transform.GetComponentInParent<SpiderLegsController>())
                 Debug.LogWarning(transform + " is not the child of a SpiderLegsController component, so it probably won't work properly.");
-            }
 
             currentPosition = transform.position;
             newPosition = transform.position;
@@ -37,8 +35,9 @@ namespace LightPat.ProceduralAnimations.Spider
         {
             transform.position = currentPosition;
 
-            RaycastHit[] allHits = Physics.RaycastAll(controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1)),
-                Vector3.down, controller.physics.isGroundedDistance);
+            Vector3 raycastPosition = controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1));
+            raycastPosition += controller.rootBone.up;
+            RaycastHit[] allHits = Physics.RaycastAll(raycastPosition, controller.rootBone.up * -1, controller.physics.isGroundedDistance);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
             bool bHit = false;

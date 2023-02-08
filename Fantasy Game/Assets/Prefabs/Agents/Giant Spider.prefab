@@ -226,11 +226,11 @@ MonoBehaviour:
   bodyVerticalOffset: 1.7
   landingTime: 1
   airborneRotateSpeed: 2
+  isGroundedDistance: 1
   airborne: 1
   landing: 0
   velocity: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
-  checkDistance: 1
 --- !u!114 &2540662555291290564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,6 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eb00a955ffa20845921e7e7480ea232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isGroundedDistance: 1
   visionDistance: 20
   chaseSpeed: 7
   maxChaseDistance: 30

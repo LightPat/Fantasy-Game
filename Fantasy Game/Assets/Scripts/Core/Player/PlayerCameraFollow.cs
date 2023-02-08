@@ -57,7 +57,7 @@ namespace LightPat.Core.Player
 
         private void LateUpdate()
         {
-            if (!followTarget) { Destroy(gameObject); }
+            if (!followTarget) { Destroy(gameObject); return; }
 
             transform.position = followTarget.position;
 

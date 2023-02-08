@@ -37,6 +37,7 @@ namespace LightPat.EnemyAI
 
         private void Update()
         {
+            if (!IsOwner) { return; }
             if (target == null)
             {
                 // If we don't have a target check a raycast
@@ -67,6 +68,7 @@ namespace LightPat.EnemyAI
 
         private void FixedUpdate()
         {
+            if (!IsOwner) { return; }
             if (animator.GetBool("airborne") | animator.GetBool("landing")) { return; }
 
             // If we don't have a target yet, roam
@@ -162,14 +164,11 @@ namespace LightPat.EnemyAI
 
             foreach (RaycastHit hit in allHits)
             {
-                if (hit.transform.gameObject == gameObject)
-                {
-                    continue;
-                }
+                if (hit.transform.gameObject == gameObject) { continue; }
 
-                if (hit.transform.GetComponent<Attributes>())
+                if (hit.transform.TryGetComponent(out Attributes hitAttributes))
                 {
-                    hit.transform.GetComponent<Attributes>().InflictDamage(attackDamage, gameObject);
+                    hitAttributes.InflictDamage(attackDamage, gameObject);
                     StartCoroutine(AttackCooldown());
                 }
                 break;
@@ -212,7 +211,6 @@ namespace LightPat.EnemyAI
             Gizmos.color = Color.black;
             Gizmos.DrawSphere(roamingPosition, 1f);
 
-
             if (lookingAround)
             {
                 Gizmos.color = Color.green;
@@ -229,12 +227,6 @@ namespace LightPat.EnemyAI
             }
         }
 
-        void OnFootstep(Vector3 soundOrigin)
-        {
-            lookingAround = true;
-            roamingPosition = soundOrigin;
-        }
-
         void OnAttacked(OnAttackedData data)
         {
             lookingAround = true;
@@ -243,7 +235,8 @@ namespace LightPat.EnemyAI
 
         void OnDeath()
         {
-            DespawnSelf();
+            Debug.Log("Death");
+            NetworkObject.Despawn(true);
         }
     }
 }

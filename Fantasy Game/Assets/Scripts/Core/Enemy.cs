@@ -14,9 +14,5 @@ namespace LightPat.Core
             combat,
             moveToTarget
         }
-
-        protected void DespawnSelf() { DespawnSelfServerRpc(); }
-
-        [ServerRpc] private void DespawnSelfServerRpc() { NetworkObject.Despawn(true); }
     }
 }

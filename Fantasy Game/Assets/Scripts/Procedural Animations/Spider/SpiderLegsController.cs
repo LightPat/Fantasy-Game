@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.Animations.Rigging;
+using Unity.Netcode;
 
 namespace LightPat.ProceduralAnimations.Spider
 {

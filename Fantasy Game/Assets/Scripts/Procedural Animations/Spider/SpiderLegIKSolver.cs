@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.ProceduralAnimations.Spider
 {
-    public class SpiderLegIKSolver : MonoBehaviour
+    public class SpiderLegIKSolver : NetworkBehaviour
     {
         // Assigned from SpiderLegsController Script
         [HideInInspector] public SpiderLegsController controller;
@@ -14,10 +15,11 @@ namespace LightPat.ProceduralAnimations.Spider
         [HideInInspector] public bool permissionToMove = true;
 
         private float lerpProgress;
-        private float lerpSpeed;
         private Vector3 newPosition;
         private Vector3 currentPosition;
         private Vector3 oldPosition;
+
+        private NetworkVariable<float> lerpSpeed = new NetworkVariable<float>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
         private void Start()
         {
@@ -80,10 +82,13 @@ namespace LightPat.ProceduralAnimations.Spider
                 float velocityAverage = controller.physics.velocity.magnitude * controller.lerpSpeedMultiplier;
                 float angularVelocityAverage = controller.physics.angularVelocity.magnitude * controller.angularLerpSpeedMultiplier;
                 
-                lerpSpeed = velocityAverage + angularVelocityAverage;
-                if (lerpSpeed < controller.minimumLerpSpeed)
+                if (IsOwner)
                 {
-                    lerpSpeed = controller.minimumLerpSpeed;
+                    lerpSpeed.Value = velocityAverage + angularVelocityAverage;
+                    if (lerpSpeed.Value < controller.minimumLerpSpeed)
+                    {
+                        lerpSpeed.Value = controller.minimumLerpSpeed;
+                    }
                 }
 
                 Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, lerpProgress);
@@ -91,7 +96,7 @@ namespace LightPat.ProceduralAnimations.Spider
 
                 currentPosition = interpolatedPosition;
 
-                lerpProgress += Time.deltaTime * lerpSpeed;
+                lerpProgress += Time.deltaTime * lerpSpeed.Value;
             }
             else
             {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using LightPat.Core;
-using LightPat.Core.Player;
+using LightPat.ProceduralAnimations.Spider;
 
 namespace LightPat.EnemyAI
 {
@@ -24,12 +24,14 @@ namespace LightPat.EnemyAI
         private bool lookingAround = true;
         public Transform target;
         private Rigidbody rb;
+        private Animator animator;
         private bool radiusBHit;
 
         private void Start()
         {
             startingPosition = transform.position;
             rb = GetComponent<Rigidbody>();
+            animator = GetComponentInChildren<Animator>();
             roamingPosition = transform.position + new Vector3(0.1f,0,0.1f);
         }
 
@@ -43,15 +45,14 @@ namespace LightPat.EnemyAI
 
                 foreach (RaycastHit hit in allHits)
                 {
-                    if (hit.transform.gameObject == gameObject)
+                    if (hit.transform.gameObject == gameObject) { continue; }
+
+                    if (hit.transform.TryGetComponent(out Attributes hitAttributes))
                     {
-                        continue;
+                        if (hitAttributes.team != GetComponent<Attributes>().team)
+                            target = hit.transform;
                     }
 
-                    if (hit.transform.GetComponent<PlayerController>() | hit.transform.GetComponent<Friendly>())
-                    {
-                        target = hit.transform;
-                    }
                     break;
                 }
             }
@@ -66,6 +67,8 @@ namespace LightPat.EnemyAI
 
         private void FixedUpdate()
         {
+            if (animator.GetBool("airborne") | animator.GetBool("landing")) { return; }
+
             // If we don't have a target yet, roam
             if (target == null)
             {
@@ -232,9 +235,15 @@ namespace LightPat.EnemyAI
             roamingPosition = soundOrigin;
         }
 
-        void OnAttacked(GameObject attacker)
+        void OnAttacked(OnAttackedData data)
         {
-            target = attacker.transform;
+            lookingAround = true;
+            roamingPosition = data.inflicterPosition;
+        }
+
+        void OnDeath()
+        {
+            DespawnSelf();
         }
     }
 }

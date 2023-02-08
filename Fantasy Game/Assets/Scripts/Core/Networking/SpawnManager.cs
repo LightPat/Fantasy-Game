@@ -15,6 +15,7 @@ namespace LightPat.Core
             foreach (SpawnData spawnData in spawnArray)
             {
                 GameObject g = Instantiate(spawnData.gameObject, spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation));
+                g.name = spawnData.gameObject.name;
                 NetworkObject networkObject = g.GetComponent<NetworkObject>();
                 networkObject.Spawn(true);
             }
@@ -25,7 +26,7 @@ namespace LightPat.Core
             foreach (SpawnData spawnData in spawnArray)
             {
                 Gizmos.color = Color.black;
-                Gizmos.DrawWireSphere(spawnData.spawnPosition, 1);
+                Gizmos.DrawSphere(spawnData.spawnPosition, 0.5f);
                 Gizmos.color = Color.blue;
                 Gizmos.DrawRay(spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation) * Vector3.forward * 2);
                 Gizmos.color = Color.red;

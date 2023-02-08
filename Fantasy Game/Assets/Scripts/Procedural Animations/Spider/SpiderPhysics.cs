@@ -1,15 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 namespace LightPat.ProceduralAnimations.Spider
 {
-    public class SpiderPhysics : MonoBehaviour
+    public class SpiderPhysics : NetworkBehaviour
     {
         public float gravitySpeed;
         public float bodyVerticalOffset;
         public float landingTime;
         public float airborneRotateSpeed;
+        public float isGroundedDistance = 1;
         [Header("Info - Do Not Edit These")]
         public bool airborne = true;
         public bool landing;
@@ -17,6 +19,7 @@ namespace LightPat.ProceduralAnimations.Spider
         public Vector3 angularVelocity;
 
         private Rigidbody rb;
+        private Animator animator;
         private bool landingCoroutineRunning;
         private float landingDipOffset;
         private float landingDipSpeed;
@@ -28,11 +31,14 @@ namespace LightPat.ProceduralAnimations.Spider
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
-            checkDistance = bodyVerticalOffset + 0.1f;
+            animator = GetComponentInChildren<Animator>();
+            isGroundedDistance = bodyVerticalOffset + 0.1f;
         }
 
         private void FixedUpdate()
         {
+            if (!IsOwner) { return; }
+
             velocity = (transform.position - lastPos) / Time.fixedDeltaTime;
             angularVelocity = (transform.rotation.eulerAngles - lastRot) / Time.fixedDeltaTime;
 
@@ -55,7 +61,7 @@ namespace LightPat.ProceduralAnimations.Spider
             else
             {
                 // If we are on the ground, return the body to its resting position
-                RaycastHit[] allHits = Physics.RaycastAll(new Vector3(rb.position.x, rb.position.y + 0.1f, rb.position.z), transform.up * -1, checkDistance);
+                RaycastHit[] allHits = Physics.RaycastAll(new Vector3(rb.position.x, rb.position.y + 0.1f, rb.position.z), transform.up * -1, isGroundedDistance);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
@@ -85,6 +91,10 @@ namespace LightPat.ProceduralAnimations.Spider
             //rb.MoveRotation(Quaternion.Slerp(rb.rotation, Quaternion.Euler(0, rb.rotation.eulerAngles.y, 0), Time.fixedDeltaTime * airborneRotateSpeed));
 
             airborne = !IsGrounded();
+
+            animator.SetBool("airborne", airborne);
+            animator.SetBool("landing", landing);
+
             lastPos = transform.position;
             lastRot = transform.rotation.eulerAngles;
         }
@@ -111,26 +121,17 @@ namespace LightPat.ProceduralAnimations.Spider
             landingCoroutineRunning = false;
         }
 
-        [HideInInspector] public float checkDistance;
         private bool IsGrounded()
         {
-            RaycastHit[] allHits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1, checkDistance);
+            RaycastHit[] allHits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1, isGroundedDistance, -1, QueryTriggerInteraction.Ignore);
 
             foreach (RaycastHit hit in allHits)
             {
-                if (hit.transform.gameObject == gameObject)
-                {
-                    continue;
-                }
+                if (hit.transform.gameObject == gameObject) { continue; }
                 return true;
             }
 
             return false;
-        }
-
-        void OnDeath()
-        {
-            gameObject.SetActive(false);
         }
     }
 }

@@ -2796,7 +2796,7 @@ MonoBehaviour:
     spawnPosition: {x: -75, y: 50, z: -230}
     spawnRotation: {x: 0, y: 0, z: 0}
   - team: 1
-    spawnPosition: {x: -75, y: 50, z: -238.12}
+    spawnPosition: {x: -75, y: 50, z: -265.5}
     spawnRotation: {x: 0, y: 0, z: 0}
   HUDPrefab: {fileID: 568550688726901635, guid: 6a685f681c1bf834fb05ed9f6491dd9a, type: 3}
   winningScore: 3
@@ -2814,11 +2814,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnArray:
   - gameObject: {fileID: 7632085764736268835, guid: d5fa2cb13e722ab4db614fd7395d7ad0, type: 3}
-    spawnPosition: {x: -70, y: 45, z: -200}
+    spawnPosition: {x: -75.8, y: 45, z: -107.2}
     spawnRotation: {x: 0, y: 0, z: 0}
   - gameObject: {fileID: 8496890371954294975, guid: 0b79a60afa48e954b83fb87c37dff655, type: 3}
     spawnPosition: {x: -75, y: 47.54, z: -245}
     spawnRotation: {x: -90, y: 180, z: 0}
+  - gameObject: {fileID: 2540662555291290618, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
+    spawnPosition: {x: -59.4, y: 64.39, z: -251.9}
+    spawnRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &841315151
 MonoBehaviour:
   m_ObjectHideFlags: 0

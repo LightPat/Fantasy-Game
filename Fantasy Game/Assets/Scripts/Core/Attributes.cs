@@ -77,7 +77,7 @@ namespace LightPat.Core
             bool alreadyDead = HP.Value <= 0;
             float damageInflicted = 0;
             float damageAngle = Vector3.Angle(inflicter.transform.forward, transform.forward);
-            SendMessage("OnAttacked", new OnAttackedData(inflicter.name, damageAngle));
+            SendMessage("OnAttacked", new OnAttackedData(inflicter.name, damageAngle, inflicter.transform.position));
 
             if (inflicter.TryGetComponent(out Attributes inflicterAttributes))
             {
@@ -142,7 +142,7 @@ namespace LightPat.Core
             bool alreadyDead = HP.Value <= 0;
             float damageInflicted = 0;
             float damageAngle = Vector3.Angle(projectile.transform.forward, transform.forward);
-            SendMessage("OnAttacked", new OnAttackedData(projectile.inflicter.name, damageAngle));
+            SendMessage("OnAttacked", new OnAttackedData(projectile.inflicter.name, damageAngle, projectile.inflicter.transform.position));
 
             if (projectile.inflicter.TryGetComponent(out Attributes inflicterAttributes))
             {
@@ -227,11 +227,13 @@ namespace LightPat.Core
     {
         public string inflicterName;
         public float damageAngle;
+        public Vector3 inflicterPosition;
 
-        public OnAttackedData(string inflicterName, float damageAngle)
+        public OnAttackedData(string inflicterName, float damageAngle, Vector3 inflicterPosition)
         {
             this.inflicterName = inflicterName;
             this.damageAngle = damageAngle;
+            this.inflicterPosition = inflicterPosition;
         }
 
         void INetworkSerializable.NetworkSerialize<T>(BufferSerializer<T> serializer)

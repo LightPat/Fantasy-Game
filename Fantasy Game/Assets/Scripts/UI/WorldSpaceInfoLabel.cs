@@ -29,7 +29,10 @@ namespace LightPat.UI
             if (!Camera.main) { return; }
 
             if (target == null)
+            {
                 Destroy(gameObject);
+                return;
+            }
 
             gameObject.SetActive(target.gameObject.activeInHierarchy);
 

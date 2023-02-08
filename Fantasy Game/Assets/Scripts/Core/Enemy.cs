@@ -7,12 +7,16 @@ namespace LightPat.Core
 {
     public abstract class Enemy : NetworkBehaviour
     {
-        public enum fightingState
+        protected enum fightingState
         {
             stationary,
             roaming,
             combat,
             moveToTarget
         }
+
+        protected void DespawnSelf() { DespawnSelfServerRpc(); }
+
+        [ServerRpc] private void DespawnSelfServerRpc() { NetworkObject.Despawn(true); }
     }
 }

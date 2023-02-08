@@ -36,7 +36,7 @@ namespace LightPat.ProceduralAnimations.Spider
             transform.position = currentPosition;
 
             RaycastHit[] allHits = Physics.RaycastAll(controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1)),
-                Vector3.down, controller.physics.checkDistance);
+                Vector3.down, controller.physics.isGroundedDistance);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
             bool bHit = false;

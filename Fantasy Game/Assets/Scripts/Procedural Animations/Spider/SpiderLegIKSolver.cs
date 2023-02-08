@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.Animations.Rigging;
 
 namespace LightPat.ProceduralAnimations.Spider
 {
@@ -12,8 +13,11 @@ namespace LightPat.ProceduralAnimations.Spider
         public float rightAxisFootSpacing;
         public float forwardAxisFootSpacing;
         public SpiderLegIKSolver correspondingLegTarget;
+
         [HideInInspector] public bool permissionToMove = true;
 
+        private RigWeightTarget rig;
+        private bool bHit;
         private float lerpProgress;
         private Vector3 newPosition;
         private Vector3 currentPosition;
@@ -29,27 +33,27 @@ namespace LightPat.ProceduralAnimations.Spider
             currentPosition = transform.position;
             newPosition = transform.position;
             oldPosition = transform.position;
+            rig = GetComponentInParent<RigWeightTarget>();
         }
 
         private void Update()
         {
+            if (bHit) { rig.weightTarget = 1; } else { rig.weightTarget = 0; }
+
             transform.position = currentPosition;
 
             Vector3 raycastPosition = controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1));
-            raycastPosition += controller.rootBone.up;
-            RaycastHit[] allHits = Physics.RaycastAll(raycastPosition, controller.rootBone.up * -1, controller.physics.isGroundedDistance);
+            RaycastHit[] allHits = Physics.RaycastAll(raycastPosition, controller.rootBone.up * -1, controller.physics.bodyVerticalOffset * 2, -1, QueryTriggerInteraction.Ignore);
+            Debug.DrawRay(raycastPosition, controller.rootBone.up * -1 * controller.physics.bodyVerticalOffset * 2, Color.red, Time.deltaTime);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
 
-            bool bHit = false;
+            bHit = false;
 
             foreach (RaycastHit hit in allHits)
             {
                 // If we raycast anything that isn't this object go to the next hit
-                if (hit.transform.gameObject == controller.rootBone.gameObject)
-                {
-                    continue;
-                }
-
+                if (hit.transform.gameObject == controller.rootBone.gameObject) { continue; }
+                
                 bHit = true;
 
                 if (Vector3.Distance(newPosition, hit.point) > controller.stepDistance & permissionToMove)

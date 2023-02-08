@@ -18,8 +18,6 @@ namespace LightPat.ProceduralAnimations.Spider
         public Vector3 velocity;
         public Vector3 angularVelocity;
 
-        public float isGroundedDistance { get; private set; }
-
         private Animator animator;
         private SpiderLegsController legController;
 
@@ -31,14 +29,16 @@ namespace LightPat.ProceduralAnimations.Spider
         {
             animator = GetComponentInChildren<Animator>();
             legController = GetComponentInChildren<SpiderLegsController>();
-            isGroundedDistance = bodyVerticalOffset + 2;
         }
 
+        public bool updatePos;
         private void Update()
         {
+            if (updatePos) { return; }
+
             if (Vector3.Distance(bodyRestingPosition, transform.position) < 0.1f)
             {
-                transform.Translate(transform.forward * 0.1f);
+                transform.Translate(transform.forward * 0.03f, Space.World);
             }
         }
 

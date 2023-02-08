@@ -127,11 +127,11 @@ namespace LightPat.ProceduralAnimations.Spider
             }
 
             // If we are not airborne, and we are landing
-            if (!physics.airborne & !physics.landing)
-            {
-                float average = heightDifferences.Average();
-                transform.rotation = transform.parent.rotation * Quaternion.Euler(average * xAxisBodyRotationMultiplier, average * yAxisBodyRotationMultiplier, average * zAxisBodyRotationMultiplier);
-            }
+            //if (!physics.airborne & !physics.landing)
+            //{
+            //    float average = heightDifferences.Average();
+            //    transform.rotation = transform.parent.rotation * Quaternion.Euler(average * xAxisBodyRotationMultiplier, average * yAxisBodyRotationMultiplier, average * zAxisBodyRotationMultiplier);
+            //}
         }
     }
 }

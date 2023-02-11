@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.Animations.Rigging;
+using System.Linq;
 
 namespace LightPat.ProceduralAnimations.Spider
 {
@@ -16,8 +16,8 @@ namespace LightPat.ProceduralAnimations.Spider
 
         [HideInInspector] public bool permissionToMove = true;
 
-        private RigWeightTarget rig;
-        private bool bHit;
+        public RaycastHit raycastHit { get; private set; }
+
         private float lerpProgress;
         private Vector3 newPosition;
         private Vector3 currentPosition;
@@ -33,41 +33,62 @@ namespace LightPat.ProceduralAnimations.Spider
             currentPosition = transform.position;
             newPosition = transform.position;
             oldPosition = transform.position;
-            rig = GetComponentInParent<RigWeightTarget>();
         }
 
         private void Update()
         {
-            if (bHit) { rig.weightTarget = 1; } else { rig.weightTarget = 0; }
-
             transform.position = currentPosition;
 
-            Vector3 raycastPosition = controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1));
-            RaycastHit[] allHits = Physics.RaycastAll(raycastPosition, controller.rootBone.up * -1, controller.physics.bodyVerticalOffset * 2, -1, QueryTriggerInteraction.Ignore);
-            Debug.DrawRay(raycastPosition, controller.rootBone.up * -1 * controller.physics.bodyVerticalOffset * 2, Color.red, Time.deltaTime);
-            System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
+            Vector3 raycastStartPosition = controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1));
+            RaycastHit[] allHits = Physics.RaycastAll(raycastStartPosition, controller.rootBone.up * -1, controller.physics.bodyVerticalOffset * 3, -1, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(allHits.ToArray(), (x, y) => x.distance.CompareTo(y.distance));
+            Debug.DrawRay(raycastStartPosition, controller.rootBone.up * -1 * controller.physics.bodyVerticalOffset * 3, Color.red, Time.deltaTime);
 
-            bHit = false;
+            bool bHit = false;
 
-            foreach (RaycastHit hit in allHits)
+            bool frontHit = false;
+            Vector3 forwardHitStartPos = raycastStartPosition;
+            forwardHitStartPos += controller.rootBone.up * controller.physics.bodyVerticalOffset;
+            RaycastHit[] forwardHits = Physics.RaycastAll(forwardHitStartPos, controller.rootBone.forward, 3, -1, QueryTriggerInteraction.Ignore);
+            System.Array.Sort(forwardHits.ToArray(), (x, y) => x.distance.CompareTo(y.distance));
+            Debug.DrawRay(forwardHitStartPos, controller.rootBone.forward * 3, Color.yellow, Time.deltaTime * 5);
+
+            foreach (RaycastHit hit in forwardHits)
             {
-                // If we raycast anything that isn't this object go to the next hit
                 if (hit.transform.gameObject == controller.rootBone.gameObject) { continue; }
-                
+
+                frontHit = true;
                 bHit = true;
+                Debug.DrawRay(hit.point, hit.normal, Color.green, Time.deltaTime * 5);
 
                 if (Vector3.Distance(newPosition, hit.point) > controller.stepDistance & permissionToMove)
                 {
                     lerpProgress = 0;
                     newPosition = hit.point;
-
-                    // This is supposed to solve walking in front of each leg
-                    //if (correspondingLegTarget.transform.position.z > transform.position.z & controller.physics.velocity.z > 0)
-                    //{
-                    //    newPosition.z += 1;
-                    //}
+                    raycastHit = hit;
                 }
+
                 break;
+            }
+
+            if (!frontHit)
+            {
+                foreach (RaycastHit hit in allHits)
+                {
+                    // If we raycast anything that isn't this object go to the next hit
+                    if (hit.transform.gameObject == controller.rootBone.gameObject) { continue; }
+
+                    bHit = true;
+
+                    if (Vector3.Distance(newPosition, hit.point) > controller.stepDistance & permissionToMove)
+                    {
+                        lerpProgress = 0;
+                        newPosition = hit.point;
+                        raycastHit = hit;
+                    }
+
+                    break;
+                }
             }
 
             // If we didn't hit anything in the previous for loop
@@ -77,6 +98,7 @@ namespace LightPat.ProceduralAnimations.Spider
                 currentPosition = controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * forwardAxisFootSpacing) + (controller.rootBone.up * -3);
                 newPosition = currentPosition;
                 oldPosition = currentPosition;
+                raycastHit = new RaycastHit();
             }
 
             if (lerpProgress < 1)
@@ -95,7 +117,7 @@ namespace LightPat.ProceduralAnimations.Spider
                 }
 
                 Vector3 interpolatedPosition = Vector3.Lerp(oldPosition, newPosition, lerpProgress);
-                interpolatedPosition.y += Mathf.Sin(lerpProgress * Mathf.PI) * controller.stepHeight;
+                interpolatedPosition += controller.physics.transform.up * Mathf.Sin(lerpProgress * Mathf.PI) * controller.stepHeight;
 
                 currentPosition = interpolatedPosition;
 
@@ -105,6 +127,8 @@ namespace LightPat.ProceduralAnimations.Spider
             {
                 oldPosition = newPosition;
             }
+
+            transform.up = raycastHit.normal;
         }
 
         public bool IsMoving()

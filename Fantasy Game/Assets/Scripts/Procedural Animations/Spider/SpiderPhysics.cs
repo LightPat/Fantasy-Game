@@ -31,68 +31,68 @@ namespace LightPat.ProceduralAnimations.Spider
             legController = GetComponentInChildren<SpiderLegsController>();
         }
 
-        public bool updatePos;
+        public bool forward;
+        public float speed;
+
         private void Update()
         {
-            if (updatePos) { return; }
-
-            if (Vector3.Distance(bodyRestingPosition, transform.position) < 0.1f)
-            {
-                transform.Translate(transform.forward * 0.03f, Space.World);
-            }
-        }
-
-        private void LateUpdate()
-        {
             if (!IsOwner) { return; }
+
+            if (forward)
+                transform.position += transform.forward * speed;
 
             velocity = (transform.position - lastPos) / Time.deltaTime;
             angularVelocity = (transform.rotation.eulerAngles - lastRot) / Time.deltaTime;
 
-            RaycastHit[] allHits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 0.1f, transform.position.z), transform.up * -1);
+            RaycastHit[] allHits = Physics.RaycastAll(transform.position, transform.up * -1);
             System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
             foreach (RaycastHit hit in allHits)
             {
                 // If we raycast this object, skip it
                 if (hit.transform.gameObject == gameObject) { continue; }
 
-                // If we are not at resting position, move to it
-                // hit.distance < bodyVerticalOffset
-
-                bodyRestingPosition = new Vector3(transform.position.x, hit.point.y + bodyVerticalOffset, transform.position.z);
+                bodyRestingPosition = hit.point + transform.up * bodyVerticalOffset;
                 break;
             }
-            bodyRestingPosition = new Vector3(transform.position.x, bodyRestingPosition.y, transform.position.z);
+
+            if (allHits.Length == 0)
+            {
+                bodyRestingPosition -= Physics.gravity * Time.deltaTime;
+            }
 
             animator.SetBool("airborne", airborne);
             animator.SetBool("landing", landing);
 
             // Orient x rotation based on leg positions to allow spider to traverse ramps
             List<RaycastHit> legHits = new List<RaycastHit>();
-            foreach (var leg in legController.legSet1)
-            {
-                RaycastHit hit;
-                bool bHit = Physics.Raycast(leg.transform.position, transform.up * -1, out hit);
-                if (bHit)
-                    legHits.Add(hit);
-            }
-            foreach (var leg in legController.legSet2)
-            {
-                RaycastHit hit;
-                bool bHit = Physics.Raycast(leg.transform.position, transform.up * -1, out hit);
-                if (bHit)
-                    legHits.Add(hit);
-            }
+            List<Transform> legTransforms = new List<Transform>();
+            foreach (SpiderLegIKSolver leg in legController.legSet1) { legHits.Add(leg.raycastHit); legTransforms.Add(leg.transform); }
+            foreach (SpiderLegIKSolver leg in legController.legSet2) { legHits.Add(leg.raycastHit); legTransforms.Add(leg.transform); }
 
             float[] normalAngles = new float[legHits.Count];
+            List<float> dotProducts = new List<float>();
             for (int i = 0; i < legHits.Count; i++)
             {
                 normalAngles[i] = Vector3.Angle(legHits[i].normal, Vector3.up);
+
+                if (i == 0 | i == legHits.Count / 2)
+                {
+                    dotProducts.Add(Vector3.Dot(transform.up, legTransforms[i].up));
+                    Debug.DrawRay(legHits[i].point, legHits[i].normal, Color.black, Time.deltaTime * 5);
+                }
             }
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-normalAngles.Average(), transform.eulerAngles.y, transform.eulerAngles.z), Time.deltaTime * Mathf.Clamp(velocity.magnitude, 1, 1000));
-            transform.position = Vector3.MoveTowards(transform.position, bodyRestingPosition, Time.deltaTime * 8);
+            if (normalAngles.Length != 0)
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(-normalAngles.Average(), Vector3.SignedAngle(Vector3.right, transform.right, transform.up), 0), Time.deltaTime * 8);
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, Vector3.SignedAngle(Vector3.right, transform.right, transform.up), transform.eulerAngles.z), Time.deltaTime * 8);
 
+            bodyRestingPosition += (1 - dotProducts.Average()) * 2 * bodyVerticalOffset * transform.up; // scale the multiplier with velocity
+            transform.position = Vector3.MoveTowards(transform.position, bodyRestingPosition, Time.deltaTime * 8);
+        }
+
+        private void LateUpdate()
+        {
             lastPos = transform.position;
             lastRot = transform.eulerAngles;
         }

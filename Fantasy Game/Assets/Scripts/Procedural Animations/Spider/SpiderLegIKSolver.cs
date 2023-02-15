@@ -17,6 +17,7 @@ namespace LightPat.ProceduralAnimations.Spider
         [HideInInspector] public bool permissionToMove = true;
 
         public RaycastHit raycastHit { get; private set; }
+        public bool bHit { get; private set; }
 
         private float lerpProgress;
         private Vector3 newPosition;
@@ -35,6 +36,7 @@ namespace LightPat.ProceduralAnimations.Spider
             oldPosition = transform.position;
         }
 
+        bool prevForwardHit;
         private void Update()
         {
             transform.position = currentPosition;
@@ -44,14 +46,16 @@ namespace LightPat.ProceduralAnimations.Spider
             System.Array.Sort(allHits.ToArray(), (x, y) => x.distance.CompareTo(y.distance));
             Debug.DrawRay(raycastStartPosition, controller.rootBone.up * -1 * controller.physics.bodyVerticalOffset * 3, Color.red, Time.deltaTime);
 
-            bool bHit = false;
+            bHit = false;
 
             bool frontHit = false;
             Vector3 forwardHitStartPos = raycastStartPosition;
             forwardHitStartPos += controller.rootBone.up * controller.physics.bodyVerticalOffset;
-            RaycastHit[] forwardHits = Physics.RaycastAll(forwardHitStartPos, controller.rootBone.forward, 3, -1, QueryTriggerInteraction.Ignore);
+            float forwardHitDistance = 2.7f;
+            if (prevForwardHit) { forwardHitDistance = 3; forwardHitStartPos += controller.physics.velocity.normalized * -0.3f; }
+            RaycastHit[] forwardHits = Physics.RaycastAll(forwardHitStartPos, controller.physics.velocity.normalized, forwardHitDistance, -1, QueryTriggerInteraction.Ignore);
             System.Array.Sort(forwardHits.ToArray(), (x, y) => x.distance.CompareTo(y.distance));
-            Debug.DrawRay(forwardHitStartPos, controller.rootBone.forward * 3, Color.yellow, Time.deltaTime * 5);
+            Debug.DrawRay(forwardHitStartPos, controller.physics.velocity.normalized * forwardHitDistance, Color.yellow, Time.deltaTime * 5);
 
             foreach (RaycastHit hit in forwardHits)
             {
@@ -71,6 +75,7 @@ namespace LightPat.ProceduralAnimations.Spider
                 break;
             }
 
+            prevForwardHit = frontHit;
             if (!frontHit)
             {
                 foreach (RaycastHit hit in allHits)

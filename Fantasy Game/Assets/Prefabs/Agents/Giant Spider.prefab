@@ -103,10 +103,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844cd3dfa8c610c4581a22b1926393d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   rightAxisFootSpacing: 1.223
   forwardAxisFootSpacing: 4.5
   correspondingLegTarget: {fileID: 2540662556342188302}
+  invertDir: 0
+  controller: {fileID: 0}
   permissionToMove: 1
 --- !u!1 &2540662555100323572
 GameObject:
@@ -151,10 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844cd3dfa8c610c4581a22b1926393d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   rightAxisFootSpacing: 2.05
   forwardAxisFootSpacing: -2
   correspondingLegTarget: {fileID: 2540662556527344263}
+  invertDir: 1
+  controller: {fileID: 0}
   permissionToMove: 1
 --- !u!1 &2540662555291290618
 GameObject:
@@ -224,13 +226,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravitySpeed: 9.8
   bodyVerticalOffset: 1.7
+  maxVerticalOffset: 2.5
   landingTime: 1
   airborneRotateSpeed: 2
-  isGroundedDistance: 1
-  airborne: 1
-  landing: 0
   velocity: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
+  forward: 1
+  speed: 0.001
+  restingPosition: 1
+  rotate: 1
 --- !u!114 &2540662555291290564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,12 +242,11 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2540662555291290618}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2eb00a955ffa20845921e7e7480ea232, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isGroundedDistance: 1
   visionDistance: 20
   chaseSpeed: 7
   maxChaseDistance: 30
@@ -619,10 +622,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844cd3dfa8c610c4581a22b1926393d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   rightAxisFootSpacing: 3.24
   forwardAxisFootSpacing: -0.5
   correspondingLegTarget: {fileID: 2540662556479178564}
+  invertDir: 0
+  controller: {fileID: 0}
   permissionToMove: 1
 --- !u!1 &2540662556322338182
 GameObject:
@@ -785,10 +789,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844cd3dfa8c610c4581a22b1926393d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   rightAxisFootSpacing: -1.223
   forwardAxisFootSpacing: 4.5
   correspondingLegTarget: {fileID: 2540662555079554990}
+  invertDir: 0
+  controller: {fileID: 0}
   permissionToMove: 1
 --- !u!1 &2540662556359102257
 GameObject:
@@ -981,10 +986,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844cd3dfa8c610c4581a22b1926393d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   rightAxisFootSpacing: -3.24
   forwardAxisFootSpacing: -0.5
   correspondingLegTarget: {fileID: 2540662556007676781}
+  invertDir: 0
+  controller: {fileID: 0}
   permissionToMove: 1
 --- !u!1 &2540662556527344261
 GameObject:
@@ -1029,10 +1035,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844cd3dfa8c610c4581a22b1926393d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   rightAxisFootSpacing: -2.05
   forwardAxisFootSpacing: -2
   correspondingLegTarget: {fileID: 2540662555100323574}
+  invertDir: 1
+  controller: {fileID: 0}
   permissionToMove: 1
 --- !u!1 &2540662556602336846
 GameObject:
@@ -1429,10 +1436,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844cd3dfa8c610c4581a22b1926393d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   rightAxisFootSpacing: 2.55
   forwardAxisFootSpacing: 1.85
   correspondingLegTarget: {fileID: 2540662557184857245}
+  invertDir: 0
+  controller: {fileID: 0}
   permissionToMove: 1
 --- !u!1 &2540662556876101330
 GameObject:
@@ -1537,10 +1545,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 844cd3dfa8c610c4581a22b1926393d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 0}
   rightAxisFootSpacing: -2.55
   forwardAxisFootSpacing: 1.85
   correspondingLegTarget: {fileID: 2540662556859954749}
+  invertDir: 0
+  controller: {fileID: 0}
   permissionToMove: 1
 --- !u!1001 &2540662556646410446
 PrefabInstance:

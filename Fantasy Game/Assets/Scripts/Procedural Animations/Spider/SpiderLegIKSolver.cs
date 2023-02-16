@@ -9,11 +9,13 @@ namespace LightPat.ProceduralAnimations.Spider
     public class SpiderLegIKSolver : NetworkBehaviour
     {
         // Assigned from SpiderLegsController Script
-        [HideInInspector] public SpiderLegsController controller;
         public float rightAxisFootSpacing;
         public float forwardAxisFootSpacing;
         public SpiderLegIKSolver correspondingLegTarget;
 
+        public bool invertDir;
+
+        [HideInInspector] public SpiderLegsController controller;
         [HideInInspector] public bool permissionToMove = true;
 
         public RaycastHit raycastHit { get; private set; }
@@ -49,13 +51,33 @@ namespace LightPat.ProceduralAnimations.Spider
             bHit = false;
 
             bool frontHit = false;
+            
             Vector3 forwardHitStartPos = raycastStartPosition;
-            forwardHitStartPos += controller.rootBone.up * controller.physics.bodyVerticalOffset;
-            float forwardHitDistance = 2.7f;
-            if (prevForwardHit) { forwardHitDistance = 3; forwardHitStartPos += controller.physics.velocity.normalized * -0.3f; }
-            RaycastHit[] forwardHits = Physics.RaycastAll(forwardHitStartPos, controller.physics.velocity.normalized, forwardHitDistance, -1, QueryTriggerInteraction.Ignore);
+            forwardHitStartPos += controller.rootBone.up;
+            
+            float forwardHitDistance = 3;
+            Vector3 dir = controller.physics.velocity.normalized;
+            if (invertDir)
+            {
+                if (Vector3.Distance(dir, controller.rootBone.forward) < 0.1f)
+                {
+                    dir *= -1;
+                    forwardHitDistance = 1;
+                }
+            }
+
+            if (prevForwardHit)
+            {
+                forwardHitDistance *= 2;
+                forwardHitStartPos -= dir;
+            }
+
+            if (controller.physics.velocity.magnitude < 0.001f)
+                forwardHitDistance = 0;
+
+            RaycastHit[] forwardHits = Physics.RaycastAll(forwardHitStartPos, dir, forwardHitDistance, -1, QueryTriggerInteraction.Ignore);
             System.Array.Sort(forwardHits.ToArray(), (x, y) => x.distance.CompareTo(y.distance));
-            Debug.DrawRay(forwardHitStartPos, controller.physics.velocity.normalized * forwardHitDistance, Color.yellow, Time.deltaTime * 5);
+            Debug.DrawRay(forwardHitStartPos, dir * forwardHitDistance, Color.yellow, Time.deltaTime);
 
             foreach (RaycastHit hit in forwardHits)
             {
@@ -63,7 +85,6 @@ namespace LightPat.ProceduralAnimations.Spider
 
                 frontHit = true;
                 bHit = true;
-                Debug.DrawRay(hit.point, hit.normal, Color.green, Time.deltaTime * 5);
 
                 if (Vector3.Distance(newPosition, hit.point) > controller.stepDistance & permissionToMove)
                 {
@@ -140,5 +161,11 @@ namespace LightPat.ProceduralAnimations.Spider
         {
             return lerpProgress < 1;
         }
+
+        //private void OnDrawGizmos()
+        //{
+        //    Gizmos.color = Color.green;
+        //    Gizmos.DrawSphere(newPosition, 0.5f);
+        //}
     }
 }

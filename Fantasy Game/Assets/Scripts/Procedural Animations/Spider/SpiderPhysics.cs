@@ -70,13 +70,19 @@ namespace LightPat.ProceduralAnimations.Spider
                 bodyRestingPosition -= Physics.gravity * Time.deltaTime;
             }
 
+            float yRot = Vector3.SignedAngle(transform.right, Vector3.right, transform.up);
+            //Debug.Log(yRot);
+
             float[] normalAngles = new float[legHits.Count];
+            Quaternion[] quaternions = new Quaternion[normalAngles.Length];
             for (int i = 0; i < normalAngles.Length; i++)
             {
                 normalAngles[i] = Vector3.Angle(legHits[i].normal, Vector3.up);
 
                 if (legHits[i].normal.z <= 0)
                     normalAngles[i] *= -1;
+
+                quaternions[i] = Quaternion.Euler(normalAngles[i], 0, 0);
             }
 
             List<float> dotProducts = new List<float>();
@@ -87,15 +93,12 @@ namespace LightPat.ProceduralAnimations.Spider
                 dotProducts.Add(dotProduct);
             }
 
-            float yRot = Vector3.SignedAngle(transform.right, Vector3.right, transform.up);
-            //Debug.Log(yRot);
-
             if (rotate)
             {
                 if (normalAngles.Length > 0)
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(normalAngles.Average(), 0, 0), Time.deltaTime * 8);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, AverageQuaternion(quaternions), Time.deltaTime * 8);
                 else
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, 0, 0), Time.deltaTime * 8);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.deltaTime * 8);
             }
 
             if (dotProducts.Count > 0)
@@ -114,6 +117,18 @@ namespace LightPat.ProceduralAnimations.Spider
         {
             lastPos = transform.position;
             lastRot = transform.eulerAngles;
+        }
+
+        private Quaternion AverageQuaternion(Quaternion[] qArray)
+        {
+            Quaternion qAvg = qArray[0];
+            float weight;
+            for (int i = 1; i < qArray.Length; i++)
+            {
+                weight = 1.0f / (float)(i + 1);
+                qAvg = Quaternion.Slerp(qAvg, qArray[i], weight);
+            }
+            return qAvg;
         }
     }
 }

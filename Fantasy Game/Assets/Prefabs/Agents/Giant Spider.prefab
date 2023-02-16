@@ -226,13 +226,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravitySpeed: 9.8
   bodyVerticalOffset: 1.7
-  maxVerticalOffset: 2.5
+  maxVerticalOffset: 2
   landingTime: 1
   airborneRotateSpeed: 2
   velocity: {x: 0, y: 0, z: 0}
   angularVelocity: {x: 0, y: 0, z: 0}
   forward: 1
-  speed: 0.001
+  speed: 0.01
   restingPosition: 1
   rotate: 1
 --- !u!114 &2540662555291290564

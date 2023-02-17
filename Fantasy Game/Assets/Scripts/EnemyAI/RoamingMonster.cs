@@ -38,6 +38,7 @@ namespace LightPat.EnemyAI
         private void Update()
         {
             if (!IsOwner) { return; }
+
             if (target == null)
             {
                 // If we don't have a target check a raycast
@@ -56,6 +57,37 @@ namespace LightPat.EnemyAI
 
                     break;
                 }
+
+                if (!rb.isKinematic) { return; }
+                // Roaming Logic
+                // If we are turning to look at our new roaming position
+                roamingPosition.y = transform.position.y;
+                Debug.Log(Time.time + " " + lookingAround);
+                if (lookingAround)
+                {
+                    transform.rotation = Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), roamingRotationSpeed);
+                    if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(roamingPosition - transform.position)) < 1)
+                    {
+                        lookingAround = false;
+                    }
+                }
+                else if (Vector3.Distance(transform.position, roamingPosition) > 1) // If we haven't reached our roaming position yet
+                {
+                    transform.rotation = Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), roamingRotationSpeed);
+                    transform.position = transform.position + (Time.deltaTime * roamSpeed * transform.forward);
+                }
+                else // Once we've reached our roaming position, get a new one
+                {
+                    lookingAround = true;
+                    roamingPosition = startingPosition + new Vector3(Random.Range(-roamRadius, roamRadius), 0, Random.Range(-roamRadius, roamRadius));
+
+                    radiusBHit = Physics.Raycast(transform.position + Quaternion.LookRotation(roamingPosition - transform.position) * Vector3.forward, roamingPosition - transform.position);
+
+                    if (radiusBHit)
+                    {
+                        StartCoroutine(RefreshRoamingPosition());
+                    }
+                }
             }
             else
             {
@@ -69,6 +101,7 @@ namespace LightPat.EnemyAI
         private void FixedUpdate()
         {
             if (!IsOwner) { return; }
+            if (rb.isKinematic) { return; }
             if (animator.GetBool("landing")) { return; }
 
             // If we don't have a target yet, roam
@@ -87,20 +120,12 @@ namespace LightPat.EnemyAI
                 }
                 else if (Vector3.Distance(transform.position, roamingPosition) > 1) // If we haven't reached our roaming position yet
                 {
-                    if (!rb.isKinematic)
-                    {
-                        Vector3 moveForce = transform.forward * roamSpeed;
-                        rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), roamingRotationSpeed));
-                        moveForce.x -= rb.velocity.x;
-                        moveForce.z -= rb.velocity.z;
-                        moveForce.y = 0;
-                        rb.AddForce(moveForce, ForceMode.VelocityChange);
-                    }
-                    else
-                    {
-                        rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), roamingRotationSpeed));
-                        rb.MovePosition(rb.position + (Time.fixedDeltaTime * roamSpeed * transform.forward));
-                    }
+                    Vector3 moveForce = transform.forward * roamSpeed;
+                    rb.MoveRotation(Quaternion.RotateTowards(rb.rotation, Quaternion.LookRotation(roamingPosition - transform.position), roamingRotationSpeed));
+                    moveForce.x -= rb.velocity.x;
+                    moveForce.z -= rb.velocity.z;
+                    moveForce.y = 0;
+                    rb.AddForce(moveForce, ForceMode.VelocityChange);                        
                 }
                 else // Once we've reached our roaming position, get a new one
                 {
@@ -120,19 +145,7 @@ namespace LightPat.EnemyAI
                 // If we are not right next to the target, move toward it
                 if (Vector3.Distance(target.position, transform.position) > stopDistance)
                 {
-                    if (!rb.isKinematic)
-                    {
-                        Vector3 moveForce = transform.forward * chaseSpeed;
-                        moveForce.x -= rb.velocity.x;
-                        moveForce.z -= rb.velocity.z;
-                        // Never let the rigidbody jump when chasing a player
-                        moveForce.y = 0;
-                        rb.AddForce(moveForce, ForceMode.VelocityChange);
-                    }
-                    else
-                    {
-                        rb.MovePosition(rb.position + (Time.fixedDeltaTime * chaseSpeed * transform.forward));
-                    }
+                    rb.MovePosition(rb.position + (Time.fixedDeltaTime * chaseSpeed * transform.forward));
                 }
                 else if (Vector3.Distance(target.position, transform.position) > maxChaseDistance) // If the target is super far away, stop following it
                 {

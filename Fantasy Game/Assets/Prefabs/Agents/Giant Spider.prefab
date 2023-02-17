@@ -224,15 +224,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf896f9a6b5cb704dbd0647887cbbfcd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gravitySpeed: 9.8
   bodyVerticalOffset: 1.7
   maxVerticalOffset: 2
-  landingTime: 1
-  airborneRotateSpeed: 2
-  velocity: {x: 0, y: 0, z: 0}
-  angularVelocity: {x: 0, y: 0, z: 0}
-  forward: 1
-  speed: 0.01
+  forward: 0
+  speed: 0.1
+  yRotation: 0
   restingPosition: 1
   rotate: 1
 --- !u!114 &2540662555291290564

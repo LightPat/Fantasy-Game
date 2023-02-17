@@ -46,7 +46,6 @@ namespace LightPat.ProceduralAnimations.Spider
             Vector3 raycastStartPosition = controller.rootBone.position + (controller.rootBone.right * rightAxisFootSpacing) + (controller.rootBone.forward * (forwardAxisFootSpacing - 1));
             RaycastHit[] allHits = Physics.RaycastAll(raycastStartPosition, controller.rootBone.up * -1, controller.physics.bodyVerticalOffset * 3, -1, QueryTriggerInteraction.Ignore);
             System.Array.Sort(allHits.ToArray(), (x, y) => x.distance.CompareTo(y.distance));
-            Debug.DrawRay(raycastStartPosition, controller.rootBone.up * -1 * controller.physics.bodyVerticalOffset * 3, Color.red, Time.deltaTime);
 
             bHit = false;
 
@@ -77,7 +76,6 @@ namespace LightPat.ProceduralAnimations.Spider
 
             RaycastHit[] forwardHits = Physics.RaycastAll(forwardHitStartPos, dir, forwardHitDistance, -1, QueryTriggerInteraction.Ignore);
             System.Array.Sort(forwardHits.ToArray(), (x, y) => x.distance.CompareTo(y.distance));
-            Debug.DrawRay(forwardHitStartPos, dir * forwardHitDistance, Color.yellow, Time.deltaTime);
 
             foreach (RaycastHit hit in forwardHits)
             {
@@ -113,6 +111,7 @@ namespace LightPat.ProceduralAnimations.Spider
                         raycastHit = hit;
                     }
 
+                    Debug.DrawRay(raycastStartPosition, controller.rootBone.up * -1 * controller.physics.bodyVerticalOffset * 3, Color.red, Time.deltaTime);
                     break;
                 }
             }

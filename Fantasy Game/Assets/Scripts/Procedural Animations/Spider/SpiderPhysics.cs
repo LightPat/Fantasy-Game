@@ -8,28 +8,26 @@ namespace LightPat.ProceduralAnimations.Spider
 {
     public class SpiderPhysics : NetworkBehaviour
     {
-        public float gravitySpeed;
         public float bodyVerticalOffset;
         public float maxVerticalOffset;
-        public float landingTime;
-        public float airborneRotateSpeed;
-        [Header("Info - Do Not Edit These")]
-        public Vector3 velocity;
-        public Vector3 angularVelocity;
+        [Header("Extras")]
+        public bool forward;
+        public float speed;
+        public int yRotation;
 
-        private SpiderLegsController legController;
+        public Vector3 velocity { get; private set; }
+        public Vector3 angularVelocity { get; private set; }
 
-        private Vector3 bodyRestingPosition;
         private Vector3 lastPos;
         private Vector3 lastRot;
 
-        private void Start()
+        private SpiderLegsController legController;
+        private Vector3 bodyRestingPosition;
+
+        private void Awake()
         {
             legController = GetComponentInChildren<SpiderLegsController>();
         }
-
-        public bool forward;
-        public float speed;
 
         private void Update()
         {
@@ -39,7 +37,6 @@ namespace LightPat.ProceduralAnimations.Spider
                 transform.position += transform.forward * speed;
 
             velocity = (transform.position - lastPos) / Time.deltaTime;
-            angularVelocity = (transform.rotation.eulerAngles - lastRot) / Time.deltaTime;
 
             // Orient x rotation based on leg positions to allow spider to traverse ramps
             List<RaycastHit> legHits = new List<RaycastHit>();
@@ -66,12 +63,13 @@ namespace LightPat.ProceduralAnimations.Spider
             }
 
             if (allHits.Length == 0)
-            {
                 bodyRestingPosition -= Physics.gravity * Time.deltaTime;
-            }
 
-            float yRot = Vector3.SignedAngle(transform.right, Vector3.right, transform.up);
-            //Debug.Log(yRot);
+            float yRot = Vector3.SignedAngle(transform.right, Vector3.right, transform.up * -1);
+            //if (transform.up.y < 0)
+            //    yRot *= -1;
+
+            Debug.Log(yRot + " " + transform.up);
 
             float[] normalAngles = new float[legHits.Count];
             Quaternion[] quaternions = new Quaternion[normalAngles.Length];
@@ -88,36 +86,31 @@ namespace LightPat.ProceduralAnimations.Spider
             List<float> dotProducts = new List<float>();
             for (int i = 0; i < legHits.Count; i++)
             {
-                float dotProduct = Vector3.Dot(transform.up, legHits[i].normal);
-
-                dotProducts.Add(dotProduct);
+                dotProducts.Add(Vector3.Dot(transform.up, legHits[i].normal));
             }
 
             if (rotate)
             {
                 if (normalAngles.Length > 0)
-                    transform.rotation = Quaternion.Slerp(transform.rotation, AverageQuaternion(quaternions), Time.deltaTime * 8);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, AverageQuaternion(quaternions) * Quaternion.Euler(0, yRot, 0), Time.deltaTime * 8);
                 else
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.identity, Time.deltaTime * 8);
+                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, yRot, 0), Time.deltaTime * 8);
             }
-
+            
             if (dotProducts.Count > 0)
-            {
-                Vector3 offset = Vector3.ClampMagnitude((1 - dotProducts.Min()) * 2 * bodyVerticalOffset * transform.up, (transform.up * maxVerticalOffset).magnitude);
-                bodyRestingPosition += offset; // scale the multiplier with velocity
-            }
+                bodyRestingPosition += Vector3.ClampMagnitude((1 - dotProducts.Min()) * 2 * bodyVerticalOffset * transform.up, (transform.up * maxVerticalOffset).magnitude);
 
             if (restingPosition)
                 transform.position = Vector3.MoveTowards(transform.position, bodyRestingPosition, Time.deltaTime * 8);
+
+            angularVelocity = (transform.eulerAngles - lastRot) / Time.deltaTime;
+
+            lastPos = transform.position;
+            lastRot = transform.eulerAngles;
         }
 
         public bool restingPosition;
         public bool rotate;
-        private void LateUpdate()
-        {
-            lastPos = transform.position;
-            lastRot = transform.eulerAngles;
-        }
 
         private Quaternion AverageQuaternion(Quaternion[] qArray)
         {

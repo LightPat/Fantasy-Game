@@ -425,10 +425,45 @@ namespace LightPat.Core.Player
             }
         }
 
+        Vehicle vehicle;
+        void OnDriverEnter(Vehicle newVehicle)
+        {
+            vehicle = newVehicle;
+
+            StartCoroutine(WaitForVehicle());
+        }
+
+        private IEnumerator WaitForVehicle()
+        {
+            yield return new WaitUntil(() => !weaponChangeRunning);
+
+            rightHandTarget.target = vehicle.rightHandGrip;
+            leftHandTarget.target = vehicle.leftHandGrip;
+
+            rightArmRig.weightTarget = 1;
+            leftArmRig.weightTarget = 1;
+        }
+
+        void OnDriverExit()
+        {
+            vehicle = null;
+
+            rightArmRig.weightTarget = 0;
+            leftArmRig.weightTarget = 0;
+
+            rightHandTarget.target = rightHandIK.data.tip;
+            leftHandTarget.target = leftHandIK.data.tip;
+        }
+
         private void Update()
         {
             Attack1(attack1.Value);
             Attack2(attack2.Value);
+
+            if (IsServer)
+            {
+                if (vehicle) { targetWeaponSlot.Value = -1; }
+            }
 
             if (waitForWeaponSlotChange) { return; }
             if (equipInitialWeaponsRunning) { return; }

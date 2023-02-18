@@ -31,8 +31,6 @@ namespace LightPat.Core
 
         public override void OnNetworkSpawn()
         {
-            interpolate = false;
-
             transformParentId.OnValueChanged += OnTransformParentIdChange;
             currentPosition.OnValueChanged += OnPositionChanged;
             currentRotation.OnValueChanged += OnRotationChanged;

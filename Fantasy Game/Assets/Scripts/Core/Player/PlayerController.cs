@@ -77,14 +77,29 @@ namespace LightPat.Core.Player
             sitting.OnValueChanged -= OnSittingChange;
         }
 
+        [Header("Vehicles")]
+        public TwoBoneIKConstraint leftLegIK;
+        public TwoBoneIKConstraint rightLegIK;
         void OnDriverEnter(Vehicle newVehicle)
         {
             vehicle = newVehicle;
+
+            leftLegIK.GetComponentInChildren<FollowTarget>().target = vehicle.leftFootGrip;
+            rightLegIK.GetComponentInChildren<FollowTarget>().target = vehicle.rightFootGrip;
+
+            leftLegIK.GetComponentInParent<Rig>().weight = 1;
+            rightLegIK.GetComponentInParent<Rig>().weight = 1;
         }
 
         void OnDriverExit()
         {
             vehicle = null;
+
+            leftLegIK.GetComponentInParent<Rig>().weight = 0;
+            rightLegIK.GetComponentInParent<Rig>().weight = 0;
+
+            leftLegIK.GetComponentInChildren<FollowTarget>().target = leftLegIK.data.tip;
+            rightLegIK.GetComponentInChildren<FollowTarget>().target = rightLegIK.data.tip;
         }
 
         private NetworkVariable<bool> sitting = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -213,12 +228,6 @@ namespace LightPat.Core.Player
 
             lookInput *= sensitivity * timeScale;
 
-            if (vehicle)
-            {
-                vehicle.SendMessage("OnVehicleLook", lookInput);
-                return;
-            }
-
             if (playerCamera.updateRotationWithTarget)
             {
                 if (!instantBoneRot)
@@ -234,6 +243,12 @@ namespace LightPat.Core.Player
                     rotateWithBoneRotOffset.y = Mathf.Clamp(rotateWithBoneRotOffset.y, rotateWithBoneLookLimit.w, rotateWithBoneLookLimit.z);
                     camConstraint.data.offset = rotateWithBoneRotOffset;
                 }
+            }
+
+            if (vehicle)
+            {
+                vehicle.SendMessage("OnVehicleLook", lookInput);
+                return;
             }
 
             if (disableLookInput) { return; }

@@ -3012,6 +3012,9 @@ MonoBehaviour:
   - gameObject: {fileID: 8496890371954294975, guid: 0b79a60afa48e954b83fb87c37dff655, type: 3}
     spawnPosition: {x: -73.28, y: 48.5, z: -248}
     spawnRotation: {x: -90, y: 0, z: 0}
+  - gameObject: {fileID: 4069727618725294910, guid: f78cebd8d74e0e94da4e258a679dbbc6, type: 3}
+    spawnPosition: {x: -69.5, y: 48.5, z: -230.1}
+    spawnRotation: {x: 0, y: 0, z: 0}
 --- !u!114 &841315151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5789,7 +5792,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1709725316}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -65.87, y: 48.52, z: -229.10222}
+  m_LocalPosition: {x: -56.1, y: 48.52, z: -223.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1967636658}

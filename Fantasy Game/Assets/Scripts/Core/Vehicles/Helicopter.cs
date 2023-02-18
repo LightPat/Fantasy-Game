@@ -7,6 +7,7 @@ namespace LightPat.Core
 {
     public class Helicopter : Vehicle
     {
+        public Camera vehicleCamera;
         public Transform mainRotor;
         public Transform tailRotor;
         public float mainRotorSpeed;
@@ -37,7 +38,6 @@ namespace LightPat.Core
             if (transform.childCount < 1) { return; }
             mainRotor = transform.GetChild(0).Find("mainRotor");
             tailRotor = transform.GetChild(0).Find("tailRotor");
-            rb.useGravity = true;
         }
 
         private void Start()

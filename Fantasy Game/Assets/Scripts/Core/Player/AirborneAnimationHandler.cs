@@ -268,6 +268,7 @@ namespace LightPat.Core.Player
             {
                 // Variable assignments to use in Update()
                 legTarget = rightLegTarget;
+                legTarget.GetComponent<FollowTarget>().enabled = false;
                 handTarget = rightHandTarget;
 
                 // Activate IK Rigs
@@ -293,8 +294,8 @@ namespace LightPat.Core.Player
             {
                 // Variable assignments to use in Update()
                 legTarget = leftLegTarget;
+                legTarget.GetComponent<FollowTarget>().enabled = false;
                 handTarget = leftHandTarget;
-                rightLeftMultiplier.Value = -1;
 
                 // Activate IK Rigs
                 legTarget.GetComponentInParent<Rig>().weight = 1;
@@ -332,6 +333,7 @@ namespace LightPat.Core.Player
                 handTarget.GetComponent<FollowTarget>().move = true;
                 handTarget.GetComponent<FollowTarget>().rotate = true;
 
+                legTarget.GetComponent<FollowTarget>().enabled = true;
                 legTarget = null;
                 handTarget = null;
                 rootRotationConstraint.localRotation = Quaternion.Euler(0, 0, 0);

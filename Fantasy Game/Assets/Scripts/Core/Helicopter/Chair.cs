@@ -5,7 +5,7 @@ using Unity.Netcode;
 
 namespace LightPat.Core
 {
-    public class VehicleChair : NetworkBehaviour
+    public class Chair : NetworkBehaviour
     {
         public bool driverChair;
         [Header("Sitting Down")]
@@ -22,7 +22,6 @@ namespace LightPat.Core
             if (occupant) { return; }
 
             occupant = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
-            
             
             ClientRpcParams clientRpcParams = new ClientRpcParams
             {
@@ -64,7 +63,8 @@ namespace LightPat.Core
                 GetComponentInParent<Vehicle>().OnDriverExit();
         }
 
-        [ClientRpc] void ExitSittingClientRpc(ClientRpcParams clientRpcParams = default)
+        [ClientRpc]
+        void ExitSittingClientRpc(ClientRpcParams clientRpcParams = default)
         {
             occupant.SendMessage("OnChairExit");
             occupant = null;

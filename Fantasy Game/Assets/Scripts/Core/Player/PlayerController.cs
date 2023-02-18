@@ -92,7 +92,7 @@ namespace LightPat.Core.Player
         void OnSittingChange(bool previous, bool current) { animator.SetBool("sitting", current); }
 
         bool disableNoPhysics;
-        void OnChairEnter(VehicleChair newChair)
+        void OnChairEnter(Chair newChair)
         {
             disableNoPhysics = true;
             StartCoroutine(WaitForParent());
@@ -544,7 +544,7 @@ namespace LightPat.Core.Player
 
         [Header("Interact Settings")]
         public float reach;
-        VehicleChair chair;
+        Chair chair;
         void OnInteract()
         {
             if (animator.GetBool("sitting"))
@@ -568,7 +568,7 @@ namespace LightPat.Core.Player
                 {
                     door.ToggleDoorServerRpc();
                 }
-                else if (hit.collider.TryGetComponent(out VehicleChair chair))
+                else if (hit.collider.TryGetComponent(out Chair chair))
                 {
                     if (animator.GetBool("falling")) { return; }
                     chair.TrySittingServerRpc(NetworkObjectId);

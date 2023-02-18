@@ -53,6 +53,11 @@ namespace LightPat.EnemyAI
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
+        private void GeneratePath(Vector3 finalPosition)
+        {
+            // TODO
+        }
+
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;

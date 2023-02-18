@@ -110,8 +110,6 @@ namespace LightPat.ProceduralAnimations.Spider
                         newPosition = hit.point;
                         raycastHit = hit;
                     }
-
-                    Debug.DrawRay(raycastStartPosition, controller.rootBone.up * -1 * controller.physics.bodyVerticalOffset * 3, Color.red, Time.deltaTime);
                     break;
                 }
             }

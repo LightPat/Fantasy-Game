@@ -28,7 +28,7 @@ namespace LightPat.ProceduralAnimations.Spider
         private float[] previousHeights;
         private float[] heightDifferences;
 
-        private void Start()
+        private void Awake()
         {
             physics = GetComponentInParent<SpiderPhysics>();
             rigBuilder = GetComponent<RigBuilder>();

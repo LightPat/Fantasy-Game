@@ -10,13 +10,11 @@ namespace LightPat.ProceduralAnimations.Spider
     {
         public float bodyVerticalOffset;
         public float maxVerticalOffset;
-        [Header("Extras")]
-        public bool forward;
-        public float speed;
-        public int yRotation;
 
         public Vector3 velocity { get; private set; }
         public Vector3 angularVelocity { get; private set; }
+
+        public Vector3 dotProductOffset { get; private set; }
 
         private Vector3 lastPos;
         private Vector3 lastRot;
@@ -32,9 +30,6 @@ namespace LightPat.ProceduralAnimations.Spider
         private void Update()
         {
             if (!IsOwner) { return; }
-
-            if (forward)
-                transform.position += transform.forward * speed;
 
             velocity = (transform.position - lastPos) / Time.deltaTime;
 
@@ -66,10 +61,6 @@ namespace LightPat.ProceduralAnimations.Spider
                 bodyRestingPosition -= Physics.gravity * Time.deltaTime;
 
             float yRot = Vector3.SignedAngle(transform.right, Vector3.right, transform.up * -1);
-            //if (transform.up.y < 0)
-            //    yRot *= -1;
-
-            Debug.Log(yRot + " " + transform.up);
 
             float[] normalAngles = new float[legHits.Count];
             Quaternion[] quaternions = new Quaternion[normalAngles.Length];
@@ -89,28 +80,24 @@ namespace LightPat.ProceduralAnimations.Spider
                 dotProducts.Add(Vector3.Dot(transform.up, legHits[i].normal));
             }
 
-            if (rotate)
-            {
-                if (normalAngles.Length > 0)
-                    transform.rotation = Quaternion.Slerp(transform.rotation, AverageQuaternion(quaternions) * Quaternion.Euler(0, yRot, 0), Time.deltaTime * 8);
-                else
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, yRot, 0), Time.deltaTime * 8);
-            }
-            
-            if (dotProducts.Count > 0)
-                bodyRestingPosition += Vector3.ClampMagnitude((1 - dotProducts.Min()) * 2 * bodyVerticalOffset * transform.up, (transform.up * maxVerticalOffset).magnitude);
+            if (normalAngles.Length > 0)
+                transform.rotation = Quaternion.Slerp(transform.rotation, AverageQuaternion(quaternions) * Quaternion.Euler(0, yRot, 0), Time.deltaTime * 8);
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0, yRot, 0), Time.deltaTime * 8);
 
-            if (restingPosition)
-                transform.position = Vector3.MoveTowards(transform.position, bodyRestingPosition, Time.deltaTime * 8);
+            if (dotProducts.Count > 0)
+                dotProductOffset = Vector3.ClampMagnitude((1 - dotProducts.Min()) * 2 * bodyVerticalOffset * transform.up, (transform.up * maxVerticalOffset).magnitude);
+            else
+                dotProductOffset = Vector3.zero;
+
+            bodyRestingPosition += dotProductOffset;
+            transform.position = Vector3.MoveTowards(transform.position, bodyRestingPosition, Time.deltaTime * 8);
 
             angularVelocity = (transform.eulerAngles - lastRot) / Time.deltaTime;
 
             lastPos = transform.position;
             lastRot = transform.eulerAngles;
         }
-
-        public bool restingPosition;
-        public bool rotate;
 
         private Quaternion AverageQuaternion(Quaternion[] qArray)
         {

@@ -9,20 +9,20 @@ namespace LightPat.EnemyAI
     public class RoamingMonster : Enemy
     {
         [Header("Chase Settings")]
-        public float visionDistance;
-        public float chaseSpeed;
-        public float maxChaseDistance;
-        public float stopDistance;
-        public float chaseRotationSpeed;
+        public float visionDistance = 20;
+        public float chaseSpeed = 7;
+        public float maxChaseDistance = 30;
+        public float stopDistance = 7;
+        public float chaseRotationSpeed = 5;
         [Header("Roam Settings")]
-        public float roamRadius;
-        public float roamSpeed;
-        public float roamingRotationSpeed;
+        public float roamRadius = 20;
+        public float roamSpeed = 2;
+        public float roamingRotationSpeed = 1;
 
+        private Transform target;
         private Vector3 startingPosition;
         private Vector3 roamingPosition;
         private bool lookingAround = true;
-        public Transform target;
         private Rigidbody rb;
         private Animator animator;
         private bool radiusBHit;
@@ -163,8 +163,8 @@ namespace LightPat.EnemyAI
         }
 
         [Header("Attack Settings")]
-        public float attackDamage = 10f;
-        public float attackReach = 4f;
+        public float attackDamage = 20;
+        public float attackReach = 7;
         public float attackCooldown = 1.5f;
         bool allowAttack = true;
         private void Attack()
@@ -244,11 +244,6 @@ namespace LightPat.EnemyAI
         {
             lookingAround = true;
             roamingPosition = data.inflicterPosition;
-        }
-
-        void OnDeath()
-        {
-            NetworkObject.Despawn(true);
         }
     }
 }

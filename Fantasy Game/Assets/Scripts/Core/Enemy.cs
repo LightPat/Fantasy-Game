@@ -14,5 +14,10 @@ namespace LightPat.Core
             combat,
             moveToTarget
         }
+
+        protected virtual void OnDeath()
+        {
+            NetworkObject.Despawn(true);
+        }
     }
 }

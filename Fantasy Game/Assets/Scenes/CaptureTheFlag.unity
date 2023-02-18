@@ -1369,11 +1369,11 @@ GameObject:
   - component: {fileID: 225414187}
   - component: {fileID: 225414186}
   m_Layer: 0
-  m_Name: Red Spawn Hut (2)
+  m_Name: NavMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!65 &225414186
 BoxCollider:
@@ -1445,7 +1445,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 225414185}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -73.3, y: 45.280003, z: -296.475}
+  m_LocalPosition: {x: -73.3, y: 39.920002, z: -297.88498}
   m_LocalScale: {x: 75, y: 2.5, z: 50}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2271,11 +2271,11 @@ GameObject:
   - component: {fileID: 545954107}
   - component: {fileID: 545954106}
   m_Layer: 0
-  m_Name: Red Spawn Hut (3)
+  m_Name: NavMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!65 &545954106
 BoxCollider:
@@ -2347,7 +2347,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 545954105}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -73.3, y: 53.58, z: -320.2}
+  m_LocalPosition: {x: -73.3, y: 48.22, z: -321.61}
   m_LocalScale: {x: 75, y: 36.1, z: 2.5}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3950,11 +3950,11 @@ GameObject:
   - component: {fileID: 959765191}
   - component: {fileID: 959765190}
   m_Layer: 0
-  m_Name: Ramp (10)
+  m_Name: NavMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!65 &959765190
 BoxCollider:
@@ -4026,7 +4026,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 959765189}
   m_LocalRotation: {x: -1, y: 0, z: 0, w: 0}
-  m_LocalPosition: {x: -69.58501, y: 67.7, z: -303.3}
+  m_LocalPosition: {x: -69.58501, y: 63.559994, z: -299.46997}
   m_LocalScale: {x: 26.3, y: 1, z: 42.86}
   m_Children: []
   m_Father: {fileID: 0}
@@ -7275,11 +7275,11 @@ GameObject:
   - component: {fileID: 1917792161}
   - component: {fileID: 1917792160}
   m_Layer: 0
-  m_Name: Ramp (9)
+  m_Name: NavMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!65 &1917792160
 BoxCollider:
@@ -7351,7 +7351,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1917792159}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -69.58501, y: 58.06, z: -292.29004}
+  m_LocalPosition: {x: -69.58501, y: 52.7, z: -293.7}
   m_LocalScale: {x: 26.3, y: 1, z: 21.92}
   m_Children: []
   m_Father: {fileID: 0}

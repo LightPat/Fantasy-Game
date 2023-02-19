@@ -7,24 +7,32 @@ namespace LightPat.Core
 {
     public class Motorcycle : Vehicle
     {
+        [Header("Motorcycle Specific")]
         public Vector3 velocityLimits;
         public float forceClampMultiplier;
+        public float maxHandleBarRotation;
+        public Transform handlebars;
+        public Transform rearSuspension;
 
         NetworkObject driver;
         Rigidbody rb;
+        float handleBarRotation;
         Vector3 currentVelocityLimits;
+        Quaternion originalHandleBarRotation;
 
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
             currentVelocityLimits = velocityLimits;
+            originalHandleBarRotation = handlebars.localRotation;
         }
 
         private void FixedUpdate()
         {
             if (!driver) { return; }
 
-            Vector3 moveForce = new Vector3(moveInput.x, 0, moveInput.y);
+            //Vector3 moveForce = new Vector3(moveInput.x, 0, moveInput.y);
+            Vector3 moveForce = new Vector3(0, 0, moveInput.y);
             Vector3 localVelocity = transform.InverseTransformDirection(rb.velocity);
 
             // Move vehicle horizontally
@@ -70,7 +78,10 @@ namespace LightPat.Core
 
         protected override void OnVehicleLook(Vector2 newLookInput)
         {
-            transform.Rotate(new Vector3(0, newLookInput.x, 0));
+            handleBarRotation += newLookInput.x;
+            if (handleBarRotation > maxHandleBarRotation) { handleBarRotation = maxHandleBarRotation; }
+            if (handleBarRotation < -maxHandleBarRotation) { handleBarRotation = -maxHandleBarRotation; }
+            handlebars.localRotation = originalHandleBarRotation * Quaternion.Euler(0, 0, handleBarRotation);
         }
 
         protected override void OnVehicleJump(bool pressed)

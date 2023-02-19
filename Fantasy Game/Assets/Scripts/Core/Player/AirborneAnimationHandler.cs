@@ -240,7 +240,7 @@ namespace LightPat.Core.Player
         }
 
         [Header("Wall Run Settings")]
-        public RigWeightTarget wallRunRig;
+        public RigWeightTarget rootRotationRig;
         public float zRot;
         public float wallRunDelay;
         public Transform rootRotationConstraint;
@@ -283,7 +283,7 @@ namespace LightPat.Core.Player
                     falling.Value = false;
                 ConstantForce wallForce = gameObject.AddComponent<ConstantForce>();
                 wallForce.relativeForce = new Vector3(50 * current, 0, 0);
-                wallRunRig.weightTarget = 1;
+                rootRotationRig.weightTarget = 1;
                 if (TryGetComponent(out PlayerController playerController))
                 {
                     playerController.disableLeanInput = true;
@@ -309,7 +309,7 @@ namespace LightPat.Core.Player
                     falling.Value = false;
                 ConstantForce wallForce = gameObject.AddComponent<ConstantForce>();
                 wallForce.relativeForce = new Vector3(50 * current, 0, 0);
-                wallRunRig.weightTarget = 1;
+                rootRotationRig.weightTarget = 1;
                 if (TryGetComponent(out PlayerController playerController))
                 {
                     playerController.disableLeanInput = true;
@@ -337,7 +337,7 @@ namespace LightPat.Core.Player
                 legTarget = null;
                 handTarget = null;
                 rootRotationConstraint.localRotation = Quaternion.Euler(0, 0, 0);
-                wallRunRig.weightTarget = 0;
+                rootRotationRig.weightTarget = 0;
                 if (TryGetComponent(out PlayerController playerController))
                 {
                     playerController.disableLeanInput = false;

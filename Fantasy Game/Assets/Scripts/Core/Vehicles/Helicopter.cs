@@ -7,6 +7,7 @@ namespace LightPat.Core
 {
     public class Helicopter : Vehicle
     {
+        [Header("Helicopter Specific")]
         public Camera vehicleCamera;
         public Transform mainRotor;
         public Transform tailRotor;

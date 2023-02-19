@@ -1138,7 +1138,7 @@ GameObject:
   - component: {fileID: 2081977406}
   - component: {fileID: 9211027351311965373}
   m_Layer: 0
-  m_Name: WallRunRig
+  m_Name: RootRotationRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6057,7 +6057,7 @@ MonoBehaviour:
   runningJumpHeight: 3
   isGroundedDistance: 2
   breakfallRollThreshold: 10
-  wallRunRig: {fileID: 9211027351311965373}
+  rootRotationRig: {fileID: 9211027351311965373}
   zRot: 20
   wallRunDelay: 0.2
   rootRotationConstraint: {fileID: 100698120}

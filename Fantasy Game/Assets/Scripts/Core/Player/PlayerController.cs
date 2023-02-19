@@ -89,6 +89,9 @@ namespace LightPat.Core.Player
 
             leftLegIK.GetComponentInParent<Rig>().weight = 1;
             rightLegIK.GetComponentInParent<Rig>().weight = 1;
+
+            GetComponent<AirborneAnimationHandler>().rootRotationConstraint.GetComponent<MultiRotationConstraint>().data.offset = new Vector3(newVehicle.xAxisRootBoneRotation, 0, 0);
+            GetComponent<AirborneAnimationHandler>().rootRotationRig.weightTarget = 1;
         }
 
         void OnDriverExit()
@@ -100,6 +103,9 @@ namespace LightPat.Core.Player
 
             leftLegIK.GetComponentInChildren<FollowTarget>().target = leftLegIK.data.tip;
             rightLegIK.GetComponentInChildren<FollowTarget>().target = rightLegIK.data.tip;
+
+            GetComponent<AirborneAnimationHandler>().rootRotationConstraint.GetComponent<MultiRotationConstraint>().data.offset = Vector3.zero;
+            GetComponent<AirborneAnimationHandler>().rootRotationRig.weightTarget = 1;
         }
 
         private NetworkVariable<bool> sitting = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
@@ -372,9 +378,27 @@ namespace LightPat.Core.Player
             }
 
             if (playerCamera.updateRotationWithTarget)
-                camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, rotateWithBoneRotOffset, 5 * Time.deltaTime);
+            {
+                if (vehicle)
+                {
+                    Vector3 targetRot = new Vector3(0, 0, rotateWithBoneRotOffset.z);
+                    if (vehicle.rotateX)
+                        targetRot.x = rotateWithBoneRotOffset.x;
+                    if (vehicle.rotateY)
+                        targetRot.y = rotateWithBoneRotOffset.y;
+
+                    camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, targetRot, 5 * Time.deltaTime);
+                }
+                else
+                {
+                    camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, rotateWithBoneRotOffset, 5 * Time.deltaTime);
+                }
+            }
             else
-                rotateWithBoneRotOffset = Vector3.zero; camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, rotateWithBoneRotOffset, 5 * Time.deltaTime);
+            {
+                rotateWithBoneRotOffset = Vector3.zero;
+                camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, rotateWithBoneRotOffset, 5 * Time.deltaTime);
+            }
 
             prevCamRotState = rotateBodyWithCamera;
         }

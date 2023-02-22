@@ -7,6 +7,8 @@ namespace LightPat.Core
 {
     public class Motorcycle : Vehicle
     {
+        [Header("Wheel Settings")]
+        public float power = 15000;
         [Header("Motorcycle Specific")]
         public Vector3 velocityLimits;
         public float forceClampMultiplier;
@@ -20,11 +22,15 @@ namespace LightPat.Core
         Vector3 currentVelocityLimits;
         Quaternion originalHandleBarRotation;
 
+        Wheel[] wheels;
+
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
             currentVelocityLimits = velocityLimits;
             originalHandleBarRotation = handlebars.localRotation;
+
+            wheels = GetComponentsInChildren<Wheel>();
         }
 
         public WheelCollider frontWheel;
@@ -70,6 +76,13 @@ namespace LightPat.Core
             //}
             moveForce = Vector3.ClampMagnitude(moveForce, forceClampMultiplier);
             rb.AddRelativeForce(moveForce, ForceMode.VelocityChange);
+
+            foreach (Wheel w in wheels)
+            {
+                w.Steer(lookInput.x);
+                w.Accelerate(moveInput.y * power);
+                w.UpdatePosition();
+            }
         }
 
         //[Header("OnCollisionStay")]
@@ -117,12 +130,15 @@ namespace LightPat.Core
             moveInput = newMoveInput;
         }
 
+        Vector2 lookInput;
         protected override void OnVehicleLook(Vector2 newLookInput)
         {
-            handleBarRotation += newLookInput.x;
-            if (handleBarRotation > maxHandleBarRotation) { handleBarRotation = maxHandleBarRotation; }
-            if (handleBarRotation < -maxHandleBarRotation) { handleBarRotation = -maxHandleBarRotation; }
-            handlebars.localRotation = originalHandleBarRotation * Quaternion.Euler(0, 0, handleBarRotation);
+            lookInput = newLookInput;
+
+            //handleBarRotation += newLookInput.x;
+            //if (handleBarRotation > maxHandleBarRotation) { handleBarRotation = maxHandleBarRotation; }
+            //if (handleBarRotation < -maxHandleBarRotation) { handleBarRotation = -maxHandleBarRotation; }
+            //handlebars.localRotation = originalHandleBarRotation * Quaternion.Euler(0, 0, handleBarRotation);
         }
 
         protected override void OnVehicleJump(bool pressed)

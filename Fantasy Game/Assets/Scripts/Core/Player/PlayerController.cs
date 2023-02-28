@@ -154,6 +154,19 @@ namespace LightPat.Core.Player
         private void OnTransformParentChanged()
         {
             playerCamera.RefreshCameraParent();
+
+            //if (transform.parent)
+            //{
+            //    rotateBodyWithCamera = true;
+            //}
+            //else
+            //{
+            //    Debug.Log((bool)GetComponent<WeaponLoadout>().equippedWeapon);
+            //    if (GetComponent<WeaponLoadout>().equippedWeapon)
+            //        rotateBodyWithCamera = true;
+            //    else
+            //        rotateBodyWithCamera = false;
+            //}
         }
 
         private void Awake()
@@ -184,7 +197,7 @@ namespace LightPat.Core.Player
         public float mouseUpXRotLimit;
         public float mouseDownXRotLimit;
         public bool disableLookInput;
-        public bool rotateBodyWithCamera;
+        public bool rotateBodyWithCamera { get; private set; } = true;
         public float attemptedXAngle { get; private set; }
         public Vector3 bodyRotation { get; private set; }
         Vector2 lookInput;
@@ -427,11 +440,6 @@ namespace LightPat.Core.Player
                         if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
                         lastNoPhysicsTime = Time.time;
 
-                        if (GetComponent<WeaponLoadout>().equippedWeapon)
-                            rotateBodyWithCamera = true;
-                        else
-                            rotateBodyWithCamera = false;
-
                         GetComponent<CustomNetworkTransform>().SetParent(null);
                         rb = gameObject.AddComponent<Rigidbody>();
                         rb.constraints = RigidbodyConstraints.FreezeRotation;
@@ -446,11 +454,6 @@ namespace LightPat.Core.Player
                 {
                     if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
                     lastNoPhysicsTime = Time.time;
-
-                    if (GetComponent<WeaponLoadout>().equippedWeapon)
-                        rotateBodyWithCamera = true;
-                    else
-                        rotateBodyWithCamera = false;
 
                     GetComponent<CustomNetworkTransform>().SetParent(null);
                     rb = gameObject.AddComponent<Rigidbody>();
@@ -477,7 +480,7 @@ namespace LightPat.Core.Player
 
                     GetComponent<CustomNetworkTransform>().SetParent(collision.transform.GetComponent<NetworkObject>());
                     Destroy(rb);
-                    rotateBodyWithCamera = true;
+                    //rotateBodyWithCamera = true;
                 }
             }
         }

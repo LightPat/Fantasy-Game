@@ -36,7 +36,7 @@ namespace LightPat.Core
             {
                 w.Steer(steerAngle);
                 w.Accelerate(moveInput.y * power);
-                w.Brake(jumping ? brakePower : 0);
+                w.Brake(jumping & driver ? brakePower : 0);
                 w.UpdatePosition();
             }
         }
@@ -86,12 +86,6 @@ namespace LightPat.Core
         protected override void OnVehicleSprint(bool pressed)
         {
             Debug.Log("OnVehicleSprint");
-        }
-
-        private void OnDrawGizmos()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(GetComponent<Rigidbody>().worldCenterOfMass, 1);
         }
     }
 }

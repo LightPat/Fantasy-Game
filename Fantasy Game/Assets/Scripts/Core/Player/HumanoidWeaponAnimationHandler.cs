@@ -818,8 +818,8 @@ namespace LightPat.Core.Player
 
         private void EnableCombatIKs()
         {
-            if (playerController)
-                playerController.rotateBodyWithCamera = true;
+            //if (playerController)
+            //    playerController.rotateBodyWithCamera = true;
 
             if (weaponLoadout.equippedWeapon.TryGetComponent(out Rifle rifleComponent))
             {
@@ -909,8 +909,8 @@ namespace LightPat.Core.Player
                 playerController.SetLean(0);
                 playerController.playerHUD.ammoDisplay.gameObject.SetActive(false);
                 playerController.playerHUD.lookAngleDisplay.gameObject.SetActive(false);
-                playerController.rotateBodyWithCamera = false;
-            }            
+                //playerController.rotateBodyWithCamera = false;
+            }
         }
 
         void OnDeath()

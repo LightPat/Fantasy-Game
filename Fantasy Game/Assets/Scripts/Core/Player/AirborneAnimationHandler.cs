@@ -73,9 +73,8 @@ namespace LightPat.Core.Player
             // Wall running logic
             if (animator.GetBool("wallRun"))
             {
-                PlayerController playerController;
-                if (TryGetComponent(out playerController))
-                    playerController.rotateBodyWithCamera = false;
+                //if (TryGetComponent(out PlayerController playerController))
+                //    playerController.rotateBodyWithCamera = false;
                 
                 rb.velocity = new Vector3(rb.velocity.x, 0, rb.velocity.z);
                 handTarget.GetComponentInParent<RigWeightTarget>().weightTarget = 1;
@@ -338,11 +337,11 @@ namespace LightPat.Core.Player
                 handTarget = null;
                 rootRotationConstraint.localRotation = Quaternion.Euler(0, 0, 0);
                 rootRotationRig.weightTarget = 0;
-                if (TryGetComponent(out PlayerController playerController))
-                {
-                    playerController.disableLeanInput = false;
-                    playerController.rotateBodyWithCamera = weaponLoadout.equippedWeapon;
-                }
+                //if (TryGetComponent(out PlayerController playerController))
+                //{
+                //    playerController.disableLeanInput = false;
+                //    playerController.rotateBodyWithCamera = weaponLoadout.equippedWeapon;
+                //}
             }
         }
 

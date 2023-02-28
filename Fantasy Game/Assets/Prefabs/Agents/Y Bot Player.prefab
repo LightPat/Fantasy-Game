@@ -6024,7 +6024,7 @@ MonoBehaviour:
   mouseUpXRotLimit: -90
   mouseDownXRotLimit: 90
   disableLookInput: 0
-  rotateBodyWithCamera: 0
+  rotateBodyWithCamera: 1
   toggleSprint: 0
   toggleCrouch: 0
   reach: 7

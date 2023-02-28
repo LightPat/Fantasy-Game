@@ -409,7 +409,7 @@ namespace LightPat.Core.Player
 
             if (!rb & !chair)
             {
-                Vector3 startPos = new Vector3(transform.position.x, transform.position.y + 0.7f, transform.position.z);
+                Vector3 startPos = transform.position + transform.up * 0.7f;
                 RaycastHit[] allHits = Physics.RaycastAll(startPos, transform.up * -1, 2, Physics.AllLayers, QueryTriggerInteraction.Ignore);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)

@@ -9,6 +9,7 @@ namespace LightPat.Core
     {
         [Header("Wheel Settings")]
         public float power = 15000;
+        public float brakePower = 1000;
         [Header("Motorcycle Specific")]
         public float forceClampMultiplier;
         public float maxHandleBarRotation;
@@ -35,6 +36,7 @@ namespace LightPat.Core
             {
                 w.Steer(steerAngle);
                 w.Accelerate(moveInput.y * power);
+                w.Brake(jumping ? brakePower : 0);
                 w.UpdatePosition();
             }
         }
@@ -62,20 +64,18 @@ namespace LightPat.Core
             moveInput = newMoveInput;
         }
 
-        Vector2 lookInput;
         protected override void OnVehicleLook(Vector2 newLookInput)
         {
-            lookInput = newLookInput;
-
             handleBarRotation += newLookInput.x;
             if (handleBarRotation > maxHandleBarRotation) { handleBarRotation = maxHandleBarRotation; }
             if (handleBarRotation < -maxHandleBarRotation) { handleBarRotation = -maxHandleBarRotation; }
             handlebars.localRotation = originalHandleBarRotation * Quaternion.Euler(0, 0, handleBarRotation);
         }
 
+        bool jumping;
         protected override void OnVehicleJump(bool pressed)
         {
-            Debug.Log("OnVehicleJump");
+            jumping = pressed;
         }
 
         protected override void OnVehicleCrouch(bool pressed)
@@ -86,6 +86,12 @@ namespace LightPat.Core
         protected override void OnVehicleSprint(bool pressed)
         {
             Debug.Log("OnVehicleSprint");
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(GetComponent<Rigidbody>().worldCenterOfMass, 1);
         }
     }
 }

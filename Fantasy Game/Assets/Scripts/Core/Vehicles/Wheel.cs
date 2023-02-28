@@ -31,7 +31,11 @@ namespace LightPat.Core
         public void Accelerate(float powerInput)
         {
             if (powered) wcol.motorTorque = powerInput;
-            else wcol.brakeTorque = 0;
+        }
+
+        public void Brake(float brakePower)
+        {
+            wcol.brakeTorque = brakePower;
         }
 
         public void UpdatePosition()

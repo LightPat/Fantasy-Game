@@ -15,19 +15,39 @@ namespace LightPat.Core
         public float maxHandleBarRotation;
         public Transform handlebars;
         public Transform rearSuspension;
+        public Transform kickStand;
+        public Vector3 kickStandExtendedRotation;
 
+        Rigidbody rb;
         NetworkObject driver;
         float handleBarRotation;
         Quaternion originalHandleBarRotation;
+        Quaternion originalKickStandRotation;
 
         Wheel[] wheels;
 
         private void Start()
         {
             originalHandleBarRotation = handlebars.localRotation;
+            originalKickStandRotation = kickStand.localRotation;
             wheels = GetComponentsInChildren<Wheel>();
+            rb = GetComponent<Rigidbody>();
         }
 
+        private void Update()
+        {
+            if (driver)
+            {
+                kickStand.localRotation = Quaternion.Slerp(kickStand.localRotation, originalKickStandRotation, Time.deltaTime * 8);
+            }
+            else
+            {
+                kickStand.localRotation = Quaternion.Slerp(kickStand.localRotation, Quaternion.Euler(kickStandExtendedRotation), Time.deltaTime * 8);
+            }
+        }
+
+        public float dampenFactor = 0.8f; // this value requires tuning
+        public float adjustFactor = 0.5f; // this value requires tuning
         private void FixedUpdate()
         {
             float steerAngle = -Vector3.SignedAngle(handlebars.up, transform.forward, transform.up);
@@ -36,9 +56,14 @@ namespace LightPat.Core
             {
                 w.Steer(steerAngle);
                 w.Accelerate(moveInput.y * power);
-                w.Brake(jumping & driver ? brakePower : 0);
+                w.Brake(jumping | !driver ? brakePower : 0);
                 w.UpdatePosition();
             }
+
+            Quaternion deltaQuat = Quaternion.FromToRotation(rb.transform.up, Vector3.up);
+            deltaQuat.ToAngleAxis(out float angle, out Vector3 axis);
+            rb.AddTorque(-rb.angularVelocity * dampenFactor, ForceMode.Acceleration);
+            rb.AddTorque(adjustFactor * angle * axis.normalized, ForceMode.Acceleration);
         }
 
         public override void OnDriverEnter(ulong networkObjectId)

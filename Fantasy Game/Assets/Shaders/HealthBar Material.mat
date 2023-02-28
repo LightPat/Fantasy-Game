@@ -117,7 +117,7 @@ Material:
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
-    - healthPercentage: 1
+    - healthPercentage: 0
     m_Colors:
     - Color_2891a35b536a4255b4c68c7c62e534a7: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 0}
     - Color_735a993c0a0340928ee50403e664465b: {r: 1, g: 0, b: 0, a: 0}

@@ -292,27 +292,33 @@ namespace LightPat.Core.Player
             if (!rotateBodyWithCamera)
             {
                 camTransform.localEulerAngles = new Vector3(camTransform.localEulerAngles.x, camTransform.localEulerAngles.y + lookInput.x, camTransform.localEulerAngles.z);
-                attemptedXAngle = Vector3.Angle(Quaternion.Euler(bodyRotation) * Vector3.forward, camTransform.forward);
-
-                if (camTransform.forward.y > 0)
-                    attemptedXAngle *= -1;
+                attemptedXAngle = Vector3.SignedAngle(Quaternion.Euler(bodyRotation) * Vector3.forward, camTransform.forward, transform.right);
 
                 if (attemptedXAngle > mouseDownXRotLimit)
+                {
                     camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, bodyRotation.y, 0);
+                    attemptedXAngle = mouseDownXRotLimit;
+                }
                 else if (attemptedXAngle < mouseUpXRotLimit)
+                {
                     camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, bodyRotation.y, 0);
+                    attemptedXAngle = mouseUpXRotLimit;
+                }
             }
-            else // When leaning
+            else // When you have a weapon out
             {
-                attemptedXAngle = Vector3.Angle(transform.forward, camTransform.forward);
-
-                if (camTransform.forward.y > 0)
-                    attemptedXAngle *= -1;
+                attemptedXAngle = Vector3.SignedAngle(transform.forward, camTransform.forward, transform.right);
 
                 if (attemptedXAngle > mouseDownXRotLimit)
+                {
                     camTransform.localEulerAngles = new Vector3(mouseDownXRotLimit, 0, 0);
+                    attemptedXAngle = mouseDownXRotLimit;
+                }
                 else if (attemptedXAngle < mouseUpXRotLimit)
+                {
                     camTransform.localEulerAngles = new Vector3(mouseUpXRotLimit, 0, 0);
+                    attemptedXAngle = mouseUpXRotLimit;
+                }
             }
         }
 

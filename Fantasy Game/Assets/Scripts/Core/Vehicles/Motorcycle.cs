@@ -46,8 +46,8 @@ namespace LightPat.Core
             }
         }
 
-        public float dampenFactor = 0.8f; // this value requires tuning
-        public float adjustFactor = 0.5f; // this value requires tuning
+        public float dampenFactor = 0.8f;
+        public float adjustFactor = 0.5f;
         private void FixedUpdate()
         {
             float steerAngle = -Vector3.SignedAngle(handlebars.up, transform.forward, transform.up);
@@ -60,10 +60,16 @@ namespace LightPat.Core
                 w.UpdatePosition();
             }
 
-            Quaternion deltaQuat = Quaternion.FromToRotation(rb.transform.up, Vector3.up);
-            deltaQuat.ToAngleAxis(out float angle, out Vector3 axis);
-            rb.AddTorque(-rb.angularVelocity * dampenFactor, ForceMode.Acceleration);
-            rb.AddTorque(adjustFactor * angle * axis.normalized, ForceMode.Acceleration);
+            if (driver)
+            {
+                Quaternion deltaQuat = Quaternion.FromToRotation(rb.transform.up, Vector3.up);
+                if (!((rb.velocity.magnitude > 15 | rb.angularVelocity.magnitude > 10) & Quaternion.Angle(deltaQuat, Quaternion.identity) > 15))
+                {
+                    deltaQuat.ToAngleAxis(out float angle, out Vector3 axis);
+                    rb.AddTorque(-rb.angularVelocity * dampenFactor, ForceMode.Acceleration);
+                    rb.AddTorque(adjustFactor * angle * axis.normalized, ForceMode.Acceleration);
+                }
+            }
         }
 
         public override void OnDriverEnter(ulong networkObjectId)
@@ -72,6 +78,7 @@ namespace LightPat.Core
             driver = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
             NetworkObject.ChangeOwnership(driver.OwnerClientId);
             driver.SendMessage("OnDriverEnter", this);
+            rb.constraints = RigidbodyConstraints.FreezeRotationZ;
         }
 
         public override void OnDriverExit()
@@ -81,6 +88,7 @@ namespace LightPat.Core
             NetworkObject.RemoveOwnership();
             driver.SendMessage("OnDriverExit");
             driver = null;
+            rb.constraints = RigidbodyConstraints.None;
         }
 
         Vector2 moveInput;

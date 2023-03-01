@@ -614,13 +614,13 @@ MonoBehaviour:
   power: 1500
   brakePower: 1000
   forceClampMultiplier: 0.3
-  maxHandleBarRotation: 30
+  maxHandleBarRotation: 50
   handlebars: {fileID: 4091939347074916408}
   rearSuspension: {fileID: 5602077209631091625}
   kickStand: {fileID: 2030205232514417456}
   kickStandExtendedRotation: {x: 0, y: 0, z: 0}
-  dampenFactor: 0.8
-  adjustFactor: 0.5
+  dampenFactor: 0
+  adjustFactor: 2
 --- !u!114 &2117773389223747652
 MonoBehaviour:
   m_ObjectHideFlags: 0

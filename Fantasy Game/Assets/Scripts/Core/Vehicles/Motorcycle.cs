@@ -26,6 +26,12 @@ namespace LightPat.Core
         Quaternion originalHandleBarRotation;
         Wheel[] wheels;
 
+        public override void OnNetworkSpawn()
+        {
+            if (IsServer)
+                GetComponent<NestedNetworkObject>().NestedSpawn();
+        }
+
         private void Start()
         {
             originalHandleBarRotation = handleBars.localRotation;
@@ -62,6 +68,8 @@ namespace LightPat.Core
         public float stopAdjustQuaternionAngle = 15;
         private void FixedUpdate()
         {
+            if (!IsOwner) { return; }
+
             float steerAngle = -Vector3.SignedAngle(handleBars.up, transform.forward, transform.up);
 
             foreach (Wheel w in wheels)
@@ -83,6 +91,7 @@ namespace LightPat.Core
                 }
                 else
                 {
+                    Debug.Log(Time.time);
                     deltaQuat.ToAngleAxis(out float angle, out Vector3 axis);
                     rb.AddTorque(-rb.angularVelocity * dampenFactor, ForceMode.Acceleration);
                     rb.AddTorque(adjustFactor * angle * axis.normalized, ForceMode.Acceleration);
@@ -95,10 +104,22 @@ namespace LightPat.Core
         {
             if (!IsServer) { Debug.LogWarning("Calling OnDriverEnter from a client"); return; }
             driver = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
+            
             NetworkObject.ChangeOwnership(driver.OwnerClientId);
-            driver.SendMessage("OnDriverEnter", this);
-            transform.rotation = Quaternion.FromToRotation(rb.transform.up, Vector3.up);
+            GetComponentInChildren<NestedNetworkObject>().NetworkObject.ChangeOwnership(driver.OwnerClientId);
+
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;
+            driver.SendMessage("OnDriverEnter", this);
+            OnDriverEnterClientRpc(networkObjectId);
+        }
+
+        [ClientRpc]
+        void OnDriverEnterClientRpc(ulong networkObjectId)
+        {
+            driver = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
+
+            rb.constraints = RigidbodyConstraints.FreezeRotationZ;
+            driver.SendMessage("OnDriverEnter", this);
         }
 
         public override void OnDriverExit()
@@ -106,9 +127,20 @@ namespace LightPat.Core
             if (!IsServer) { Debug.LogWarning("Calling OnDriverExit from a client"); return; }
 
             NetworkObject.RemoveOwnership();
+            rb.constraints = RigidbodyConstraints.None;
+
+            OnDriverExitClientRpc();
+
             driver.SendMessage("OnDriverExit");
             driver = null;
+        }
+
+        [ClientRpc]
+        void OnDriverExitClientRpc()
+        {
             rb.constraints = RigidbodyConstraints.None;
+            driver.SendMessage("OnDriverExit");
+            driver = null;
         }
 
         Vector2 moveInput;

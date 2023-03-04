@@ -1061,6 +1061,7 @@ GameObject:
   - component: {fileID: 1051505835867871174}
   - component: {fileID: 1154673197849305429}
   - component: {fileID: 6394841326812074991}
+  - component: {fileID: 5932289968870673947}
   m_Layer: 0
   m_Name: Motorcycle
   m_TagString: Untagged
@@ -1178,8 +1179,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.57387555, z: 1.4795802}
-  m_Center: {x: 0, y: 1.5670629, z: -0.8940283}
+  m_Size: {x: 1, y: 0.5738754, z: 0.9357306}
+  m_Center: {x: 0, y: 1.5670629, z: -0.6221035}
 --- !u!114 &6394841326812074991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1196,6 +1197,20 @@ MonoBehaviour:
   occupantPosition: {x: 0, y: 0.81, z: -0.56}
   occupantRotation: {x: 0, y: 0, z: 0}
   exitPosOffset: {x: 0, y: 0, z: -2.5}
+--- !u!114 &5932289968870673947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4069727618725294910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b08f8afdb3f2774baf2fe40937f1f32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nestedNetworkObjectPrefab:
+  - {fileID: 287936439935252453, guid: 90eaf325464130c4f9feea2bfe4efd4e, type: 3}
 --- !u!1 &4073652166704054311
 GameObject:
   m_ObjectHideFlags: 0

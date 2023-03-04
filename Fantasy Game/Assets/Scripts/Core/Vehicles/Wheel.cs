@@ -12,12 +12,11 @@ namespace LightPat.Core
 
         private float turnAngle;
         private WheelCollider wcol;
-        private Transform wmesh;
+        [SerializeField] private Transform wmesh;
 
         private void Awake()
         {
             wcol = GetComponentInChildren<WheelCollider>();
-            wmesh = GetComponentInChildren<Renderer>().transform;
         }
 
         public void Steer(float steerInput)

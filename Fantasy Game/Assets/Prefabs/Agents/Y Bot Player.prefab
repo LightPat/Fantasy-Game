@@ -45,23 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Weight: 0
-  m_Effectors:
-  - m_Transform: {fileID: 548850743}
-    m_Style:
-      shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
-      color: {r: 1, g: 1, b: 0, a: 0.5}
-      size: 0.1
-      position: {x: 0, y: 0, z: 0}
-      rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
-  - m_Transform: {fileID: 277842407}
-    m_Style:
-      shape: {fileID: 4300000, guid: c6793350c150f456688e39a81f97364a, type: 2}
-      color: {r: 1, g: 0, b: 0, a: 0.5}
-      size: 0.1
-      position: {x: 0, y: 0, z: 0}
-      rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
+  m_Effectors: []
 --- !u!1 &23860724
 GameObject:
   m_ObjectHideFlags: 0
@@ -3043,23 +3027,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Weight: 0
-  m_Effectors:
-  - m_Transform: {fileID: 9174669157334797600}
-    m_Style:
-      shape: {fileID: 4300000, guid: 687b70eb9c49243639f9379f6965034f, type: 2}
-      color: {r: 1, g: 1, b: 0, a: 0.5}
-      size: 0.1
-      position: {x: 0, y: 0, z: 0}
-      rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
-  - m_Transform: {fileID: 9034503154966763265}
-    m_Style:
-      shape: {fileID: 4300000, guid: c6793350c150f456688e39a81f97364a, type: 2}
-      color: {r: 1, g: 0, b: 0, a: 0.5}
-      size: 0.1
-      position: {x: 0, y: 0, z: 0}
-      rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
+  m_Effectors: []
 --- !u!1 &2860282880175213526
 GameObject:
   m_ObjectHideFlags: 0
@@ -5603,7 +5571,7 @@ MonoBehaviour:
       size: 0.1
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0}
-    m_Visible: 1
+    m_Visible: 0
 --- !u!114 &7284513825018453871
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6024,7 +5992,6 @@ MonoBehaviour:
   mouseUpXRotLimit: -90
   mouseDownXRotLimit: 90
   disableLookInput: 0
-  rotateBodyWithCamera: 1
   toggleSprint: 0
   toggleCrouch: 0
   reach: 7

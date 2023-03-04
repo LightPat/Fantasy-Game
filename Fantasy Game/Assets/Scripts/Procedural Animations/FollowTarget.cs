@@ -12,7 +12,7 @@ namespace LightPat.ProceduralAnimations
         public bool lerp;
         public float lerpSpeed = 5;
 
-        private void Update()
+        private void LateUpdate()
         {
             if (target)
             {

@@ -43,6 +43,8 @@ namespace LightPat.Core
         private float lastRearYValue;
         private void Update()
         {
+            if (!IsOwner) { return; }
+
             // Handle bar mesh position is found by tracking the y delta local position of the wheel and translating it accordingly
             // Take wheel collider pose and convert that into local space
             // Handle bar mesh rotation is found by 
@@ -91,7 +93,6 @@ namespace LightPat.Core
                 }
                 else
                 {
-                    Debug.Log(Time.time);
                     deltaQuat.ToAngleAxis(out float angle, out Vector3 axis);
                     rb.AddTorque(-rb.angularVelocity * dampenFactor, ForceMode.Acceleration);
                     rb.AddTorque(adjustFactor * angle * axis.normalized, ForceMode.Acceleration);

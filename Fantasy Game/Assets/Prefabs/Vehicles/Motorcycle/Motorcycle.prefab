@@ -1123,7 +1123,7 @@ MonoBehaviour:
   rotateX: 1
   rotateY: 0
   power: 1500
-  brakePower: 1000
+  brakePower: 1500
   forceClampMultiplier: 0.3
   maxHandleBarRotation: 50
   handleBars: {fileID: 4890821509948981005}

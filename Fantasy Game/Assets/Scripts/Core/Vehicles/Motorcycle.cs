@@ -63,6 +63,13 @@ namespace LightPat.Core
             driverChair = GetComponent<Chair>();
         }
 
+        [Header("Skid Settings")]
+        public GameObject skidPrefab;
+        public Vector3 frontSkidRotationOffset;
+        public float frontSkidThreshold;
+        public Vector3 rearSkidRotationOffset;
+        public float rearSkidThreshold;
+
         private float lastFrontYValue;
         private float lastRearYValue;
         private void Update()
@@ -73,7 +80,6 @@ namespace LightPat.Core
             if (!IsOwner) { return; }
 
             driverChair.rotateY = crouching;
-            //driverChair.rotateX = !crouching;
 
             // Suspension position is found by tracking the y delta local position of the wheel and translating it accordingly in local space
 
@@ -89,6 +95,18 @@ namespace LightPat.Core
             wheelLocPos = rearWheelCollider.transform.InverseTransformPoint(pos);
             rearSuspension.Translate(0, 0, wheelLocPos.y - lastRearYValue, Space.Self);
             lastRearYValue = wheelLocPos.y;
+
+            frontWheelCollider.GetGroundHit(out WheelHit frontHit);
+            if (Mathf.Abs(frontHit.sidewaysSlip) > 1 | Mathf.Abs(frontHit.forwardSlip) > frontSkidThreshold)
+            {
+                Instantiate(skidPrefab, frontHit.point, Quaternion.Euler(frontHit.normal) * frontWheelCollider.transform.rotation * Quaternion.Euler(frontSkidRotationOffset));
+            }
+            
+            rearWheelCollider.GetGroundHit(out WheelHit rearHit);
+            if (Mathf.Abs(rearHit.sidewaysSlip) > 1 | Mathf.Abs(rearHit.forwardSlip) > rearSkidThreshold)
+            {
+                Instantiate(skidPrefab, rearHit.point, Quaternion.Euler(rearHit.normal) * rearWheelCollider.transform.rotation * Quaternion.Euler(rearSkidRotationOffset));
+            }
         }
 
         [Header("Physics Settings")]

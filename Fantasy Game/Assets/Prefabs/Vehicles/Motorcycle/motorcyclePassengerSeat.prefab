@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -8452770934210327057}
   - component: {fileID: -6044082659901571929}
   m_Layer: 0
-  m_Name: motorcyclePassengerSeat
+  m_Name: MotorcyclePassengerSeat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

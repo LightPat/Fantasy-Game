@@ -116,7 +116,6 @@ namespace LightPat.Core.Player
                 rightLegIK.GetComponentInParent<Rig>().weight = 1;
             }
 
-
             originalLookLimit = rotateWithBoneLookLimit;
             rotateWithBoneLookLimit = chair.occupantLookLimits;
         }

@@ -70,9 +70,7 @@ namespace LightPat.Core
 
             if (!IsOwner) { return; }
 
-            // Handle bar mesh position is found by tracking the y delta local position of the wheel and translating it accordingly
-            // Take wheel collider pose and convert that into local space
-            // Handle bar mesh rotation is found by 
+            // Suspension position is found by tracking the y delta local position of the wheel and translating it accordingly in local space
 
             frontWheelCollider.GetWorldPose(out Vector3 pos, out Quaternion rot);
             frontWheelMesh.rotation = rot;
@@ -82,6 +80,7 @@ namespace LightPat.Core
             lastFrontYValue = wheelLocPos.y;
             
             rearWheelCollider.GetWorldPose(out pos, out rot);
+            // Take wheel collider pose and convert that into local space
             wheelLocPos = rearWheelCollider.transform.InverseTransformPoint(pos);
             rearSuspension.Translate(0, 0, wheelLocPos.y - lastRearYValue, Space.Self);
             lastRearYValue = wheelLocPos.y;
@@ -102,7 +101,7 @@ namespace LightPat.Core
             foreach (Wheel w in wheels)
             {
                 w.Steer(steerAngle);
-                w.Accelerate(moveInput.y * power);
+                w.Accelerate(sprinting ? moveInput.y * power * 2 : moveInput.y * power);
                 w.Brake(jumping | !driver ? brakePower : 0);
                 w.UpdatePosition();
             }

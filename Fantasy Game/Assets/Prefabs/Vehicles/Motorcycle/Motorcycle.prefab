@@ -1546,12 +1546,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 464389c7a4439214f82dab2f67172d53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftFootGrip: {fileID: 2460933281306531648}
-  rightFootGrip: {fileID: 5475707421428395675}
-  leftHandGrip: {fileID: 3577263506933105289}
-  rightHandGrip: {fileID: 5383202860605535943}
-  leftFingersGrips: {fileID: 6064216684951845284}
-  rightFingersGrips: {fileID: 2980609152841959345}
   power: 1500
   brakePower: 1500
   forceClampMultiplier: 0.3
@@ -1632,8 +1626,8 @@ MonoBehaviour:
   rightFingersGrips: {fileID: 2980609152841959345}
   rotateX: 1
   rotateY: 0
-  occupantPosition: {x: 0, y: 0.95, z: -1.32}
-  occupantRotation: {x: 50, y: -2, z: 0}
+  occupantPosition: {x: 0, y: 1, z: -1.38}
+  occupantRotation: {x: 55, y: -2, z: 0}
   exitPosOffset: {x: 0, y: 0, z: -2.5}
 --- !u!114 &5932289968870673947
 MonoBehaviour:

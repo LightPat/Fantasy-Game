@@ -1557,10 +1557,10 @@ MonoBehaviour:
   rearSuspension: {fileID: 3938502247559623836}
   rearWheelCollider: {fileID: 4385247811900674008}
   skidPrefab: {fileID: 6835329911111739836, guid: fdc089cc766306c48bf3ff3b0568c1f5, type: 3}
-  frontSkidRotationOffset: {x: 90, y: 90, z: 0}
-  frontSkidThreshold: 0
+  frontSkidRotationOffset: {x: 180, y: 0, z: 90}
+  frontSkidThreshold: 1
   rearSkidRotationOffset: {x: 90, y: 90, z: 0}
-  rearSkidThreshold: 50
+  rearSkidThreshold: 1
   dampenFactor: 0.8
   adjustFactor: 2
   stopAdjustMaxVelocity: 15

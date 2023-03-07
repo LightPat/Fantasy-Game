@@ -97,13 +97,13 @@ namespace LightPat.Core
             lastRearYValue = wheelLocPos.y;
 
             frontWheelCollider.GetGroundHit(out WheelHit frontHit);
-            if (Mathf.Abs(frontHit.sidewaysSlip) > 1 | Mathf.Abs(frontHit.forwardSlip) > frontSkidThreshold)
+            if (Mathf.Abs(frontHit.sidewaysSlip) > frontSkidThreshold | Mathf.Abs(frontHit.forwardSlip) > frontSkidThreshold)
             {
                 Instantiate(skidPrefab, frontHit.point, Quaternion.Euler(frontHit.normal) * frontWheelCollider.transform.rotation * Quaternion.Euler(frontSkidRotationOffset));
             }
             
             rearWheelCollider.GetGroundHit(out WheelHit rearHit);
-            if (Mathf.Abs(rearHit.sidewaysSlip) > 1 | Mathf.Abs(rearHit.forwardSlip) > rearSkidThreshold)
+            if (Mathf.Abs(rearHit.sidewaysSlip) > rearSkidThreshold | Mathf.Abs(rearHit.forwardSlip) > rearSkidThreshold)
             {
                 Instantiate(skidPrefab, rearHit.point, Quaternion.Euler(rearHit.normal) * rearWheelCollider.transform.rotation * Quaternion.Euler(rearSkidRotationOffset));
             }

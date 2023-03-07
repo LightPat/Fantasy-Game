@@ -234,7 +234,7 @@ MonoBehaviour:
   tip: {fileID: 548850743}
   tipAxis: 1
   tipMultiplier: -1
-  offset: {x: 0, y: 0, z: 1}
+  offset: {x: 0.1, y: 0, z: 1}
   debugLines: 0
 --- !u!1 &548850742
 GameObject:
@@ -2553,7 +2553,7 @@ MonoBehaviour:
   tip: {fileID: 9174669157334797600}
   tipAxis: 1
   tipMultiplier: -1
-  offset: {x: 0, y: 0, z: 1}
+  offset: {x: -0.1, y: 0, z: 1}
   debugLines: 0
 --- !u!1 &2114555447844662640
 GameObject:

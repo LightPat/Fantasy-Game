@@ -11,6 +11,8 @@ namespace LightPat.Core
         [Header("Sitting Down")]
         public Vector3 occupantPosition;
         public Vector3 occupantRotation;
+        public bool rotateX = true;
+        public bool rotateY = true;
         [Header("Exitting Chair")]
         public Vector3 exitPosOffset;
 

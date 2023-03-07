@@ -10,11 +10,10 @@ namespace LightPat.Core
         [Header("All Vehicles")]
         public Transform leftFootGrip;
         public Transform rightFootGrip;
-        public Transform rightHandGrip;
         public Transform leftHandGrip;
-        public float xAxisRootBoneRotation;
-        public bool rotateX;
-        public bool rotateY;
+        public Transform rightHandGrip;
+        public Transform leftFingersGrips;
+        public Transform rightFingersGrips;
 
         public abstract void OnDriverEnter(ulong networkObjectId);
         public abstract void OnDriverExit();

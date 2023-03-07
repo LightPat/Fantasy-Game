@@ -164,14 +164,16 @@ namespace LightPat.Core
             jumping = pressed;
         }
 
+        bool crouching;
         protected override void OnVehicleCrouch(bool pressed)
         {
-            Debug.Log("OnVehicleCrouch");
+            crouching = pressed;
         }
 
+        bool sprinting;
         protected override void OnVehicleSprint(bool pressed)
         {
-            Debug.Log("OnVehicleSprint");
+            sprinting = pressed;
         }
     }
 }

@@ -440,8 +440,19 @@ namespace LightPat.Core.Player
             rightHandTarget.target = vehicle.rightHandGrip;
             leftHandTarget.target = vehicle.leftHandGrip;
 
+            Transform rightFingers = vehicle.rightFingersGrips;
+            Transform leftFingers = vehicle.leftFingersGrips;
+            for (int i = 0; i < rightFingerIKs.Length; i++)
+            {
+                rightFingerIKs[i].target = rightFingers.GetChild(i);
+                leftFingerIKs[i].target = leftFingers.GetChild(i);
+            }
+
             rightArmRig.weightTarget = 1;
             leftArmRig.weightTarget = 1;
+
+            rightFingerRig.weightTarget = 1;
+            leftFingerRig.weightTarget = 1;
         }
 
         void OnDriverExit()

@@ -89,9 +89,6 @@ namespace LightPat.Core.Player
 
             leftLegIK.GetComponentInParent<Rig>().weight = 1;
             rightLegIK.GetComponentInParent<Rig>().weight = 1;
-
-            GetComponent<AirborneAnimationHandler>().rootRotationConstraint.GetComponent<MultiRotationConstraint>().data.offset = new Vector3(newVehicle.xAxisRootBoneRotation, 0, 0);
-            GetComponent<AirborneAnimationHandler>().rootRotationRig.weightTarget = 1;
         }
 
         void OnDriverExit()
@@ -126,6 +123,9 @@ namespace LightPat.Core.Player
             transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
             bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             sitting.Value = true;
+
+            //GetComponent<AirborneAnimationHandler>().rootRotationConstraint.GetComponent<MultiRotationConstraint>().data.offset = new Vector3(chair.xAxisRootBoneRotation, 0, 0);
+            //GetComponent<AirborneAnimationHandler>().rootRotationRig.weightTarget = 1;
         }
 
         private IEnumerator WaitForParent()
@@ -398,12 +398,12 @@ namespace LightPat.Core.Player
 
             if (playerCamera.updateRotationWithTarget)
             {
-                if (vehicle)
+                if (chair)
                 {
                     Vector3 targetRot = new Vector3(0, 0, rotateWithBoneRotOffset.z);
-                    if (vehicle.rotateX)
+                    if (chair.rotateX)
                         targetRot.x = rotateWithBoneRotOffset.x;
-                    if (vehicle.rotateY)
+                    if (chair.rotateY)
                         targetRot.y = rotateWithBoneRotOffset.y;
 
                     camConstraint.data.offset = Vector3.Lerp(camConstraint.data.offset, targetRot, 5 * Time.deltaTime);

@@ -103,11 +103,17 @@ namespace LightPat.Core.Player
             bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             sitting.Value = true;
 
-            leftLegIK.GetComponentInChildren<FollowTarget>().target = chair.leftFootGrip;
-            rightLegIK.GetComponentInChildren<FollowTarget>().target = chair.rightFootGrip;
+            if (chair.leftFootGrip)
+            {
+                leftLegIK.GetComponentInChildren<FollowTarget>().target = chair.leftFootGrip;
+                leftLegIK.GetComponentInParent<Rig>().weight = 1;
+            }
 
-            leftLegIK.GetComponentInParent<Rig>().weight = 1;
-            rightLegIK.GetComponentInParent<Rig>().weight = 1;
+            if (chair.rightFootGrip)
+            {
+                rightLegIK.GetComponentInChildren<FollowTarget>().target = chair.rightFootGrip;
+                rightLegIK.GetComponentInParent<Rig>().weight = 1;
+            }
         }
 
         private IEnumerator WaitForParent()

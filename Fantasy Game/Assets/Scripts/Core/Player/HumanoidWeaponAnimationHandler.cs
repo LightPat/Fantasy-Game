@@ -434,22 +434,30 @@ namespace LightPat.Core.Player
         {
             yield return new WaitUntil(() => !weaponChangeRunning);
 
-            rightHandTarget.target = chair.rightHandGrip;
-            leftHandTarget.target = chair.leftHandGrip;
-
-            Transform rightFingers = chair.rightFingersGrips;
-            Transform leftFingers = chair.leftFingersGrips;
-            for (int i = 0; i < rightFingerIKs.Length; i++)
+            if (chair.rightHandGrip)
             {
-                rightFingerIKs[i].target = rightFingers.GetChild(i);
-                leftFingerIKs[i].target = leftFingers.GetChild(i);
+                rightHandTarget.target = chair.rightHandGrip;
+                rightArmRig.weightTarget = 1;
             }
 
-            rightArmRig.weightTarget = 1;
-            leftArmRig.weightTarget = 1;
+            if (chair.leftHandGrip)
+            {
+                leftHandTarget.target = chair.leftHandGrip;
+                leftArmRig.weightTarget = 1;
+            }
 
-            rightFingerRig.weightTarget = 1;
-            leftFingerRig.weightTarget = 1;
+            if (chair.rightFingersGrips)
+            {
+                Transform rightFingers = chair.rightFingersGrips;
+                Transform leftFingers = chair.leftFingersGrips;
+                for (int i = 0; i < rightFingerIKs.Length; i++)
+                {
+                    rightFingerIKs[i].target = rightFingers.GetChild(i);
+                    leftFingerIKs[i].target = leftFingers.GetChild(i);
+                }
+                rightFingerRig.weightTarget = 1;
+                leftFingerRig.weightTarget = 1;
+            }
         }
 
         void OnChairExit()

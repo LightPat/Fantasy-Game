@@ -8,8 +8,8 @@ namespace LightPat.Core
     public class Motorcycle : Vehicle
     {
         [Header("Wheel Settings")]
-        public float power = 15000;
-        public float brakePower = 1000;
+        public float power = 1500;
+        public float brakePower = 1500;
         [Header("Motorcycle Specific")]
         public float forceClampMultiplier;
         public float maxHandleBarRotation;
@@ -20,6 +20,7 @@ namespace LightPat.Core
         public Transform rearSuspension;
         public WheelCollider rearWheelCollider;
 
+        Collider passengerSeatCollider;
         Rigidbody rb;
         NetworkObject driver;
         float handleBarRotation;
@@ -30,6 +31,27 @@ namespace LightPat.Core
         {
             if (IsServer)
                 GetComponent<NestedNetworkObject>().NestedSpawn();
+
+            StartCoroutine(WaitForChildSeatSpawn());
+        }
+
+        private IEnumerator WaitForChildSeatSpawn()
+        {
+            while (true)
+            {
+                bool broken = false;
+                foreach (Transform child in transform)
+                {
+                    if (child.TryGetComponent(out Chair chair))
+                    {
+                        passengerSeatCollider = chair.GetComponent<Collider>();
+                        broken = true;
+                        break;
+                    }
+                }
+                if (broken) { break; }
+                yield return null;
+            }
         }
 
         private void Start()
@@ -43,6 +65,9 @@ namespace LightPat.Core
         private float lastRearYValue;
         private void Update()
         {
+            if (passengerSeatCollider)
+                passengerSeatCollider.enabled = driver;
+
             if (!IsOwner) { return; }
 
             // Handle bar mesh position is found by tracking the y delta local position of the wheel and translating it accordingly

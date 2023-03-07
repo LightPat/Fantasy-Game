@@ -425,23 +425,20 @@ namespace LightPat.Core.Player
             }
         }
 
-        Vehicle vehicle;
-        void OnDriverEnter(Vehicle newVehicle)
+        void OnChairEnter(Chair newChair)
         {
-            vehicle = newVehicle;
-
-            StartCoroutine(WaitForVehicle());
+            StartCoroutine(ActivateChairIKs(newChair));
         }
 
-        private IEnumerator WaitForVehicle()
+        private IEnumerator ActivateChairIKs(Chair chair)
         {
             yield return new WaitUntil(() => !weaponChangeRunning);
 
-            rightHandTarget.target = vehicle.rightHandGrip;
-            leftHandTarget.target = vehicle.leftHandGrip;
+            rightHandTarget.target = chair.rightHandGrip;
+            leftHandTarget.target = chair.leftHandGrip;
 
-            Transform rightFingers = vehicle.rightFingersGrips;
-            Transform leftFingers = vehicle.leftFingersGrips;
+            Transform rightFingers = chair.rightFingersGrips;
+            Transform leftFingers = chair.leftFingersGrips;
             for (int i = 0; i < rightFingerIKs.Length; i++)
             {
                 rightFingerIKs[i].target = rightFingers.GetChild(i);
@@ -455,16 +452,25 @@ namespace LightPat.Core.Player
             leftFingerRig.weightTarget = 1;
         }
 
-        void OnDriverExit()
+        void OnChairExit()
         {
-            vehicle = null;
+            if (targetWeaponSlot.Value == -1)
+            {
+                rightArmRig.weightTarget = 0;
+                leftArmRig.weightTarget = 0;
 
-            rightArmRig.weightTarget = 0;
-            leftArmRig.weightTarget = 0;
+                rightHandTarget.target = rightHandIK.data.tip;
+                leftHandTarget.target = leftHandIK.data.tip;
 
-            rightHandTarget.target = rightHandIK.data.tip;
-            leftHandTarget.target = leftHandIK.data.tip;
+                rightFingerRig.weightTarget = 0;
+                leftFingerRig.weightTarget = 0;
+            }
         }
+
+        Vehicle vehicle;
+        void OnDriverEnter(Vehicle newVehicle) { vehicle = newVehicle; }
+
+        void OnDriverExit() { vehicle = null; }
 
         private void Update()
         {

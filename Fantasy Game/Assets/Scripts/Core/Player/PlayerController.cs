@@ -20,7 +20,6 @@ namespace LightPat.Core.Player
 
         Animator animator;
         Rigidbody rb;
-        Vehicle vehicle;
 
         public void TurnOnDisplayModelMode()
         {
@@ -77,38 +76,18 @@ namespace LightPat.Core.Player
             sitting.OnValueChanged -= OnSittingChange;
         }
 
-        [Header("Vehicles")]
-        public TwoBoneIKConstraint leftLegIK;
-        public TwoBoneIKConstraint rightLegIK;
-        void OnDriverEnter(Vehicle newVehicle)
-        {
-            vehicle = newVehicle;
+        Vehicle vehicle;
+        void OnDriverEnter(Vehicle newVehicle) { vehicle = newVehicle; }
 
-            leftLegIK.GetComponentInChildren<FollowTarget>().target = vehicle.leftFootGrip;
-            rightLegIK.GetComponentInChildren<FollowTarget>().target = vehicle.rightFootGrip;
-
-            leftLegIK.GetComponentInParent<Rig>().weight = 1;
-            rightLegIK.GetComponentInParent<Rig>().weight = 1;
-        }
-
-        void OnDriverExit()
-        {
-            vehicle = null;
-
-            leftLegIK.GetComponentInParent<Rig>().weight = 0;
-            rightLegIK.GetComponentInParent<Rig>().weight = 0;
-
-            leftLegIK.GetComponentInChildren<FollowTarget>().target = leftLegIK.data.tip;
-            rightLegIK.GetComponentInChildren<FollowTarget>().target = rightLegIK.data.tip;
-
-            GetComponent<AirborneAnimationHandler>().rootRotationConstraint.GetComponent<MultiRotationConstraint>().data.offset = Vector3.zero;
-            GetComponent<AirborneAnimationHandler>().rootRotationRig.weightTarget = 1;
-        }
+        void OnDriverExit() { vehicle = null; }
 
         private NetworkVariable<bool> sitting = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
         void OnSittingChange(bool previous, bool current) { animator.SetBool("sitting", current); }
 
+        [Header("Sitting In Chairs")]
+        public TwoBoneIKConstraint leftLegIK;
+        public TwoBoneIKConstraint rightLegIK;
         bool disableNoPhysics;
         void OnChairEnter(Chair newChair)
         {
@@ -124,8 +103,11 @@ namespace LightPat.Core.Player
             bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             sitting.Value = true;
 
-            //GetComponent<AirborneAnimationHandler>().rootRotationConstraint.GetComponent<MultiRotationConstraint>().data.offset = new Vector3(chair.xAxisRootBoneRotation, 0, 0);
-            //GetComponent<AirborneAnimationHandler>().rootRotationRig.weightTarget = 1;
+            leftLegIK.GetComponentInChildren<FollowTarget>().target = chair.leftFootGrip;
+            rightLegIK.GetComponentInChildren<FollowTarget>().target = chair.rightFootGrip;
+
+            leftLegIK.GetComponentInParent<Rig>().weight = 1;
+            rightLegIK.GetComponentInParent<Rig>().weight = 1;
         }
 
         private IEnumerator WaitForParent()
@@ -147,6 +129,12 @@ namespace LightPat.Core.Player
             rb.constraints = RigidbodyConstraints.FreezeRotation;
             rb.interpolation = RigidbodyInterpolation.Interpolate;
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+            leftLegIK.GetComponentInParent<Rig>().weight = 0;
+            rightLegIK.GetComponentInParent<Rig>().weight = 0;
+
+            leftLegIK.GetComponentInChildren<FollowTarget>().target = leftLegIK.data.tip;
+            rightLegIK.GetComponentInChildren<FollowTarget>().target = rightLegIK.data.tip;
 
             chair = null;
         }

@@ -7,12 +7,21 @@ namespace LightPat.Core
 {
     public class Chair : NetworkBehaviour
     {
+        [Header("Vehicle?")]
         public bool driverChair;
+        [Header("IK Transform assignments")]
+        public Transform leftFootGrip;
+        public Transform rightFootGrip;
+        public Transform leftHandGrip;
+        public Transform rightHandGrip;
+        public Transform leftFingersGrips;
+        public Transform rightFingersGrips;
+        [Header("Look Input Settings")]
+        public bool rotateX = true;
+        public bool rotateY = true;
         [Header("Sitting Down")]
         public Vector3 occupantPosition;
         public Vector3 occupantRotation;
-        public bool rotateX = true;
-        public bool rotateY = true;
         [Header("Exitting Chair")]
         public Vector3 exitPosOffset;
 

@@ -7,14 +7,6 @@ namespace LightPat.Core
 {
     public abstract class Vehicle : NetworkBehaviour
     {
-        [Header("All Vehicles")]
-        public Transform leftFootGrip;
-        public Transform rightFootGrip;
-        public Transform leftHandGrip;
-        public Transform rightHandGrip;
-        public Transform leftFingersGrips;
-        public Transform rightFingersGrips;
-
         public abstract void OnDriverEnter(ulong networkObjectId);
         public abstract void OnDriverExit();
         protected abstract void OnVehicleMove(Vector2 newMoveInput);

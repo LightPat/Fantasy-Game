@@ -22,6 +22,7 @@ namespace LightPat.Core
         [Header("Sitting Down")]
         public Vector3 occupantPosition;
         public Vector3 occupantRotation;
+        public Vector4 occupantLookLimits = new Vector4(55, -90, 100, -100);
         [Header("Exitting Chair")]
         public Vector3 exitPosOffset;
 

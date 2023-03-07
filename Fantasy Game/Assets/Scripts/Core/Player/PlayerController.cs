@@ -89,6 +89,7 @@ namespace LightPat.Core.Player
         public TwoBoneIKConstraint leftLegIK;
         public TwoBoneIKConstraint rightLegIK;
         bool disableNoPhysics;
+        Vector4 originalLookLimit;
         void OnChairEnter(Chair newChair)
         {
             disableNoPhysics = true;
@@ -114,6 +115,10 @@ namespace LightPat.Core.Player
                 rightLegIK.GetComponentInChildren<FollowTarget>().target = chair.rightFootGrip;
                 rightLegIK.GetComponentInParent<Rig>().weight = 1;
             }
+
+
+            originalLookLimit = rotateWithBoneLookLimit;
+            rotateWithBoneLookLimit = chair.occupantLookLimits;
         }
 
         private IEnumerator WaitForParent()
@@ -141,6 +146,8 @@ namespace LightPat.Core.Player
 
             leftLegIK.GetComponentInChildren<FollowTarget>().target = leftLegIK.data.tip;
             rightLegIK.GetComponentInChildren<FollowTarget>().target = rightLegIK.data.tip;
+
+            rotateWithBoneLookLimit = originalLookLimit;
 
             chair = null;
         }

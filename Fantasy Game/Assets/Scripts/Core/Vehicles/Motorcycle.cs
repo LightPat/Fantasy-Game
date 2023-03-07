@@ -26,6 +26,7 @@ namespace LightPat.Core
         float handleBarRotation;
         Quaternion originalHandleBarRotation;
         Wheel[] wheels;
+        Chair driverChair;
 
         public override void OnNetworkSpawn()
         {
@@ -59,6 +60,7 @@ namespace LightPat.Core
             originalHandleBarRotation = handleBars.localRotation;
             wheels = GetComponentsInChildren<Wheel>();
             rb = GetComponent<Rigidbody>();
+            driverChair = GetComponent<Chair>();
         }
 
         private float lastFrontYValue;
@@ -69,6 +71,9 @@ namespace LightPat.Core
                 passengerSeatCollider.enabled = driver;
 
             if (!IsOwner) { return; }
+
+            driverChair.rotateY = crouching;
+            //driverChair.rotateX = !crouching;
 
             // Suspension position is found by tracking the y delta local position of the wheel and translating it accordingly in local space
 
@@ -176,10 +181,13 @@ namespace LightPat.Core
 
         protected override void OnVehicleLook(Vector2 newLookInput)
         {
-            handleBarRotation += newLookInput.x;
-            if (handleBarRotation > maxHandleBarRotation) { handleBarRotation = maxHandleBarRotation; }
-            if (handleBarRotation < -maxHandleBarRotation) { handleBarRotation = -maxHandleBarRotation; }
-            handleBars.localRotation = originalHandleBarRotation * Quaternion.Euler(0, 0, handleBarRotation);
+            if (!crouching)
+            {
+                handleBarRotation += newLookInput.x;
+                if (handleBarRotation > maxHandleBarRotation) { handleBarRotation = maxHandleBarRotation; }
+                if (handleBarRotation < -maxHandleBarRotation) { handleBarRotation = -maxHandleBarRotation; }
+                handleBars.localRotation = originalHandleBarRotation * Quaternion.Euler(0, 0, handleBarRotation);
+            }
         }
 
         bool jumping;

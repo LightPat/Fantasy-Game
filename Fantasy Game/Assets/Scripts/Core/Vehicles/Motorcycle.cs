@@ -34,6 +34,12 @@ namespace LightPat.Core
                 GetComponent<NestedNetworkObject>().NestedSpawn();
 
             StartCoroutine(WaitForChildSeatSpawn());
+
+            AudioSource[] audioSources = GetComponents<AudioSource>();
+            engineAudioSource = audioSources[0];
+            engineAudioSource.clip = engineIdleSound;
+            engineStartAudioSource = audioSources[1];
+            engineStartAudioSource.clip = engineStartSound;
         }
 
         private IEnumerator WaitForChildSeatSpawn()
@@ -70,8 +76,17 @@ namespace LightPat.Core
         public Vector3 rearSkidRotationOffset;
         public float rearSkidThreshold;
 
+        [Header("Audio Settings")]
+        public AudioClip engineStartSound;
+        public AudioClip engineIdleSound;
+        public float lowerRPMThrottleLimit;
+        public float upperRPMThrottleLimit;
+
+        private AudioSource engineStartAudioSource;
+        private AudioSource engineAudioSource;
         private float lastFrontYValue;
         private float lastRearYValue;
+        private bool engineStarted;
         private void Update()
         {
             if (passengerSeatCollider)
@@ -80,6 +95,23 @@ namespace LightPat.Core
             if (!IsOwner) { return; }
 
             driverChair.rotateY = crouching;
+
+            if (!engineStartAudioSource.isPlaying)
+            {
+                if (engineStarted & !engineAudioSource.isPlaying)
+                {
+                    engineAudioSource.volume = 1;
+                    engineAudioSource.Play();
+                }
+                else if (!engineStarted)
+                {
+                    engineAudioSource.volume = 0;
+                    engineAudioSource.Stop();
+                }
+            }
+
+            Debug.Log(rearWheelCollider.rpm);
+            engineAudioSource.pitch = Mathf.Clamp(Mathf.Abs(rearWheelCollider.rpm) / lowerRPMThrottleLimit, 1, upperRPMThrottleLimit);
 
             // Suspension position is found by tracking the y delta local position of the wheel and translating it accordingly in local space
 
@@ -124,7 +156,8 @@ namespace LightPat.Core
             foreach (Wheel w in wheels)
             {
                 w.Steer(steerAngle);
-                w.Accelerate(sprinting ? moveInput.y * power * 2 : moveInput.y * power);
+                if (engineAudioSource.isPlaying)
+                    w.Accelerate(sprinting ? moveInput.y * power * 2 : moveInput.y * power);
                 w.Brake(jumping | !driver ? brakePower : 0);
                 w.UpdatePosition();
             }
@@ -156,6 +189,10 @@ namespace LightPat.Core
             NetworkObject.ChangeOwnership(driver.OwnerClientId);
             GetComponentInChildren<NestedNetworkObject>().NetworkObject.ChangeOwnership(driver.OwnerClientId);
 
+            engineStartAudioSource.volume = 1;
+            engineStartAudioSource.Play();
+            engineStarted = true;
+
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;
             driver.SendMessage("OnDriverEnter", this);
             OnDriverEnterClientRpc(networkObjectId);
@@ -165,6 +202,10 @@ namespace LightPat.Core
         void OnDriverEnterClientRpc(ulong networkObjectId)
         {
             driver = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
+
+            engineStartAudioSource.volume = 1;
+            engineStartAudioSource.Play();
+            engineStarted = true;
 
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;
             driver.SendMessage("OnDriverEnter", this);
@@ -176,6 +217,9 @@ namespace LightPat.Core
 
             NetworkObject.RemoveOwnership();
             rb.constraints = RigidbodyConstraints.None;
+            engineStartAudioSource.volume = 0;
+            engineStartAudioSource.Stop();
+            engineStarted = false;
 
             OnDriverExitClientRpc();
 
@@ -186,6 +230,9 @@ namespace LightPat.Core
         [ClientRpc]
         void OnDriverExitClientRpc()
         {
+            engineStartAudioSource.volume = 0;
+            engineStartAudioSource.Stop();
+            engineStarted = false;
             rb.constraints = RigidbodyConstraints.None;
             driver.SendMessage("OnDriverExit");
             driver = null;

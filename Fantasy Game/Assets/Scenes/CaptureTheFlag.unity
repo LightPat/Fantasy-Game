@@ -3313,7 +3313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   audioSourcePrefab: {fileID: 4190215059227863283, guid: 853941c4bee1eca43b031578623830bd, type: 3}
-  initialVolume: 0
+  initialVolume: 0.5
   networkAudioClips:
   - {fileID: 8300000, guid: 3cf53b7d782708b409bcd1a45eb1ec9f, type: 3}
   - {fileID: 8300000, guid: 09a8ee7010a430446b582cd94731a18a, type: 3}

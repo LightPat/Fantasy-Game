@@ -1548,6 +1548,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 464389c7a4439214f82dab2f67172d53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gear: 0
+  mphGearShifts: 000000000a0000001900000032000000460000005a000000
+  gearSounds:
+  - {fileID: 8300000, guid: 7aa50c388ed680f479b371c7e5a9721d, type: 3}
+  - {fileID: 8300000, guid: 5d17831b81a2a634d9f2c5975a3969c6, type: 3}
+  - {fileID: 8300000, guid: 66cbabbf3a9142a4bb88e06ff835b8ce, type: 3}
+  - {fileID: 8300000, guid: af959aa415ade4a4eb57b91926a8679b, type: 3}
+  - {fileID: 8300000, guid: 62fe8c03dc626544181f099ef1515b3d, type: 3}
+  - {fileID: 8300000, guid: 5b2a8073cc5ca6a428eb932c23943507, type: 3}
+  mph: 0
+  rpm: 0
   power: 1500
   brakePower: 1500
   forceClampMultiplier: 0.3
@@ -1565,7 +1576,6 @@ MonoBehaviour:
   rearSkidThreshold: 1
   engineStartSound: {fileID: 8300000, guid: 94318dde2bbdab342ac5803f23fd391a, type: 3}
   engineIdleSound: {fileID: 8300000, guid: 7aa50c388ed680f479b371c7e5a9721d, type: 3}
-  throttleSound: {fileID: 0}
   dampenFactor: 0.8
   adjustFactor: 2
   stopAdjustMaxVelocity: 15

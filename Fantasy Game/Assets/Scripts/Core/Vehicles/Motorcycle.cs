@@ -7,6 +7,12 @@ namespace LightPat.Core
 {
     public class Motorcycle : Vehicle
     {
+        public int gear;
+        public int[] mphGearShifts;
+        public AudioClip[] gearSounds;
+        public int mph;
+        public int rpm;
+
         [Header("Wheel Settings")]
         public float power = 1500;
         public float brakePower = 1500;
@@ -79,8 +85,6 @@ namespace LightPat.Core
         [Header("Audio Settings")]
         public AudioClip engineStartSound;
         public AudioClip engineIdleSound;
-        public float lowerRPMThrottleLimit;
-        public float upperRPMThrottleLimit;
 
         private AudioSource engineStartAudioSource;
         private AudioSource engineAudioSource;
@@ -98,10 +102,13 @@ namespace LightPat.Core
 
             if (!engineStartAudioSource.isPlaying)
             {
-                if (engineStarted & !engineAudioSource.isPlaying)
+                if (engineStarted)
                 {
-                    engineAudioSource.volume = 1;
-                    engineAudioSource.Play();
+                    if (!engineAudioSource.isPlaying)
+                    {
+                        engineAudioSource.volume = 1;
+                        engineAudioSource.Play();
+                    }
                 }
                 else if (!engineStarted)
                 {
@@ -110,8 +117,21 @@ namespace LightPat.Core
                 }
             }
 
-            Debug.Log(rearWheelCollider.rpm);
-            engineAudioSource.pitch = Mathf.Clamp(Mathf.Abs(rearWheelCollider.rpm) / lowerRPMThrottleLimit, 1, upperRPMThrottleLimit);
+            rpm = Mathf.RoundToInt(rearWheelCollider.rpm);
+
+            float kilometersPerSecond = transform.InverseTransformDirection(rb.velocity).z / 1000; // m/s to km/s
+            float kilometersPerHour = kilometersPerSecond * 3600;
+            mph = Mathf.RoundToInt(Mathf.Clamp(kilometersPerHour / 1.609f, 0, 999));
+
+            for (int i = 0; i < gearSounds.Length; i++)
+            {
+                if (mph > mphGearShifts[i])
+                {
+                    gear = i;
+                }
+            }
+
+            engineAudioSource.clip = gearSounds[gear];
 
             // Suspension position is found by tracking the y delta local position of the wheel and translating it accordingly in local space
 

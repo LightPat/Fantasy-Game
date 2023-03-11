@@ -7,11 +7,14 @@ namespace LightPat.Core
 {
     public class Motorcycle : Vehicle
     {
-        public int gear;
-        public int[] mphGearShifts;
-        public AudioClip[] gearSounds;
         public int mph;
         public int rpm;
+        public int gear;
+        public int[] mphGearShifts;
+        public int[] rpmGearShifts;
+        public AudioClip[] gearSounds;
+        public AudioClip engineStartSound;
+        public float loopingAudioSourceVolume = 1;
 
         [Header("Wheel Settings")]
         public float power = 1500;
@@ -42,10 +45,10 @@ namespace LightPat.Core
             StartCoroutine(WaitForChildSeatSpawn());
 
             AudioSource[] audioSources = GetComponents<AudioSource>();
-            engineAudioSource = audioSources[0];
-            engineAudioSource.clip = engineIdleSound;
-            engineStartAudioSource = audioSources[1];
-            engineStartAudioSource.clip = engineStartSound;
+            loopingAudioSource = audioSources[0];
+            loopingAudioSource.clip = gearSounds[0];
+            notLoopingAudioSource = audioSources[1];
+            notLoopingAudioSource.clip = engineStartSound;
         }
 
         private IEnumerator WaitForChildSeatSpawn()
@@ -82,15 +85,12 @@ namespace LightPat.Core
         public Vector3 rearSkidRotationOffset;
         public float rearSkidThreshold;
 
-        [Header("Audio Settings")]
-        public AudioClip engineStartSound;
-        public AudioClip engineIdleSound;
-
-        private AudioSource engineStartAudioSource;
-        private AudioSource engineAudioSource;
+        private AudioSource notLoopingAudioSource;
+        private AudioSource loopingAudioSource;
         private float lastFrontYValue;
         private float lastRearYValue;
         private bool engineStarted;
+        private float lastmph;
         private void Update()
         {
             if (passengerSeatCollider)
@@ -100,20 +100,17 @@ namespace LightPat.Core
 
             driverChair.rotateY = crouching;
 
-            if (!engineStartAudioSource.isPlaying)
+            if (notLoopingAudioSource.isPlaying | !engineStarted)
             {
-                if (engineStarted)
+                loopingAudioSource.volume = 0;
+                loopingAudioSource.Stop();
+            }
+            else
+            {
+                if (!loopingAudioSource.isPlaying)
                 {
-                    if (!engineAudioSource.isPlaying)
-                    {
-                        engineAudioSource.volume = 1;
-                        engineAudioSource.Play();
-                    }
-                }
-                else if (!engineStarted)
-                {
-                    engineAudioSource.volume = 0;
-                    engineAudioSource.Stop();
+                    loopingAudioSource.volume = 1;
+                    loopingAudioSource.Play();
                 }
             }
 
@@ -121,17 +118,44 @@ namespace LightPat.Core
 
             float kilometersPerSecond = transform.InverseTransformDirection(rb.velocity).z / 1000; // m/s to km/s
             float kilometersPerHour = kilometersPerSecond * 3600;
-            mph = Mathf.RoundToInt(Mathf.Clamp(kilometersPerHour / 1.609f, 0, 999));
+            float milesPerHour = kilometersPerHour / 1.609f;
+            mph = Mathf.RoundToInt(Mathf.Clamp(milesPerHour, 0, 999));
 
-            for (int i = 0; i < gearSounds.Length; i++)
+            bool gearChange = false;
+            for (int i = gearSounds.Length-1; i > -1; i--)
             {
-                if (mph > mphGearShifts[i])
+                if (mph > mphGearShifts[i]) // if we are on ground otherwise use rpm
                 {
-                    gear = i;
+                    gearChange = Mathf.Clamp(i, 0, gearSounds.Length) != gear;
+                    gear = Mathf.Clamp(i, 0, gearSounds.Length);
+                    break;
                 }
+
+                //if (rpm > rpmGearShifts[i] & moveInput.y > 0)
+                //{
+                //    gearChange = Mathf.Clamp(i, 0, gearSounds.Length) != gear;
+                //    gear = Mathf.Clamp(i, 0, gearSounds.Length);
+                //    break;
+                //}
             }
 
-            engineAudioSource.clip = gearSounds[gear];
+            if (gearChange)
+            {
+                notLoopingAudioSource.clip = gearSounds[gear];
+                notLoopingAudioSource.Play();
+            }
+            else if (moveInput.y > 0)
+            {
+                notLoopingAudioSource.clip = gearSounds[gear];
+                if (!notLoopingAudioSource.isPlaying)
+                    notLoopingAudioSource.Play();
+            }
+
+            // If the throttle is held, play a normal clip, if it is not, reverse the clip
+            loopingAudioSource.pitch = Mathf.Abs(moveInput.y) > 0 ? loopingAudioSourceVolume + 0.1f * gear : -loopingAudioSourceVolume - 0.1f * gear;
+            notLoopingAudioSource.pitch = Mathf.Abs(moveInput.y) > 0 ? 1 : -1;
+
+            // If the throttle is not held, decrease the gear if we are about to loop the clip
 
             // Suspension position is found by tracking the y delta local position of the wheel and translating it accordingly in local space
 
@@ -159,6 +183,8 @@ namespace LightPat.Core
             {
                 Instantiate(skidPrefab, rearHit.point, Quaternion.Euler(rearHit.normal) * rearWheelCollider.transform.rotation * Quaternion.Euler(rearSkidRotationOffset));
             }
+
+            lastmph = mph;
         }
 
         [Header("Physics Settings")]
@@ -176,8 +202,7 @@ namespace LightPat.Core
             foreach (Wheel w in wheels)
             {
                 w.Steer(steerAngle);
-                if (engineAudioSource.isPlaying)
-                    w.Accelerate(sprinting ? moveInput.y * power * 2 : moveInput.y * power);
+                w.Accelerate(sprinting ? moveInput.y * power * 2 : moveInput.y * power);
                 w.Brake(jumping | !driver ? brakePower : 0);
                 w.UpdatePosition();
             }
@@ -209,8 +234,8 @@ namespace LightPat.Core
             NetworkObject.ChangeOwnership(driver.OwnerClientId);
             GetComponentInChildren<NestedNetworkObject>().NetworkObject.ChangeOwnership(driver.OwnerClientId);
 
-            engineStartAudioSource.volume = 1;
-            engineStartAudioSource.Play();
+            notLoopingAudioSource.volume = 1;
+            notLoopingAudioSource.Play();
             engineStarted = true;
 
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;
@@ -223,8 +248,8 @@ namespace LightPat.Core
         {
             driver = NetworkManager.SpawnManager.SpawnedObjects[networkObjectId];
 
-            engineStartAudioSource.volume = 1;
-            engineStartAudioSource.Play();
+            notLoopingAudioSource.volume = 1;
+            notLoopingAudioSource.Play();
             engineStarted = true;
 
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;
@@ -237,8 +262,8 @@ namespace LightPat.Core
 
             NetworkObject.RemoveOwnership();
             rb.constraints = RigidbodyConstraints.None;
-            engineStartAudioSource.volume = 0;
-            engineStartAudioSource.Stop();
+            notLoopingAudioSource.volume = 0;
+            notLoopingAudioSource.Stop();
             engineStarted = false;
 
             OnDriverExitClientRpc();
@@ -250,8 +275,8 @@ namespace LightPat.Core
         [ClientRpc]
         void OnDriverExitClientRpc()
         {
-            engineStartAudioSource.volume = 0;
-            engineStartAudioSource.Stop();
+            notLoopingAudioSource.volume = 0;
+            notLoopingAudioSource.Stop();
             engineStarted = false;
             rb.constraints = RigidbodyConstraints.None;
             driver.SendMessage("OnDriverExit");

@@ -478,6 +478,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 369383657806881238}
+  - component: {fileID: 8470040397959345845}
   m_Layer: 0
   m_Name: Motorcycle
   m_TagString: Untagged
@@ -506,6 +507,19 @@ Transform:
   m_Father: {fileID: 4069727618725294911}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+--- !u!65 &8470040397959345845
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039065797124275052}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.33627933, z: 1.1777848}
+  m_Center: {x: 0, y: 0.44500116, z: 0.10720126}
 --- !u!1 &1088446205177605597
 GameObject:
   m_ObjectHideFlags: 0
@@ -1548,8 +1562,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 464389c7a4439214f82dab2f67172d53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mph: 0
+  rpm: 0
   gear: 0
-  mphGearShifts: 000000000a0000001900000032000000460000005a000000
+  mphGearShifts: 000000000a00000028000000460000006400000082000000
+  rpmGearShifts: 000000003c0000002c0100005802000084030000b0040000
   gearSounds:
   - {fileID: 8300000, guid: 7aa50c388ed680f479b371c7e5a9721d, type: 3}
   - {fileID: 8300000, guid: 5d17831b81a2a634d9f2c5975a3969c6, type: 3}
@@ -1557,8 +1574,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: af959aa415ade4a4eb57b91926a8679b, type: 3}
   - {fileID: 8300000, guid: 62fe8c03dc626544181f099ef1515b3d, type: 3}
   - {fileID: 8300000, guid: 5b2a8073cc5ca6a428eb932c23943507, type: 3}
-  mph: 0
-  rpm: 0
+  engineStartSound: {fileID: 8300000, guid: 94318dde2bbdab342ac5803f23fd391a, type: 3}
+  loopingAudioSourceVolume: 1
   power: 1500
   brakePower: 1500
   forceClampMultiplier: 0.3
@@ -1574,8 +1591,6 @@ MonoBehaviour:
   frontSkidThreshold: 1
   rearSkidRotationOffset: {x: 90, y: 90, z: 0}
   rearSkidThreshold: 1
-  engineStartSound: {fileID: 8300000, guid: 94318dde2bbdab342ac5803f23fd391a, type: 3}
-  engineIdleSound: {fileID: 8300000, guid: 7aa50c388ed680f479b371c7e5a9721d, type: 3}
   dampenFactor: 0.8
   adjustFactor: 2
   stopAdjustMaxVelocity: 15

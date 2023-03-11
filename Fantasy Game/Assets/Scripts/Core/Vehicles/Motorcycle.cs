@@ -7,14 +7,18 @@ namespace LightPat.Core
 {
     public class Motorcycle : Vehicle
     {
+        public float idlePitch;
         public int mph;
         public int rpm;
         public int gear;
         public int[] mphGearShifts;
         public int[] rpmGearShifts;
+        public float[] engineIdlePitchShifts;
         public AudioClip[] gearSounds;
+        public AudioClip engineIdleSound;
         public AudioClip engineStartSound;
-        public float loopingAudioSourceVolume = 1;
+        public float loopingAudioBasePitch = 1;
+        public float enginePitchSpeed = 5;
 
         [Header("Wheel Settings")]
         public float power = 1500;
@@ -46,7 +50,7 @@ namespace LightPat.Core
 
             AudioSource[] audioSources = GetComponents<AudioSource>();
             loopingAudioSource = audioSources[0];
-            loopingAudioSource.clip = gearSounds[0];
+            loopingAudioSource.clip = engineIdleSound;
             notLoopingAudioSource = audioSources[1];
             notLoopingAudioSource.clip = engineStartSound;
         }
@@ -90,28 +94,19 @@ namespace LightPat.Core
         private float lastFrontYValue;
         private float lastRearYValue;
         private bool engineStarted;
-        private float lastmph;
         private void Update()
         {
             if (passengerSeatCollider)
                 passengerSeatCollider.enabled = driver;
 
-            if (!IsOwner) { return; }
-
             driverChair.rotateY = crouching;
 
-            if (notLoopingAudioSource.isPlaying | !engineStarted)
+            if (engineStarted)
             {
-                loopingAudioSource.volume = 0;
-                loopingAudioSource.Stop();
-            }
-            else
-            {
+                notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
+                loopingAudioSource.volume = Mathf.MoveTowards(loopingAudioSource.volume, 0.7f, Time.deltaTime * enginePitchSpeed);
                 if (!loopingAudioSource.isPlaying)
-                {
-                    loopingAudioSource.volume = 1;
                     loopingAudioSource.Play();
-                }
             }
 
             rpm = Mathf.RoundToInt(rearWheelCollider.rpm);
@@ -133,27 +128,39 @@ namespace LightPat.Core
 
                 //if (rpm > rpmGearShifts[i] & moveInput.y > 0)
                 //{
-                //    gearChange = Mathf.Clamp(i, 0, gearSounds.Length) != gear;
                 //    gear = Mathf.Clamp(i, 0, gearSounds.Length);
                 //    break;
                 //}
             }
 
+            notLoopingAudioSource.pitch = moveInput.y > 0 | gear == 0 ? 1 : -1;
+            idlePitch = Mathf.MoveTowards(idlePitch, engineIdlePitchShifts[gear], Time.deltaTime * enginePitchSpeed);
+            loopingAudioSource.pitch = idlePitch;
+
+            // If we are downshifting
             if (gearChange)
             {
-                notLoopingAudioSource.clip = gearSounds[gear];
-                notLoopingAudioSource.Play();
-            }
-            else if (moveInput.y > 0)
-            {
-                notLoopingAudioSource.clip = gearSounds[gear];
-                if (!notLoopingAudioSource.isPlaying)
-                    notLoopingAudioSource.Play();
-            }
+                if (System.Array.IndexOf(gearSounds, notLoopingAudioSource.clip) > gear & moveInput.y <= 0)
+                {
+                    Debug.Log(Time.time + " Downshift");
+                    notLoopingAudioSource.clip = gearSounds[gear];
+                    if (notLoopingAudioSource.clip)
+                    {
+                        notLoopingAudioSource.time = notLoopingAudioSource.clip.length * 0.9f;
+                    }
+                }
+                else
+                {
+                    Debug.Log(Time.time + " Upshift");
+                    notLoopingAudioSource.clip = gearSounds[gear];
+                    if (notLoopingAudioSource.clip)
+                    {
+                        notLoopingAudioSource.time = 0;
+                    }
+                }
 
-            // If the throttle is held, play a normal clip, if it is not, reverse the clip
-            loopingAudioSource.pitch = Mathf.Abs(moveInput.y) > 0 ? loopingAudioSourceVolume + 0.1f * gear : -loopingAudioSourceVolume - 0.1f * gear;
-            notLoopingAudioSource.pitch = Mathf.Abs(moveInput.y) > 0 ? 1 : -1;
+                if (!notLoopingAudioSource.isPlaying) { notLoopingAudioSource.Play(); }
+            }
 
             // If the throttle is not held, decrease the gear if we are about to loop the clip
 
@@ -183,8 +190,6 @@ namespace LightPat.Core
             {
                 Instantiate(skidPrefab, rearHit.point, Quaternion.Euler(rearHit.normal) * rearWheelCollider.transform.rotation * Quaternion.Euler(rearSkidRotationOffset));
             }
-
-            lastmph = mph;
         }
 
         [Header("Physics Settings")]
@@ -202,7 +207,12 @@ namespace LightPat.Core
             foreach (Wheel w in wheels)
             {
                 w.Steer(steerAngle);
-                w.Accelerate(sprinting ? moveInput.y * power * 2 : moveInput.y * power);
+
+                if (moveInput.y <= 0 & rearWheelCollider.rpm > 100)
+                    w.Accelerate(-power * 2);
+                else
+                    w.Accelerate(sprinting ? moveInput.y * power * 2 : moveInput.y * power);
+                
                 w.Brake(jumping | !driver ? brakePower : 0);
                 w.UpdatePosition();
             }
@@ -236,6 +246,7 @@ namespace LightPat.Core
 
             notLoopingAudioSource.volume = 1;
             notLoopingAudioSource.Play();
+            loopingAudioSource.Play();
             engineStarted = true;
 
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;
@@ -250,6 +261,7 @@ namespace LightPat.Core
 
             notLoopingAudioSource.volume = 1;
             notLoopingAudioSource.Play();
+            loopingAudioSource.Play();
             engineStarted = true;
 
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;

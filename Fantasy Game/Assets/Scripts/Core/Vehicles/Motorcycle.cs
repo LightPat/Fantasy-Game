@@ -7,7 +7,6 @@ namespace LightPat.Core
 {
     public class Motorcycle : Vehicle
     {
-        public float idlePitch;
         public int mph;
         public int rpm;
         public int gear;
@@ -93,6 +92,7 @@ namespace LightPat.Core
         private AudioSource loopingAudioSource;
         private float lastFrontYValue;
         private float lastRearYValue;
+        private float idlePitch;
         private bool engineStarted;
         private Vector2 lastMoveInput;
         private void Update()

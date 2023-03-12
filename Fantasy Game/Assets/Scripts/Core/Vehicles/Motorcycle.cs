@@ -94,6 +94,7 @@ namespace LightPat.Core
         private float lastFrontYValue;
         private float lastRearYValue;
         private bool engineStarted;
+        private Vector2 lastMoveInput;
         private void Update()
         {
             if (passengerSeatCollider)
@@ -137,21 +138,19 @@ namespace LightPat.Core
             idlePitch = Mathf.MoveTowards(idlePitch, engineIdlePitchShifts[gear], Time.deltaTime * enginePitchSpeed);
             loopingAudioSource.pitch = idlePitch;
 
-            // If we are downshifting
             if (gearChange)
             {
+                // If we are downshifting
                 if (System.Array.IndexOf(gearSounds, notLoopingAudioSource.clip) > gear & moveInput.y <= 0)
                 {
-                    Debug.Log(Time.time + " Downshift");
                     notLoopingAudioSource.clip = gearSounds[gear];
                     if (notLoopingAudioSource.clip)
                     {
                         notLoopingAudioSource.time = notLoopingAudioSource.clip.length * 0.9f;
                     }
                 }
-                else
+                else // If we are upshifting
                 {
-                    Debug.Log(Time.time + " Upshift");
                     notLoopingAudioSource.clip = gearSounds[gear];
                     if (notLoopingAudioSource.clip)
                     {
@@ -160,6 +159,16 @@ namespace LightPat.Core
                 }
 
                 if (!notLoopingAudioSource.isPlaying) { notLoopingAudioSource.Play(); }
+            }
+
+            // If the current gear's clip is not playing and we hit the throttle again, play the clip again
+            if (gear > 0 & !notLoopingAudioSource.isPlaying)
+            {
+                if (moveInput.y > 0 & lastMoveInput.y <= 0)
+                {
+                    notLoopingAudioSource.clip = gearSounds[gear];
+                    notLoopingAudioSource.Play();
+                }
             }
 
             // If the throttle is not held, decrease the gear if we are about to loop the clip
@@ -190,6 +199,8 @@ namespace LightPat.Core
             {
                 Instantiate(skidPrefab, rearHit.point, Quaternion.Euler(rearHit.normal) * rearWheelCollider.transform.rotation * Quaternion.Euler(rearSkidRotationOffset));
             }
+
+            lastMoveInput = moveInput;
         }
 
         [Header("Physics Settings")]

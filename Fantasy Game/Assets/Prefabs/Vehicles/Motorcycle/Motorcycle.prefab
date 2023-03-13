@@ -1565,15 +1565,14 @@ MonoBehaviour:
   mph: 0
   rpm: 0
   gear: 0
-  mphGearShifts: 000000000a0000001e00000032000000460000005a000000
-  rpmGearShifts: 0000000064000000c80000002c01000090010000f4010000
+  rpmGearShifts: 0000000082000000e60000002c01000072010000c2010000
   engineIdlePitchShifts:
   - 1
-  - 1.3
-  - 1.6
-  - 1.9
+  - 1.4
+  - 1.8
   - 2.1
-  - 2.4
+  - 2.5
+  - 2.9
   gearSounds:
   - {fileID: 0}
   - {fileID: 8300000, guid: 5d17831b81a2a634d9f2c5975a3969c6, type: 3}
@@ -1671,7 +1670,7 @@ MonoBehaviour:
   rotateX: 1
   rotateY: 0
   occupantPosition: {x: 0, y: 1, z: -1.38}
-  occupantRotation: {x: 55, y: -2, z: 0}
+  occupantRotation: {x: 55, y: 0, z: 0}
   occupantLookLimits: {x: 10, y: -90, z: 90, w: -90}
   exitPosOffset: {x: 0, y: 0, z: -2.5}
 --- !u!114 &5932289968870673947
@@ -1700,7 +1699,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 1
   Mute: 0

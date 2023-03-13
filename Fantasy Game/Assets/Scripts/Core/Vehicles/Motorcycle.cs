@@ -10,7 +10,6 @@ namespace LightPat.Core
         public int mph;
         public int rpm;
         public int gear;
-        public int[] mphGearShifts;
         public int[] rpmGearShifts;
         public float[] engineIdlePitchShifts;
         public AudioClip[] gearSounds;
@@ -47,11 +46,11 @@ namespace LightPat.Core
 
             StartCoroutine(WaitForChildSeatSpawn());
 
-            AudioSource[] audioSources = GetComponents<AudioSource>();
-            loopingAudioSource = audioSources[0];
-            loopingAudioSource.clip = engineIdleSound;
-            notLoopingAudioSource = audioSources[1];
-            notLoopingAudioSource.clip = engineStartSound;
+            //AudioSource[] audioSources = GetComponents<AudioSource>();
+            //loopingAudioSource = audioSources[0];
+            //loopingAudioSource.clip = engineIdleSound;
+            //notLoopingAudioSource = audioSources[1];
+            //notLoopingAudioSource.clip = engineStartSound;
         }
 
         private IEnumerator WaitForChildSeatSpawn()
@@ -79,6 +78,12 @@ namespace LightPat.Core
             wheels = GetComponentsInChildren<Wheel>();
             rb = GetComponent<Rigidbody>();
             driverChair = GetComponent<Chair>();
+
+            AudioSource[] audioSources = GetComponents<AudioSource>();
+            loopingAudioSource = audioSources[0];
+            loopingAudioSource.clip = engineIdleSound;
+            notLoopingAudioSource = audioSources[1];
+            notLoopingAudioSource.clip = engineStartSound;
         }
 
         [Header("Skid Settings")]
@@ -92,39 +97,42 @@ namespace LightPat.Core
         private AudioSource loopingAudioSource;
         private float lastFrontYValue;
         private float lastRearYValue;
-        private float idlePitch;
+        private float idlePitch = 1;
         private bool engineStarted;
         private Vector2 lastMoveInput;
         private float lastGearChangeTime;
         private void Update()
         {
+            // Suspension position is found by tracking the y delta local position of the wheel and translating it accordingly in local space
+            frontWheelCollider.GetWorldPose(out Vector3 pos, out Quaternion rot);
+            frontWheelMesh.rotation = rot;
+            // I have no idea why this requires the rear wheel collider
+            Vector3 wheelLocPos = rearWheelCollider.transform.InverseTransformPoint(pos);
+            frontSuspension.Translate(0, 0, wheelLocPos.y - lastFrontYValue, Space.Self);
+            lastFrontYValue = wheelLocPos.y;
+
+            rearWheelCollider.GetWorldPose(out pos, out rot);
+            // Take wheel collider pose and convert that into local space
+            wheelLocPos = rearWheelCollider.transform.InverseTransformPoint(pos);
+            rearSuspension.Translate(0, 0, wheelLocPos.y - lastRearYValue, Space.Self);
+            lastRearYValue = wheelLocPos.y;
+
+            frontWheelCollider.GetGroundHit(out WheelHit frontHit);
+            if (Mathf.Abs(frontHit.sidewaysSlip) > frontSkidThreshold | Mathf.Abs(frontHit.forwardSlip) > frontSkidThreshold)
+            {
+                Instantiate(skidPrefab, frontHit.point, Quaternion.Euler(frontHit.normal) * frontWheelCollider.transform.rotation * Quaternion.Euler(frontSkidRotationOffset));
+            }
+
+            rearWheelCollider.GetGroundHit(out WheelHit rearHit);
+            if (Mathf.Abs(rearHit.sidewaysSlip) > rearSkidThreshold | Mathf.Abs(rearHit.forwardSlip) > rearSkidThreshold)
+            {
+                Instantiate(skidPrefab, rearHit.point, Quaternion.Euler(rearHit.normal) * rearWheelCollider.transform.rotation * Quaternion.Euler(rearSkidRotationOffset));
+            }
+
             if (passengerSeatCollider)
                 passengerSeatCollider.enabled = driver;
 
             driverChair.rotateY = crouching;
-
-            if (engineStarted)
-            {
-                //if (notLoopingAudioSource.isPlaying)
-                //{
-                //    if (notLoopingAudioSource.time / notLoopingAudioSource.clip.length > 0.9f)
-                //    {
-                //        notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 0, Time.deltaTime * enginePitchSpeed);
-                //    }
-                //    else
-                //    {
-                //        notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
-                //    }
-                //}
-                //else
-                //{
-                //    notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 0, Time.deltaTime * enginePitchSpeed);
-                //}
-                //notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
-                loopingAudioSource.volume = Mathf.MoveTowards(loopingAudioSource.volume, 0.7f, Time.deltaTime * enginePitchSpeed);
-                if (!loopingAudioSource.isPlaying)
-                    loopingAudioSource.Play();
-            }
 
             rpm = Mathf.RoundToInt(rearWheelCollider.rpm);
             float kilometersPerSecond = transform.InverseTransformDirection(rb.velocity).z / 1000; // m/s to km/s
@@ -132,19 +140,30 @@ namespace LightPat.Core
             float milesPerHour = kilometersPerHour / 1.609f;
             mph = Mathf.RoundToInt(Mathf.Clamp(milesPerHour, 0, 999));
 
+            // START Audio Logic
+            if (notLoopingAudioSource.clip == engineStartSound)
+            {
+                if (notLoopingAudioSource.isPlaying)
+                {
+                    return;
+                }
+                else if (driver)
+                {
+                    engineStarted = true;
+                }
+            }
+
+            if (!engineStarted) { return; }
+
+            if (!loopingAudioSource.isPlaying)
+                loopingAudioSource.Play();
+
             bool gearChange;
             int newGear = gear;
             if (Time.time - lastGearChangeTime > 1)
             {
                 for (int i = 0; i < gearSounds.Length; i++)
                 {
-                    //if (mph > mphGearShifts[i]) // if we are on ground otherwise use rpm
-                    //{
-                    //    gearChange = Mathf.Clamp(i, 0, gearSounds.Length) != gear;
-                    //    gear = Mathf.Clamp(i, 0, gearSounds.Length);
-                    //    break;
-                    //}
-
                     if (rearWheelCollider.rpm > rpmGearShifts[i]) { newGear = Mathf.Clamp(i, 0, gearSounds.Length); }
                 }
             }
@@ -152,7 +171,7 @@ namespace LightPat.Core
             gearChange = newGear != gear;
             gear = newGear;
 
-            notLoopingAudioSource.pitch = moveInput.y > 0 | gear == 0 ? 1 : -1;
+            notLoopingAudioSource.pitch = moveInput.y > 0 ? 1 : -1;
             idlePitch = Mathf.MoveTowards(idlePitch, engineIdlePitchShifts[gear], Time.deltaTime * enginePitchSpeed);
             loopingAudioSource.pitch = idlePitch;
 
@@ -187,7 +206,7 @@ namespace LightPat.Core
                     }
                 }
 
-                if (!notLoopingAudioSource.isPlaying) { notLoopingAudioSource.Play(); }
+                if (!notLoopingAudioSource.isPlaying & gear != 0) { notLoopingAudioSource.Play(); }
             }
             else if (gear == gearSounds.Length-1) // If no gear change
             {
@@ -202,35 +221,6 @@ namespace LightPat.Core
                     notLoopingAudioSource.clip = gearSounds[gear];
                     notLoopingAudioSource.Play();
                 }
-            }
-
-            // If the throttle is not held, decrease the gear if we are about to loop the clip
-
-            // Suspension position is found by tracking the y delta local position of the wheel and translating it accordingly in local space
-
-            frontWheelCollider.GetWorldPose(out Vector3 pos, out Quaternion rot);
-            frontWheelMesh.rotation = rot;
-            // I have no idea why this requires the rear wheel collider
-            Vector3 wheelLocPos = rearWheelCollider.transform.InverseTransformPoint(pos);
-            frontSuspension.Translate(0, 0, wheelLocPos.y - lastFrontYValue, Space.Self);
-            lastFrontYValue = wheelLocPos.y;
-            
-            rearWheelCollider.GetWorldPose(out pos, out rot);
-            // Take wheel collider pose and convert that into local space
-            wheelLocPos = rearWheelCollider.transform.InverseTransformPoint(pos);
-            rearSuspension.Translate(0, 0, wheelLocPos.y - lastRearYValue, Space.Self);
-            lastRearYValue = wheelLocPos.y;
-
-            frontWheelCollider.GetGroundHit(out WheelHit frontHit);
-            if (Mathf.Abs(frontHit.sidewaysSlip) > frontSkidThreshold | Mathf.Abs(frontHit.forwardSlip) > frontSkidThreshold)
-            {
-                Instantiate(skidPrefab, frontHit.point, Quaternion.Euler(frontHit.normal) * frontWheelCollider.transform.rotation * Quaternion.Euler(frontSkidRotationOffset));
-            }
-            
-            rearWheelCollider.GetGroundHit(out WheelHit rearHit);
-            if (Mathf.Abs(rearHit.sidewaysSlip) > rearSkidThreshold | Mathf.Abs(rearHit.forwardSlip) > rearSkidThreshold)
-            {
-                Instantiate(skidPrefab, rearHit.point, Quaternion.Euler(rearHit.normal) * rearWheelCollider.transform.rotation * Quaternion.Euler(rearSkidRotationOffset));
             }
 
             lastMoveInput = moveInput;
@@ -290,8 +280,6 @@ namespace LightPat.Core
 
             notLoopingAudioSource.volume = 1;
             notLoopingAudioSource.Play();
-            loopingAudioSource.Play();
-            engineStarted = true;
 
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;
             driver.SendMessage("OnDriverEnter", this);
@@ -305,8 +293,6 @@ namespace LightPat.Core
 
             notLoopingAudioSource.volume = 1;
             notLoopingAudioSource.Play();
-            loopingAudioSource.Play();
-            engineStarted = true;
 
             rb.constraints = RigidbodyConstraints.FreezeRotationZ;
             driver.SendMessage("OnDriverEnter", this);

@@ -175,13 +175,13 @@ namespace LightPat.Core
             idlePitch = Mathf.MoveTowards(idlePitch, engineIdlePitchShifts[gear], Time.deltaTime * enginePitchSpeed);
             loopingAudioSource.pitch = idlePitch;
 
-            if (gear != 0)
+            if (gear == 0 | notLoopingAudioSource.time / notLoopingAudioSource.clip.length > 0.95f)
             {
-                notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
+                notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 0, Time.deltaTime * enginePitchSpeed);
             }
             else
             {
-                notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 0, Time.deltaTime * enginePitchSpeed);
+                notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
             }
 
             if (gearChange)

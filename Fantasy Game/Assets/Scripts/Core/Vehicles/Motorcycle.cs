@@ -95,6 +95,7 @@ namespace LightPat.Core
         private float idlePitch;
         private bool engineStarted;
         private Vector2 lastMoveInput;
+        private float lastGearChangeTime;
         private void Update()
         {
             if (passengerSeatCollider)
@@ -104,60 +105,92 @@ namespace LightPat.Core
 
             if (engineStarted)
             {
-                notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
+                //if (notLoopingAudioSource.isPlaying)
+                //{
+                //    if (notLoopingAudioSource.time / notLoopingAudioSource.clip.length > 0.9f)
+                //    {
+                //        notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 0, Time.deltaTime * enginePitchSpeed);
+                //    }
+                //    else
+                //    {
+                //        notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
+                //    }
+                //}
+                //else
+                //{
+                //    notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 0, Time.deltaTime * enginePitchSpeed);
+                //}
+                //notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
                 loopingAudioSource.volume = Mathf.MoveTowards(loopingAudioSource.volume, 0.7f, Time.deltaTime * enginePitchSpeed);
                 if (!loopingAudioSource.isPlaying)
                     loopingAudioSource.Play();
             }
 
             rpm = Mathf.RoundToInt(rearWheelCollider.rpm);
-
             float kilometersPerSecond = transform.InverseTransformDirection(rb.velocity).z / 1000; // m/s to km/s
             float kilometersPerHour = kilometersPerSecond * 3600;
             float milesPerHour = kilometersPerHour / 1.609f;
             mph = Mathf.RoundToInt(Mathf.Clamp(milesPerHour, 0, 999));
 
-            bool gearChange = false;
-            for (int i = gearSounds.Length-1; i > -1; i--)
+            bool gearChange;
+            int newGear = gear;
+            if (Time.time - lastGearChangeTime > 1)
             {
-                if (mph > mphGearShifts[i]) // if we are on ground otherwise use rpm
+                for (int i = 0; i < gearSounds.Length; i++)
                 {
-                    gearChange = Mathf.Clamp(i, 0, gearSounds.Length) != gear;
-                    gear = Mathf.Clamp(i, 0, gearSounds.Length);
-                    break;
-                }
+                    //if (mph > mphGearShifts[i]) // if we are on ground otherwise use rpm
+                    //{
+                    //    gearChange = Mathf.Clamp(i, 0, gearSounds.Length) != gear;
+                    //    gear = Mathf.Clamp(i, 0, gearSounds.Length);
+                    //    break;
+                    //}
 
-                //if (rpm > rpmGearShifts[i] & moveInput.y > 0)
-                //{
-                //    gear = Mathf.Clamp(i, 0, gearSounds.Length);
-                //    break;
-                //}
+                    if (rearWheelCollider.rpm > rpmGearShifts[i]) { newGear = Mathf.Clamp(i, 0, gearSounds.Length); }
+                }
             }
+
+            gearChange = newGear != gear;
+            gear = newGear;
 
             notLoopingAudioSource.pitch = moveInput.y > 0 | gear == 0 ? 1 : -1;
             idlePitch = Mathf.MoveTowards(idlePitch, engineIdlePitchShifts[gear], Time.deltaTime * enginePitchSpeed);
             loopingAudioSource.pitch = idlePitch;
 
+            if (gear != 0)
+            {
+                notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 1, Time.deltaTime * enginePitchSpeed);
+            }
+            else
+            {
+                notLoopingAudioSource.volume = Mathf.MoveTowards(notLoopingAudioSource.volume, 0, Time.deltaTime * enginePitchSpeed);
+            }
+
             if (gearChange)
             {
+                lastGearChangeTime = Time.time;
+
                 // If we are downshifting
                 if (System.Array.IndexOf(gearSounds, notLoopingAudioSource.clip) > gear & moveInput.y <= 0)
                 {
-                    notLoopingAudioSource.clip = gearSounds[gear];
-                    if (notLoopingAudioSource.clip)
+                    if (gear != 0)
                     {
-                        notLoopingAudioSource.time = notLoopingAudioSource.clip.length * 0.9f;
+                        notLoopingAudioSource.clip = gearSounds[gear];
+                        if (notLoopingAudioSource.clip) { notLoopingAudioSource.time = notLoopingAudioSource.clip.length * 0.9f; }
                     }
                 }
                 else // If we are upshifting
                 {
-                    notLoopingAudioSource.clip = gearSounds[gear];
-                    if (notLoopingAudioSource.clip)
+                    if (gear != 0)
                     {
-                        notLoopingAudioSource.time = 0;
+                        notLoopingAudioSource.clip = gearSounds[gear];
+                        if (notLoopingAudioSource.clip) { notLoopingAudioSource.time = 0; }
                     }
                 }
 
+                if (!notLoopingAudioSource.isPlaying) { notLoopingAudioSource.Play(); }
+            }
+            else if (gear == gearSounds.Length-1) // If no gear change
+            {
                 if (!notLoopingAudioSource.isPlaying) { notLoopingAudioSource.Play(); }
             }
 
@@ -289,10 +322,13 @@ namespace LightPat.Core
             notLoopingAudioSource.Stop();
             engineStarted = false;
 
-            OnDriverExitClientRpc();
+            if (!IsClient)
+            {
+                driver.SendMessage("OnDriverExit");
+                driver = null;
+            }
 
-            driver.SendMessage("OnDriverExit");
-            driver = null;
+            OnDriverExitClientRpc();
         }
 
         [ClientRpc]

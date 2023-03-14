@@ -3384,7 +3384,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnArray:
   - gameObject: {fileID: 7632085764736268835, guid: d5fa2cb13e722ab4db614fd7395d7ad0, type: 3}
-    spawnPosition: {x: -81.2, y: 45, z: -196.68}
+    spawnPosition: {x: -70, y: 48.58, z: -240.2}
     spawnRotation: {x: 0, y: 0, z: 0}
   - gameObject: {fileID: 2540662555291290618, guid: edfaf138523bc3b4099bff5ea12a51ad, type: 3}
     spawnPosition: {x: -73.28, y: 50.5, z: -305.2}

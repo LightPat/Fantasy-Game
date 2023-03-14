@@ -36,9 +36,9 @@ namespace LightPat.Core
 
         private void OnTransformChildrenChanged()
         {
-            if (transform.childCount < 1) { return; }
-            mainRotor = transform.GetChild(0).Find("mainRotor");
-            tailRotor = transform.GetChild(0).Find("tailRotor");
+            if (transform.childCount < 2) { return; }
+            mainRotor = transform.GetChild(1).Find("mainRotor");
+            tailRotor = transform.GetChild(1).Find("tailRotor");
         }
 
         private void Start()
@@ -51,7 +51,13 @@ namespace LightPat.Core
             originalCameraPositionOffset = vehicleCamera.transform.localPosition;
             vehicleCamera.transform.SetParent(null, true);
             vehicleCamera.transform.LookAt(transform.position);
+
+            motorSoundSource.volume = 0;
+            motorSoundSource.Play();
         }
+
+        [Header("Audio Settings")]
+        public AudioSource motorSoundSource;
 
         private void Update()
         {
@@ -59,9 +65,9 @@ namespace LightPat.Core
 
             // Rotate rotors
             if (engineStarted)
-                currentRotorSpeed = Mathf.MoveTowards(currentRotorSpeed, 1, Time.deltaTime / 4);
+                currentRotorSpeed = Mathf.MoveTowards(currentRotorSpeed, sprinting ? 2 : 1, Time.deltaTime / 4);
             else
-                currentRotorSpeed = Mathf.Lerp(currentRotorSpeed, 0, Time.deltaTime / 8);
+                currentRotorSpeed = Mathf.MoveTowards(currentRotorSpeed, 0, Time.deltaTime / 4);
             mainRotor.Rotate(0, 0, mainRotorSpeed * Time.deltaTime * currentRotorSpeed, Space.Self);
             tailRotor.Rotate(tailRotorSpeed * Time.deltaTime * currentRotorSpeed, 0, 0, Space.Self);
 
@@ -69,6 +75,9 @@ namespace LightPat.Core
 
             vehicleCamera.transform.position += transform.position - prevPosition;
             prevPosition = transform.position;
+
+            motorSoundSource.pitch = currentRotorSpeed;
+            motorSoundSource.volume = 1;
 
             if (driver)
             {
@@ -137,7 +146,7 @@ namespace LightPat.Core
             engineStarted = true;
 
             NetworkObject.ChangeOwnership(driver.OwnerClientId);
-            transform.GetChild(0).GetComponent<NestedNetworkObject>().NetworkObject.ChangeOwnership(driver.OwnerClientId);
+            transform.GetChild(1).GetComponent<NestedNetworkObject>().NetworkObject.ChangeOwnership(driver.OwnerClientId);
 
             rb.constraints = RigidbodyConstraints.FreezeRotation;
             driver.SendMessage("OnDriverEnter", this);
@@ -166,7 +175,7 @@ namespace LightPat.Core
             if (!IsServer) { Debug.LogWarning("Calling OnDriverExit from a client"); return; }
 
             NetworkObject.RemoveOwnership();
-            transform.GetChild(0).GetComponent<NestedNetworkObject>().NetworkObject.RemoveOwnership();
+            transform.GetChild(1).GetComponent<NestedNetworkObject>().NetworkObject.RemoveOwnership();
 
             rb.constraints = RigidbodyConstraints.None;
             driver.SendMessage("OnDriverExit");

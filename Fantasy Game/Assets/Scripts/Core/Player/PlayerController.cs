@@ -132,7 +132,7 @@ namespace LightPat.Core.Player
             transform.Translate(transform.rotation * chair.exitPosOffset, Space.World);
 
             transform.rotation.ToAngleAxis(out float angle, out Vector3 axis);
-            bodyRotation = new Vector3(0, angle, 0);
+            bodyRotation = new Vector3(0, angle * axis.y, 0);
 
             GetComponent<CustomNetworkTransform>().SetParent(null);
 
@@ -334,7 +334,6 @@ namespace LightPat.Core.Player
         bool prevCamRotState;
         private void Update()
         {
-            Debug.Log(bodyRotation + " parent: " + transform.parent);
             if (chair)
             {
                 if (IsOwner)
@@ -432,8 +431,9 @@ namespace LightPat.Core.Player
 
             if (!rb & !chair)
             {
-                Vector3 startPos = transform.position + transform.up * 0.7f;
+                Vector3 startPos = transform.position;
                 RaycastHit[] allHits = Physics.RaycastAll(startPos, transform.up * -1, 2, Physics.AllLayers, QueryTriggerInteraction.Ignore);
+                Debug.DrawRay(startPos, transform.up * -1, Color.red, Time.fixedDeltaTime);
                 System.Array.Sort(allHits, (x, y) => x.distance.CompareTo(y.distance));
                 foreach (RaycastHit hit in allHits)
                 {
@@ -445,7 +445,7 @@ namespace LightPat.Core.Player
                         lastNoPhysicsTime = Time.time;
 
                         transform.parent.rotation.ToAngleAxis(out float angle, out Vector3 axis);
-                        bodyRotation = new Vector3(0, bodyRotation.y + angle, 0);
+                        bodyRotation = new Vector3(0, bodyRotation.y + angle * axis.y, 0);
 
                         GetComponent<CustomNetworkTransform>().SetParent(null);
                         rb = gameObject.AddComponent<Rigidbody>();
@@ -463,7 +463,7 @@ namespace LightPat.Core.Player
                     lastNoPhysicsTime = Time.time;
 
                     transform.parent.rotation.ToAngleAxis(out float angle, out Vector3 axis);
-                    bodyRotation = new Vector3(0, bodyRotation.y + angle, 0);
+                    bodyRotation = new Vector3(0, bodyRotation.y + angle * axis.y, 0);
 
                     GetComponent<CustomNetworkTransform>().SetParent(null);
                     rb = gameObject.AddComponent<Rigidbody>();
@@ -491,7 +491,7 @@ namespace LightPat.Core.Player
                     GetComponent<CustomNetworkTransform>().SetParent(collision.transform.GetComponent<NetworkObject>());
                     Destroy(rb);
                     collision.transform.rotation.ToAngleAxis(out float angle, out Vector3 axis);
-                    bodyRotation = new Vector3(0, bodyRotation.y - angle, 0);
+                    bodyRotation = new Vector3(0, bodyRotation.y - angle * axis.y, 0);
                 }
             }
         }

@@ -41,6 +41,12 @@ namespace LightPat.Core
             tailRotor = transform.GetChild(1).Find("tailRotor");
         }
 
+        private void Awake()
+        {
+            motorSoundSource.volume = 0;
+            motorSoundSource.Play();
+        }
+
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
@@ -51,9 +57,6 @@ namespace LightPat.Core
             originalCameraPositionOffset = vehicleCamera.transform.localPosition;
             vehicleCamera.transform.SetParent(null, true);
             vehicleCamera.transform.LookAt(transform.position);
-
-            motorSoundSource.volume = 0;
-            motorSoundSource.Play();
         }
 
         [Header("Audio Settings")]
@@ -77,7 +80,10 @@ namespace LightPat.Core
             prevPosition = transform.position;
 
             motorSoundSource.pitch = currentRotorSpeed;
-            motorSoundSource.volume = 1;
+            if (motorSoundSource.pitch < 0.1f)
+                motorSoundSource.volume = Mathf.MoveTowards(motorSoundSource.volume, 0, Time.deltaTime * 5);
+            else
+                motorSoundSource.volume = Mathf.MoveTowards(motorSoundSource.volume, 1, Time.deltaTime * 5);
 
             if (driver)
             {

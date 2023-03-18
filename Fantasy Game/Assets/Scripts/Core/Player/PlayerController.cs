@@ -93,15 +93,13 @@ namespace LightPat.Core.Player
         void OnChairEnter(Chair newChair)
         {
             disableNoPhysics = true;
-            StartCoroutine(WaitForParent());
+            StartCoroutine(WaitForParentOnChairEnter());
             GetComponent<CustomNetworkTransform>().SetParent(newChair.NetworkObject);
             chair = newChair;
 
             if (rb)
                 Destroy(rb);
-            transform.localPosition = chair.occupantPosition;
-            transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
-            bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
+            
             sitting.Value = true;
 
             if (chair.leftFootGrip)
@@ -120,7 +118,7 @@ namespace LightPat.Core.Player
             rotateWithBoneLookLimit = chair.occupantLookLimits;
         }
 
-        private IEnumerator WaitForParent()
+        private IEnumerator WaitForParentOnChairEnter()
         {
             yield return new WaitUntil(() => chair != null);
             yield return new WaitUntil(() => transform.parent == chair.transform);
@@ -129,16 +127,21 @@ namespace LightPat.Core.Player
 
         void OnChairExit()
         {
-            GetComponent<CustomNetworkTransform>().SetParent(null);
+            disableNoPhysics = true;
+            StartCoroutine(WaitForParentOnChairExit());
             transform.Translate(transform.rotation * chair.exitPosOffset, Space.World);
 
-            bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
-            sitting.Value = false;
+            transform.rotation.ToAngleAxis(out float angle, out Vector3 axis);
+            bodyRotation = new Vector3(0, angle, 0);
+
+            GetComponent<CustomNetworkTransform>().SetParent(null);
 
             rb = gameObject.AddComponent<Rigidbody>();
             rb.constraints = RigidbodyConstraints.FreezeRotation;
             rb.interpolation = RigidbodyInterpolation.Interpolate;
             rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+
+            sitting.Value = false;
 
             leftLegIK.GetComponentInParent<Rig>().weight = 0;
             rightLegIK.GetComponentInParent<Rig>().weight = 0;
@@ -147,26 +150,19 @@ namespace LightPat.Core.Player
             rightLegIK.GetComponentInChildren<FollowTarget>().target = rightLegIK.data.tip;
 
             rotateWithBoneLookLimit = originalLookLimit;
-
             chair = null;
+        }
+
+        private IEnumerator WaitForParentOnChairExit()
+        {
+            yield return new WaitUntil(() => !transform.parent);
+            yield return new WaitForSeconds(0.1f);
+            disableNoPhysics = false;
         }
 
         private void OnTransformParentChanged()
         {
             playerCamera.RefreshCameraParent();
-
-            //if (transform.parent)
-            //{
-            //    rotateBodyWithCamera = true;
-            //}
-            //else
-            //{
-            //    Debug.Log((bool)GetComponent<WeaponLoadout>().equippedWeapon);
-            //    if (GetComponent<WeaponLoadout>().equippedWeapon)
-            //        rotateBodyWithCamera = true;
-            //    else
-            //        rotateBodyWithCamera = false;
-            //}
         }
 
         private void Awake()
@@ -338,6 +334,7 @@ namespace LightPat.Core.Player
         bool prevCamRotState;
         private void Update()
         {
+            Debug.Log(bodyRotation + " parent: " + transform.parent);
             if (chair)
             {
                 if (IsOwner)
@@ -345,8 +342,6 @@ namespace LightPat.Core.Player
                     transform.localPosition = chair.occupantPosition;
                     transform.rotation = chair.transform.rotation * Quaternion.Euler(chair.occupantRotation);
                 }
-
-                bodyRotation = new Vector3(0, transform.eulerAngles.y, 0);
             }
 
             playerHUD.lookAngleDisplay.rotation = Quaternion.Slerp(playerHUD.lookAngleDisplay.rotation, Quaternion.Euler(new Vector3(0, 0, -lookAngle.Value)), playerHUD.lookAngleRotSpeed * Time.deltaTime);
@@ -380,15 +375,24 @@ namespace LightPat.Core.Player
             if (rotateBodyWithCamera != prevCamRotState)
                 playerCamera.RefreshCameraParent();
 
-            if (!rotateBodyWithCamera)
-            {
-                if (rb)
-                    rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
-                else if (playerCamera.updateRotationWithTarget)
-                    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
-                else if (transform.parent)
-                    transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
-            }
+            //if (!rotateBodyWithCamera)
+            //{
+            //    if (rb)
+            //        rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
+            //    else if (playerCamera.updateRotationWithTarget)
+            //        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
+            //    else if (transform.parent)
+            //        transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
+            //}
+            //if (rotateBodyWithCamera)
+            //{
+            //    if (rb)
+            //        rb.MoveRotation(Quaternion.Euler(bodyRotation));
+            //    else if (playerCamera.updateRotationWithTarget)
+            //        transform.rotation = Quaternion.Euler(bodyRotation);
+            //    else if (transform.parent)
+            //        transform.localRotation = Quaternion.Euler(bodyRotation);
+            //}
 
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean.Value / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
@@ -440,6 +444,9 @@ namespace LightPat.Core.Player
                         if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
                         lastNoPhysicsTime = Time.time;
 
+                        transform.parent.rotation.ToAngleAxis(out float angle, out Vector3 axis);
+                        bodyRotation = new Vector3(0, bodyRotation.y + angle, 0);
+
                         GetComponent<CustomNetworkTransform>().SetParent(null);
                         rb = gameObject.AddComponent<Rigidbody>();
                         rb.constraints = RigidbodyConstraints.FreezeRotation;
@@ -454,6 +461,9 @@ namespace LightPat.Core.Player
                 {
                     if (Time.time - lastNoPhysicsTime < noPhysicsTimeThreshold) { return; }
                     lastNoPhysicsTime = Time.time;
+
+                    transform.parent.rotation.ToAngleAxis(out float angle, out Vector3 axis);
+                    bodyRotation = new Vector3(0, bodyRotation.y + angle, 0);
 
                     GetComponent<CustomNetworkTransform>().SetParent(null);
                     rb = gameObject.AddComponent<Rigidbody>();
@@ -480,7 +490,8 @@ namespace LightPat.Core.Player
 
                     GetComponent<CustomNetworkTransform>().SetParent(collision.transform.GetComponent<NetworkObject>());
                     Destroy(rb);
-                    //rotateBodyWithCamera = true;
+                    collision.transform.rotation.ToAngleAxis(out float angle, out Vector3 axis);
+                    bodyRotation = new Vector3(0, bodyRotation.y - angle, 0);
                 }
             }
         }

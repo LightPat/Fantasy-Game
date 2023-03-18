@@ -90,6 +90,8 @@ namespace LightPat.Core
             }
         }
 
+        [Header("Physics Settings")]
+        public float dampenFactor = 0.8f;
         Vector3 rotationOffset;
         float verticalForceAmount;
         private void FixedUpdate()
@@ -101,6 +103,9 @@ namespace LightPat.Core
 
             if (IsGrounded())
             {
+                rb.AddTorque(-rb.angularVelocity * dampenFactor, ForceMode.Acceleration);
+                rb.AddRelativeForce(-rb.velocity * dampenFactor, ForceMode.Acceleration);
+
                 moveForce.x = 0 - localVelocity.x;
                 moveForce.z = 0 - localVelocity.z;
                 moveForce = Vector3.ClampMagnitude(moveForce, currentRotorSpeed * forceClampMultiplier);

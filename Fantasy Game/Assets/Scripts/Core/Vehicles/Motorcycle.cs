@@ -158,17 +158,17 @@ namespace LightPat.Core
             if (!loopingAudioSource.isPlaying)
                 loopingAudioSource.Play();
 
-            bool gearChange;
             int newGear = gear;
             if (Time.time - lastGearChangeTime > 1)
             {
+                if (rpm < 0) { rpm = 0; }
                 for (int i = 0; i < gearSounds.Length; i++)
                 {
-                    if (rearWheelCollider.rpm > rpmGearShifts[i]) { newGear = Mathf.Clamp(i, 0, gearSounds.Length); }
+                    if (rpm > rpmGearShifts[i]) { newGear = Mathf.Clamp(i, 0, gearSounds.Length); }
                 }
             }
 
-            gearChange = newGear != gear;
+            bool gearChange = newGear != gear;
             gear = newGear;
 
             notLoopingAudioSource.pitch = moveInput.y > 0 ? 1 : -1;

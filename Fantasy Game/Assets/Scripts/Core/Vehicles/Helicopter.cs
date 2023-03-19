@@ -98,6 +98,7 @@ namespace LightPat.Core
 
         [Header("Physics Settings")]
         public float dampenFactor = 0.8f;
+
         Vector3 rotationOffset;
         float verticalForceAmount;
         private void FixedUpdate()

@@ -1565,7 +1565,7 @@ MonoBehaviour:
   mph: 0
   rpm: 0
   gear: 0
-  rpmGearShifts: 0000000082000000e60000002c01000072010000c2010000
+  rpmGearShifts: ffffffff82000000e60000002c01000072010000c2010000
   engineIdlePitchShifts:
   - 1
   - 1.4

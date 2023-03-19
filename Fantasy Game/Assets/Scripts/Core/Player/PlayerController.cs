@@ -374,25 +374,6 @@ namespace LightPat.Core.Player
             if (rotateBodyWithCamera != prevCamRotState)
                 playerCamera.RefreshCameraParent();
 
-            //if (!rotateBodyWithCamera)
-            //{
-            //    if (rb)
-            //        rb.MoveRotation(Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed));
-            //    else if (playerCamera.updateRotationWithTarget)
-            //        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
-            //    else if (transform.parent)
-            //        transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(bodyRotation), Time.deltaTime * currentBodyRotSpeed);
-            //}
-            //if (rotateBodyWithCamera)
-            //{
-            //    if (rb)
-            //        rb.MoveRotation(Quaternion.Euler(bodyRotation));
-            //    else if (playerCamera.updateRotationWithTarget)
-            //        transform.rotation = Quaternion.Euler(bodyRotation);
-            //    else if (transform.parent)
-            //        transform.localRotation = Quaternion.Euler(bodyRotation);
-            //}
-
             spineAim.data.offset = Vector3.Lerp(spineAim.data.offset, new Vector3(0, 0, targetLean.Value / spineAim.weight), leanSpeed * Time.deltaTime);
             foreach (MultiAimConstraint aimConstraint in aimConstraints)
             {

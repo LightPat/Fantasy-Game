@@ -6,9 +6,8 @@ using Unity.Netcode;
 
 namespace LightPat.Core
 {
-    public class CaptureTheFlagManager : NetworkBehaviour
+    public class CaptureTheFlagManager : GameLogicManager
     {
-        public TeamSpawnPoint[] spawnPoints;
         public GameObject HUDPrefab;
         public int winningScore = 3;
 
@@ -70,27 +69,5 @@ namespace LightPat.Core
                 Gizmos.DrawRay(spawnPoint.spawnPosition, Quaternion.Euler(spawnPoint.spawnRotation) * Vector3.forward * 5);
             }
         }
-    }
-
-    [System.Serializable]
-    public class TeamSpawnPoint
-    {
-        public Team team;
-        public Vector3 spawnPosition;
-        public Vector3 spawnRotation;
-    }
-
-    public enum Team
-    {
-        Environment,
-        Red,
-        Blue
-    }
-
-    public enum GameMode
-    {
-        CaptureTheFlag,
-        HordeMode,
-        GhostInTheGraveyard
     }
 }

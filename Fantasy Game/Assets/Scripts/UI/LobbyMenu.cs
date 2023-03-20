@@ -52,7 +52,7 @@ namespace LightPat.UI
             if (gameModeDropdown.options[gameModeDropdown.value].text == "CaptureTheFlag")
                 ClientManager.Singleton.ChangeSceneServerRpc(NetworkManager.Singleton.LocalClientId, "CaptureTheFlag", true);
             else if (gameModeDropdown.options[gameModeDropdown.value].text == "HordeMode")
-                Debug.LogError("Horde mode isn't done yet");
+                ClientManager.Singleton.ChangeSceneServerRpc(NetworkManager.Singleton.LocalClientId, "HordeMode", true);
             else if (gameModeDropdown.options[gameModeDropdown.value].text == "GhostInTheGraveyard")
                 Debug.LogError("Ghost in the graveyard isn't done yet");
         }

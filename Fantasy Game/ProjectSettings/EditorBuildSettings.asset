@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CaptureTheFlag.unity
     guid: 074e568ce5c296542bfdcc8e8bc79d59
+  - enabled: 1
+    path: Assets/Scenes/HordeMode.unity
+    guid: 5efb082ad70874f4a96ac7ed2eb2eccb
   m_configObjects: {}

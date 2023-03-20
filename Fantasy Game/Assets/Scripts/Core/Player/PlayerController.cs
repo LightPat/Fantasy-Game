@@ -766,7 +766,7 @@ namespace LightPat.Core.Player
         {
             yield return new WaitUntil(() => deathScreenInstance == null);
 
-            foreach (TeamSpawnPoint teamSpawnPoint in FindObjectOfType<CaptureTheFlagManager>().spawnPoints)
+            foreach (TeamSpawnPoint teamSpawnPoint in FindObjectOfType<GameLogicManager>().spawnPoints)
             {
                 if (teamSpawnPoint.team == GetComponent<Attributes>().team)
                 {

@@ -245,7 +245,7 @@ namespace LightPat.Core
 
             if (gameMode.Value == GameMode.CaptureTheFlag)
             {
-                foreach (TeamSpawnPoint teamSpawnPoint in FindObjectOfType<CaptureTheFlagManager>().spawnPoints)
+                foreach (TeamSpawnPoint teamSpawnPoint in FindObjectOfType<GameLogicManager>().spawnPoints)
                 {
                     if (teamSpawnPoint.team == clientDataDictionary[clientId].team)
                     {

@@ -174,6 +174,7 @@ namespace LightPat.Core
             if (driver.IsLocalPlayer)
             {
                 vehicleCamera.depth = 1;
+                vehicleCamera.enabled = true;
                 vehicleCamera.transform.position = transform.position + originalCameraPositionOffset;
                 vehicleCamera.transform.LookAt(transform.position);
             }
@@ -202,7 +203,10 @@ namespace LightPat.Core
         void OnDriverExitClientRpc()
         {
             if (driver.IsLocalPlayer)
+            {
                 vehicleCamera.depth = -1;
+                vehicleCamera.enabled = false;
+            }
 
             rb.constraints = RigidbodyConstraints.None;
             driver.SendMessage("OnDriverExit");

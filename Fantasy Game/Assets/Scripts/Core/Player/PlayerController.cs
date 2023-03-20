@@ -58,6 +58,7 @@ namespace LightPat.Core.Player
                 GetComponent<ActionMapHandler>().enabled = false;
                 Destroy(playerCamera.GetComponent<AudioListener>());
                 playerCamera.GetComponent<Camera>().depth = -1;
+                playerCamera.GetComponent<Camera>().enabled = false;
                 playerHUD.gameObject.SetActive(false);
             }
 

@@ -328,7 +328,10 @@ namespace LightPat.Core.Player
                 ADSCamera.transform.localRotation = Quaternion.Slerp(ADSCamera.transform.localRotation, adsCameraLocRot, Time.deltaTime * 12);
 
                 if (playerWeaponAnimationHandler.IsLocalPlayer)
+                {
                     ADSCamera.depth = 1;
+                    ADSCamera.enabled = true;
+                }
 
                 transform.localPosition = Vector3.Lerp(transform.localPosition, Vector3.zero, Time.deltaTime * 8);
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.identity, Time.deltaTime * 8);
@@ -341,7 +344,10 @@ namespace LightPat.Core.Player
                 ADSCamera.transform.rotation = Quaternion.Slerp(ADSCamera.transform.rotation, playerWeaponAnimationHandler.mainCamera.rotation, Time.deltaTime * 12);
 
                 if (Vector3.Distance(ADSCamera.transform.position, playerWeaponAnimationHandler.mainCamera.position) < 0.1f)
+                {
                     ADSCamera.depth = -1;
+                    ADSCamera.enabled = false;
+                }
 
                 neckAimConstraint.data.offset = Vector3.Lerp(neckAimConstraint.data.offset, Vector3.zero, Time.deltaTime * 8);
             }

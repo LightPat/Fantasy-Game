@@ -721,6 +721,7 @@ namespace LightPat.Core.Player
             if (animator.GetBool("falling")) { return; }
             if (collision.relativeVelocity.magnitude < 1) { return; }
             if (Vector3.Distance(collision.GetContact(0).point, lastFootstepPosition) < 1) { return; }
+            if (!animator.GetCurrentAnimatorStateInfo(weaponLoadout.equippedWeapon ? animator.GetLayerIndex(weaponLoadout.equippedWeapon.animationClass) : 0).IsName("Idle")) { return; }
 
             lastFootstepPosition = collision.GetContact(0).point;
             AudioManager.Singleton.PlayClipAtPoint(footStepSounds[UnityEngine.Random.Range(0, footStepSounds.Length)], collision.GetContact(0).point);

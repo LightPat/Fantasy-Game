@@ -6,6 +6,7 @@ namespace LightPat.Core
 {
     public class SkidMark : MonoBehaviour
     {
+        [SerializeField] private AudioClip[] skidSounds;
         [SerializeField] private float timeBeforeDestroy = 5;
 
         private float timeExisting;
@@ -14,6 +15,7 @@ namespace LightPat.Core
         private void Start()
         {
             thisRenderer = GetComponent<Renderer>();
+            AudioManager.Singleton.PlayClipAtPoint(skidSounds[Random.Range(0, skidSounds.Length)], transform.position, 0.5f);
         }
 
         private void Update()

@@ -94,4 +94,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92f1dac3f55a31e458cbad337608181c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  skidSounds:
+  - {fileID: 8300000, guid: a54b2ba1b8c3eb44f8146d621b0577be, type: 3}
+  - {fileID: 8300000, guid: 91b5d727ad6ee7347928246dc364a0d5, type: 3}
+  - {fileID: 8300000, guid: 1e4829902dd479e4680b09061ee59978, type: 3}
+  - {fileID: 8300000, guid: b7ee5d1e740aea7418856cc3792a627c, type: 3}
   timeBeforeDestroy: 15

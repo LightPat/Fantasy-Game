@@ -393,7 +393,7 @@ namespace LightPat.Core.Player
         bool IsGrounded()
         {
             RaycastHit hit;
-            return rb.SweepTest(Vector3.down, out hit, isGroundedDistance);
+            return rb.SweepTest(Vector3.down, out hit, isGroundedDistance, QueryTriggerInteraction.Ignore);
         }
     }
 }

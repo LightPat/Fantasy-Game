@@ -8,9 +8,24 @@ namespace LightPat.Core
     public class SpawnManager : MonoBehaviour
     {
         public SpawnData[] spawnArray;
+        
+        [SerializeField] private bool spawnOnStart;
+
+        public void SpawnObjects()
+        {
+            if (!NetworkManager.Singleton.IsServer) { return; }
+            foreach (SpawnData spawnData in spawnArray)
+            {
+                GameObject g = Instantiate(spawnData.gameObject, spawnData.spawnPosition, Quaternion.Euler(spawnData.spawnRotation));
+                g.name = spawnData.gameObject.name;
+                NetworkObject networkObject = g.GetComponent<NetworkObject>();
+                networkObject.Spawn(true);
+            }
+        }
 
         private void Start()
         {
+            if (!spawnOnStart) { return; }
             if (!NetworkManager.Singleton.IsServer) { return; }
             foreach (SpawnData spawnData in spawnArray)
             {

@@ -225,11 +225,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pathFindingPositions:
-  - {x: -71.9, y: 50.2, z: -295}
-  - {x: -64.2, y: 62.6, z: -310.2}
-  targetPosition: {x: -65.08, y: 62.3, z: -311}
-  moveTowardsSpeed: 0
-  rotationSpeed: 0
+  - {x: 0, y: -23, z: 33.2}
+  - {x: 0, y: -22, z: 15}
+  moveTowardsSpeed: 5
+  rotationSpeed: 5
 --- !u!114 &2540662555291290565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3075,6 +3074,10 @@ PrefabInstance:
     - target: {fileID: 4604779477673013647, guid: e018d1a779ce1bc40b3750b8f44545c1, type: 3}
       propertyPath: m_Name
       value: WorldSpaceLabel
+      objectReference: {fileID: 0}
+    - target: {fileID: 4604779477673013647, guid: e018d1a779ce1bc40b3750b8f44545c1, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4604779478868071990, guid: e018d1a779ce1bc40b3750b8f44545c1, type: 3}
       propertyPath: m_Materials.Array.data[0]

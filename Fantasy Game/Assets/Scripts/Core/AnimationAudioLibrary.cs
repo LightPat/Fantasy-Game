@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using LightPat.Singleton;
+using LightPat.Audio;
 
 namespace LightPat.Core
 {

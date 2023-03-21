@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Linq;
 using Unity.Netcode;
-using LightPat.Singleton;
+using LightPat.Audio;
 
 namespace LightPat.Core.Player
 {

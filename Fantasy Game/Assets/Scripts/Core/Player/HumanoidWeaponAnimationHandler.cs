@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using LightPat.ProceduralAnimations;
 using Unity.Netcode;
-using LightPat.Singleton;
+using LightPat.Audio;
 
 namespace LightPat.Core.Player
 {
@@ -63,6 +63,7 @@ namespace LightPat.Core.Player
             attack2.OnValueChanged += OnAttack2Change;
             reloading.OnValueChanged += OnReloadChange;
             targetWeaponSlot.OnValueChanged += OnTargetWeaponSlotChange;
+            flashLightState.OnValueChanged += OnFlashLightStateChange;
 
             weaponLoadout.startingWeapons.Clear();
             int i = 0;
@@ -83,6 +84,7 @@ namespace LightPat.Core.Player
             attack2.OnValueChanged -= OnAttack2Change;
             reloading.OnValueChanged -= OnReloadChange;
             targetWeaponSlot.OnValueChanged -= OnTargetWeaponSlotChange;
+            flashLightState.OnValueChanged -= OnFlashLightStateChange;
         }
 
         bool equipInitialWeaponsRunning = true;
@@ -392,11 +394,23 @@ namespace LightPat.Core.Player
             reloading.Value = true;
         }
 
+        [Header("Flash Light Settings")]
         public Light flashLight;
-        void OnFlashLight()
+        public AudioClip flashLightOnSound;
+        public AudioClip flashLightOffSound;
+
+        private NetworkVariable<bool> flashLightState = new NetworkVariable<bool>(default, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
+        void OnFlashLightStateChange(bool previous, bool current)
         {
             flashLight.enabled = !flashLight.enabled;
+            if (flashLight.enabled)
+                AudioManager.Singleton.PlayClipAtPoint(flashLightOnSound, flashLight.transform.position, 1);
+            else
+                AudioManager.Singleton.PlayClipAtPoint(flashLightOffSound, flashLight.transform.position, 1);
         }
+
+        void OnFlashLight() { flashLightState.Value = !flashLightState.Value; }
 
         void OnQueryWeaponSlot(InputValue value)
         {

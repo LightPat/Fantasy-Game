@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
-using LightPat.Singleton;
+using LightPat.Audio;
 
 namespace LightPat.ProceduralAnimations.Spider
 {

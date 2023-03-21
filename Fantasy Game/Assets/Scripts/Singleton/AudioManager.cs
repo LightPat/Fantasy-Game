@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace LightPat.Singleton
+namespace LightPat.Audio
 {
     public class AudioManager : MonoBehaviour
     {
@@ -13,8 +13,6 @@ namespace LightPat.Singleton
 
         private static List<AudioSource> audioSources = new List<AudioSource>();
         private static AudioManager _singleton;
-
-        private AudioSource musicSource;
 
         public static AudioManager Singleton
         {
@@ -77,12 +75,15 @@ namespace LightPat.Singleton
         {
             foreach (AudioSource audioSouce in FindObjectsOfType<AudioSource>())
             {
+                if (audioSouce.gameObject.scene.name == "DontDestroyOnLoad") { continue; }
+
                 RegisterAudioSource(audioSouce);
             }
             AudioListener.volume = initialVolume;
 
-            musicSource = GetComponent<AudioSource>();
-            musicSource.spatialBlend = 0;
+            // This is for music
+            if (TryGetComponent(out AudioSource audioSource))
+                audioSource.spatialBlend = 0;
         }
 
         private void Update()

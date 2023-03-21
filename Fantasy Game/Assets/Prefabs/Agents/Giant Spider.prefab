@@ -2572,7 +2572,7 @@ MonoBehaviour:
   lerpSpeedMultiplier: 2
   angularLerpSpeedMultiplier: 0.1
   minimumLerpSpeed: 3
-  footstepVolume: 0.7
+  footstepVolume: 0.4
   footStepSounds:
   - {fileID: 8300000, guid: f6a8cae881e7e424986dcc64ec6e88e0, type: 3}
   - {fileID: 8300000, guid: 25bfdc517dcedda41b9328509a834b29, type: 3}

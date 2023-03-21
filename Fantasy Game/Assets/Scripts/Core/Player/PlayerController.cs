@@ -6,7 +6,7 @@ using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
 using Unity.Netcode;
 using System.Linq;
-using LightPat.Singleton;
+using LightPat.Audio;
 
 namespace LightPat.Core.Player
 {

@@ -3072,7 +3072,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 30
-  m_Range: 20
+  m_Range: 40
   m_SpotAngle: 90
   m_InnerSpotAngle: 20
   m_CookieSize: 10
@@ -6167,6 +6167,8 @@ MonoBehaviour:
   dropForce: {x: 0, y: 0, z: 5}
   blockConstraints: {fileID: 2499275057994608015}
   flashLight: {fileID: 2480033183009909353}
+  flashLightOnSound: {fileID: 8300000, guid: e4086a9cf2b79bd4da74b21161926b39, type: 3}
+  flashLightOffSound: {fileID: 8300000, guid: 07885b512e6867d4f8f75f50f08fa61c, type: 3}
   footStepSounds:
   - {fileID: 8300000, guid: 0737b44acf8500a45ac166f28a8e7781, type: 3}
   - {fileID: 8300000, guid: 902ae170729ed1349ac01c2d3dfada94, type: 3}

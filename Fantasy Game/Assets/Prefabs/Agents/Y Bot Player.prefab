@@ -6116,7 +6116,7 @@ MonoBehaviour:
   jumpForceDelay: 0
   runningJumpHeight: 3
   isGroundedDistance: 2
-  breakfallRollThreshold: 10
+  breakfallRollThreshold: 15
   rootRotationRig: {fileID: 9211027351311965373}
   zRot: 20
   wallRunDelay: 0.2

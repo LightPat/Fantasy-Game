@@ -389,8 +389,11 @@ namespace LightPat.Core.Player
             }
         }
 
+        float lastReloadTime;
         void OnReload()
         {
+            if (Time.time - lastReloadTime < 0.1f) { return; }
+            lastReloadTime = Time.time;
             reloading.Value = true;
         }
 

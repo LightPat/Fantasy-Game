@@ -375,7 +375,12 @@ namespace LightPat.Core.Player
 
         void OnReloadChange(bool previous, bool current)
         {
-            if (!current) { return; }
+            if (!current)
+            {
+                lastReloadEndTime = Time.time;
+                return;
+            }
+
             if (weaponLoadout.equippedWeapon == null) { return; }
             if (weaponLoadout.equippedWeapon.GetComponent<GreatSword>())
             {
@@ -389,11 +394,10 @@ namespace LightPat.Core.Player
             }
         }
 
-        float lastReloadTime;
+        float lastReloadEndTime;
         void OnReload()
         {
-            if (Time.time - lastReloadTime < 0.1f) { return; }
-            lastReloadTime = Time.time;
+            if (Time.time - lastReloadEndTime < 0.1f) { return; }
             reloading.Value = true;
         }
 

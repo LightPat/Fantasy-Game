@@ -6,6 +6,7 @@ using UnityEngine.Animations.Rigging;
 using LightPat.ProceduralAnimations;
 using Unity.Netcode;
 using System.Linq;
+using LightPat.Singleton;
 
 namespace LightPat.Core.Player
 {

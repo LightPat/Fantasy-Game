@@ -2572,6 +2572,16 @@ MonoBehaviour:
   lerpSpeedMultiplier: 2
   angularLerpSpeedMultiplier: 0.1
   minimumLerpSpeed: 3
+  footstepVolume: 0.7
+  footStepSounds:
+  - {fileID: 8300000, guid: f6a8cae881e7e424986dcc64ec6e88e0, type: 3}
+  - {fileID: 8300000, guid: 25bfdc517dcedda41b9328509a834b29, type: 3}
+  - {fileID: 8300000, guid: 6973e44785f8f3845bf185e8632135f2, type: 3}
+  - {fileID: 8300000, guid: d6838f07da47a0f4484379b661dc128f, type: 3}
+  - {fileID: 8300000, guid: 58ff10e664ad51b4c99d5d7954ff28af, type: 3}
+  - {fileID: 8300000, guid: aeb37d0a914cec546a8cafb674a51e24, type: 3}
+  - {fileID: 8300000, guid: 4b31ae2bf18ea23408ffb77d8b0bd146, type: 3}
+  - {fileID: 8300000, guid: 3982fde9e1d6b8a4490bf6de5fdb425a, type: 3}
 --- !u!136 &2540662555333023527
 CapsuleCollider:
   m_ObjectHideFlags: 0

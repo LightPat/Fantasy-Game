@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using System.Linq;
 using Unity.Netcode;
+using LightPat.Singleton;
 
 namespace LightPat.Core
 {

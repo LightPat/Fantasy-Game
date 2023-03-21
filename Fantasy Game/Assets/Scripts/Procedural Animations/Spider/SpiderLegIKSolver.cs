@@ -89,6 +89,7 @@ namespace LightPat.ProceduralAnimations.Spider
                     lerpProgress = 0;
                     newPosition = hit.point;
                     raycastHit = hit;
+                    controller.PlayFootstep(this);
                 }
 
                 break;
@@ -109,6 +110,7 @@ namespace LightPat.ProceduralAnimations.Spider
                         lerpProgress = 0;
                         newPosition = hit.point;
                         raycastHit = hit;
+                        controller.PlayFootstep(this);
                     }
                     break;
                 }

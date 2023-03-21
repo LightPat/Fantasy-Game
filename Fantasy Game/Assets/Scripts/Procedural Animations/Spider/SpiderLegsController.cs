@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 using UnityEngine.Animations.Rigging;
-using Unity.Netcode;
+using LightPat.Singleton;
 
 namespace LightPat.ProceduralAnimations.Spider
 {
@@ -24,9 +23,18 @@ namespace LightPat.ProceduralAnimations.Spider
         public SpiderLegIKSolver[] legSet1 { get; private set; }
         public SpiderLegIKSolver[] legSet2 { get; private set; }
 
+        [Header("Audio Settings")]
+        public float footstepVolume = 1;
+        public AudioClip[] footStepSounds;
+
         private RigBuilder rigBuilder;
         private float[] previousHeights;
         private float[] heightDifferences;
+
+        public void PlayFootstep(SpiderLegIKSolver leg)
+        {
+            AudioManager.Singleton.PlayClipAtPoint(footStepSounds[Random.Range(0, footStepSounds.Length)], leg.transform.position, footstepVolume);
+        }
 
         private void Awake()
         {

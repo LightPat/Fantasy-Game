@@ -391,6 +391,12 @@ namespace LightPat.Core.Player
             reloading.Value = true;
         }
 
+        public Light flashLight;
+        void OnFlashLight()
+        {
+            flashLight.enabled = !flashLight.enabled;
+        }
+
         void OnQueryWeaponSlot(InputValue value)
         {
             if (reloading.Value) { return; }

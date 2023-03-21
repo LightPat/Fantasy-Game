@@ -9,6 +9,15 @@ namespace LightPat.Core
     {
         public TeamSpawnPoint[] spawnPoints;
 
+        private void OnDrawGizmos()
+        {
+            foreach (TeamSpawnPoint spawnPoint in spawnPoints)
+            {
+                Gizmos.color = (Color)typeof(Color).GetProperty(spawnPoint.team.ToString().ToLowerInvariant()).GetValue(null, null);
+                Gizmos.DrawWireSphere(spawnPoint.spawnPosition, 2);
+                Gizmos.DrawRay(spawnPoint.spawnPosition, Quaternion.Euler(spawnPoint.spawnRotation) * Vector3.forward * 5);
+            }
+        }
     }
 
     [System.Serializable]

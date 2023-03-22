@@ -15,15 +15,26 @@ namespace LightPat.EnemyAI
         private Vector3 currentTargetPosition;
         private float verticalOffset;
         private SpiderPhysics spiderPhysics;
+        private Attributes attributes;
+        public Transform target;
 
         private void Start()
         {
             spiderPhysics = GetComponent<SpiderPhysics>();
             verticalOffset = spiderPhysics.bodyVerticalOffset;
+            attributes = GetComponent<Attributes>();
         }
 
         private void Update()
         {
+            if (!IsOwner) { return; }
+
+            if (target)
+            {
+                pathFindingPositions = new List<Vector3>();
+                pathFindingPositions.Add(target.position);
+            }
+
             if (pathFindingPositions.Count < 1) { return; }
 
             bool targetPositionHit = false;
@@ -43,7 +54,7 @@ namespace LightPat.EnemyAI
 
             currentTargetPosition += spiderPhysics.dotProductOffset;
 
-            if (Vector3.Distance(transform.position, currentTargetPosition) > 0.1f)
+            if (Vector3.Distance(transform.position, currentTargetPosition) > (target ? 6 : 0.1f))
                 transform.position += moveTowardsSpeed * Time.deltaTime * transform.forward;
             else
                 pathFindingPositions.RemoveAt(0);
@@ -51,11 +62,29 @@ namespace LightPat.EnemyAI
             Quaternion targetRotation = Quaternion.LookRotation(currentTargetPosition - transform.position, transform.up);
             if (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            foreach (Collider col in Physics.OverlapSphere(transform.position, 10, -1, QueryTriggerInteraction.Ignore))
+            {
+                Attributes targetAttributes = col.GetComponentInParent<Attributes>();
+                if (targetAttributes)
+                {
+                    if (targetAttributes.team != attributes.team)
+                    {
+                        target = targetAttributes.transform;
+                        break;
+                    }
+                }
+            }
         }
 
         private void GeneratePath(Vector3 finalPosition)
         {
             // TODO
+        }
+
+        void OnAttacked(OnAttackedData data)
+        {
+            //data.inflicterPosition;
         }
 
         private void OnDrawGizmos()

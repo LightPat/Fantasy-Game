@@ -80,6 +80,7 @@ namespace LightPat.ProceduralAnimations.Spider
             foreach (RaycastHit hit in forwardHits)
             {
                 if (hit.transform.gameObject == controller.rootBone.gameObject) { continue; }
+                if (hit.rigidbody) { continue; }
 
                 frontHit = true;
                 bHit = true;
@@ -100,6 +101,7 @@ namespace LightPat.ProceduralAnimations.Spider
             {
                 foreach (RaycastHit hit in allHits)
                 {
+                    if (hit.rigidbody) { continue; }
                     // If we raycast anything that isn't this object go to the next hit
                     if (hit.transform.gameObject == controller.rootBone.gameObject) { continue; }
 

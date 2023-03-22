@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LightPat.Core;
 
-namespace LightPat.Core
+namespace LightPat.Triggers
 {
     public class Level1Trigger : MonoBehaviour
     {

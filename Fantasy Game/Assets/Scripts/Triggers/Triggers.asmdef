@@ -1,0 +1,17 @@
+{
+    "name": "Triggers",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f4e8ad42b28a7364f8fc49ee074da19b",
+        "GUID:aa58c616bf91eb246a556398ae85e22c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

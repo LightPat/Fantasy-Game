@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using LightPat.Misc;
 
 namespace LightPat.Audio
 {
@@ -75,7 +76,7 @@ namespace LightPat.Audio
         {
             foreach (AudioSource audioSouce in FindObjectsOfType<AudioSource>())
             {
-                if (audioSouce.gameObject.scene.name == "DontDestroyOnLoad") { continue; }
+                if (audioSouce.GetComponent<DestroyAfterScene>()) { continue; }
 
                 RegisterAudioSource(audioSouce);
             }

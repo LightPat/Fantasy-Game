@@ -7,6 +7,7 @@ using Unity.Netcode;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using LightPat.Audio;
 
 namespace LightPat.UI
 {
@@ -26,6 +27,9 @@ namespace LightPat.UI
         public TMP_Dropdown secondaryWeaponDropdown;
         public TMP_Dropdown tertiaryWeaponDropdown;
 
+        [Header("Audio Settings")]
+        public AudioClip buttonClickSound;
+
         GameObject playerModel;
         MaterialColorChange colors;
         Vector3 cameraPositionOffset;
@@ -41,6 +45,7 @@ namespace LightPat.UI
         {
             ulong localClientId = NetworkManager.Singleton.LocalClientId;
             ClientManager.Singleton.ToggleReadyServerRpc(localClientId);
+            AudioManager.Singleton.Play2DClip(buttonClickSound, 1);
         }
 
         bool loadingGame;

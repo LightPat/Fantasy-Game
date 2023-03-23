@@ -10,6 +10,7 @@ namespace LightPat.Triggers
         bool ran;
         private void OnTriggerEnter(Collider other)
         {
+            if (!other.GetComponentInParent<Attributes>()) { return; }
             if (ran) { return; }
             ran = true;
             FindObjectOfType<SpawnManager>().SpawnObjects();

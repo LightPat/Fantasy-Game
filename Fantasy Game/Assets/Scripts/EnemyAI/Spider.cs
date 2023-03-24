@@ -54,7 +54,7 @@ namespace LightPat.EnemyAI
 
             currentTargetPosition += spiderPhysics.dotProductOffset;
 
-            if (Vector3.Distance(transform.position, currentTargetPosition) > (target ? 6 : 0.1f))
+            if (Vector3.Distance(transform.position, currentTargetPosition) > (target ? 6 : 0.5f))
                 transform.position += moveTowardsSpeed * Time.deltaTime * transform.forward;
             else
                 pathFindingPositions.RemoveAt(0);
@@ -63,15 +63,31 @@ namespace LightPat.EnemyAI
             if (Quaternion.Angle(transform.rotation, targetRotation) > 0.1f)
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-            foreach (Collider col in Physics.OverlapSphere(transform.position, 10, -1, QueryTriggerInteraction.Ignore))
+            if (target)
             {
-                Attributes targetAttributes = col.GetComponentInParent<Attributes>();
-                if (targetAttributes)
+                if (Vector3.Distance(transform.position, target.position) > 20) { target = null; }
+            }
+            else
+            {
+                float targetCastDistance = 10;
+                foreach (Collider col in Physics.OverlapSphere(transform.position, targetCastDistance, -1, QueryTriggerInteraction.Ignore))
                 {
-                    if (targetAttributes.team != attributes.team)
+                    Attributes targetAttributes = col.GetComponentInParent<Attributes>();
+                    if (targetAttributes)
                     {
-                        target = targetAttributes.transform;
-                        break;
+                        if (targetAttributes.team != attributes.team)
+                        {
+                            Debug.DrawRay(transform.position, targetAttributes.transform.position - transform.position, Color.red, 15);
+                            foreach (RaycastHit hit in Physics.RaycastAll(transform.position, targetAttributes.transform.position - transform.position, targetCastDistance, -1, QueryTriggerInteraction.Ignore))
+                            {
+                                if (hit.transform == targetAttributes.transform)
+                                {
+                                    target = targetAttributes.transform;
+                                    break;
+                                }
+                            }
+                            break;
+                        }
                     }
                 }
             }

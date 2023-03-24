@@ -36,7 +36,7 @@ namespace LightPat.ProceduralAnimations.Spider
             AudioManager.Singleton.PlayClipAtPoint(footStepSounds[Random.Range(0, footStepSounds.Length)], leg.transform.position, footstepVolume);
         }
 
-        private void Awake()
+        private void Start()
         {
             physics = GetComponentInParent<SpiderPhysics>();
             rigBuilder = GetComponent<RigBuilder>();

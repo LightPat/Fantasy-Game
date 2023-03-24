@@ -30,7 +30,7 @@ namespace LightPat.Core
         public Collider headCollider;
 
         public NetworkVariable<float> HP { get; private set; } = new NetworkVariable<float>();
-        bool invincible;
+        public bool invincible;
 
         public override void OnNetworkSpawn()
         {
@@ -40,19 +40,11 @@ namespace LightPat.Core
             {
                 team = ClientManager.Singleton.GetClient(OwnerClientId).team;
             }
-            StartCoroutine(SpawnProtection());
         }
 
         public override void OnNetworkDespawn()
         {
             HP.OnValueChanged -= OnHPChanged;
-        }
-
-        private IEnumerator SpawnProtection()
-        {
-            invincible = true;
-            yield return new WaitForSeconds(0.1f);
-            invincible = false;
         }
 
         private void Start()

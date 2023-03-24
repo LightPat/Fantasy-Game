@@ -12,26 +12,8 @@ namespace LightPat.Triggers
 
         public override void OnNetworkSpawn()
         {
-            // I have no idea why I need to do this
-            StartCoroutine(WaitAfterSpawn());
-        }
-
-        private IEnumerator WaitAfterSpawn()
-        {
             foreach (NetworkObject g in objectsToSetActive)
             {
-                yield return new WaitUntil(() => g.IsSpawned);
-                yield return null;
-                yield return null;
-                yield return null;
-                yield return null;
-                yield return null;
-                yield return null;
-                yield return null;
-                yield return null;
-                yield return null;
-                yield return null;
-                yield return null;
                 g.gameObject.SetActive(false);
             }
         }
@@ -62,6 +44,7 @@ namespace LightPat.Triggers
                 g.gameObject.SetActive(true);
             }
 
+            ActivateClientRpc();
             NetworkObject.Despawn(true);
         }
 

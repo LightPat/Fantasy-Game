@@ -31,7 +31,7 @@ namespace LightPat.EnemyAI
         HumanoidWeaponAnimationHandler humanoidWeaponAnimationHandler;
         WeaponLoadout weaponLoadout;
         Weapon targetWeapon;
-        fightingState fightState;
+        [SerializeField] private fightingState fightState;
 
         public void MoveToPoint(Vector3 worldPosition, float stopDistance = 1, bool sprint = false)
         {
@@ -62,13 +62,19 @@ namespace LightPat.EnemyAI
 
         public void RotateBodyToPoint(Vector3 worldPosition)
         {
-            rb.MoveRotation(Quaternion.LookRotation(new Vector3(worldPosition.x, transform.position.y, worldPosition.z) - transform.position, Vector3.up));
+            if (rb)
+                rb.MoveRotation(Quaternion.LookRotation(new Vector3(worldPosition.x, transform.position.y, worldPosition.z) - transform.position, Vector3.up));
+            else
+                transform.rotation = Quaternion.LookRotation(new Vector3(worldPosition.x, transform.position.y, worldPosition.z) - transform.position, Vector3.up);
         }
 
         public float RotateBodyTowardsPoint(Vector3 worldPosition, float rotationSpeed)
         {
             Quaternion targetRotation = Quaternion.LookRotation(new Vector3(worldPosition.x, transform.position.y, worldPosition.z) - transform.position, Vector3.up);
-            rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime));
+            if (rb)
+                rb.MoveRotation(Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime));
+            else
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             return Quaternion.Angle(transform.rotation, targetRotation);
         }
 
